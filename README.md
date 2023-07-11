@@ -1,2 +1,1 @@
-# massaMockProject
 # bridge-web
