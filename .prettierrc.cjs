@@ -1,22 +1,22 @@
 module.exports = {
-  ...require("@massalabs/prettier-config-as"),
+  ...require('@massalabs/prettier-config-as'),
   overrides: [
     {
-      files: "*.json",
+      files: '*.json',
       options: {
-        parser: "json",
+        parser: 'json',
       },
     },
     {
-      files: "*.html",
+      files: '*.html',
       options: {
-        parser: "html",
+        parser: 'html',
       },
     },
     {
-      files: "*.css",
+      files: '*.css',
       options: {
-        parser: "css",
+        parser: 'css',
       },
     },
   ],
