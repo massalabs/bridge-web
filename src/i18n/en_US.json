@@ -1,0 +1,10 @@
+{
+  "main": "hello_world!",
+  "side": {
+    "indent-1": {
+      "indent-2": {
+        "indent-3": "maximum-indent-3"
+      }
+    }
+  }
+}
