@@ -1,11 +1,9 @@
-import { Button } from '@massalabs/react-ui-kit/src';
-import Intl from './i18n/i18n';
+import { Base } from './base/Base';
 
 function App() {
-  // const [state, setState] = useState(0)
   return (
     <div>
-      <Button>{Intl.t('main')}</Button>
+      <Base />
     </div>
   );
 }
