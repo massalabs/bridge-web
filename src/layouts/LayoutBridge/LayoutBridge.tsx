@@ -13,10 +13,7 @@ export function LayoutBridge({ ...props }) {
 
   const options = [
     {
-      item: 'BuildNet',
-    },
-    {
-      item: 'TestNet',
+      item: 'testnet',
     },
   ];
 
