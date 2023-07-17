@@ -1,5 +1,4 @@
-
-# Massa Bridge-Web app frontend
+# Bridge web app frontend
 
 ## Dev guide
 
