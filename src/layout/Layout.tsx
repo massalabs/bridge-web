@@ -14,12 +14,13 @@ export function Layout({ ...props }) {
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-center items-center
-      bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] 
-      from-[#3271A5] to-deep-blue to-60%`}
+      className="bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] 
+      from-[#3271A5] to-deep-blue to-60%
+      fixed w-full
+      "
     >
       {/* Header Element */}
-      <div className="flex flex-row items-center justify-between p-11">
+      <div className="flex flex-row items-center justify-between p-11 h-fit ">
         <img src={logo} alt="" />
         <div className="flex flex-row items-center gap-4">
           <Dropdown options={options} />
