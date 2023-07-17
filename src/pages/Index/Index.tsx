@@ -51,8 +51,19 @@ export function Index() {
             </div>
           </div>
           <div className="mb-4 flex items-center gap-2">
+            <p className="mas-body2">Wallet address:</p>
+            <p className="mas-caption">
+              0x2b4d87eff06f22798c30dc4407c7d83429aaa9abc
+            </p>
+          </div>
+          <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
-              <Currency defaultValue="" name="amount" placeholder="Amount" />
+              <Currency
+                defaultValue=""
+                name="amount"
+                placeholder="Amount"
+                suffix=""
+              />
             </div>
             <Dropdown
               size="xs"
@@ -68,9 +79,15 @@ export function Index() {
               ]}
             />
           </div>
-          <div className="flex justify-end items-center gap-2">
-            <p className="mas-body2">Balance:</p>
-            <p className="mas-body">0,000.00</p>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <p className="mas-body2">Total fees:</p>
+              <p className="mas-body">0,000.00</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="mas-body2">Balance:</p>
+              <p className="mas-body">0,000.00</p>
+            </div>
           </div>
         </div>
         <div className="mb-5 flex justify-center items-center">
@@ -101,6 +118,12 @@ export function Index() {
               <p className="mas-body">MassaWallet</p>
               <Tag type={'error'} content={'Not connected'} />
             </div>
+          </div>
+          <div className="mb-4 flex items-center gap-2">
+            <p className="mas-body2">Wallet address:</p>
+            <p className="mas-caption">
+              AU12irbDfYNwyZRbnpBrfCBPCxrktp8f8riK2sQddWbzQ3g43G7bb
+            </p>
           </div>
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
