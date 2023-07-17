@@ -6,6 +6,7 @@ import {
   ThemeMode,
   BridgeLogo,
 } from '@massalabs/react-ui-kit';
+import { ConnectWalletPopup } from '@/components/ConnectWalletPopup/ConnectWalletPopup';
 
 export function LayoutBridge({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
@@ -26,6 +27,12 @@ export function LayoutBridge({ ...props }) {
     onSetTheme?.(theme);
   }
 
+  const [open, setOpen] = useState(false);
+
+  const popupArgs = {
+    setOpen,
+  };
+
   return (
     <div
       className="bg-fixed bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
@@ -37,7 +44,7 @@ export function LayoutBridge({ ...props }) {
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown readOnly={true} options={options} />
-          <Button>Connect Wallet</Button>
+          <Button onClick={() => setOpen(true)}>Connect Wallet</Button>
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
@@ -46,6 +53,7 @@ export function LayoutBridge({ ...props }) {
       >
         {children}
       </div>
+      {open ? <ConnectWalletPopup {...popupArgs} /> : null}
     </div>
   );
 }
