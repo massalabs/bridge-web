@@ -58,7 +58,7 @@ export function ConnectWalletCards() {
           </div>
         </WalletCard>
         <WalletCard>
-          <div className="flex justify-evenly w-full mb-4">
+          <div className="flex w-full  justify-between gap-4 mb-4">
             <p>To: Massa testnet wallet </p>
             <Tag type="error" content="Not Connected" />
           </div>
