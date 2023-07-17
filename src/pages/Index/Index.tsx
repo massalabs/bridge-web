@@ -1,4 +1,5 @@
 import { useRef, SyntheticEvent } from 'react';
+import Intl from '@/i18n/i18n';
 
 import {
   Dropdown,
@@ -31,7 +32,7 @@ export function Index() {
     >
       <form ref={form} onSubmit={handleSubmit}>
         <div className="p-6 bg-primary rounded-2xl mb-5">
-          <p className="mb-4 mas-body">From</p>
+          <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
           <div className="mb-4 flex items-center justify-between">
             <Dropdown
               options={[
@@ -47,7 +48,7 @@ export function Index() {
             />
             <div className="flex items-center gap-3">
               <p className="mas-body">EVM wallet</p>
-              <Tag type={'error'} content={'Not connected'} />
+              <Tag type={'error'} content={Intl.t(`index.tag.not-connected`)} />
             </div>
           </div>
           <div className="mb-4 flex items-center gap-2">
@@ -61,7 +62,7 @@ export function Index() {
               <Currency
                 defaultValue=""
                 name="amount"
-                placeholder="Amount"
+                placeholder={Intl.t(`index.input.placeholder.amount`)}
                 suffix=""
               />
             </div>
@@ -100,7 +101,7 @@ export function Index() {
           </Button>
         </div>
         <div className="mb-5 p-6 bg-primary rounded-2xl">
-          <p className="mb-4 mas-body">To</p>
+          <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
           <div className="mb-4 flex items-center justify-between">
             <Dropdown
               options={[
@@ -116,7 +117,7 @@ export function Index() {
             />
             <div className="flex items-center gap-3">
               <p className="mas-body">MassaWallet</p>
-              <Tag type={'error'} content={'Not connected'} />
+              <Tag type={'error'} content={Intl.t(`index.tag.not-connected`)} />
             </div>
           </div>
           <div className="mb-4 flex items-center gap-2">
@@ -127,7 +128,10 @@ export function Index() {
           </div>
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
-              <Currency readOnly={true} placeholder="To receive" />
+              <Currency
+                readOnly={true}
+                placeholder={Intl.t(`index.input.placeholder.receive`)}
+              />
             </div>
             <Dropdown
               readOnly={true}
@@ -158,11 +162,15 @@ export function Index() {
           </div>
         </div>
         <div>
-          <p className="mas-caption mb-4">Total approved: 0,000.00</p>
+          <p className="mas-caption mb-4">
+            {Intl.t(`index.total.approve`, { amount: '0,000.00' })}
+          </p>
           <div className="flex items-center gap-5">
-            <Button onClick={() => console.log('approve')}>Approve</Button>
+            <Button onClick={() => console.log('approve')}>
+              {Intl.t(`index.button.approve`)}
+            </Button>
             <Button variant="secondary" onClick={() => console.log('bridge')}>
-              Bridge
+              {Intl.t(`index.button.bridge`)}
             </Button>
           </div>
         </div>
