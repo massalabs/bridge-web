@@ -1,5 +1,8 @@
+// STYLES
+
 // EXTERNALS
 import dot from 'dot-object';
+
 // LOCALS
 import enUs from './en_US.json';
 import frFR from './fr_FR.json';
