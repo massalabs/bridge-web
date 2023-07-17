@@ -33,8 +33,7 @@ export function LayoutBridge({ ...props }) {
   return (
     <div
       className="bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
-      from-[#3271A5] to-primary to-60%
-      fixed w-full
+      from-[#3271A5] to-primary to-60% fixed w-full min-h-screen
       "
     >
       {/* Header Element */}
@@ -46,7 +45,7 @@ export function LayoutBridge({ ...props }) {
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
-      <div className={`min-h-screen flex flex-col justify-center items-center`}>
+      <div className={`flex flex-col justify-center items-center`}>
         {children}
       </div>
     </div>
