@@ -1,4 +1,25 @@
 {
+  "index": {
+    "from": "From",
+    "to": "To",
+    "tag": {
+      "not-connected": "Not connected",
+      "connected": "Connected"
+    },
+    "input": {
+      "placeholder": {
+        "amount": "Amount",
+        "receive": "To receive"
+      }
+    },
+    "button": {
+      "approve": "Approve",
+      "bridge": "Bridge"
+    },
+    "total": {
+      "approve": "Total approved: {amount}"
+    }
+  },
   "unexpected-error": {
     "title": "Oops!",
     "description": "An unexpected error has occurred",
