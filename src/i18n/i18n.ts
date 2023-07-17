@@ -34,10 +34,10 @@ class I18n {
     let fromUrl = urlParams.get('l');
 
     if (fromUrl) {
-      localStorage.setItem('massa-station-lang', fromUrl);
+      localStorage.setItem('massa-bridge-lang', fromUrl);
     }
 
-    return fromUrl || localStorage.getItem('massa-station-lang') || INTL.EN_us;
+    return fromUrl || localStorage.getItem('massa-bridge-lang') || INTL.EN_us;
   }
 
   private _getCopy(): Copy {
