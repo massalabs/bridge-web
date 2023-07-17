@@ -6,7 +6,6 @@ import {
   ThemeMode,
   BridgeLogo,
 } from '@massalabs/react-ui-kit';
-import logo from '@/assets/logo.svg';
 
 export function LayoutBridge({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
@@ -29,12 +28,12 @@ export function LayoutBridge({ ...props }) {
 
   return (
     <div
-      className="bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
-      from-[#3271A5] to-primary to-60% fixed w-full min-h-screen
+      className="bg-fixed bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
+      from-[#3271A5] to-primary to-60% overflow-auto w-full min-h-screen
       "
     >
       {/* Header Element */}
-      <div className="flex flex-row items-center justify-between p-11 h-fit">
+      <div className="flex flex-row items-center justify-between p-11 w-full h-fit fixed z-10">
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown readOnly={true} options={options} />
@@ -42,7 +41,9 @@ export function LayoutBridge({ ...props }) {
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
-      <div className={`flex flex-col justify-center items-center`}>
+      <div
+        className={`flex flex-col justify-center items-center pt-[150px] pb-10`}
+      >
         {children}
       </div>
     </div>
