@@ -1,4 +1,8 @@
 {
+  "general": {
+    "click-here": "Click here",
+    "select-this-account": "Select this account"
+  },
   "index": {
     "from": "From",
     "to": "To",
@@ -24,5 +28,23 @@
     "title": "Oops!",
     "description": "An unexpected error has occurred",
     "link": "Go back to the Welcome page!"
+  },
+  "connect-wallet": {
+    "title": "Connect wallets",
+    "description": "Connect 1 wallet on Sepolia testnet and 1 on Massa buildnet, to bridge tokens between networks.",
+    "button": "Connect",
+    "card-destination": {
+      "from": "From: Sepolia testnet wallet",
+      "to": "To: Massa buildnett wallet"
+    },
+    "connected-cards": {
+      "wallet-address": "Wallet address: ",
+      "change-wallet": "Change Wallet"
+    },
+    "connect-metamask": "Metamask",
+    "ressource-sidepanel": {
+      "add-sepolia": "If you want to add sepolia on your Metamask",
+      "add-massa": "If you want to add to create a Massa Wallet"
+    }
   }
 }

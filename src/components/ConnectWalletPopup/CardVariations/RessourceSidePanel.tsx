@@ -1,4 +1,5 @@
 import { Tag } from '@massalabs/react-ui-kit';
+import Intl from '@/i18n/i18n';
 
 export function RessourceSidePanel() {
   // TODO : add links to correct ressources
@@ -13,17 +14,19 @@ export function RessourceSidePanel() {
     >
       <div className="flex flex-col justify-center items-center gap-4 mas-menu-default">
         <Tag type="info" content="Add Sepolia testnet" />
-        If you want to add sepolia on your Metamask <br />
+        {Intl.t('connect-wallet.ressource-sidepanel.add-sepolia')}
+        <br />
         <a href="www.mylink.com" target="_blank">
-          <u>Click Here</u>
+          <u>{Intl.t('general.click-here')}</u>
         </a>
       </div>
       <div className="w-full bg-slate-500 bg-opacity-5 border border-1"></div>
       <div className="flex flex-col justify-center items-center gap-4 mas-menu-default">
         <Tag type="success" content="Create a Massa Wallet" />
-        If you want to add to create a Massa Wallet <br />
+        {Intl.t('connect-wallet.ressource-sidepanel.add-massa')}
+        <br />
         <a href="www.mylink.com" target="_blank">
-          <u>Click Here</u>
+          <u> {Intl.t('general.click-here')}</u>
         </a>
       </div>
     </div>
