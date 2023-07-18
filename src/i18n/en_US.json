@@ -35,7 +35,7 @@
     "button": "Connect",
     "card-destination": {
       "from": "From: Sepolia testnet wallet",
-      "to": "To: Massa buildnett wallet"
+      "to": "To: Massa buildnet wallet"
     },
     "connected-cards": {
       "wallet-address": "Wallet address: ",

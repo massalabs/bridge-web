@@ -1,17 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import {
+  ConnectMetamask,
+  SelectMassaWalletAccount,
+  RessourceSidePanel,
+  ConnectedCard,
+} from '@/components';
+
 import metamask from '@/assets/metamask.svg';
-import { ConnectMetamask } from './CardVariations/ConnectMetaMask';
-import { SelectMassaWalletAccount } from './CardVariations/SelectMassaAccount';
-import { RessourceSidePanel } from './CardVariations/RessourceSidePanel';
+
 import { Tag } from '@massalabs/react-ui-kit';
-import { ConnectedCard } from './CardVariations/ConnectedCard';
 import { FiUser } from 'react-icons/fi';
+
 import Intl from '@/i18n/i18n';
+import { tagTypes } from '@/utils/const';
 
 export function ConnectWalletCards() {
   const [isMassaConnected, setIsMassaConnected] = useState(false);
   const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
-
+  const [massaTagType, setMassaTagType] = useState<string>(tagTypes.error);
+  const [metamaskTagType, setMetamaskTagType] = useState<string>(
+    tagTypes.error,
+  );
   // Massa Account selection options
   // Simulates the options that would be returned from the Massa Web 3 fetches
   // Todo, we have to know how to get the account that is selected in the options
@@ -34,6 +44,22 @@ export function ConnectWalletCards() {
       ),
     },
   ];
+
+  useEffect(() => {
+    if (isMassaConnected) {
+      setMassaTagType(tagTypes.success);
+    } else {
+      setMassaTagType(tagTypes.error);
+    }
+  }, [isMassaConnected]);
+
+  useEffect(() => {
+    if (isMetamaskConnected) {
+      setMetamaskTagType(tagTypes.success);
+    } else {
+      setMetamaskTagType(tagTypes.error);
+    }
+  }, [isMetamaskConnected]);
 
   // The idea would be to have a map of the accounts and reuse them for the selector
 
@@ -76,14 +102,28 @@ export function ConnectWalletCards() {
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
             <p> {Intl.t('connect-wallet.card-destination.from')} </p>
-            <Tag type="error" content="Not Connected" />
+            <Tag
+              type={metamaskTagType}
+              content={
+                isMetamaskConnected
+                  ? Intl.t('index.tag.connected')
+                  : Intl.t('index.tag.not-connected')
+              }
+            />
           </div>
-          {isMetamaskConnected ? null : <ConnectMetamask {...metamaskArgs} />}
+          {!isMetamaskConnected && <ConnectMetamask {...metamaskArgs} />}
         </WalletCard>
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
             <p>{Intl.t('connect-wallet.card-destination.to')}</p>
-            <Tag type="error" content="Not Connected" />
+            <Tag
+              type={massaTagType}
+              content={
+                isMassaConnected
+                  ? Intl.t('index.tag.connected')
+                  : Intl.t('index.tag.not-connected')
+              }
+            />
           </div>
           {isMassaConnected ? (
             <ConnectedCard {...walletArgs} />

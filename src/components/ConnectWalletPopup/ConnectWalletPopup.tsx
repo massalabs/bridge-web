@@ -1,16 +1,18 @@
+import { ConnectWalletCards } from '@/components';
+
 import {
   PopupModal,
   PopupModalContent,
   PopupModalHeader,
 } from '@massalabs/react-ui-kit';
-import { ConnectWalletCards } from '@/components/ConnectWalletPopup/ConnectWalletCards';
+
 import Intl from '@/i18n/i18n';
 
 export function ConnectWalletPopup({ ...props }) {
   const { setOpen } = props;
   const args = {
     onOpen: () => {
-      console.log('event on open');
+      return null;
     },
     onClose: () => {
       setOpen(false);
