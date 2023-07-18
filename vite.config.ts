@@ -12,7 +12,6 @@ export default ({ mode }) => {
     plugins: [react(), svgr()],
     base: process.env.VITE_BASE_APP,
     build: {
-      outDir: './int/api/dist/massabrigde', // TODO: change the outdir link
       emptyOutDir: true,
       manifest: true,
       sourcemap: true,

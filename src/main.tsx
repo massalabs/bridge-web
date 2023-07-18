@@ -17,7 +17,6 @@ import { mockServer } from '@/mirage';
 import { Error, NotFound, Index } from '@/pages/index';
 import { PAGES } from '@/const/pages/pages';
 
-const baseURL = import.meta.env.VITE_BASE_APP;
 const baseENV = import.meta.env.VITE_ENV;
 
 if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
@@ -28,7 +27,7 @@ const queryClient = new QueryClient();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path={baseURL} element={<Base />}>
+    <Route element={<Base />}>
       <Route path=":network" element={<Network />}>
         {/* routes for pages */}
         <Route path={PAGES.INDEX} element={<Index />} />
