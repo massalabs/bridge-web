@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import { useConfigStore } from '@/store/store';
-import { routeFor } from '@/utils/utils';
 
 import { Toast } from '@massalabs/react-ui-kit';
 import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
@@ -24,7 +23,7 @@ export function Base() {
   );
 
   useEffect(() => {
-    navigate(routeFor('testnet/index'));
+    navigate('testnet/index');
   }, [navigate]);
 
   // Store
