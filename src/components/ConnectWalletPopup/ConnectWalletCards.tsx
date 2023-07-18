@@ -48,6 +48,11 @@ export function ConnectWalletCards() {
     setIsMassaConnected,
   };
 
+  const metamaskArgs = {
+    setIsMetamaskConnected,
+    src: metamask,
+  };
+
   // Wallet card wrapper component
 
   function WalletCard({ ...props }) {
@@ -72,7 +77,7 @@ export function ConnectWalletCards() {
             <p>From: Sepolia testnet wallet </p>
             <Tag type="error" content="Not Connected" />
           </div>
-          {isMetamaskConnected ? null : <ConnectMetamask src={metamask} />}
+          {isMetamaskConnected ? null : <ConnectMetamask {...metamaskArgs} />}
         </WalletCard>
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
