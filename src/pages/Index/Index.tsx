@@ -13,6 +13,7 @@ import { FiRepeat } from 'react-icons/fi';
 // Remove those 2 lines and replace by correct icon when backend is ready
 import { FiAperture } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
+import { tagTypes } from '@/utils/const';
 
 export function Index() {
   const form = useRef(null);
@@ -48,7 +49,10 @@ export function Index() {
             />
             <div className="flex items-center gap-3">
               <p className="mas-body">EVM wallet</p>
-              <Tag type={'error'} content={Intl.t(`index.tag.not-connected`)} />
+              <Tag
+                type={tagTypes.error}
+                content={Intl.t(`index.tag.not-connected`)}
+              />
             </div>
           </div>
           <div className="mb-4 flex items-center gap-2">
@@ -117,7 +121,10 @@ export function Index() {
             />
             <div className="flex items-center gap-3">
               <p className="mas-body">MassaWallet</p>
-              <Tag type={'error'} content={Intl.t(`index.tag.not-connected`)} />
+              <Tag
+                type={tagTypes.error}
+                content={Intl.t(`index.tag.not-connected`)}
+              />
             </div>
           </div>
           <div className="mb-4 flex items-center gap-2">

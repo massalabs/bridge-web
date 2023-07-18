@@ -3,7 +3,6 @@ import Intl from '@/i18n/i18n';
 
 export function ConnectedCard({ ...props }) {
   // This takes either massa walllet information or meta mask information
-  // We will need to make sure the formatiting works for both
 
   const { walletName, walletAddress, icon, setIsMassaConnected } = props;
   const formattedWalletName = maskAddress(walletAddress);
