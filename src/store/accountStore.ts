@@ -25,13 +25,9 @@ const accountStore =
     availableAccounts: undefined,
 
     getAvailableAccounts: async () => {
-
       const massaStationProvider = providers().find(
         (provider) => provider.name() === MASSA_STATION
       );
-      debugger;
-      console.log('providers', providers());
-      
       set({ availableAccounts: await massaStationProvider?.accounts()});
     },
     

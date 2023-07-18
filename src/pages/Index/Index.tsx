@@ -8,6 +8,8 @@ import {
   providers,
 } from '@massalabs/wallet-provider';
 
+import {registerEvent} from '../../custom/provider/provider';
+
 import {
   Dropdown,
   MassaToken,
@@ -23,26 +25,41 @@ import { FiAperture } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
 
 export function Index() {
+
+  // we must to initialize the providers to be able to use providers()
+  // from '@massalabs/wallet-provider';
+  registerEvent();
+
   const form = useRef(null);
   const getAvailableAccounts = useAccountStore((state) => state.getAvailableAccounts);
   const availableAccounts = useAccountStore((state) => state.availableAccounts);
+
+  
+  function buildOptions(items: []) {
+    let optionsList = [];
+
+    items?.map((item: string) => {
+      optionsList.push({
+        item: item._name,
+        icon: <MassaToken />,
+      });
+    });
+
+    return optionsList;
+  }
+
+
+  useEffect(() => {
+    getAvailableAccounts();
     
+  }, [availableAccounts]);
 
 
-  async function handleSubmit(e: SyntheticEvent) {
+  
+  function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     
-    const massaStationProvider = providers().find(
-      (provider) => provider.name() === 'MASSASTATION'
-    );
-
-    console.log(await massaStationProvider?.accounts());
-
     console.log('handleSubmit');
-    
-    await getAvailableAccounts();
-
-    console.log(availableAccounts);
     
     // TODO: add validation function
 
@@ -58,18 +75,9 @@ export function Index() {
         <div className="p-6 bg-primary rounded-2xl mb-5">
           <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
           <div className="mb-4 flex items-center justify-between">
-            <Dropdown
-              options={[
-                {
-                  item: 'Sepolia Testnet',
-                  icon: <FiAperture size={40} />,
-                },
-                {
-                  item: 'Massa Buildnet',
-                  icon: <MassaToken />,
-                },
-              ]}
-            />
+            <div className="w-1/2">
+              <Dropdown options={buildOptions(availableAccounts)}/>
+            </div>
             <div className="flex items-center gap-3">
               <p className="mas-body">EVM wallet</p>
               <Tag type={'error'} content={Intl.t(`index.tag.not-connected`)} />
