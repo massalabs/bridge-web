@@ -1,5 +1,12 @@
-import { useRef, SyntheticEvent } from 'react';
+import { useRef, SyntheticEvent, useEffect } from 'react';
 import Intl from '@/i18n/i18n';
+
+import {
+  IAccount,
+  IAccountBalanceResponse,
+  IProvider,
+  providers,
+} from '@massalabs/wallet-provider';
 
 import {
   Dropdown,
@@ -9,6 +16,7 @@ import {
   Button,
 } from '@massalabs/react-ui-kit';
 import { FiRepeat } from 'react-icons/fi';
+import { useAccountStore } from '@/store/store';
 
 // Remove those 2 lines and replace by correct icon when backend is ready
 import { FiAperture } from 'react-icons/fi';
@@ -16,10 +24,26 @@ import { BsDiamondHalf } from 'react-icons/bs';
 
 export function Index() {
   const form = useRef(null);
+  const getAvailableAccounts = useAccountStore((state) => state.getAvailableAccounts);
+  const availableAccounts = useAccountStore((state) => state.availableAccounts);
+    
 
-  function handleSubmit(e: SyntheticEvent) {
+
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
+    
+    const massaStationProvider = providers().find(
+      (provider) => provider.name() === 'MASSASTATION'
+    );
 
+    console.log(await massaStationProvider?.accounts());
+
+    console.log('handleSubmit');
+    
+    await getAvailableAccounts();
+
+    console.log(availableAccounts);
+    
     // TODO: add validation function
 
     // TODO: add submit function
@@ -94,7 +118,7 @@ export function Index() {
         <div className="mb-5 flex justify-center items-center">
           <Button
             variant="toggle"
-            onClick={() => console.log('burn')}
+            onClick={handleSubmit}
             customClass="w-12 h-12"
           >
             <FiRepeat size={24} />
