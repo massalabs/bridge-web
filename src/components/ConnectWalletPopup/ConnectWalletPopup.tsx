@@ -3,7 +3,8 @@ import {
   PopupModalContent,
   PopupModalHeader,
 } from '@massalabs/react-ui-kit';
-import { ConnectWalletCards } from './ConnectWalletCards';
+import { ConnectWalletCards } from '@/components/ConnectWalletPopup/ConnectWalletCards';
+import Intl from '@/i18n/i18n';
 
 export function ConnectWalletPopup({ ...props }) {
   const { setOpen } = props;
@@ -27,10 +28,11 @@ export function ConnectWalletPopup({ ...props }) {
       >
         <PopupModalHeader>
           <div className="text-f-primary flex flex-col mb-4">
-            <label className="mas-title mb-4">Connect wallets</label>
+            <label className="mas-title mb-4">
+              {Intl.t('connect-wallet.title')}
+            </label>
             <div className="mas-body">
-              Connect 1 wallet on Sepolia testnet and 1 on Massa Buildnet, to
-              bridge tokens between networks.
+              {Intl.t('connect-wallet.description')}
             </div>
           </div>
         </PopupModalHeader>

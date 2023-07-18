@@ -6,6 +6,7 @@ import { RessourceSidePanel } from './CardVariations/RessourceSidePanel';
 import { Tag } from '@massalabs/react-ui-kit';
 import { ConnectedCard } from './CardVariations/ConnectedCard';
 import { FiUser } from 'react-icons/fi';
+import Intl from '@/i18n/i18n';
 
 export function ConnectWalletCards() {
   const [isMassaConnected, setIsMassaConnected] = useState(false);
@@ -74,14 +75,14 @@ export function ConnectWalletCards() {
       <div className="flex flex-col gap-4 min-w-[480px]">
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
-            <p>From: Sepolia testnet wallet </p>
+            <p> {Intl.t('connect-wallet.card-destination.from')} </p>
             <Tag type="error" content="Not Connected" />
           </div>
           {isMetamaskConnected ? null : <ConnectMetamask {...metamaskArgs} />}
         </WalletCard>
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
-            <p>To: Massa testnet wallet </p>
+            <p>{Intl.t('connect-wallet.card-destination.to')}</p>
             <Tag type="error" content="Not Connected" />
           </div>
           {isMassaConnected ? (
