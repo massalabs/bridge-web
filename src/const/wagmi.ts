@@ -16,7 +16,7 @@ export const connectors = connectorsForWallets([
     groupName: 'Recommended',
     wallets: [
       metaMaskWallet({
-        projectId: '',
+        projectId: 'massa-bridge',
         chains: chains,
       }),
     ],
