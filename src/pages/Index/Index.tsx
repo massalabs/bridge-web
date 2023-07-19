@@ -1,13 +1,5 @@
-import {
-  useState,
-  useRef,
-  SyntheticEvent,
-  useEffect,
-  useCallback,
-} from 'react';
+import { useState, useRef, SyntheticEvent, useEffect } from 'react';
 import Intl from '@/i18n/i18n';
-import { providers, IAccount } from '@massalabs/wallet-provider';
-import { MASSA_STATION } from '@/const';
 import {
   Dropdown,
   MassaToken,
@@ -15,14 +7,11 @@ import {
   Currency,
   Button,
 } from '@massalabs/react-ui-kit';
-import { getSupportedTokensList } from '@/custom/bridge/bridge';
-import { getMassaTokenName } from '@/custom/token/token';
 import { FiRepeat } from 'react-icons/fi';
 import { GetTokensPopUpModal } from '@/components';
 import { tagTypes } from '@/utils/const';
 import { useAccountStore } from '@/store/store';
 import { registerEvent } from '@/custom/provider/provider';
-import { IToken } from '@/store/accountStore';
 
 // Remove those 2 lines and replace by correct icon when backend is ready
 import { FiAperture } from 'react-icons/fi';
@@ -34,56 +23,25 @@ export function Index() {
   registerEvent();
 
   const form = useRef(null);
-  const setAvailableAccounts = useAccountStore(
-    (state) => state.setAvailableAccounts,
+  const [accounts, tokens, getAccounts, getTokens] = useAccountStore(
+    (state) => [
+      state.accounts,
+      state.tokens,
+      state.getAccounts,
+      state.getTokens,
+    ],
   );
-  const setAvailableTokens = useAccountStore(
-    (state) => state.setAvailableTokens,
-  );
 
-  const availableAccounts = useAccountStore((state) => state.availableAccounts);
-  const availableTokens = useAccountStore((state) => state.availableTokens);
-
-  const fetchAccounts = useCallback(async () => {
-    const massaStationProvider = providers().find(
-      (provider) => provider.name() === MASSA_STATION,
-    );
-    return await massaStationProvider?.accounts();
-  }, []);
-
-  const fetchTokens = useCallback(async (available: IAccount[]) => {
-    let firstAccount = available.at(0);
-
-    if (firstAccount) {
-      let overriddenFetchAvailableTokens: IToken[] = [];
-
-      getSupportedTokensList(firstAccount).then((tokens) => {
-        tokens.forEach(async (at) => {
-          if (firstAccount) {
-            // we are overriding the tuple to include token name
-            overriddenFetchAvailableTokens.push({
-              ...at,
-              name: await getMassaTokenName(at.massaToken, firstAccount),
-            });
-          }
-        });
-        setAvailableTokens(overriddenFetchAvailableTokens);
-      });
-    }
+  useEffect(() => {
+    getAccounts();
   }, []);
 
   useEffect(() => {
-    fetchAccounts()
-      .then((account) => {
-        setAvailableAccounts(...[account]);
-        return account;
-      })
-      .catch(console.error);
-  }, []);
+    getTokens();
+  }, [accounts]);
 
-  useEffect(() => {
-    fetchTokens(availableAccounts).catch(console.error);
-  }, [availableAccounts]);
+  console.log(accounts);
+  console.log(tokens);
 
   // HOOKS
   const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
