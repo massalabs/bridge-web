@@ -36,7 +36,7 @@ export function LayoutBridge({ ...props }) {
   return (
     <div
       className="bg-fixed bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
-      from-[#3271A5] to-primary to-60% overflow-auto w-full min-h-screen
+      from-bright-blue to-deep-blue to-60% overflow-auto w-full min-h-screen
       "
     >
       {/* Header Element */}

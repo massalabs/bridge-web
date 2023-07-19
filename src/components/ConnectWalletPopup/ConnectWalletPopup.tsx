@@ -23,7 +23,7 @@ export function ConnectWalletPopup({ ...props }) {
     <>
       <PopupModal
         customClass="w-[720px] min-w-fit"
-        customClassNested="bg-transparent bg-gradient-to-tl from-transparent to-primary backdrop-blur-md"
+        customClassNested="border border-tertiary bg-secondary/50 backdrop-blur-lg"
         fullMode={true}
         onOpen={args.onOpen}
         onClose={args.onClose}

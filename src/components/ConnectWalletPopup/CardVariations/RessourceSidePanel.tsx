@@ -7,7 +7,7 @@ export function RessourceSidePanel() {
     <div
       className="
         bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))]
-        from-[#3271A5] to-primary to-60%
+        from-bright-blue to-deep-blue to-60%
         min-h-full w-[270px] p-6 rounded-2xl
         flex flex-col justify-evenly items-center gap-4
         "
