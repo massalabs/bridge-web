@@ -46,5 +46,19 @@
       "add-sepolia": "If you want to add sepolia on your Metamask",
       "add-massa": "If you want to add to create a Massa Wallet"
     }
+  },
+  "get-tokens": {
+    "title": "Get Sepolia testnet tokens:",
+    "card": {
+      "tDAI-description": "If you want to get tDAI tokens",
+      "WETH-description": "If you want to get WETH tokens",
+      "ETH-description": "If you want to get ETH tokens to pay fees",
+      "link": "Click here"
+    },
+    "tag": {
+      "tDAI": "Get tDAI",
+      "WETH": "Get wrapped Ethereum",
+      "ETH": "Get Ethereum"
+    }
   }
 }
