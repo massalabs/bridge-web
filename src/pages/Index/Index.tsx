@@ -3,6 +3,7 @@ import Intl from '@/i18n/i18n';
 import {
   Dropdown,
   MassaToken,
+  MassaLogo,
   Tag,
   Currency,
   Button,
@@ -16,6 +17,17 @@ import { registerEvent } from '@/custom/provider/provider';
 // Remove those 2 lines and replace by correct icon when backend is ready
 import { FiAperture } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
+import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
+
+const iconsAccounts = {
+  MASSASTATION: <MassaLogo />,
+  OTHER: <BsDiamondHalf size={32} />,
+};
+
+const iconsTokens = {
+  MASSASTATION: <MassaLogo size={24} />,
+  OTHER: <BsDiamondHalf />,
+};
 
 export function Index() {
   // we must to initialize the providers to be able to use providers()
@@ -23,14 +35,20 @@ export function Index() {
   registerEvent();
 
   const form = useRef(null);
-  const [accounts, tokens, getAccounts, getTokens] = useAccountStore(
-    (state) => [
+  const [accounts, tokens, getAccounts, getTokens, setAccount, account] =
+    useAccountStore((state) => [
       state.accounts,
       state.tokens,
       state.getAccounts,
       state.getTokens,
-    ],
-  );
+      state.setAccount,
+      state.account,
+    ]);
+
+  // HOOKS
+  const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
+  const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
+  const [balance, setBalance] = useState<IAccountBalanceResponse>();
 
   useEffect(() => {
     getAccounts();
@@ -38,16 +56,30 @@ export function Index() {
 
   useEffect(() => {
     getTokens();
+
+    let firstAccount = accounts[0];
+    setAccount(firstAccount);
   }, [accounts]);
 
-  console.log(accounts);
-  console.log(tokens);
-
-  // HOOKS
-  const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
-  const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
+  useEffect(() => {
+    fetchBalance(account).then((balance) => setBalance(balance));
+  }, [account]);
 
   // FUNCTIONS
+  async function fetchBalance(account: IAccount | null) {
+    try {
+      return await account?.balance();
+    } catch (error) {
+      console.error('Error while retrieving balance: ', error);
+    }
+  }
+
+  const selectedAccountKey: number = parseInt(
+    Object.keys(accounts).find(
+      (_, idx) => accounts[idx].name() === account?.name(),
+    ) || '0',
+  );
+
   function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
 
@@ -149,18 +181,18 @@ export function Index() {
           <div className="mb-5 p-6 bg-primary rounded-2xl">
             <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
             <div className="mb-4 flex items-center justify-between">
-              <Dropdown
-                options={[
-                  {
-                    item: 'Massa Buildnet',
-                    icon: <MassaToken />,
-                  },
-                  {
-                    item: 'Sepolia Tesnet',
-                    icon: <FiAperture size={40} />,
-                  },
-                ]}
-              />
+              <div className="w-1/2">
+                <Dropdown
+                  select={selectedAccountKey}
+                  options={accounts.map((account) => {
+                    return {
+                      item: account.name(),
+                      icon: iconsAccounts['MASSASTATION'],
+                      onClick: () => setAccount(account),
+                    };
+                  })}
+                />
+              </div>
               <div className="flex items-center gap-3">
                 <p className="mas-body">MassaWallet</p>
                 <Tag
@@ -171,9 +203,7 @@ export function Index() {
             </div>
             <div className="mb-4 flex items-center gap-2">
               <p className="mas-body2">Wallet address:</p>
-              <p className="mas-caption">
-                AU12irbDfYNwyZRbnpBrfCBPCxrktp8f8riK2sQddWbzQ3g43G7bb
-              </p>
+              <p className="mas-caption">{account?.address()}</p>
             </div>
             <div className="mb-4 flex items-center gap-2">
               <div className="w-full">
@@ -182,16 +212,18 @@ export function Index() {
                   placeholder={Intl.t(`index.input.placeholder.receive`)}
                 />
               </div>
-              <Dropdown
-                readOnly={true}
-                size="xs"
-                options={[
-                  {
-                    item: 'mWETH',
-                    icon: <BsDiamondHalf />,
-                  },
-                ]}
-              />
+              <div className="w-1/3">
+                <Dropdown
+                  readOnly={true}
+                  size="xs"
+                  options={tokens.map((token) => {
+                    return {
+                      item: token.name,
+                      icon: iconsTokens['OTHER'],
+                    };
+                  })}
+                />
+              </div>
             </div>
             <div className="flex justify-between items-center">
               <div>
@@ -206,7 +238,7 @@ export function Index() {
               </div>
               <div className="flex items-center gap-2">
                 <p className="mas-body2">Balance:</p>
-                <p className="mas-body">0,000.00</p>
+                <p className="mas-body">{balance?.candidateBalance}</p>
               </div>
             </div>
           </div>
