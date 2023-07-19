@@ -18,6 +18,7 @@ import { registerEvent } from '@/custom/provider/provider';
 import { FiAperture } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
+import { useAccount } from 'wagmi';
 
 const iconsAccounts = {
   MASSASTATION: <MassaLogo />,
@@ -42,9 +43,8 @@ export function Disconnected() {
 }
 
 export function Index() {
-  // we must to initialize the providers to be able to use providers()
-  // from '@massalabs/wallet-provider';
-  registerEvent();
+  const { isConnected: isEvmWalletConnected, address: EvmAddress } =
+    useAccount();
 
   const form = useRef(null);
   const [accounts, tokens, getAccounts, getTokens, setAccount, account] =
@@ -130,12 +130,10 @@ export function Index() {
                 />
               </div>
             </div>
-            <div className="mb-4 flex items-center gap-2">
-              <p className="mas-body2">Wallet address:</p>
-              <p className="mas-caption">
-                0x2b4d87eff06f22798c30dc4407c7d83429aaa9abc
-              </p>
-            </div>
+            <AddressBox
+              address={EvmAddress}
+              isConnected={isEvmWalletConnected}
+            />
             <div className="mb-4 flex items-center gap-2">
               <div className="w-full">
                 <Currency
@@ -214,6 +212,12 @@ export function Index() {
               <p className="mas-body2">Wallet address:</p>
               <p className="mas-caption">{account?.address()}</p>
             </div>
+
+            <AddressBox
+              address="0x2b4d87eff06f22798c30dc4407c7d83429aaa9abc"
+              isConnected={isEvmWalletConnected}
+            />
+
             <div className="mb-4 flex items-center gap-2">
               <div className="w-full">
                 <Currency
@@ -270,5 +274,20 @@ export function Index() {
         <GetTokensPopUpModal setOpenModal={setOpenTokensModal} />
       )}
     </>
+  );
+}
+
+function AddressBox({
+  address,
+  isConnected,
+}: {
+  address?: string;
+  isConnected?: boolean;
+}) {
+  return (
+    <div className="mb-4 flex items-center gap-2">
+      <p className="mas-body2">Wallet address:</p>
+      <p className="mas-caption">{isConnected ? address : 'Not Connected'}</p>
+    </div>
   );
 }
