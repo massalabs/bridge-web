@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IAccount } from '@massalabs/wallet-provider';
 
+export interface IToken {
+  name: string;
+  massaToken: string;
+  evmToken: string;
+  chainId: number;
+}
+
 export interface AccountStoreState {
   selectedAccount: IAccount | null;
-  availableAccounts: [] | undefined;
-  selectedToken: string | undefined;
-  availableTokens: [] | undefined;
+  availableAccounts: IAccount[];
+  selectedToken: IToken | null;
+  availableTokens: IToken[];
 
   setAccount: (account: IAccount | null) => void;
   setToken: (account: IAccount | null) => void;
@@ -17,19 +24,19 @@ export interface AccountStoreState {
 const accountStore = (set: any) => ({
   selectedAccount: null,
   selectedToken: null,
-  availableAccounts: undefined,
-  availableTokens: undefined,
+  availableAccounts: [],
+  availableTokens: [],
 
-  setAvailableAccounts: (accounts: any) => {
+  setAvailableAccounts: (accounts: IAccount) => {
     set({ availableAccounts: accounts });
   },
 
-  setAvailableTokens: (tokens: any) => {
+  setAvailableTokens: (tokens: IToken) => {
     set({ availableTokens: tokens });
   },
 
   setAccount: (selectedAccount: IAccount | null) => set({ selectedAccount }),
-  setToken: (selectedToken: string | null) => set({ selectedToken }),
+  setToken: (selectedToken: IToken | null) => set({ selectedToken }),
 });
 
 export default accountStore;
