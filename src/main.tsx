@@ -11,17 +11,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
 
-import { ENV } from '@/const/env/env';
+// import { ENV } from '@/const/env/env';
 import { Base, Network } from '@/components';
-import { mockServer } from '@/mirage';
+// import { mockServer } from '@/mirage';
 import { Error, NotFound, Index } from '@/pages/index';
 import { PAGES } from '@/const/pages/pages';
 
-const baseENV = import.meta.env.VITE_ENV;
+// const baseENV = import.meta.env.VITE_ENV;
 
-if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
-  mockServer(baseENV);
-}
+// if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
+//   mockServer(baseENV);
+// }
 
 const queryClient = new QueryClient();
 

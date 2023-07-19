@@ -1,20 +1,35 @@
-// EXTERNALS
-import { persist } from 'zustand/middleware';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IAccount } from '@massalabs/wallet-provider';
 
 export interface AccountStoreState {
-  currentAccount: string | null;
-  setCurrentAccount: (nickname: string | null) => void;
+  selectedAccount: IAccount | null;
+  availableAccounts: [] | undefined;
+  selectedToken: string | undefined;
+  availableTokens: [] | undefined;
+
+  setAccount: (account: IAccount | null) => void;
+  setToken: (account: IAccount | null) => void;
+
+  setAvailableAccounts: (accounts: any) => void;
+  setAvailableTokens: (tokens: any) => void;
 }
 
-const accountStore = persist<AccountStoreState>(
-  (set) => ({
-    currentAccount: null,
-    setCurrentAccount: (nickname: string | null) =>
-      set({ currentAccount: nickname }),
-  }),
-  {
-    name: 'account-store',
+const accountStore = (set: any) => ({
+  selectedAccount: null,
+  selectedToken: null,
+  availableAccounts: undefined,
+  availableTokens: undefined,
+
+  setAvailableAccounts: (accounts: any) => {
+    set({ availableAccounts: accounts });
   },
-);
+
+  setAvailableTokens: (tokens: any) => {
+    set({ availableTokens: tokens });
+  },
+
+  setAccount: (selectedAccount: IAccount | null) => set({ selectedAccount }),
+  setToken: (selectedToken: string | null) => set({ selectedToken }),
+});
 
 export default accountStore;
