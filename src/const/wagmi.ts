@@ -19,10 +19,6 @@ export const connectors = connectorsForWallets([
         projectId: '',
         chains: chains,
       }),
-      // walletConnectWallet({
-      //   projectId: '18e0ad18e2d6baa27759d7c94ebdede0',
-      //   chains: chains,
-      // }),
     ],
   },
 ]);
