@@ -12,7 +12,6 @@ import { FiRepeat } from 'react-icons/fi';
 import { GetTokensPopUpModal } from '@/components';
 import { tagTypes } from '@/utils/const';
 import { useAccountStore } from '@/store/store';
-import { registerEvent } from '@/custom/provider/provider';
 
 // Remove those 2 lines and replace by correct icon when backend is ready
 import { FiAperture } from 'react-icons/fi';
@@ -214,8 +213,8 @@ export function Index() {
             </div>
 
             <AddressBox
-              address="0x2b4d87eff06f22798c30dc4407c7d83429aaa9abc"
-              isConnected={isEvmWalletConnected}
+              address="AU2b4d87eff06f22798c30dc4407c7d83429aaa9abc"
+              isConnected={isMassaWalletConnected}
             />
 
             <div className="mb-4 flex items-center gap-2">
