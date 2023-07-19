@@ -11,11 +11,14 @@ import metamask from '@/assets/metamask.svg';
 
 import { Tag } from '@massalabs/react-ui-kit';
 import { FiUser } from 'react-icons/fi';
+import { useAccount } from 'wagmi';
+import { ConnectButton as ConnectEvmButton } from '@rainbow-me/rainbowkit';
 
 import Intl from '@/i18n/i18n';
 import { tagTypes } from '@/utils/const';
 
 export function ConnectWalletCards() {
+  const { isConnected: isEvmWalletConnected } = useAccount();
   const [isMassaConnected, setIsMassaConnected] = useState(false);
   const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
   const [massaTagType, setMassaTagType] = useState<string>(tagTypes.error);
@@ -102,16 +105,18 @@ export function ConnectWalletCards() {
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
             <p> {Intl.t('connect-wallet.card-destination.from')} </p>
-            <Tag
-              type={metamaskTagType}
-              content={
-                isMetamaskConnected
-                  ? Intl.t('index.tag.connected')
-                  : Intl.t('index.tag.not-connected')
-              }
-            />
+            {isEvmWalletConnected ? null : (
+              <Tag
+                type={metamaskTagType}
+                content={
+                  isMetamaskConnected
+                    ? Intl.t('index.tag.connected')
+                    : Intl.t('index.tag.not-connected')
+                }
+              />
+            )}
           </div>
-          {!isMetamaskConnected && <ConnectMetamask {...metamaskArgs} />}
+          <ConnectEvmButton />
         </WalletCard>
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
