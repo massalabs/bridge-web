@@ -124,8 +124,14 @@ export function Index() {
               <div className="flex items-center gap-3">
                 <p className="mas-body">EVM wallet</p>
                 <Tag
-                  type={tagTypes.error}
-                  content={Intl.t(`index.tag.not-connected`)}
+                  type={
+                    isEvmWalletConnected ? tagTypes.success : tagTypes.error
+                  }
+                  content={
+                    isEvmWalletConnected
+                      ? Intl.t(`index.tag.connected`)
+                      : Intl.t(`index.tag.not-connected`)
+                  }
                 />
               </div>
             </div>
