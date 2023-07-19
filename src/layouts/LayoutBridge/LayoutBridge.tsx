@@ -40,7 +40,7 @@ export function LayoutBridge({ ...props }) {
       "
     >
       {/* Header Element */}
-      <div className="flex flex-row items-center justify-between p-11 w-full h-fit fixed z-10">
+      <div className="flex flex-row items-center justify-between px-11 py-8 w-full h-fit fixed z-10 backdrop-blur-sm">
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown readOnly={true} options={options} />

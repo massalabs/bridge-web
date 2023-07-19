@@ -18,7 +18,7 @@ export interface AccountStoreState {
   tokens: IToken[];
 
   setAccount: (account: IAccount | null) => void;
-  setToken: (account: IAccount | null) => void;
+  setToken: (token: IToken | null) => void;
 
   setAvailableAccounts: (accounts: any) => void;
   setAvailableTokens: (tokens: any) => void;
@@ -32,6 +32,8 @@ const accountStore = (set: any, get: any) => ({
   selectedToken: null,
   accounts: [],
   tokens: [],
+  token: null,
+  account: null,
 
   setAvailableAccounts: (accounts: IAccount) => {
     set({ accounts: accounts });
@@ -48,15 +50,14 @@ const accountStore = (set: any, get: any) => ({
       let overriddenFetchAvailableTokens: IToken[] = [];
       let supportedTokens = await getSupportedTokensList(firstAccount);
 
-      supportedTokens.forEach(async (at) => {
-        if (firstAccount) {
-          // we are overriding the tuple to include token name
-          overriddenFetchAvailableTokens.push({
-            ...at,
-            name: await getMassaTokenName(at.massaToken, firstAccount),
-          });
-        }
+      const tokenNamePromises = supportedTokens.map(async (tokenPair) => {
+        overriddenFetchAvailableTokens.push({
+          ...tokenPair,
+          name: await getMassaTokenName(tokenPair.massaToken, firstAccount),
+        });
       });
+      await Promise.all(tokenNamePromises);
+
       set({ tokens: overriddenFetchAvailableTokens });
     }
   },
@@ -68,8 +69,8 @@ const accountStore = (set: any, get: any) => ({
     set({ accounts: await massaStationProvider?.accounts() });
   },
 
-  setAccount: (selectedAccount: IAccount | null) => set({ selectedAccount }),
-  setToken: (selectedToken: IToken | null) => set({ selectedToken }),
+  setAccount: (account: IAccount | null) => set({ account }),
+  setToken: (token: IToken | null) => set({ token }),
 });
 
 export default accountStore;
