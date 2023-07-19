@@ -29,6 +29,18 @@ const iconsTokens = {
   OTHER: <BsDiamondHalf />,
 };
 
+export function Connected() {
+  return (
+    <Tag type={tagTypes.success} content={Intl.t(`index.tag.connected`)} />
+  );
+}
+
+export function Disconnected() {
+  return (
+    <Tag type={tagTypes.error} content={Intl.t(`index.tag.not-connected`)} />
+  );
+}
+
 export function Index() {
   // we must to initialize the providers to be able to use providers()
   // from '@massalabs/wallet-provider';
@@ -195,10 +207,7 @@ export function Index() {
               </div>
               <div className="flex items-center gap-3">
                 <p className="mas-body">MassaWallet</p>
-                <Tag
-                  type={tagTypes.error}
-                  content={Intl.t(`index.tag.not-connected`)}
-                />
+                {accounts.length ? <Connected /> : <Disconnected />}
               </div>
             </div>
             <div className="mb-4 flex items-center gap-2">
