@@ -10,6 +10,7 @@ import Intl from '@/i18n/i18n';
 
 export function ConnectWalletPopup({ ...props }) {
   const { setOpen } = props;
+
   const args = {
     onOpen: () => {
       return null;

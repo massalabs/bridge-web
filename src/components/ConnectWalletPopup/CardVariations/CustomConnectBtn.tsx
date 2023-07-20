@@ -57,25 +57,27 @@ export function CustomConnectButton(): JSX.Element {
 
               return (
                 <>
-                  <div className="flex min-w-fit gap-3">
+                  <div className="flex w-full gap-3">
                     <Button
                       customClass="w-fit"
                       onClick={openChainModal}
                       type="button"
                     >
-                      {chain.hasIcon && (
-                        <div>
-                          {chain.iconUrl && (
-                            <img
-                              className="w-6 h-6 min-w-fit"
-                              alt={chain.name ?? 'Chain icon'}
-                              src={chain.iconUrl}
-                              // style={{ width: 24, height: 24 }}
-                            />
-                          )}
-                        </div>
-                      )}
-                      {chain.name}
+                      <div className="flex w-full gap-2">
+                        {chain.hasIcon && (
+                          <div>
+                            {chain.iconUrl && (
+                              <img
+                                className="w-6 h-6"
+                                alt={chain.name ?? 'Chain icon'}
+                                src={chain.iconUrl}
+                                // style={{ width: 24, height: 24 }}
+                              />
+                            )}
+                          </div>
+                        )}
+                        {chain.name}
+                      </div>
                     </Button>
 
                     {/* Can't use UI-Kit button here because it breaks the sepolia icon */}
@@ -83,7 +85,7 @@ export function CustomConnectButton(): JSX.Element {
                       onClick={openAccountModal}
                       type="button"
                       className="bg-secondary rounded-lg px-2 hover:bg-tertiary 
-                      mas-body flex items-center w-full justify-between"
+                      mas-body flex items-center w-fit justify-between gap-5"
                     >
                       {Intl.t('connect-wallet.connected-cards.wallet-address')}
                       {account.displayName}
