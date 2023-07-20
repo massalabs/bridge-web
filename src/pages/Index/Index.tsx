@@ -110,7 +110,7 @@ export function Index() {
     setLayout(isMassaToEvm ? EVM_TO_MASSA : MASSA_TO_EVM);
   }
 
-  function EVM() {
+  function EVMHeader() {
     return (
       <div className="mb-4 flex items-center justify-between">
         <Dropdown
@@ -136,7 +136,7 @@ export function Index() {
     );
   }
 
-  function MASSA() {
+  function MassaHeader() {
     return (
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
@@ -159,15 +159,143 @@ export function Index() {
     );
   }
 
+  function EVMMiddle() {
+    return (
+      <div className="mb-4 flex items-center gap-2">
+        <p className="mas-body2">Wallet address:</p>
+        <p className="mas-caption">
+          0x2b4d87eff06f22798c30dc4407c7d83429aaa9abc
+        </p>
+      </div>
+    );
+  }
+
+  function MassaMiddle() {
+    return (
+      <div className="mb-4 flex items-center gap-2">
+        <p className="mas-body2">Wallet address:</p>
+        <p className="mas-caption">{account?.address()}</p>
+      </div>
+    );
+  }
+
+  function EVMToken() {
+    return (
+      <Dropdown
+        readOnly={layout === MASSA_TO_EVM}
+        size="xs"
+        options={tokens.map((token) => {
+          return {
+            item: token.name,
+            icon: iconsTokens['OTHER'],
+          };
+        })}
+      />
+    );
+  }
+
+  function MassaToken() {
+    return (
+      <Dropdown
+        readOnly={layout === EVM_TO_MASSA}
+        size="xs"
+        options={[
+          {
+            item: 'WETH',
+            icon: <BsDiamondHalf />,
+          },
+          {
+            item: 'MASSA',
+            icon: <BsDiamondHalf />,
+          },
+        ]}
+      />
+    );
+  }
+
+  function EVMFees() {
+    return (
+      <div>
+        <div className="flex items-center gap-2">
+          <p className="mas-body2">Total Massa fees:</p>
+          <p className="mas-body">{formatStandard(Number(0))}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <p className="mas-body2">Total EVM fees:</p>
+          <p className="mas-body">{formatStandard(Number(0))}</p>
+        </div>
+      </div>
+    );
+  }
+
+  function MassaFees() {
+    return (
+      <div>
+        <div className="flex items-center gap-2">
+          <p className="mas-body2">Total EVM fees:</p>
+          <p className="mas-body">{formatStandard(Number(0))}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <p className="mas-body2">Total Massa fees:</p>
+          <p className="mas-body">{formatStandard(Number(0))}</p>
+        </div>
+      </div>
+    );
+  }
+
+  function EVMBalance() {
+    return (
+      <div className="flex items-center gap-2">
+        <p className="mas-body2">Balance:</p>
+        <p className="mas-body">{formatStandard(Number(0))}</p>
+      </div>
+    );
+  }
+
+  function MassaBalance() {
+    return (
+      <div className="flex items-center gap-2">
+        <p className="mas-body2">Balance:</p>
+        <p className="mas-body">
+          {formatStandard(Number(balance?.candidateBalance || 0))}
+        </p>
+      </div>
+    );
+  }
+
   function massaToEvm(layout = MASSA_TO_EVM) {
     const layouts = {
       massaToEvm: {
-        up: <MASSA />,
-        down: <EVM />,
+        up: {
+          header: <MassaHeader />,
+          wallet: <MassaMiddle />,
+          token: <MassaToken />,
+          fees: null,
+          balance: <MassaBalance />,
+        },
+        down: {
+          header: <EVMHeader />,
+          wallet: <EVMMiddle />,
+          token: <EVMToken />,
+          fees: <EVMFees />,
+          balance: <EVMBalance />,
+        },
       },
       evmToMassa: {
-        up: <EVM />,
-        down: <MASSA />,
+        up: {
+          header: <EVMHeader />,
+          wallet: <EVMMiddle />,
+          token: <EVMToken />,
+          fees: null,
+          balance: <EVMBalance />,
+        },
+        down: {
+          header: <MassaHeader />,
+          wallet: <MassaMiddle />,
+          token: <MassaToken />,
+          fees: <MassaFees />,
+          balance: <MassaBalance />,
+        },
       },
     };
 
@@ -182,7 +310,7 @@ export function Index() {
       return false;
     }
 
-    if (Number(balance.candidateBalance) < Number(amount)) {
+    if (Number(balance?.candidateBalance) < Number(amount)) {
       setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
       return false;
     }
@@ -283,13 +411,8 @@ export function Index() {
             <form ref={form} onSubmit={handleSubmit}>
               <div className="p-6 bg-primary rounded-2xl mb-5">
                 <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
-                {massaToEvm(layout).up}
-                <div className="mb-4 flex items-center gap-2">
-                  <p className="mas-body2">Wallet address:</p>
-                  <p className="mas-caption">
-                    0x2b4d87eff06f22798c30dc4407c7d83429aaa9abc
-                  </p>
-                </div>
+                {massaToEvm(layout).up.header}
+                {massaToEvm(layout).up.wallet}
                 <div className="mb-4 flex items-center gap-2">
                   <div className="w-full">
                     <Currency
@@ -301,19 +424,7 @@ export function Index() {
                       error={error?.amount}
                     />
                   </div>
-                  <Dropdown
-                    size="xs"
-                    options={[
-                      {
-                        item: 'WETH',
-                        icon: <BsDiamondHalf />,
-                      },
-                      {
-                        item: 'MASSA',
-                        icon: <BsDiamondHalf />,
-                      },
-                    ]}
-                  />
+                  <div className="w-1/3">{massaToEvm(layout).up.token}</div>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
@@ -331,10 +442,7 @@ export function Index() {
                       </>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <p className="mas-body2">Balance:</p>
-                    <p className="mas-body">{formatStandard(Number(0))}</p>
-                  </div>
+                  {massaToEvm(layout).up.balance}
                 </div>
               </div>
               <div className="mb-5 flex justify-center items-center">
@@ -350,11 +458,8 @@ export function Index() {
               </div>
               <div className="mb-5 p-6 bg-primary rounded-2xl">
                 <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
-                {massaToEvm(layout).down}
-                <div className="mb-4 flex items-center gap-2">
-                  <p className="mas-body2">Wallet address:</p>
-                  <p className="mas-caption">{account?.address()}</p>
-                </div>
+                {massaToEvm(layout).down.header}
+                {massaToEvm(layout).down.wallet}
                 <div className="mb-4 flex items-center gap-2">
                   <div className="w-full">
                     <Currency
@@ -367,36 +472,11 @@ export function Index() {
                       error=""
                     />
                   </div>
-                  <div className="w-1/3">
-                    <Dropdown
-                      readOnly={true}
-                      size="xs"
-                      options={tokens.map((token) => {
-                        return {
-                          item: token.name,
-                          icon: iconsTokens['OTHER'],
-                        };
-                      })}
-                    />
-                  </div>
+                  <div className="w-1/3">{massaToEvm(layout).down.token}</div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="mas-body2">Total EVM fees:</p>
-                      <p className="mas-body">{formatStandard(Number(0))}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <p className="mas-body2">Total Massa fees:</p>
-                      <p className="mas-body">{formatStandard(Number(0))}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="mas-body2">Balance:</p>
-                    <p className="mas-body">
-                      {formatStandard(Number(balance?.candidateBalance || 0))}
-                    </p>
-                  </div>
+                  {massaToEvm(layout).down.fees}
+                  {massaToEvm(layout).down.balance}
                 </div>
               </div>
               <div>
