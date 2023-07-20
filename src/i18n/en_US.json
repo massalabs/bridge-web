@@ -22,12 +22,33 @@
     },
     "total": {
       "approve": "Total approved: {amount}"
+    },
+    "approve": {
+      "error": {
+        "general": "Euh! Something went wrong! Please, try again!",
+        "invalid-amount": "Invalid amount",
+        "insuficient-funds": "Insuficient founds"
+      },
+      "success": "Great! Amount approved!",
+      "loading": "We are aproooooooving..."
+    },
+    "bridge": {
+      "error": {
+        "general": "Euh! Something went wrong! Please, try again!",
+        "invalid-amount": "Invalid amount",
+        "insuficient-funds": "Insuficient founds"
+      },
+      "success": "Great! Bridge from {from} to {to} was executed successfully!",
+      "loading": "We are briiiiiiiiidging..."
+    },
+    "balance": {
+      "error": "Euh! We couldn't fetch your balance! Please, try again!"
     }
   },
   "unexpected-error": {
     "title": "Oops!",
     "description": "An unexpected error has occurred",
-    "link": "Go back to the Welcome page!"
+    "link": "Go back to the main page!"
   },
   "connect-wallet": {
     "title": "Connect wallets",
