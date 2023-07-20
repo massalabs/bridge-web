@@ -2,7 +2,6 @@ import { useState, useRef, SyntheticEvent, useEffect } from 'react';
 import Intl from '@/i18n/i18n';
 import {
   Dropdown,
-  MassaToken,
   MassaLogo,
   Tag,
   Currency,
@@ -93,11 +92,6 @@ export function Index() {
 
   useEffect(() => {
     getTokens();
-
-    let firstToken = tokens[0];
-    let firstAccount = accounts[0];
-    setAccount(firstAccount);
-    setToken(firstToken);
   }, [accounts]);
 
   useEffect(() => {
@@ -182,7 +176,7 @@ export function Index() {
   function EVMToken() {
     return (
       <Dropdown
-        // readOnly={layout === EVM_TO_MASSA}
+        readOnly={layout === MASSA_TO_EVM}
         size="xs"
         options={[
           {
@@ -201,12 +195,13 @@ export function Index() {
   function MassaToken() {
     return (
       <Dropdown
-        // readOnly={layout === MASSA_TO_EVM}
+        readOnly={layout === EVM_TO_MASSA}
         size="xs"
         options={tokens.map((token) => {
           return {
             item: token.name,
             icon: iconsTokens['OTHER'],
+            onClick: () => setToken(token),
           };
         })}
       />

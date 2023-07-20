@@ -28,8 +28,6 @@ export interface AccountStoreState {
 }
 
 const accountStore = (set: any, get: any) => ({
-  selectedAccount: null,
-  selectedToken: null,
   accounts: [],
   tokens: [],
   token: null,
@@ -58,7 +56,12 @@ const accountStore = (set: any, get: any) => ({
       });
       await Promise.all(tokenNamePromises);
 
-      set({ tokens: overriddenFetchAvailableTokens });
+      const firstToken = overriddenFetchAvailableTokens?.at(0);
+
+      set({
+        tokens: overriddenFetchAvailableTokens,
+        token: firstToken ?? null,
+      });
     }
   },
 
@@ -66,7 +69,10 @@ const accountStore = (set: any, get: any) => ({
     const massaStationProvider = providers().find(
       (provider) => provider.name() === MASSA_STATION,
     );
-    set({ accounts: await massaStationProvider?.accounts() });
+    const fetchedAccounts = await massaStationProvider?.accounts();
+    const firstAccount = fetchedAccounts?.at(0);
+
+    set({ accounts: fetchedAccounts, account: firstAccount ?? null });
   },
 
   setAccount: (account: IAccount | null) => set({ account }),
