@@ -60,6 +60,7 @@
     },
     "connected-cards": {
       "wallet-address": "Wallet address: ",
+      "wallet-balance": "Wallet balance: ",
       "change-wallet": "Change Wallet"
     },
     "connect-metamask": "Metamask",

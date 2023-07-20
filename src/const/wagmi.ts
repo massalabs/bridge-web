@@ -1,10 +1,7 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, sepolia } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import {
-  metaMaskWallet,
-  walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets';
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 
 export const { chains, publicClient } = configureChains(
   [sepolia],
