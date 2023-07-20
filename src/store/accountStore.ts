@@ -16,6 +16,7 @@ export interface AccountStoreState {
   accounts: IAccount[];
   token: IToken | null;
   tokens: IToken[];
+  isFetching: boolean;
 
   setAccount: (account: IAccount | null) => void;
   setToken: (token: IToken | null) => void;
@@ -32,6 +33,7 @@ const accountStore = (set: any, get: any) => ({
   tokens: [],
   token: null,
   account: null,
+  isFetching: false,
 
   setAvailableAccounts: (accounts: IAccount) => {
     set({ accounts: accounts });
@@ -42,6 +44,8 @@ const accountStore = (set: any, get: any) => ({
   },
 
   getTokens: async () => {
+    set({ isFetching: true });
+
     let firstAccount = get().accounts.at(0);
 
     if (firstAccount) {
@@ -61,11 +65,14 @@ const accountStore = (set: any, get: any) => ({
       set({
         tokens: overriddenFetchAvailableTokens,
         token: firstToken ?? null,
+        isFetching: false,
       });
     }
   },
 
   getAccounts: async () => {
+    set({ isFetching: true });
+
     const providerList = await providers();
     const massaStationWallet = providerList.find(
       (provider: any) => provider.name() === MASSA_STATION,
@@ -73,7 +80,11 @@ const accountStore = (set: any, get: any) => ({
     const fetchedAccounts = await massaStationWallet?.accounts();
     const firstAccount = fetchedAccounts?.at(0);
 
-    set({ accounts: fetchedAccounts, account: firstAccount ?? null });
+    set({
+      accounts: fetchedAccounts,
+      account: firstAccount ?? null,
+      isFetching: false,
+    });
   },
 
   setAccount: (account: IAccount | null) => set({ account }),

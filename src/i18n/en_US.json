@@ -1,7 +1,8 @@
 {
   "general": {
     "click-here": "Click here",
-    "select-this-account": "Select this account"
+    "select-this-account": "Select this account",
+    "loading": "looaading..."
   },
   "index": {
     "from": "From",
