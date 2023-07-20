@@ -14,10 +14,10 @@ import { tagTypes } from '@/utils/const';
 import { useAccountStore } from '@/store/store';
 
 // Remove those 2 lines and replace by correct icon when backend is ready
-import { FiAperture } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
-import { useAccount } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
+import { ConnectButton as ConnectEvmButton } from '@rainbow-me/rainbowkit';
 
 const iconsAccounts = {
   MASSASTATION: <MassaLogo />,
@@ -42,9 +42,6 @@ export function Disconnected() {
 }
 
 export function Index() {
-  const { isConnected: isEvmWalletConnected, address: EvmAddress } =
-    useAccount();
-
   const form = useRef(null);
   const [accounts, tokens, getAccounts, getTokens, setAccount, account] =
     useAccountStore((state) => [
@@ -56,10 +53,68 @@ export function Index() {
       state.account,
     ]);
 
+  const isMassaWalletConnected = !!account;
+
   // HOOKS
-  const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
+  const { isConnected: isEvmWalletConnected, address: EvmAddress } =
+    useAccount();
+  const { data: evmBalanceObject } = useBalance({
+    address: EvmAddress,
+  });
+  const evmBalance = evmBalanceObject?.formatted;
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
+
+  const selectedAccountKey: number = parseInt(
+    Object.keys(accounts).find(
+      (_, idx) => accounts[idx].name() === account?.name(),
+    ) || '0',
+  );
+
+  const [from, setFrom] = useState({
+    isConnected: isEvmWalletConnected,
+    address: `${EvmAddress}`,
+    balance: evmBalance,
+    walletType: 'EVM wallet',
+  });
+
+  const [to, setTo] = useState({
+    isConnected: isMassaWalletConnected,
+    address: `${account?.address()}`,
+    balance: balance?.candidateBalance,
+    walletType: 'MassaWallet',
+  });
+
+  useEffect(() => {
+    const newMassaData = {
+      isConnected: isMassaWalletConnected,
+      address: `${account?.address()}`,
+      balance: balance?.candidateBalance,
+    };
+    if (to.walletType === 'MassaWallet') {
+      setTo((prev) => ({ ...prev, ...newMassaData }));
+    } else {
+      setFrom((prev) => ({ ...prev, ...newMassaData }));
+    }
+  }, [isMassaWalletConnected, account, balance]);
+
+  useEffect(() => {
+    const newEvmData = {
+      isConnected: isEvmWalletConnected,
+      address: `${EvmAddress}`,
+      balance: evmBalance,
+    };
+    if (from.walletType === 'EVM wallet') {
+      setFrom((prev) => ({ ...prev, ...newEvmData }));
+    } else {
+      setTo((prev) => ({ ...prev, ...newEvmData }));
+    }
+  }, [isEvmWalletConnected, EvmAddress, evmBalance]);
+
+  const switchFromAndTo = () => {
+    setFrom(to);
+    setTo(from);
+  };
 
   useEffect(() => {
     getAccounts();
@@ -85,12 +140,6 @@ export function Index() {
     }
   }
 
-  const selectedAccountKey: number = parseInt(
-    Object.keys(accounts).find(
-      (_, idx) => accounts[idx].name() === account?.name(),
-    ) || '0',
-  );
-
   function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
 
@@ -109,36 +158,21 @@ export function Index() {
           <div className="p-6 bg-primary rounded-2xl mb-5">
             <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
             <div className="mb-4 flex items-center justify-between">
-              <Dropdown
-                options={[
-                  {
-                    item: 'Sepolia Testnet',
-                    icon: <FiAperture size={40} />,
-                  },
-                  {
-                    item: 'Massa Buildnet',
-                    icon: <MassaToken />,
-                  },
-                ]}
-              />
-              <div className="flex items-center gap-3">
-                <p className="mas-body">EVM wallet</p>
-                <Tag
-                  type={
-                    isEvmWalletConnected ? tagTypes.success : tagTypes.error
-                  }
-                  content={
-                    isEvmWalletConnected
-                      ? Intl.t(`index.tag.connected`)
-                      : Intl.t(`index.tag.not-connected`)
-                  }
+              {from.walletType === 'MassaWallet' ? (
+                <MassaAccountSelector
+                  accounts={accounts}
+                  setAccount={setAccount}
+                  selectedAccountKey={selectedAccountKey}
                 />
-              </div>
+              ) : (
+                <EvmAccountSelector />
+              )}
+              <ConnectedBox
+                isConnected={from.isConnected}
+                walletType={from.walletType}
+              />
             </div>
-            <AddressBox
-              address={EvmAddress}
-              isConnected={isEvmWalletConnected}
-            />
+            <AddressBox address={from.address} isConnected={from.isConnected} />
             <div className="mb-4 flex items-center gap-2">
               <div className="w-full">
                 <Currency
@@ -164,7 +198,7 @@ export function Index() {
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                {evmWalletConnected ? (
+                {isEvmWalletConnected ? (
                   <h3
                     className="mas-h3 text-f-disabled-1 underline cursor-pointer"
                     onClick={() => setOpenTokensModal(true)}
@@ -178,16 +212,14 @@ export function Index() {
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <p className="mas-body2">Balance:</p>
-                <p className="mas-body">0,000.00</p>
-              </div>
+              <BalanceBox balance={from.balance} />
             </div>
           </div>
+
           <div className="mb-5 flex justify-center items-center">
             <Button
               variant="toggle"
-              onClick={() => console.log('burn')}
+              onClick={switchFromAndTo}
               customClass="w-12 h-12"
             >
               <FiRepeat size={24} />
@@ -196,32 +228,22 @@ export function Index() {
           <div className="mb-5 p-6 bg-primary rounded-2xl">
             <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
             <div className="mb-4 flex items-center justify-between">
-              <div className="w-1/2">
-                <Dropdown
-                  select={selectedAccountKey}
-                  options={accounts.map((account) => {
-                    return {
-                      item: account.name(),
-                      icon: iconsAccounts['MASSASTATION'],
-                      onClick: () => setAccount(account),
-                    };
-                  })}
+              {to.walletType === 'MassaWallet' ? (
+                <MassaAccountSelector
+                  accounts={accounts}
+                  setAccount={setAccount}
+                  selectedAccountKey={selectedAccountKey}
                 />
-              </div>
-              <div className="flex items-center gap-3">
-                <p className="mas-body">MassaWallet</p>
-                {accounts.length ? <Connected /> : <Disconnected />}
-              </div>
-            </div>
-            <div className="mb-4 flex items-center gap-2">
-              <p className="mas-body2">Wallet address:</p>
-              <p className="mas-caption">{account?.address()}</p>
+              ) : (
+                <EvmAccountSelector />
+              )}
+              <ConnectedBox
+                isConnected={to.isConnected}
+                walletType={to.walletType}
+              />
             </div>
 
-            <AddressBox
-              address="AU2b4d87eff06f22798c30dc4407c7d83429aaa9abc"
-              isConnected={isMassaWalletConnected}
-            />
+            <AddressBox address={to.address} isConnected={to.isConnected} />
 
             <div className="mb-4 flex items-center gap-2">
               <div className="w-full">
@@ -245,19 +267,10 @@ export function Index() {
             </div>
             <div className="flex justify-between items-center">
               <div>
-                <div className="flex items-center gap-2">
-                  <p className="mas-body2">Total EVM fees:</p>
-                  <p className="mas-body">0,000.00</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="mas-body2">Total Massa fees:</p>
-                  <p className="mas-body">0,000.00</p>
-                </div>
+                <FeesBox fees="0,000.00" chain="Massa" />
+                <FeesBox fees="0,000.00" chain="EVM" />
               </div>
-              <div className="flex items-center gap-2">
-                <p className="mas-body2">Balance:</p>
-                <p className="mas-body">{balance?.candidateBalance}</p>
-              </div>
+              <BalanceBox balance={to.balance} />
             </div>
           </div>
           <div>
@@ -295,4 +308,64 @@ function AddressBox({
       <p className="mas-caption">{isConnected ? address : 'Not Connected'}</p>
     </div>
   );
+}
+
+function BalanceBox({ balance }: { balance?: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <p className="mas-body2">Balance:</p>
+      <p className="mas-body">{balance || 0}</p>
+    </div>
+  );
+}
+
+function FeesBox({ fees, chain }: { fees?: string; chain: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <p className="mas-body2">Total {chain} fees:</p>
+      <p className="mas-body">{fees}</p>
+    </div>
+  );
+}
+
+function ConnectedBox({
+  isConnected,
+  walletType,
+}: {
+  isConnected?: boolean;
+  walletType: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <p className="mas-body">{walletType}</p>
+      {isConnected ? <Connected /> : <Disconnected />}
+    </div>
+  );
+}
+
+function MassaAccountSelector({
+  accounts,
+  setAccount,
+  selectedAccountKey,
+}: {
+  accounts: IAccount[];
+  setAccount: (account: IAccount) => void;
+  selectedAccountKey: number;
+}) {
+  return (
+    <Dropdown
+      select={selectedAccountKey}
+      options={accounts.map((account) => {
+        return {
+          item: account.name(),
+          icon: iconsAccounts['MASSASTATION'],
+          onClick: () => setAccount(account),
+        };
+      })}
+    />
+  );
+}
+
+function EvmAccountSelector() {
+  return <ConnectEvmButton />;
 }
