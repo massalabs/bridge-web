@@ -182,22 +182,7 @@ export function Index() {
   function EVMToken() {
     return (
       <Dropdown
-        readOnly={layout === MASSA_TO_EVM}
-        size="xs"
-        options={tokens.map((token) => {
-          return {
-            item: token.name,
-            icon: iconsTokens['OTHER'],
-          };
-        })}
-      />
-    );
-  }
-
-  function MassaToken() {
-    return (
-      <Dropdown
-        readOnly={layout === EVM_TO_MASSA}
+        // readOnly={layout === EVM_TO_MASSA}
         size="xs"
         options={[
           {
@@ -209,6 +194,21 @@ export function Index() {
             icon: <BsDiamondHalf />,
           },
         ]}
+      />
+    );
+  }
+
+  function MassaToken() {
+    return (
+      <Dropdown
+        // readOnly={layout === MASSA_TO_EVM}
+        size="xs"
+        options={tokens.map((token) => {
+          return {
+            item: token.name,
+            icon: iconsTokens['OTHER'],
+          };
+        })}
       />
     );
   }
@@ -263,7 +263,7 @@ export function Index() {
     );
   }
 
-  function massaToEvm(layout = MASSA_TO_EVM) {
+  function boxLayout(layout = MASSA_TO_EVM) {
     const layouts = {
       massaToEvm: {
         up: {
@@ -386,13 +386,13 @@ export function Index() {
   function handleSubmit(e: SyntheticEvent, action: string) {
     e.preventDefault();
 
-    if (layout === EVM_TO_MASSA) {
+    if (layout === MASSA_TO_EVM) {
       if (action === APPROVE) {
         handleApprove();
       } else if (action === BRIDGE) {
         handleBridge();
       }
-    } else if (layout === MASSA_TO_EVM) {
+    } else if (layout === EVM_TO_MASSA) {
       // TODO: TO BE IMPLEMENTED
       console.log('TODO: TO BE IMPLEMENTED');
     }
@@ -411,8 +411,8 @@ export function Index() {
             <form ref={form} onSubmit={handleSubmit}>
               <div className="p-6 bg-primary rounded-2xl mb-5">
                 <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
-                {massaToEvm(layout).up.header}
-                {massaToEvm(layout).up.wallet}
+                {boxLayout(layout).up.header}
+                {boxLayout(layout).up.wallet}
                 <div className="mb-4 flex items-center gap-2">
                   <div className="w-full">
                     <Currency
@@ -424,7 +424,7 @@ export function Index() {
                       error={error?.amount}
                     />
                   </div>
-                  <div className="w-1/3">{massaToEvm(layout).up.token}</div>
+                  <div className="w-1/3">{boxLayout(layout).up.token}</div>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
@@ -442,7 +442,7 @@ export function Index() {
                       </>
                     )}
                   </div>
-                  {massaToEvm(layout).up.balance}
+                  {boxLayout(layout).up.balance}
                 </div>
               </div>
               <div className="mb-5 flex justify-center items-center">
@@ -458,8 +458,8 @@ export function Index() {
               </div>
               <div className="mb-5 p-6 bg-primary rounded-2xl">
                 <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
-                {massaToEvm(layout).down.header}
-                {massaToEvm(layout).down.wallet}
+                {boxLayout(layout).down.header}
+                {boxLayout(layout).down.wallet}
                 <div className="mb-4 flex items-center gap-2">
                   <div className="w-full">
                     <Currency
@@ -472,11 +472,11 @@ export function Index() {
                       error=""
                     />
                   </div>
-                  <div className="w-1/3">{massaToEvm(layout).down.token}</div>
+                  <div className="w-1/3">{boxLayout(layout).down.token}</div>
                 </div>
                 <div className="flex justify-between items-center">
-                  {massaToEvm(layout).down.fees}
-                  {massaToEvm(layout).down.balance}
+                  {boxLayout(layout).down.fees}
+                  {boxLayout(layout).down.balance}
                 </div>
               </div>
               <div>
