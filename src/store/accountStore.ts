@@ -66,10 +66,11 @@ const accountStore = (set: any, get: any) => ({
   },
 
   getAccounts: async () => {
-    const massaStationProvider = providers().find(
-      (provider) => provider.name() === MASSA_STATION,
+    const providerList = await providers();
+    const massaStationWallet = providerList.find(
+      (provider: any) => provider.name() === MASSA_STATION,
     );
-    const fetchedAccounts = await massaStationProvider?.accounts();
+    const fetchedAccounts = await massaStationWallet?.accounts();
     const firstAccount = fetchedAccounts?.at(0);
 
     set({ accounts: fetchedAccounts, account: firstAccount ?? null });
