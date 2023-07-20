@@ -2,6 +2,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from '@massalabs/react-ui-kit';
 import { MetaMaskSvg } from '@/assets';
 import Intl from '@/i18n/i18n';
+import { FiEdit } from 'react-icons/fi';
 export function CustomConnectButton(): JSX.Element {
   return (
     <ConnectButton.Custom>
@@ -80,10 +81,12 @@ export function CustomConnectButton(): JSX.Element {
                     <button
                       onClick={openAccountModal}
                       type="button"
-                      className="bg-secondary rounded-lg px-2 hover:bg-tertiary mas-body"
+                      className="bg-secondary rounded-lg px-2 hover:bg-tertiary w-full 
+                      mas-body flex items-center justify-between"
                     >
                       {Intl.t('connect-wallet.connected-cards.wallet-address')}
                       {account.displayName}
+                      <FiEdit size={24} />
                     </button>
                   </div>
                   <div>
