@@ -57,7 +57,7 @@ export function CustomConnectButton(): JSX.Element {
 
               return (
                 <>
-                  <div style={{ display: 'flex', gap: 12 }}>
+                  <div className="flex min-w-fit gap-3">
                     <Button
                       customClass="w-fit"
                       onClick={openChainModal}
@@ -67,9 +67,10 @@ export function CustomConnectButton(): JSX.Element {
                         <div>
                           {chain.iconUrl && (
                             <img
+                              className="w-6 h-6 min-w-fit"
                               alt={chain.name ?? 'Chain icon'}
                               src={chain.iconUrl}
-                              style={{ width: 24, height: 24 }}
+                              // style={{ width: 24, height: 24 }}
                             />
                           )}
                         </div>
@@ -81,12 +82,12 @@ export function CustomConnectButton(): JSX.Element {
                     <button
                       onClick={openAccountModal}
                       type="button"
-                      className="bg-secondary rounded-lg px-2 hover:bg-tertiary w-full 
-                      mas-body flex items-center justify-between"
+                      className="bg-secondary rounded-lg px-2 hover:bg-tertiary 
+                      mas-body flex items-center w-full justify-between"
                     >
                       {Intl.t('connect-wallet.connected-cards.wallet-address')}
                       {account.displayName}
-                      <FiEdit size={24} />
+                      <FiEdit size={18} />
                     </button>
                   </div>
                   <div>
