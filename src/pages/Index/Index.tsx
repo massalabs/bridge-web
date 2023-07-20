@@ -1,4 +1,4 @@
-import { useState, useRef, SyntheticEvent, useEffect } from 'react';
+import { useState, SyntheticEvent, useEffect } from 'react';
 import Intl from '@/i18n/i18n';
 import {
   Dropdown,
@@ -16,7 +16,6 @@ import { useAccountStore } from '@/store/store';
 import { registerEvent } from '@/custom/provider/provider';
 
 // Remove those 2 lines and replace by correct icon when backend is ready
-import { FiAperture } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
@@ -57,13 +56,11 @@ export function Index() {
   // from '@massalabs/wallet-provider';
   registerEvent();
 
-  const form = useRef(null);
   const [
     accounts,
     tokens,
     getAccounts,
     getTokens,
-    setAccount,
     account,
     setToken,
     token,
@@ -72,7 +69,6 @@ export function Index() {
     state.tokens,
     state.getAccounts,
     state.getTokens,
-    state.setAccount,
     state.account,
     state.setToken,
     state.token,
@@ -112,11 +108,7 @@ export function Index() {
           options={[
             {
               item: 'Sepolia Testnet',
-              icon: <FiAperture size={40} />,
-            },
-            {
-              item: 'Massa Buildnet',
-              icon: <MassaToken />,
+              icon: <BsDiamondHalf size={40} />,
             },
           ]}
         />
@@ -136,14 +128,12 @@ export function Index() {
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
           <Dropdown
-            select={selectedAccountKey}
-            options={accounts.map((account) => {
-              return {
-                item: account.name(),
-                icon: iconsAccounts['MASSASTATION'],
-                onClick: () => setAccount(account),
-              };
-            })}
+            options={[
+              {
+                item: 'Massa Buildnet',
+                icon: <MassaToken />,
+              },
+            ]}
           />
         </div>
         <div className="flex items-center gap-3">
@@ -177,16 +167,19 @@ export function Index() {
   function EVMTokenOptions() {
     return (
       <Dropdown
+        select={selectedMassaTokenKey}
         readOnly={layout === MASSA_TO_EVM}
         size="xs"
         options={[
           {
-            item: 'WETH',
+            item: 'tDai',
             icon: <BsDiamondHalf />,
+            onClick: () => setToken(token),
           },
           {
-            item: 'MASSA',
+            item: 'Sepolia',
             icon: <BsDiamondHalf />,
+            onClick: () => setToken(token),
           },
         ]}
       />
@@ -196,12 +189,13 @@ export function Index() {
   function MassaTokenOptions() {
     return (
       <Dropdown
+        select={selectedMassaTokenKey}
         readOnly={layout === EVM_TO_MASSA}
         size="xs"
         options={tokens.map((token) => {
           return {
             item: token.name,
-            icon: iconsTokens['OTHER'],
+            icon: iconsTokens['MASSASTATION'],
             onClick: () => setToken(token),
           };
         })}
@@ -373,10 +367,9 @@ export function Index() {
     }
   }
 
-  const selectedAccountKey: number = parseInt(
-    Object.keys(accounts).find(
-      (_, idx) => accounts[idx].name() === account?.name(),
-    ) || '0',
+  const selectedMassaTokenKey: number = parseInt(
+    Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
+      '0',
   );
 
   function handleSubmit(e: SyntheticEvent, action: string) {
@@ -404,96 +397,94 @@ export function Index() {
             className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
         bg-secondary/50 backdrop-blur-lg text-f-primary`}
           >
-            <form ref={form} onSubmit={handleSubmit}>
-              <div className="p-6 bg-primary rounded-2xl mb-5">
-                <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
-                {boxLayout(layout).up.header}
-                {boxLayout(layout).up.wallet}
-                <div className="mb-4 flex items-center gap-2">
-                  <div className="w-full">
-                    <Currency
-                      name="amount"
-                      value={amount}
-                      onValueChange={(value) => setAmount(value)}
-                      placeholder={Intl.t(`index.input.placeholder.amount`)}
-                      suffix=""
-                      error={error?.amount}
-                    />
-                  </div>
-                  <div className="w-1/3">{boxLayout(layout).up.token}</div>
+            <div className="p-6 bg-primary rounded-2xl mb-5">
+              <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
+              {boxLayout(layout).up.header}
+              {boxLayout(layout).up.wallet}
+              <div className="mb-4 flex items-center gap-2">
+                <div className="w-full">
+                  <Currency
+                    name="amount"
+                    value={amount}
+                    onValueChange={(value) => setAmount(value)}
+                    placeholder={Intl.t(`index.input.placeholder.amount`)}
+                    suffix=""
+                    error={error?.amount}
+                  />
                 </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    {evmWalletConnected ? (
-                      <h3
-                        className="mas-h3 text-f-disabled-1 underline cursor-pointer"
-                        onClick={() => setOpenTokensModal(true)}
-                      >
-                        Get tokens
-                      </h3>
-                    ) : (
-                      <>
-                        <p className="mas-body2">Total fees:</p>
-                        <p className="mas-body">{formatStandard(Number(0))}</p>
-                      </>
-                    )}
-                  </div>
-                  {boxLayout(layout).up.balance}
-                </div>
+                <div className="w-1/3">{boxLayout(layout).up.token}</div>
               </div>
-              <div className="mb-5 flex justify-center items-center">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  {evmWalletConnected ? (
+                    <h3
+                      className="mas-h3 text-f-disabled-1 underline cursor-pointer"
+                      onClick={() => setOpenTokensModal(true)}
+                    >
+                      Get tokens
+                    </h3>
+                  ) : (
+                    <>
+                      <p className="mas-body2">Total fees:</p>
+                      <p className="mas-body">{formatStandard(Number(0))}</p>
+                    </>
+                  )}
+                </div>
+                {boxLayout(layout).up.balance}
+              </div>
+            </div>
+            <div className="mb-5 flex justify-center items-center">
+              <Button
+                variant="toggle"
+                onClick={handleToggleLayout}
+                customClass={`w-12 h-12 inline-block transition ease-in-out delay-10 ${
+                  layout === MASSA_TO_EVM ? 'rotate-180' : ''
+                }`}
+              >
+                <FiRepeat size={24} />
+              </Button>
+            </div>
+            <div className="mb-5 p-6 bg-primary rounded-2xl">
+              <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
+              {boxLayout(layout).down.header}
+              {boxLayout(layout).down.wallet}
+              <div className="mb-4 flex items-center gap-2">
+                <div className="w-full">
+                  <Currency
+                    readOnly={true}
+                    placeholder={Intl.t(`index.input.placeholder.receive`)}
+                    name="receive"
+                    value={amount}
+                    onValueChange={(value) => setAmount(value)}
+                    suffix=""
+                    error=""
+                  />
+                </div>
+                <div className="w-1/3">{boxLayout(layout).down.token}</div>
+              </div>
+              <div className="flex justify-between items-center">
+                {boxLayout(layout).down.fees}
+                {boxLayout(layout).down.balance}
+              </div>
+            </div>
+            <div>
+              <p className="mas-caption mb-4">
+                {Intl.t(`index.total.approve`, {
+                  amount: formatStandard(Number(0)),
+                })}
+              </p>
+              <div className="flex items-center gap-5">
+                <Button onClick={(e) => handleSubmit(e, 'approve')}>
+                  {Intl.t(`index.button.approve`)}
+                </Button>
                 <Button
-                  variant="toggle"
-                  onClick={handleToggleLayout}
-                  customClass={`w-12 h-12 inline-block transition ease-in-out delay-10 ${
-                    layout === MASSA_TO_EVM ? 'rotate-180' : ''
-                  }`}
+                  variant="secondary"
+                  onClick={(e) => handleSubmit(e, 'bridge')}
                 >
-                  <FiRepeat size={24} />
+                  {Intl.t(`index.button.bridge`)}
                 </Button>
               </div>
-              <div className="mb-5 p-6 bg-primary rounded-2xl">
-                <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
-                {boxLayout(layout).down.header}
-                {boxLayout(layout).down.wallet}
-                <div className="mb-4 flex items-center gap-2">
-                  <div className="w-full">
-                    <Currency
-                      readOnly={true}
-                      placeholder={Intl.t(`index.input.placeholder.receive`)}
-                      name="receive"
-                      value={amount}
-                      onValueChange={(value) => setAmount(value)}
-                      suffix=""
-                      error=""
-                    />
-                  </div>
-                  <div className="w-1/3">{boxLayout(layout).down.token}</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  {boxLayout(layout).down.fees}
-                  {boxLayout(layout).down.balance}
-                </div>
-              </div>
-              <div>
-                <p className="mas-caption mb-4">
-                  {Intl.t(`index.total.approve`, {
-                    amount: formatStandard(Number(0)),
-                  })}
-                </p>
-                <div className="flex items-center gap-5">
-                  <Button onClick={(e) => handleSubmit(e, 'approve')}>
-                    {Intl.t(`index.button.approve`)}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={(e) => handleSubmit(e, 'bridge')}
-                  >
-                    {Intl.t(`index.button.bridge`)}
-                  </Button>
-                </div>
-              </div>
-            </form>
+            </div>
           </div>
           {openTokensModal && (
             <GetTokensPopUpModal setOpenModal={setOpenTokensModal} />
