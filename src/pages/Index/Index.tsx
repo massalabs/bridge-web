@@ -17,7 +17,7 @@ import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
-import { Loading } from './Loading';
+import { FetchingLine, FetchingStatus, Loading } from './Loading';
 import { formatStandard, maskAddress } from '@/utils/massaFormat';
 import { useAccount, useBalance } from 'wagmi';
 import { ConnectButton as ConnectEvmButton } from '@rainbow-me/rainbowkit';
@@ -51,16 +51,25 @@ export function Disconnected() {
 }
 
 export function Index() {
-  const [accounts, tokens, getAccounts, getTokens, account, setToken, token] =
-    useAccountStore((state) => [
-      state.accounts,
-      state.tokens,
-      state.getAccounts,
-      state.getTokens,
-      state.account,
-      state.setToken,
-      state.token,
-    ]);
+  const [
+    accounts,
+    tokens,
+    getAccounts,
+    getTokens,
+    account,
+    setToken,
+    token,
+    isFetching,
+  ] = useAccountStore((state) => [
+    state.accounts,
+    state.tokens,
+    state.getAccounts,
+    state.getTokens,
+    state.account,
+    state.setToken,
+    state.token,
+    state.isFetching,
+  ]);
 
   // HOOKS
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
@@ -124,7 +133,13 @@ export function Index() {
         </div>
         <div className="flex items-center gap-3">
           <p className="mas-body">MassaWallet</p>
-          {isMassaWalletConnected ? <Connected /> : <Disconnected />}
+          {isFetching ? (
+            <FetchingStatus />
+          ) : isMassaWalletConnected ? (
+            <Connected />
+          ) : (
+            <Disconnected />
+          )}
         </div>
       </div>
     );
@@ -143,7 +158,9 @@ export function Index() {
     return (
       <div className="mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
-        <p className="mas-caption">{account?.address()}</p>
+        <div className="mas-caption">
+          {isFetching ? <FetchingLine /> : account?.address()}
+        </div>
       </div>
     );
   }
@@ -230,9 +247,13 @@ export function Index() {
     return (
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
-        <p className="mas-body">
-          {formatStandard(Number(balance?.candidateBalance || 0))}
-        </p>
+        <div className="mas-body">
+          {isFetching ? (
+            <FetchingLine />
+          ) : (
+            formatStandard(Number(balance?.candidateBalance || 0))
+          )}
+        </div>
       </div>
     );
   }
