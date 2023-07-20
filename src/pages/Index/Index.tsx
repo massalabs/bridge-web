@@ -13,15 +13,14 @@ import { FiRepeat } from 'react-icons/fi';
 import { GetTokensPopUpModal } from '@/components';
 import { tagTypes } from '@/utils/const';
 import { useAccountStore } from '@/store/store';
-import { registerEvent } from '@/custom/provider/provider';
-
-// Remove those 2 lines and replace by correct icon when backend is ready
 import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { Loading } from './Loading';
 import { formatStandard, maskAddress } from '@/utils/massaFormat';
+import { useAccount, useBalance } from 'wagmi';
+import { ConnectButton as ConnectEvmButton } from '@rainbow-me/rainbowkit';
 
 const BRIDGE = 'bridge';
 const APPROVE = 'approve';
@@ -29,10 +28,10 @@ const APPROVE = 'approve';
 const MASSA_TO_EVM = 'massaToEvm';
 const EVM_TO_MASSA = 'evmToMassa';
 
-const iconsAccounts = {
-  MASSASTATION: <MassaLogo />,
-  OTHER: <BsDiamondHalf size={32} />,
-};
+// const iconsAccounts = {
+//   MASSASTATION: <MassaLogo />,
+//   OTHER: <BsDiamondHalf size={32} />,
+// };
 
 const iconsTokens = {
   MASSASTATION: <MassaLogo size={24} />,
@@ -52,36 +51,33 @@ export function Disconnected() {
 }
 
 export function Index() {
-  // we must to initialize the providers to be able to use providers()
-  // from '@massalabs/wallet-provider';
-  registerEvent();
-
-  const [
-    accounts,
-    tokens,
-    getAccounts,
-    getTokens,
-    account,
-    setToken,
-    token,
-  ] = useAccountStore((state) => [
-    state.accounts,
-    state.tokens,
-    state.getAccounts,
-    state.getTokens,
-    state.account,
-    state.setToken,
-    state.token,
-  ]);
+  const [accounts, tokens, getAccounts, getTokens, account, setToken, token] =
+    useAccountStore((state) => [
+      state.accounts,
+      state.tokens,
+      state.getAccounts,
+      state.getTokens,
+      state.account,
+      state.setToken,
+      state.token,
+    ]);
 
   // HOOKS
-  const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
   const [amount, setAmount] = useState<number | string | undefined>('');
   const [layout, setLayout] = useState<string>(EVM_TO_MASSA);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState(null);
+
+  const isMassaWalletConnected = !!account;
+  const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
+  const { isConnected: isEvmWalletConnected, address: EvmAddress } =
+    useAccount();
+  const { data: evmBalanceObject } = useBalance({
+    address: EvmAddress,
+  });
+  const evmBalance = evmBalanceObject?.formatted;
 
   useEffect(() => {
     getAccounts();
@@ -104,20 +100,10 @@ export function Index() {
   function EVMHeader() {
     return (
       <div className="mb-4 flex items-center justify-between">
-        <Dropdown
-          options={[
-            {
-              item: 'Sepolia Testnet',
-              icon: <BsDiamondHalf size={40} />,
-            },
-          ]}
-        />
+        <ConnectEvmButton />
         <div className="flex items-center gap-3">
           <p className="mas-body">EVM wallet</p>
-          <Tag
-            type={tagTypes.error}
-            content={Intl.t(`index.tag.not-connected`)}
-          />
+          {isEvmWalletConnected ? <Connected /> : <Disconnected />}
         </div>
       </div>
     );
@@ -138,7 +124,7 @@ export function Index() {
         </div>
         <div className="flex items-center gap-3">
           <p className="mas-body">MassaWallet</p>
-          {accounts.length ? <Connected /> : <Disconnected />}
+          {isMassaWalletConnected ? <Connected /> : <Disconnected />}
         </div>
       </div>
     );
@@ -148,9 +134,7 @@ export function Index() {
     return (
       <div className="mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
-        <p className="mas-caption">
-          0x2b4d87eff06f22798c30dc4407c7d83429aaa9abc
-        </p>
+        <p className="mas-caption">{EvmAddress}</p>
       </div>
     );
   }
@@ -237,7 +221,7 @@ export function Index() {
     return (
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
-        <p className="mas-body">{formatStandard(Number(0))}</p>
+        <p className="mas-body">{formatStandard(Number(evmBalance))}</p>
       </div>
     );
   }
