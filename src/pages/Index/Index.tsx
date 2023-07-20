@@ -3,6 +3,7 @@ import Intl from '@/i18n/i18n';
 import {
   Dropdown,
   MassaLogo,
+  MassaToken,
   Tag,
   Currency,
   Button,
@@ -173,7 +174,7 @@ export function Index() {
     );
   }
 
-  function EVMToken() {
+  function EVMTokenOptions() {
     return (
       <Dropdown
         readOnly={layout === MASSA_TO_EVM}
@@ -192,7 +193,7 @@ export function Index() {
     );
   }
 
-  function MassaToken() {
+  function MassaTokenOptions() {
     return (
       <Dropdown
         readOnly={layout === EVM_TO_MASSA}
@@ -264,14 +265,14 @@ export function Index() {
         up: {
           header: <MassaHeader />,
           wallet: <MassaMiddle />,
-          token: <MassaToken />,
+          token: <MassaTokenOptions />,
           fees: null,
           balance: <MassaBalance />,
         },
         down: {
           header: <EVMHeader />,
           wallet: <EVMMiddle />,
-          token: <EVMToken />,
+          token: <EVMTokenOptions />,
           fees: <EVMFees />,
           balance: <EVMBalance />,
         },
@@ -280,14 +281,14 @@ export function Index() {
         up: {
           header: <EVMHeader />,
           wallet: <EVMMiddle />,
-          token: <EVMToken />,
+          token: <EVMTokenOptions />,
           fees: null,
           balance: <EVMBalance />,
         },
         down: {
           header: <MassaHeader />,
           wallet: <MassaMiddle />,
-          token: <MassaToken />,
+          token: <MassaTokenOptions />,
           fees: <MassaFees />,
           balance: <MassaBalance />,
         },
