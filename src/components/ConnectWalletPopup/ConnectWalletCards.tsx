@@ -55,10 +55,10 @@ export function ConnectWalletCards() {
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
             <p>{Intl.t('connect-wallet.card-destination.to')}</p>
-            {accounts.length ? <Connected /> : <Disconnected />}
+            {accounts?.length ? <Connected /> : <Disconnected />}
           </div>
           {/*  Add user flow cases where there is no massastation, no wallet etc etc */}
-          {accounts.length ? <ConnectedCard {...massaWalletArgs} /> : null}
+          {accounts?.length ? <ConnectedCard {...massaWalletArgs} /> : null}
         </WalletCard>
       </div>
       <RessourceSidePanel />
