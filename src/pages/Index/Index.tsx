@@ -29,7 +29,7 @@ const MASSA_TO_EVM = 'massaToEvm';
 const EVM_TO_MASSA = 'evmToMassa';
 
 const iconsTokens = {
-  MASSASTATION: <MassaLogo size={24} />,
+  MASSASTATION: <MassaLogo size={16} />,
   OTHER: <BsDiamondHalf />,
 };
 
