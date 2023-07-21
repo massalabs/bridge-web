@@ -32,3 +32,15 @@ export async function getMassaTokenName(
     new Args().addString(account.address()),
   );
 }
+
+export async function getMassaTokenSymbol(
+  tokenAddress: string,
+  account: IAccount,
+): Promise<string> {
+  return getInfo(
+    'symbol',
+    tokenAddress,
+    account,
+    new Args().addString(account.address()),
+  );
+}
