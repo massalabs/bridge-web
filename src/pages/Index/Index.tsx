@@ -28,11 +28,6 @@ const APPROVE = 'approve';
 const MASSA_TO_EVM = 'massaToEvm';
 const EVM_TO_MASSA = 'evmToMassa';
 
-// const iconsAccounts = {
-//   MASSASTATION: <MassaLogo />,
-//   OTHER: <BsDiamondHalf size={32} />,
-// };
-
 const iconsTokens = {
   MASSASTATION: <MassaLogo size={24} />,
   OTHER: <BsDiamondHalf />,
@@ -75,9 +70,9 @@ export function Index() {
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
   const [amount, setAmount] = useState<number | string | undefined>('');
-  const [layout, setLayout] = useState<string>(EVM_TO_MASSA);
+  const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<{ amount: string } | null>(null);
 
   const isMassaWalletConnected = !!account;
   const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
@@ -258,7 +253,21 @@ export function Index() {
     );
   }
 
-  function boxLayout(layout = MASSA_TO_EVM) {
+  interface Layout {
+    header: JSX.Element;
+    wallet: JSX.Element;
+    token: JSX.Element;
+    fees: JSX.Element | null;
+    balance: JSX.Element;
+  }
+
+  // Define the layout types
+  type LayoutType = 'massaToEvm' | 'evmToMassa';
+
+  function boxLayout(layout: LayoutType = 'massaToEvm'): {
+    up: Layout;
+    down: Layout;
+  } {
     const layouts = {
       massaToEvm: {
         up: {
@@ -329,7 +338,7 @@ export function Index() {
           from: maskAddress(result.recipient),
         }),
       );
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       if (
         error?.message?.split('message:').pop().trim() !==
