@@ -11,7 +11,13 @@ import {
 } from '@massalabs/react-ui-kit';
 import { FiRepeat } from 'react-icons/fi';
 import { GetTokensPopUpModal } from '@/components';
-import { tagTypes } from '@/utils/const';
+import {
+  APPROVE,
+  BRIDGE,
+  EVM_TO_MASSA,
+  MASSA_TO_EVM,
+  tagTypes,
+} from '@/utils/const';
 import { useAccountStore } from '@/store/store';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
@@ -20,12 +26,6 @@ import { TokenPair } from '@/custom/serializable/tokenPair';
 import { FetchingLine, FetchingStatus, Loading } from './Loading';
 import { formatStandard, maskAddress } from '@/utils/massaFormat';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
-
-const BRIDGE = 'bridge';
-const APPROVE = 'approve';
-
-const MASSA_TO_EVM = 'massaToEvm';
-const EVM_TO_MASSA = 'evmToMassa';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -88,6 +88,8 @@ export function Index() {
   });
   const evmBalance = evmBalanceObject?.formatted;
 
+  const isFetchingAccounts = isFetching && accounts?.length;
+
   useEffect(() => {
     getAccounts();
   }, []);
@@ -139,8 +141,8 @@ export function Index() {
           />
         </div>
         <div className="flex items-center gap-3">
-          <p className="mas-body">MassaWallet</p>
-          {isFetching ? (
+          <p className="mas-body">Massa Wallet</p>
+          {isFetchingAccounts ? (
             <FetchingStatus />
           ) : isMassaWalletConnected ? (
             <Connected />
@@ -166,7 +168,7 @@ export function Index() {
       <div className="mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
         <div className="mas-caption">
-          {isFetching ? <FetchingLine /> : account?.address()}
+          {isFetchingAccounts ? <FetchingLine /> : account?.address()}
         </div>
       </div>
     );
@@ -242,7 +244,7 @@ export function Index() {
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
-          {isFetching ? (
+          {isFetchingAccounts ? (
             <FetchingLine />
           ) : (
             formatStandard(Number(balance?.candidateBalance || 0))

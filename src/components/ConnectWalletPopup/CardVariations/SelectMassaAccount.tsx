@@ -5,6 +5,7 @@ import { BsDiamondHalf } from 'react-icons/bs';
 
 export function SelectMassaWalletAccount({ ...props }) {
   const { accounts, account, setAccount } = props;
+
   const selectedAccountKey: number = parseInt(
     Object.keys(accounts).find(
       (_, idx) => accounts[idx].name() === account?.name(),
@@ -28,9 +29,6 @@ export function SelectMassaWalletAccount({ ...props }) {
           };
         })}
       />
-      {/* <Button onClick={() => setIsMassaConnected(true)}>
-        {Intl.t('general.select-this-account')}
-      </Button> */}
     </div>
   );
 }

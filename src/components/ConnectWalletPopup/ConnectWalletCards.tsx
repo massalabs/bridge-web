@@ -13,6 +13,7 @@ import Intl from '@/i18n/i18n';
 
 import { useAccountStore } from '@/store/store';
 import { Connected, Disconnected } from '@/pages';
+import { MassaConnectError } from './CardVariations/MassaConnectError';
 
 export function ConnectWalletCards() {
   const { isConnected: isEvmWalletConnected } = useAccount();
@@ -58,7 +59,11 @@ export function ConnectWalletCards() {
             {accounts?.length ? <Connected /> : <Disconnected />}
           </div>
           {/*  Add user flow cases where there is no massastation, no wallet etc etc */}
-          {accounts?.length ? <ConnectedCard {...massaWalletArgs} /> : null}
+          {accounts?.length ? (
+            <ConnectedCard {...massaWalletArgs} />
+          ) : (
+            <MassaConnectError {...massaWalletArgs} />
+          )}
         </WalletCard>
       </div>
       <RessourceSidePanel />
