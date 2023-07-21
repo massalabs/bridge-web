@@ -18,11 +18,14 @@ import { MassaConnectError } from './CardVariations/MassaConnectError';
 export function ConnectWalletCards() {
   const { isConnected: isEvmWalletConnected } = useAccount();
 
-  const [accounts, account, setAccount] = useAccountStore((state) => [
-    state.accounts,
-    state.account,
-    state.setAccount,
-  ]);
+  const [accounts, account, setAccount, isFetching] = useAccountStore(
+    (state) => [
+      state.accounts,
+      state.account,
+      state.setAccount,
+      state.isFetching,
+    ],
+  );
 
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState<boolean>(
     window.ethereum.isConnected(),
@@ -36,6 +39,7 @@ export function ConnectWalletCards() {
     accounts,
     account,
     setAccount,
+    isFetching,
   };
 
   return (

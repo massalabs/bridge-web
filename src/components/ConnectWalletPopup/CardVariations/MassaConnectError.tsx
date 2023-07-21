@@ -5,7 +5,7 @@ import { providers } from '@massalabs/wallet-provider';
 import { useEffect, useState } from 'react';
 
 export function MassaConnectError({ ...props }) {
-  const { accounts } = props;
+  const { accounts, isFetching } = props;
   const [isMassaStationConnected, setIsMassaStationConnected] =
     useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<JSX.Element | null>(null);
@@ -27,8 +27,7 @@ export function MassaConnectError({ ...props }) {
   useEffect(() => {
     getSomething();
   }, [isMassaStationConnected]);
-  // TODO : change to a better conditional
-  return <>{errorMessage === null ? <FetchingStatus /> : errorMessage}</>;
+  return <>{isFetching ? <FetchingStatus /> : errorMessage}</>;
 }
 
 export function ErrorMassaStation() {
