@@ -45,7 +45,7 @@ export function FetchingLine() {
 
 export function FetchingStatus() {
   return (
-    <div className="bg-tertiary rounded-full w-fit px-3 pb-0.5 bg-tertiary opacity-30">
+    <div className="bg-tertiary rounded-full w-fit px-3 pb-0.5 opacity-30">
       {Intl.t('general.loading')}.
     </div>
   );

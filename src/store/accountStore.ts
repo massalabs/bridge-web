@@ -46,7 +46,7 @@ const accountStore = (set: any, get: any) => ({
   getTokens: async () => {
     set({ isFetching: true });
 
-    let firstAccount = get().accounts.at(0);
+    let firstAccount = get().accounts?.at(0);
 
     if (firstAccount) {
       let overriddenFetchAvailableTokens: IToken[] = [];
