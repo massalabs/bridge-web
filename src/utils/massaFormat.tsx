@@ -75,7 +75,7 @@ export function checkAddressFormat(recipient: string): boolean {
  * @returns The masked address.
  */
 
-export function maskAddress(str: string, length = 4, mask = '. . .'): string {
+export function maskAddress(str: string, length = 4, mask = '...'): string {
   const start = length;
   const end = str?.length - length;
 
