@@ -2,7 +2,7 @@
 import { providers, IAccount } from '@massalabs/wallet-provider';
 import { MASSA_STATION } from '@/const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
-import { getMassaTokenName } from '@/custom/token/token';
+import { getMassaTokenSymbol } from '@/custom/token/token';
 
 export interface IToken {
   name: string;
@@ -55,7 +55,7 @@ const accountStore = (set: any, get: any) => ({
       const tokenNamePromises = supportedTokens.map(async (tokenPair) => {
         overriddenFetchAvailableTokens.push({
           ...tokenPair,
-          name: await getMassaTokenName(tokenPair.massaToken, firstAccount),
+          name: await getMassaTokenSymbol(tokenPair.massaToken, firstAccount),
         });
       });
       await Promise.all(tokenNamePromises);

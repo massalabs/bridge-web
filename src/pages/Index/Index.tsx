@@ -19,14 +19,18 @@ import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { FetchingLine, FetchingStatus, Loading } from './Loading';
 import { formatStandard, maskAddress } from '@/utils/massaFormat';
-import { useAccount, useBalance } from 'wagmi';
-import { ConnectButton as ConnectEvmButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useBalance, useNetwork } from 'wagmi';
 
 const BRIDGE = 'bridge';
 const APPROVE = 'approve';
 
 const MASSA_TO_EVM = 'massaToEvm';
 const EVM_TO_MASSA = 'evmToMassa';
+
+const iconsNetworks = {
+  Sepolia: <BsDiamondHalf size={40} />,
+  OTHER: <BsDiamondHalf />,
+};
 
 const iconsTokens = {
   MASSASTATION: <MassaLogo size={16} />,
@@ -75,7 +79,8 @@ export function Index() {
   const [error, setError] = useState<{ amount: string } | null>(null);
 
   const isMassaWalletConnected = !!account;
-  const [evmWalletConnected, _] = useState<boolean>(true); // TODO: replace by correct hook when backend is ready
+  const [evmWalletConnected, _] = useState<boolean>(true);
+  const { chains } = useNetwork();
   const { isConnected: isEvmWalletConnected, address: EvmAddress } =
     useAccount();
   const { data: evmBalanceObject } = useBalance({
@@ -104,7 +109,14 @@ export function Index() {
   function EVMHeader() {
     return (
       <div className="mb-4 flex items-center justify-between">
-        <ConnectEvmButton />
+        <div className="w-1/2">
+          <Dropdown
+            options={chains.map((chain) => ({
+              item: chain.name,
+              icon: iconsNetworks['Sepolia'],
+            }))}
+          />
+        </div>
         <div className="flex items-center gap-3">
           <p className="mas-body">EVM wallet</p>
           {isEvmWalletConnected ? <Connected /> : <Disconnected />}
@@ -166,18 +178,13 @@ export function Index() {
         select={selectedMassaTokenKey}
         readOnly={layout === MASSA_TO_EVM}
         size="xs"
-        options={[
-          {
-            item: 'tDai',
-            icon: <BsDiamondHalf />,
+        options={tokens.map((token) => {
+          return {
+            item: token.name.slice(0, -2),
+            icon: iconsTokens['OTHER'],
             onClick: () => setToken(token),
-          },
-          {
-            item: 'Sepolia',
-            icon: <BsDiamondHalf />,
-            onClick: () => setToken(token),
-          },
-        ]}
+          };
+        })}
       />
     );
   }
@@ -203,10 +210,6 @@ export function Index() {
     return (
       <div>
         <div className="flex items-center gap-2">
-          <p className="mas-body2">Total Massa fees:</p>
-          <p className="mas-body">{formatStandard(Number(0))}</p>
-        </div>
-        <div className="flex items-center gap-2">
           <p className="mas-body2">Total EVM fees:</p>
           <p className="mas-body">{formatStandard(Number(0))}</p>
         </div>
@@ -217,10 +220,6 @@ export function Index() {
   function MassaFees() {
     return (
       <div>
-        <div className="flex items-center gap-2">
-          <p className="mas-body2">Total EVM fees:</p>
-          <p className="mas-body">{formatStandard(Number(0))}</p>
-        </div>
         <div className="flex items-center gap-2">
           <p className="mas-body2">Total Massa fees:</p>
           <p className="mas-body">{formatStandard(Number(0))}</p>
@@ -382,8 +381,9 @@ export function Index() {
   }
 
   const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
-      '0',
+    Object.keys(tokens).find(
+      (_, idx) => tokens[idx].name.slice(0, -2) === token?.name.slice(0, -2),
+    ) || '0',
   );
 
   function handleSubmit(e: SyntheticEvent, action: string) {
