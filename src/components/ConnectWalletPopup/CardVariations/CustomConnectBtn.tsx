@@ -24,6 +24,8 @@ export function CustomConnectButton(): JSX.Element {
           chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
 
+        console.log('account', account);
+
         return (
           <div
             className="flex flex-col gap-4"
@@ -96,7 +98,7 @@ export function CustomConnectButton(): JSX.Element {
                     {account.displayBalance
                       ? ` ${Intl.t(
                           'connect-wallet.connected-cards.wallet-balance',
-                        )} ${account.displayBalance}`
+                        )} ${account.balanceFormatted} ETH`
                       : ''}
                   </div>
                 </>
