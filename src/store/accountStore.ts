@@ -11,7 +11,7 @@ import { getMassaTokenSymbol } from '@/custom/token/token';
 export interface IToken {
   name: string;
   massaToken: string;
-  evmToken: string;
+  evmToken: `0x${string}`;
   chainId: number;
 }
 

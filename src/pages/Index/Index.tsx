@@ -19,9 +19,11 @@ import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
-import { FetchingLine, FetchingStatus } from './Loading';
-import { formatStandard } from '@/utils/massaFormat';
 import { useAccount, useBalance, useNetwork, useFeeData } from 'wagmi';
+import { FetchingLine, FetchingStatus, Loading } from './Loading';
+import { formatStandard } from '@/utils/massaFormat';
+import useEvmBridge from '@/useEvmBridge';
+import { set } from 'dot-object';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -124,13 +126,17 @@ export function Index() {
 
   const { chains } = useNetwork();
   const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
-  const { isConnected: isEvmWalletConnected, address: EvmAddress } =
+  const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
-  const { data: evmBalanceObject } = useBalance({
-    address: EvmAddress,
-  });
 
-  const evmBalance = evmBalanceObject?.formatted;
+  const {
+    evmTokenBalance,
+    handleBridgeEvm,
+    handleEvmApprove,
+    allowanceValue: evmAllowanceValue,
+  } = useEvmBridge({
+    setLoading,
+  });
 
   useEffect(() => {
     getAccounts();
@@ -200,7 +206,7 @@ export function Index() {
     return (
       <div className="mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
-        <p className="mas-caption">{EvmAddress}</p>
+        <p className="mas-caption">{evmAddress}</p>
       </div>
     );
   }
@@ -282,7 +288,9 @@ export function Index() {
     return (
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
-        <p className="mas-body">{formatStandard(Number(evmBalance || 0))}</p>
+        <p className="mas-body">
+          {formatStandard(Number(evmTokenBalance || 0))}
+        </p>
       </div>
     );
   }
@@ -530,12 +538,12 @@ export function Index() {
     setLoading('loading');
 
     if (layout === MASSA_TO_EVM) {
+      // Allowance
       const approved = await handleApprove();
-
       if (approved) handleBridge();
     } else if (layout === EVM_TO_MASSA) {
-      // TODO: TO BE IMPLEMENTED
-      console.log('TODO: TO BE IMPLEMENTED');
+      if (evmAllowanceValue < BigInt(amount!)) await handleEvmApprove();
+      else handleBridgeEvm(BigInt(amount!));
     }
   }
 
