@@ -9,7 +9,7 @@ import {
   Button,
   toast,
 } from '@massalabs/react-ui-kit';
-import { FiRepeat, FiX } from 'react-icons/fi';
+import { FiRepeat, FiX, FiPauseCircle } from 'react-icons/fi';
 import { BsCheckLg } from 'react-icons/bs';
 import { RxCross2 } from 'react-icons/rx';
 import { GetTokensPopUpModal, Spinner } from '@/components';
@@ -111,11 +111,11 @@ export function Index() {
     'loading' | 'error' | 'success' | 'none'
   >('none');
   const [approveLoading, setApproveLoading] = useState<
-    'loading' | 'error' | 'success'
-  >('loading');
+    'loading' | 'error' | 'success' | 'none'
+  >('none');
   const [bridgeLoading, setBridgeLoading] = useState<
-    'loading' | 'error' | 'success'
-  >('loading');
+    'loading' | 'error' | 'success' | 'none'
+  >('none');
   const [error, setError] = useState<{ amount: string } | null>(null);
 
   const isMassaWalletConnected = !!account;
@@ -279,7 +279,7 @@ export function Index() {
     return (
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
-        <p className="mas-body">{formatStandard(Number(evmBalance))}</p>
+        <p className="mas-body">{formatStandard(Number(evmBalance || 0))}</p>
       </div>
     );
   }
@@ -299,6 +299,50 @@ export function Index() {
     );
   }
 
+  function LoadingBox() {
+    return (
+      <>
+        <div
+          className={`z-10 absolute flex-none max-w-2xl w-full h-[870px] blur-md`}
+        />
+        <div
+          className="absolute z-10 p-10 max-w-sm w-full max-h-96 h-full border border-tertiary rounded-2xl
+              bg-secondary/50 backdrop-blur-lg text-f-primary"
+        >
+          <div className="flex justify-end pb-8">
+            <button
+              className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
+                      hover:bg-tertiary hover:text-c-primary"
+              type="button"
+              onClick={handleClosePopUp}
+            >
+              <FiX className="w-5 h-5" />
+            </button>
+          </div>
+          <div
+            className={`relative flex flex-col items-center justify-start pb-10`}
+          >
+            {loadingState(loading, 'lg')}
+            <p className="mas-subtitle pt-6">
+              {Intl.t('index.loading-box.title')}
+            </p>
+            <p className="text-xs pb-6">
+              {Intl.t('index.loading-box.subtitle')}
+            </p>
+          </div>
+          <div className="mb-6 flex justify-between">
+            <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
+            {loadingState(approveLoading)}
+          </div>
+          <div className="mb-6 flex justify-between">
+            <p className="mas-body-2">{Intl.t('index.loading-box.bridge')}</p>
+            {loadingState(bridgeLoading)}
+          </div>
+        </div>
+      </>
+    );
+  }
+
   interface ILoading {
     loading: JSX.Element;
     error: JSX.Element;
@@ -313,7 +357,7 @@ export function Index() {
       loading: <Spinner size={size} />,
       error: <ErrorCheck size={size} />,
       success: <SuccessCheck size={size} />,
-      none: <></>,
+      none: <FiPauseCircle size={24} />,
     };
 
     return loading[state];
@@ -348,7 +392,7 @@ export function Index() {
           wallet: <EVMMiddle />,
           token: <EVMTokenOptions />,
           fees: <EVMFees />,
-          balance: <EVMBalance />,
+          balance: null,
         },
       },
       evmToMassa: {
@@ -364,7 +408,7 @@ export function Index() {
           wallet: <MassaMiddle />,
           token: <MassaTokenOptions />,
           fees: <MassaFees />,
-          balance: <MassaBalance />,
+          balance: null,
         },
       },
     };
@@ -372,37 +416,34 @@ export function Index() {
     return layouts[layout];
   }
 
-  // FUNCTIONS
-  // function validateApprove() {
-  //   setError(null);
-  //   if (!amount) {
-  //     setError({ amount: Intl.t('index.approve.error.invalid-amount') });
-  //     return false;
-  //   }
+  function validateBridge() {
+    setError(null);
+    if (!amount) {
+      setError({ amount: Intl.t('index.approve.error.invalid-amount') });
+      return false;
+    }
 
-  //   if (Number(balance?.candidateBalance) < Number(amount)) {
-  //     setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
-  //     return false;
-  //   }
+    if (Number(balance?.candidateBalance) < Number(amount)) {
+      setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
+      return false;
+    }
 
-  //   return true;
-  // }
+    return true;
+  }
 
   async function handleApprove() {
-    // if (!validateApprove()) return;
-
+    setApproveLoading('loading');
     try {
-      const result = await increaseAllowance(
+      const maxAmount = BigInt('2') ** BigInt('256') - BigInt('1');
+      await increaseAllowance(
         account ?? undefined,
         token?.massaToken ? token.massaToken : '',
-        amount ? Number(amount) : 0,
+        maxAmount,
       );
-      toast.success(
-        Intl.t(`index.approve.success`, {
-          from: maskAddress(result.recipient),
-        }),
-      );
-    } catch (error: any) {
+
+      setApproveLoading('success');
+    } catch (error) {
+      console.log(error);
       setApproveLoading('error');
       setBridgeLoading('error');
       setLoading('error');
@@ -413,31 +454,35 @@ export function Index() {
         toast.error(Intl.t(`index.approve.error.general`));
       return false;
     }
-    setApproveLoading('success');
+
     return true;
   }
 
   async function handleBridge() {
-    try {
-      const result = await forwardBurn(account ?? undefined, {
-        massaToken: token?.massaToken,
-        evmToken: token?.evmToken,
-        chainId: token?.chainId,
-      } as TokenPair);
+    setBridgeLoading('loading');
 
-      toast.success(
-        Intl.t(`index.bridge.success`, {
-          from: maskAddress(result.recipient),
-        }),
+    try {
+      let tokenPairs = new TokenPair(
+        token?.massaToken,
+        token?.evmToken,
+        token?.chainId,
       );
+
+      await forwardBurn(account ?? undefined, tokenPairs);
+
+      setBridgeLoading('success');
+      setLoading('success');
+      handleTimerClosePopUp();
+
+      toast.success(Intl.t(`index.bridge.success`));
     } catch (error) {
+      console.log(error);
       setBridgeLoading('error');
       setLoading('error');
       toast.error(Intl.t(`index.bridge.error.general`));
       return false;
     }
-    setBridgeLoading('success');
-    setLoading('success');
+
     return true;
   }
 
@@ -456,8 +501,26 @@ export function Index() {
     ) || '0',
   );
 
+  function handleClosePopUp() {
+    setLoading('none');
+    setApproveLoading('none');
+    setBridgeLoading('none');
+    setAmount('');
+  }
+
+  function handleTimerClosePopUp(timer: number = 1500) {
+    setTimeout(() => {
+      setLoading('none');
+      setApproveLoading('none');
+      setBridgeLoading('none');
+      setAmount('');
+    }, timer);
+  }
+
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
+    if (!validateBridge()) return;
+
     setLoading('loading');
 
     if (layout === MASSA_TO_EVM) {
@@ -474,42 +537,7 @@ export function Index() {
 
   return (
     <>
-      {isLoading && (
-        <>
-          <div
-            className={`z-10 absolute flex-none max-w-2xl w-full h-[870px] blur-md`}
-          />
-          <div
-            className="absolute z-10 p-10 max-w-sm w-full max-h-96 h-full border border-tertiary rounded-2xl
-              bg-secondary/50 backdrop-blur-lg text-f-primary"
-          >
-            <div className="flex justify-end">
-              <button
-                className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
-                      hover:bg-tertiary hover:text-c-primary"
-                type="button"
-                onClick={() => setLoading('none')}
-              >
-                <FiX className="w-5 h-5" />
-              </button>
-            </div>
-            <div
-              className={`relative flex flex-col items-center justify-start gap-6 m-6`}
-            >
-              {loadingState(loading, 'lg')}
-              <p className="mas-menu-active">Brige pending</p>
-            </div>
-            <div className="mb-6 flex justify-between">
-              <p className="mas-body-2">Give allowance</p>
-              {loadingState(approveLoading)}
-            </div>
-            <div className="mb-6 flex justify-between">
-              <p className="mas-body-2">Lock/Transfer from</p>
-              {loadingState(bridgeLoading)}
-            </div>
-          </div>
-        </>
-      )}
+      {isLoading && <LoadingBox />}
       <div
         className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
             bg-secondary/50 backdrop-blur-lg text-f-primary ${isLoading}`}
@@ -568,13 +596,13 @@ export function Index() {
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
               <Currency
-                readOnly={true}
                 placeholder={Intl.t(`index.input.placeholder.receive`)}
                 name="receive"
                 value={amount}
                 onValueChange={(value) => setAmount(value)}
                 suffix=""
                 error=""
+                disable={true}
               />
             </div>
             <div className="w-1/3">{boxLayout(layout).down.token}</div>
