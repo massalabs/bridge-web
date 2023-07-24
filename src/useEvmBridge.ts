@@ -91,7 +91,6 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
 
   useEffect(() => {
     if (!approvalIsPending && approvalIsSuccess) {
-      console.log(approvalReceipt);
       // TODO: update Loading when ok
       // setLoading(false);
       // Personalize success message
@@ -107,7 +106,6 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   useEffect(() => {
     // If no allowance, error
     if (!lockIsPending && lockIsSuccess) {
-      console.log(lockReceipt);
       // TODO: update Loading when ok
       // setLoading(false);
       toast.success(
