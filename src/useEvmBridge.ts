@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { maskAddress } from '@/utils/massaFormat';
 import Intl from '@/i18n/i18n';
 import { toast } from '@massalabs/react-ui-kit';
@@ -38,14 +38,18 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   const { data: tokenData } = useToken({ address: token?.evmToken });
   const decimals: number = tokenData?.decimals || 18;
   const evmUserAddress = accountAddress ? accountAddress : '0x00000';
-  console.log(Boolean(accountAddress && token?.evmToken));
+
   const balanceData = useBalance({
     token: token?.evmToken,
     address: accountAddress,
   });
 
-  console.log(balanceData);
-  const evmTokenBalance = balanceData.data?.formatted || 0;
+  const [evmTokenBalance, setEvmTokenBalance] = useState<string>();
+
+  useEffect(() => {
+    if (evmTokenBalance || !token) return;
+    setEvmTokenBalance(balanceData.data?.formatted || '0');
+  }, [token]);
 
   const allowance = useContractRead({
     address: token?.evmToken,
