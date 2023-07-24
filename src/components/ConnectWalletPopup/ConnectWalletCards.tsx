@@ -28,10 +28,11 @@ export function ConnectWalletCards() {
   );
 
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState<boolean>(
-    window.ethereum.isConnected(),
+    window.ethereum?.isConnected(),
   );
 
   useEffect(() => {
+    if (!window.ethereum) return;
     setIsMetamaskInstalled(window.ethereum.isConnected());
   }, [isMetamaskInstalled]);
 
