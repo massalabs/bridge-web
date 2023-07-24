@@ -49,7 +49,8 @@
   "unexpected-error": {
     "title": "Oops!",
     "description": "An unexpected error has occurred",
-    "link": "Go back to the main page!"
+    "link": "Go back to the main page!",
+    "no-wallet": "No wallet is associated with your Massa Account. Please create one and try again!"
   },
   "connect-wallet": {
     "title": "Connect wallets",

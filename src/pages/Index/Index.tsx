@@ -79,16 +79,18 @@ export function Index() {
   const [error, setError] = useState<{ amount: string } | null>(null);
 
   const isMassaWalletConnected = !!account;
+
   const [evmWalletConnected, _] = useState<boolean>(true);
+
   const { chains } = useNetwork();
+
   const { isConnected: isEvmWalletConnected, address: EvmAddress } =
     useAccount();
   const { data: evmBalanceObject } = useBalance({
     address: EvmAddress,
   });
-  const evmBalance = evmBalanceObject?.formatted;
 
-  const isFetchingAccounts = isFetching && accounts?.length;
+  const evmBalance = evmBalanceObject?.formatted;
 
   useEffect(() => {
     getAccounts();
@@ -109,6 +111,9 @@ export function Index() {
   }
 
   function EVMHeader() {
+    if (typeof window.ethereum === 'undefined') {
+      toast.error(Intl.t(`index.metamask.missing`));
+    }
     return (
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
@@ -142,7 +147,7 @@ export function Index() {
         </div>
         <div className="flex items-center gap-3">
           <p className="mas-body">Massa Wallet</p>
-          {isFetchingAccounts ? (
+          {isFetching ? (
             <FetchingStatus />
           ) : isMassaWalletConnected ? (
             <Connected />
@@ -168,7 +173,7 @@ export function Index() {
       <div className="mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
         <div className="mas-caption">
-          {isFetchingAccounts ? <FetchingLine /> : account?.address()}
+          {isFetching ? <FetchingLine /> : account?.address()}
         </div>
       </div>
     );
@@ -244,7 +249,7 @@ export function Index() {
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
-          {isFetchingAccounts ? (
+          {isFetching ? (
             <FetchingLine />
           ) : (
             formatStandard(Number(balance?.candidateBalance || 0))

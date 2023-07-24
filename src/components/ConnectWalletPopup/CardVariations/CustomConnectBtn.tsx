@@ -23,7 +23,6 @@ export function CustomConnectButton(): JSX.Element {
           account &&
           chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
-
         return (
           <div
             className="flex flex-col gap-4"
