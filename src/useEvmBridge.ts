@@ -69,13 +69,10 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
     args: [EVM_BRIDGE_ADDRESS, MAX_APPROVAL],
   });
 
-  const {
-    data: approvalReceipt,
-    isLoading: approvalIsPending,
-    isSuccess: approvalIsSuccess,
-  } = useWaitForTransaction({
-    hash: approveData?.hash,
-  });
+  const { isLoading: approvalIsPending, isSuccess: approvalIsSuccess } =
+    useWaitForTransaction({
+      hash: approveData?.hash,
+    });
 
   const { write: lock, ...lockState } = useContractWrite({
     abi: bridgeVaultAbi,
@@ -85,7 +82,6 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   });
 
   const {
-    data: lockReceipt,
     isLoading: lockIsPending,
     isSuccess: lockIsSuccess,
     isError: lockIsError,
