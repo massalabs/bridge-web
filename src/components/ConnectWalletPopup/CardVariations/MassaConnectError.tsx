@@ -3,6 +3,7 @@ import { FetchingStatus } from '@/pages/Index/Loading';
 import { linkToCreateWallet, linkToInstall } from '@/utils/const';
 import { providers } from '@massalabs/wallet-provider';
 import { useEffect, useState } from 'react';
+import Intl from '@/i18n/i18n';
 
 export function MassaConnectError({ ...props }) {
   const { accounts, isFetching } = props;
@@ -33,11 +34,13 @@ export function MassaConnectError({ ...props }) {
 export function ErrorMassaStation() {
   return (
     <div className="truncate max-w-10 mas-body">
-      Please{' '}
       <a href={linkToInstall} target="_blank">
-        <u>Download MassaStation</u>
-      </a>{' '}
-      in order to connect your wallet.
+        <u>
+          {' '}
+          {Intl.t('connect-wallet.station-connect-error.download-station')}
+        </u>
+      </a>
+      {Intl.t('connect-wallet.station-connect-error.error-station')}
     </div>
   );
 }
@@ -45,9 +48,9 @@ export function ErrorMassaStation() {
 export function ErrorWallet() {
   return (
     <div className="truncate max-w-10 mas-body">
-      Please create a wallet at the following link{' '}
+      {Intl.t('connect-wallet.station-connect-error.error-wallet')}
       <a href={linkToCreateWallet} target="_blank">
-        <u>Download MassaStation</u>.
+        <u>{Intl.t('connect-wallet.station-connect-error.add-wallet')}</u>.
       </a>
     </div>
   );
