@@ -20,8 +20,8 @@ import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { FetchingLine, FetchingStatus } from './Loading';
-import { formatStandard, maskAddress } from '@/utils/massaFormat';
-import { useAccount, useBalance, useNetwork } from 'wagmi';
+import { formatStandard } from '@/utils/massaFormat';
+import { useAccount, useBalance, useNetwork, useFeeData } from 'wagmi';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -123,7 +123,7 @@ export function Index() {
   const [evmWalletConnected, _] = useState<boolean>(true);
 
   const { chains } = useNetwork();
-
+  const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
   const { isConnected: isEvmWalletConnected, address: EvmAddress } =
     useAccount();
   const { data: evmBalanceObject } = useBalance({
@@ -258,7 +258,13 @@ export function Index() {
       <div>
         <div className="flex items-center gap-2">
           <p className="mas-body2">Total EVM fees:</p>
-          <p className="mas-body">{formatStandard(Number(0))}</p>
+          <div className="mas-body">
+            {isLoadingEVMFeeData ? (
+              <FetchingLine />
+            ) : (
+              evmFeeData?.formatted.maxFeePerGas
+            )}
+          </div>
         </div>
       </div>
     );
@@ -367,7 +373,7 @@ export function Index() {
     header: JSX.Element;
     wallet: JSX.Element;
     token: JSX.Element;
-    fees: JSX.Element | null;
+    fees: JSX.Element;
     balance: JSX.Element;
   }
 
@@ -384,7 +390,7 @@ export function Index() {
           header: <MassaHeader />,
           wallet: <MassaMiddle />,
           token: <MassaTokenOptions />,
-          fees: null,
+          fees: <></>,
           balance: <MassaBalance />,
         },
         down: {
@@ -392,7 +398,7 @@ export function Index() {
           wallet: <EVMMiddle />,
           token: <EVMTokenOptions />,
           fees: <EVMFees />,
-          balance: null,
+          balance: <></>,
         },
       },
       evmToMassa: {
@@ -400,7 +406,7 @@ export function Index() {
           header: <EVMHeader />,
           wallet: <EVMMiddle />,
           token: <EVMTokenOptions />,
-          fees: null,
+          fees: <></>,
           balance: <EVMBalance />,
         },
         down: {
@@ -408,7 +414,7 @@ export function Index() {
           wallet: <MassaMiddle />,
           token: <MassaTokenOptions />,
           fees: <MassaFees />,
-          balance: null,
+          balance: <></>,
         },
       },
     };
@@ -447,7 +453,10 @@ export function Index() {
       setApproveLoading('error');
       setBridgeLoading('error');
       setLoading('error');
+
       if (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         error?.message?.split('message:').pop().trim() !==
         'Unable to unprotect wallet'
       )
@@ -508,7 +517,7 @@ export function Index() {
     setAmount('');
   }
 
-  function handleTimerClosePopUp(timer: number = 1500) {
+  function handleTimerClosePopUp(timer = 1500) {
     setTimeout(() => {
       setLoading('none');
       setApproveLoading('none');
