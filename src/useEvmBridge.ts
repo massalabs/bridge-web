@@ -42,7 +42,6 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   const balanceData = useBalance({
     token: token?.evmToken,
     address: accountAddress,
-    enabled: false,
   });
 
   console.log(balanceData);
