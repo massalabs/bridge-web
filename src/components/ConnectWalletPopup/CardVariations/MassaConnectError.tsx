@@ -28,6 +28,7 @@ export function MassaConnectError({ ...props }) {
   useEffect(() => {
     getSomething();
   }, [isMassaStationConnected]);
+
   return <>{isFetching ? <FetchingStatus /> : errorMessage}</>;
 }
 

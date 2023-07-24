@@ -71,20 +71,31 @@ const accountStore = (set: any, get: any) => ({
   },
 
   getAccounts: async () => {
-    set({ isFetching: true });
+    try {
+      set({ isFetching: true });
 
-    const providerList = await providers();
-    const massaStationWallet = providerList.find(
-      (provider: any) => provider.name() === MASSA_STATION,
-    );
-    const fetchedAccounts = await massaStationWallet?.accounts();
-    const firstAccount = fetchedAccounts?.at(0);
-
-    set({
-      accounts: fetchedAccounts,
-      account: firstAccount ?? null,
-      isFetching: false,
-    });
+      const providerList = await providers();
+      const massaStationWallet = providerList.find(
+        (provider: any) => provider.name() === MASSA_STATION,
+      );
+      const fetchedAccounts = await massaStationWallet?.accounts();
+      if (fetchedAccounts?.length === 0) {
+        set({
+          isFetching: false,
+        });
+      } else {
+        const firstAccount = fetchedAccounts?.at(0);
+        set({
+          accounts: fetchedAccounts,
+          account: firstAccount ?? null,
+          isFetching: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      set({ isFetching: false });
+    }
   },
 
   setAccount: (account: IAccount | null) => set({ account }),
