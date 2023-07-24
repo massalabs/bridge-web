@@ -9,21 +9,17 @@ import {
   Button,
   toast,
 } from '@massalabs/react-ui-kit';
-import { FiRepeat } from 'react-icons/fi';
-import { GetTokensPopUpModal } from '@/components';
-import {
-  APPROVE,
-  BRIDGE,
-  EVM_TO_MASSA,
-  MASSA_TO_EVM,
-  tagTypes,
-} from '@/utils/const';
+import { FiRepeat, FiX } from 'react-icons/fi';
+import { BsCheckLg } from 'react-icons/bs';
+import { RxCross2 } from 'react-icons/rx';
+import { GetTokensPopUpModal, Spinner } from '@/components';
+import { EVM_TO_MASSA, MASSA_TO_EVM, tagTypes } from '@/utils/const';
 import { useAccountStore } from '@/store/store';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
-import { FetchingLine, FetchingStatus, Loading } from './Loading';
+import { FetchingLine, FetchingStatus } from './Loading';
 import { formatStandard, maskAddress } from '@/utils/massaFormat';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
 
@@ -46,6 +42,42 @@ export function Connected() {
 export function Disconnected() {
   return (
     <Tag type={tagTypes.error} content={Intl.t(`index.tag.not-connected`)} />
+  );
+}
+
+function SuccessCheck({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }) {
+  const isSmall = size === 'sm';
+  const isMedium = size === 'md';
+  const sizeClass = isSmall
+    ? 'w-6 h-6'
+    : isMedium
+    ? 'w-8 h-8'
+    : 'w-12 h-12 border-4';
+
+  return (
+    <div
+      className={`${sizeClass} rounded-full bg-s-success/30 flex justify-center items-center border-none`}
+    >
+      <BsCheckLg className="text-s-success w-full h-full p-1" />
+    </div>
+  );
+}
+
+function ErrorCheck({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }) {
+  const isSmall = size === 'sm';
+  const isMedium = size === 'md';
+  const sizeClass = isSmall
+    ? 'w-6 h-6'
+    : isMedium
+    ? 'w-8 h-8'
+    : 'w-12 h-12 border-4';
+
+  return (
+    <div
+      className={`${sizeClass} rounded-full bg-s-error/30 flex justify-center items-center border-none`}
+    >
+      <RxCross2 className="text-s-error w-full h-full p-1" />
+    </div>
   );
 }
 
@@ -75,7 +107,15 @@ export function Index() {
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
   const [amount, setAmount] = useState<number | string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<
+    'loading' | 'error' | 'success' | 'none'
+  >('none');
+  const [approveLoading, setApproveLoading] = useState<
+    'loading' | 'error' | 'success'
+  >('loading');
+  const [bridgeLoading, setBridgeLoading] = useState<
+    'loading' | 'error' | 'success'
+  >('loading');
   const [error, setError] = useState<{ amount: string } | null>(null);
 
   const isMassaWalletConnected = !!account;
@@ -259,6 +299,26 @@ export function Index() {
     );
   }
 
+  interface ILoading {
+    loading: JSX.Element;
+    error: JSX.Element;
+    success: JSX.Element;
+    none: JSX.Element;
+  }
+
+  type StateType = 'loading' | 'error' | 'success' | 'none';
+
+  function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
+    const loading: ILoading = {
+      loading: <Spinner size={size} />,
+      error: <ErrorCheck size={size} />,
+      success: <SuccessCheck size={size} />,
+      none: <></>,
+    };
+
+    return loading[state];
+  }
+
   interface Layout {
     header: JSX.Element;
     wallet: JSX.Element;
@@ -313,51 +373,51 @@ export function Index() {
   }
 
   // FUNCTIONS
-  function validateApprove() {
-    setError(null);
-    if (!amount) {
-      setError({ amount: Intl.t('index.approve.error.invalid-amount') });
-      return false;
-    }
+  // function validateApprove() {
+  //   setError(null);
+  //   if (!amount) {
+  //     setError({ amount: Intl.t('index.approve.error.invalid-amount') });
+  //     return false;
+  //   }
 
-    if (Number(balance?.candidateBalance) < Number(amount)) {
-      setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
-      return false;
-    }
+  //   if (Number(balance?.candidateBalance) < Number(amount)) {
+  //     setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
+  //     return false;
+  //   }
 
-    return true;
-  }
+  //   return true;
+  // }
 
   async function handleApprove() {
-    if (!validateApprove()) return;
+    // if (!validateApprove()) return;
 
-    setLoading(true);
     try {
       const result = await increaseAllowance(
         account ?? undefined,
         token?.massaToken ? token.massaToken : '',
         amount ? Number(amount) : 0,
       );
-      console.log(result);
       toast.success(
         Intl.t(`index.approve.success`, {
           from: maskAddress(result.recipient),
         }),
       );
     } catch (error: any) {
-      console.log(error);
+      setApproveLoading('error');
+      setBridgeLoading('error');
+      setLoading('error');
       if (
         error?.message?.split('message:').pop().trim() !==
         'Unable to unprotect wallet'
       )
         toast.error(Intl.t(`index.approve.error.general`));
-    } finally {
-      setLoading(false);
+      return false;
     }
+    setApproveLoading('success');
+    return true;
   }
 
   async function handleBridge() {
-    setLoading(true);
     try {
       const result = await forwardBurn(account ?? undefined, {
         massaToken: token?.massaToken,
@@ -371,11 +431,14 @@ export function Index() {
         }),
       );
     } catch (error) {
-      console.log(error);
+      setBridgeLoading('error');
+      setLoading('error');
       toast.error(Intl.t(`index.bridge.error.general`));
-    } finally {
-      setLoading(false);
+      return false;
     }
+    setBridgeLoading('success');
+    setLoading('success');
+    return true;
   }
 
   async function fetchBalance(account: IAccount | null) {
@@ -393,124 +456,147 @@ export function Index() {
     ) || '0',
   );
 
-  function handleSubmit(e: SyntheticEvent, action: string) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
+    setLoading('loading');
 
     if (layout === MASSA_TO_EVM) {
-      if (action === APPROVE) {
-        handleApprove();
-      } else if (action === BRIDGE) {
-        handleBridge();
-      }
+      const approved = await handleApprove();
+
+      if (approved) handleBridge();
     } else if (layout === EVM_TO_MASSA) {
       // TODO: TO BE IMPLEMENTED
       console.log('TODO: TO BE IMPLEMENTED');
     }
   }
 
+  const isLoading = loading !== 'none' ? 'blur-md' : null;
+
   return (
     <>
-      {loading ? (
-        <Loading />
-      ) : (
+      {isLoading && (
         <>
           <div
-            className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
-        bg-secondary/50 backdrop-blur-lg text-f-primary`}
+            className={`z-10 absolute flex-none max-w-2xl w-full h-[870px] blur-md`}
+          />
+          <div
+            className="absolute z-10 p-10 max-w-sm w-full max-h-96 h-full border border-tertiary rounded-2xl
+              bg-secondary/50 backdrop-blur-lg text-f-primary"
           >
-            <div className="p-6 bg-primary rounded-2xl mb-5">
-              <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
-              {boxLayout(layout).up.header}
-              {boxLayout(layout).up.wallet}
-              <div className="mb-4 flex items-center gap-2">
-                <div className="w-full">
-                  <Currency
-                    name="amount"
-                    value={amount}
-                    onValueChange={(value) => setAmount(value)}
-                    placeholder={Intl.t(`index.input.placeholder.amount`)}
-                    suffix=""
-                    error={error?.amount}
-                  />
-                </div>
-                <div className="w-1/3">{boxLayout(layout).up.token}</div>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  {evmWalletConnected ? (
-                    <h3
-                      className="mas-h3 text-f-disabled-1 underline cursor-pointer"
-                      onClick={() => setOpenTokensModal(true)}
-                    >
-                      Get tokens
-                    </h3>
-                  ) : (
-                    <>
-                      <p className="mas-body2">Total fees:</p>
-                      <p className="mas-body">{formatStandard(Number(0))}</p>
-                    </>
-                  )}
-                </div>
-                {boxLayout(layout).up.balance}
-              </div>
-            </div>
-            <div className="mb-5 flex justify-center items-center">
-              <Button
-                variant="toggle"
-                onClick={handleToggleLayout}
-                customClass={`w-12 h-12 inline-block transition ease-in-out delay-10 ${
-                  layout === MASSA_TO_EVM ? 'rotate-180' : ''
-                }`}
+            <div className="flex justify-end">
+              <button
+                className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
+                      hover:bg-tertiary hover:text-c-primary"
+                type="button"
+                onClick={() => setLoading('none')}
               >
-                <FiRepeat size={24} />
-              </Button>
+                <FiX className="w-5 h-5" />
+              </button>
             </div>
-            <div className="mb-5 p-6 bg-primary rounded-2xl">
-              <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
-              {boxLayout(layout).down.header}
-              {boxLayout(layout).down.wallet}
-              <div className="mb-4 flex items-center gap-2">
-                <div className="w-full">
-                  <Currency
-                    readOnly={true}
-                    placeholder={Intl.t(`index.input.placeholder.receive`)}
-                    name="receive"
-                    value={amount}
-                    onValueChange={(value) => setAmount(value)}
-                    suffix=""
-                    error=""
-                  />
-                </div>
-                <div className="w-1/3">{boxLayout(layout).down.token}</div>
-              </div>
-              <div className="flex justify-between items-center">
-                {boxLayout(layout).down.fees}
-                {boxLayout(layout).down.balance}
-              </div>
+            <div
+              className={`relative flex flex-col items-center justify-start gap-6 m-6`}
+            >
+              {loadingState(loading, 'lg')}
+              <p className="mas-menu-active">Brige pending</p>
             </div>
-            <div>
-              <p className="mas-caption mb-4">
-                {Intl.t(`index.total.approve`, {
-                  amount: formatStandard(Number(0)),
-                })}
-              </p>
-              <div className="flex items-center gap-5">
-                <Button onClick={(e) => handleSubmit(e, 'approve')}>
-                  {Intl.t(`index.button.approve`)}
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={(e) => handleSubmit(e, 'bridge')}
-                >
-                  {Intl.t(`index.button.bridge`)}
-                </Button>
-              </div>
+            <div className="mb-6 flex justify-between">
+              <p className="mas-body-2">Give allowance</p>
+              {loadingState(approveLoading)}
+            </div>
+            <div className="mb-6 flex justify-between">
+              <p className="mas-body-2">Lock/Transfer from</p>
+              {loadingState(bridgeLoading)}
             </div>
           </div>
-          {openTokensModal && (
-            <GetTokensPopUpModal setOpenModal={setOpenTokensModal} />
-          )}
         </>
+      )}
+      <div
+        className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
+            bg-secondary/50 backdrop-blur-lg text-f-primary ${isLoading}`}
+      >
+        <div className="p-6 bg-primary rounded-2xl mb-5">
+          <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
+          {boxLayout(layout).up.header}
+          {boxLayout(layout).up.wallet}
+          <div className="mb-4 flex items-center gap-2">
+            <div className="w-full">
+              <Currency
+                name="amount"
+                value={amount}
+                onValueChange={(value) => setAmount(value)}
+                placeholder={Intl.t(`index.input.placeholder.amount`)}
+                suffix=""
+                error={error?.amount}
+              />
+            </div>
+            <div className="w-1/3">{boxLayout(layout).up.token}</div>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              {evmWalletConnected ? (
+                <h3
+                  className="mas-h3 text-f-disabled-1 underline cursor-pointer"
+                  onClick={() => setOpenTokensModal(true)}
+                >
+                  Get tokens
+                </h3>
+              ) : (
+                <>
+                  <p className="mas-body2">Total fees:</p>
+                  <p className="mas-body">{formatStandard(Number(0))}</p>
+                </>
+              )}
+            </div>
+            {boxLayout(layout).up.balance}
+          </div>
+        </div>
+        <div className="mb-5 flex justify-center items-center">
+          <Button
+            variant="toggle"
+            onClick={handleToggleLayout}
+            customClass={`w-12 h-12 inline-block transition ease-in-out delay-10 ${
+              layout === MASSA_TO_EVM ? 'rotate-180' : ''
+            }`}
+          >
+            <FiRepeat size={24} />
+          </Button>
+        </div>
+        <div className="mb-5 p-6 bg-primary rounded-2xl">
+          <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
+          {boxLayout(layout).down.header}
+          {boxLayout(layout).down.wallet}
+          <div className="mb-4 flex items-center gap-2">
+            <div className="w-full">
+              <Currency
+                readOnly={true}
+                placeholder={Intl.t(`index.input.placeholder.receive`)}
+                name="receive"
+                value={amount}
+                onValueChange={(value) => setAmount(value)}
+                suffix=""
+                error=""
+              />
+            </div>
+            <div className="w-1/3">{boxLayout(layout).down.token}</div>
+          </div>
+          <div className="flex justify-between items-center">
+            {boxLayout(layout).down.fees}
+            {boxLayout(layout).down.balance}
+          </div>
+        </div>
+        <div>
+          <p className="mas-caption mb-4">
+            {Intl.t(`index.total.approve`, {
+              amount: formatStandard(Number(0)),
+            })}
+          </p>
+          <Button onClick={(e) => handleSubmit(e)}>
+            {Intl.t(`index.button.bridge`)}
+          </Button>
+        </div>
+      </div>
+      {openTokensModal && (
+        <GetTokensPopUpModal setOpenModal={setOpenTokensModal} />
       )}
     </>
   );
