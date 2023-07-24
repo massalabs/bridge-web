@@ -47,7 +47,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   const [evmTokenBalance, setEvmTokenBalance] = useState<string>();
 
   useEffect(() => {
-    if (evmTokenBalance || !token) return;
+    if (!token) return;
     setEvmTokenBalance(balanceData.data?.formatted || '0');
   }, [token]);
 
