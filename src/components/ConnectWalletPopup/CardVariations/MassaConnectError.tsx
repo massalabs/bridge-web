@@ -29,7 +29,7 @@ export function MassaConnectError({ ...props }) {
     getSomething();
   }, [isMassaStationConnected]);
 
-  return <>{isFetching ? <FetchingStatus /> : errorMessage}</>;
+  return <>{errorMessage === null ? <FetchingStatus /> : errorMessage}</>;
 }
 
 export function ErrorMassaStation() {
