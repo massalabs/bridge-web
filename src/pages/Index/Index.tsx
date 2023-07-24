@@ -19,11 +19,10 @@ import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
-import { useAccount, useBalance, useNetwork, useFeeData } from 'wagmi';
-import { FetchingLine, FetchingStatus, Loading } from './Loading';
+import { useAccount, useNetwork, useFeeData } from 'wagmi';
+import { FetchingLine, FetchingStatus } from './Loading';
 import { formatStandard } from '@/utils/massaFormat';
 import useEvmBridge from '@/useEvmBridge';
-import { set } from 'dot-object';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
