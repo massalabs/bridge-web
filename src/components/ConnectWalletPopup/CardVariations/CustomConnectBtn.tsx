@@ -24,8 +24,6 @@ export function CustomConnectButton(): JSX.Element {
           chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
 
-        console.log('account', account);
-
         return (
           <div
             className="flex flex-col gap-4"
@@ -38,7 +36,7 @@ export function CustomConnectButton(): JSX.Element {
               if (!connected) {
                 return (
                   <Button onClick={openConnectModal} preIcon={<MetaMaskSvg />}>
-                    Connect to MetaMask
+                    {Intl.t('connect-wallet.connected-metamask.title')}
                   </Button>
                 );
               }
@@ -47,11 +45,14 @@ export function CustomConnectButton(): JSX.Element {
                 return (
                   <>
                     <div>
-                      Your network is invalid, please change it to Sepolia
-                      testnet
+                      {Intl.t(
+                        'connect-wallet.connected-metamask.invalid-network',
+                      )}
                     </div>
                     <Button onClick={openChainModal} type="button">
-                      Change your network
+                      {Intl.t(
+                        'connect-wallet.connected-metamask.change-network',
+                      )}
                     </Button>
                   </>
                 );
@@ -73,7 +74,6 @@ export function CustomConnectButton(): JSX.Element {
                                 className="w-6 h-6"
                                 alt={chain.name ?? 'Chain icon'}
                                 src={chain.iconUrl}
-                                // style={{ width: 24, height: 24 }}
                               />
                             )}
                           </div>
