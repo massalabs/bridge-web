@@ -3,6 +3,8 @@ import { maskAddress } from '@/utils/massaFormat';
 import Intl from '@/i18n/i18n';
 import { toast } from '@massalabs/react-ui-kit';
 import { useAccountStore } from '@/store/store';
+import { parseUnits } from 'viem';
+
 import {
   useContractWrite,
   useContractRead,
@@ -21,6 +23,8 @@ interface useEvmBridgeProps {
   >;
 }
 
+// TODO: Max u256 pour approval
+const MAX_APPROVAL = 2n ** 256n - 1n;
 // TODO: fix gas limit
 const MAX_GAS = 1_000_000n;
 
@@ -30,8 +34,9 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
     state.token,
     state.account,
   ]);
-  const { data: tokenData } = useToken({ address: token?.evmToken });
 
+  const { data: tokenData } = useToken({ address: token?.evmToken });
+  const decimals: number = tokenData?.decimals || 18;
   const evmUserAddress = accountAddress ? accountAddress : '0x00000';
 
   const balanceData = useBalance({
@@ -40,7 +45,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
     enabled: Boolean(accountAddress && token?.evmToken),
   });
 
-  const evmTokenBalance = BigInt(balanceData.data?.formatted || 0);
+  const evmTokenBalance = balanceData.data?.formatted || 0;
 
   const allowance = useContractRead({
     address: token?.evmToken,
@@ -57,6 +62,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
     address: token?.evmToken,
     abi: erc20ABI,
     gas: MAX_GAS,
+    args: [EVM_BRIDGE_ADDRESS, MAX_APPROVAL],
   });
 
   const {
@@ -99,6 +105,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   }, [approvalIsPending, approvalIsSuccess]);
 
   useEffect(() => {
+    // If no allowance, error
     if (!lockIsPending && lockIsSuccess) {
       console.log(lockReceipt);
       // TODO: update Loading when ok
@@ -115,22 +122,20 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
       // TODO: update Loading when ok
       // setLoading(false);
     }
+    balanceData.refetch();
+    // Refetch token balance on massa side
   }, [lockIsPending, lockIsSuccess]);
 
-  async function handleEvmApprove(amount: bigint) {
+  async function handleEvmApprove() {
     if (!accountAddress) {
       toast.error(Intl.t(`index.bridge.error.noAddress`));
       return;
     }
 
     try {
-      if (allowanceValue < amount) {
-        // TODO: update Loading when ok
-        // setLoading(true);
-        approve({
-          args: [EVM_BRIDGE_ADDRESS, 10000n],
-        });
-      }
+      // TODO: update Loading when ok
+      // setLoading(true);
+      approve();
     } catch (error) {
       // TODO: Improve error handling
       console.log(error);
@@ -147,7 +152,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
       console.log('no amount');
       return;
     }
-    if (evmTokenBalance < 10000n) {
+    if (Number(evmTokenBalance) < Number(amount)) {
       toast.error(Intl.t(`index.bridge.error.lowBalance`));
       console.log('low balance');
       return;
@@ -157,7 +162,11 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
 
     try {
       lock({
-        args: [amount, massaAccount?.address, token?.evmToken],
+        args: [
+          parseUnits(amount.toString(), decimals),
+          massaAccount?.address(),
+          token?.evmToken,
+        ],
       });
     } catch (error) {
       // TODO: Improve error handling
