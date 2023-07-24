@@ -4,27 +4,37 @@ import { SelectMassaWalletAccount } from '@/components';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { useEffect, useState } from 'react';
 import { Clipboard } from '@massalabs/react-ui-kit';
+import { useAccount, useBalance, useNetwork } from 'wagmi';
+import { BsDiamondHalf } from 'react-icons/bs';
+import {
+  Dropdown,
+  MassaLogo,
+  MassaToken,
+  Tag,
+  Currency,
+  Button,
+  toast,
+} from '@massalabs/react-ui-kit';
 
-export function ConnectedCard({ ...props }) {
+const iconsNetworks = {
+  Sepolia: <BsDiamondHalf size={40} />,
+  OTHER: <BsDiamondHalf />,
+};
+
+export function ConnectedCardEVM({ ...props }) {
   const { account } = props;
-  const [balance, setBalance] = useState<IAccountBalanceResponse>();
 
-  async function fetchBalance(account: IAccount | null) {
-    try {
-      return await account?.balance();
-    } catch (error) {
-      console.error('Error while retrieving balance: ', error);
-    }
-  }
-
-  useEffect(() => {
-    fetchBalance(account).then((balance) => setBalance(balance));
-  }, [account]);
+  const { chains } = useNetwork();
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4 w-full h-full">
-        <SelectMassaWalletAccount {...props} />
+        <Dropdown
+          options={chains.map((chain) => ({
+            item: chain.name,
+            icon: iconsNetworks['Sepolia'],
+          }))}
+        />
         <Clipboard
           displayedContent={maskAddress(account?.address().toString())}
           rawContent={maskAddress(account?.address().toString())}
@@ -34,7 +44,7 @@ export function ConnectedCard({ ...props }) {
       </div>
       <div>
         {Intl.t('connect-wallet.connected-cards.wallet-balance')}
-        {Number(balance?.candidateBalance || 0)} MAS
+        {/* {Number(balance?.candidateBalance || 0)} MAS */}
       </div>
     </div>
   );

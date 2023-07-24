@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   RessourceSidePanel,
   ConnectedCard,
+  ConnectedCardEVM,
   MetamaskNotInstalled,
   CustomConnectButton,
 } from '@/components';
@@ -48,14 +49,15 @@ export function ConnectWalletCards() {
           </div>
           {/* <ConnectEvmButton /> */}
           {isMetamaskInstalled ? (
-            <CustomConnectButton />
+            // <CustomConnectButton />abc
+            <ConnectedCardEVM {...massaWalletArgs} />
           ) : (
             <MetamaskNotInstalled />
           )}
         </WalletCard>
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
-            <p>{Intl.t('connect-wallet.card-destination.to')}</p>
+            <div>{Intl.t('connect-wallet.card-destination.to')}</div>
             {accounts?.length ? <Connected /> : <Disconnected />}
           </div>
           {/*  Add user flow cases where there is no massastation, no wallet etc etc */}
