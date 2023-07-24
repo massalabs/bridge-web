@@ -38,13 +38,14 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   const { data: tokenData } = useToken({ address: token?.evmToken });
   const decimals: number = tokenData?.decimals || 18;
   const evmUserAddress = accountAddress ? accountAddress : '0x00000';
-
+  console.log(Boolean(accountAddress && token?.evmToken));
   const balanceData = useBalance({
-    token: token?.evmToken ? token?.evmToken : '0x00000',
-    address: evmUserAddress,
-    enabled: Boolean(accountAddress && token?.evmToken),
+    token: token?.evmToken,
+    address: accountAddress,
+    enabled: false,
   });
 
+  console.log(balanceData);
   const evmTokenBalance = balanceData.data?.formatted || 0;
 
   const allowance = useContractRead({
