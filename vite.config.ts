@@ -18,10 +18,7 @@ export default ({ mode }) => {
       assetsDir: './', // put the assets next to the index.html file
     },
     resolve: {
-      alias: [
-        { find: '@', replacement: path.resolve(__dirname, 'src') },
-        { find: '@/shared', replacement: path.resolve(__dirname, '../shared') },
-      ],
+      alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
     },
   });
 };

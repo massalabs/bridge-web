@@ -1,24 +1,76 @@
-import Lottie from 'lottie-react';
+import { ReactNode } from 'react';
 import Intl from '@/i18n/i18n';
-import animationData from '../../assets/lotties/loading.json';
+import { FiX, FiPauseCircle } from 'react-icons/fi';
 
-export function Loading() {
+import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
+import { StateType } from '@/const';
+
+interface ILoading {
+  loading: ReactNode;
+  error: ReactNode;
+  success: ReactNode;
+  none: ReactNode;
+}
+
+function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
+  const loading: ILoading = {
+    loading: <Spinner size={size} />,
+    error: <ErrorCheck size={size} />,
+    success: <SuccessCheck size={size} />,
+    none: <FiPauseCircle size={24} />,
+  };
+
+  return loading[state];
+}
+
+interface ILoadingBoxProps {
+  onClose: () => void;
+  loading: StateType;
+  approveLoading: StateType;
+  bridgeLoading: StateType;
+}
+
+export function LoadingBox(props: ILoadingBoxProps) {
+  const { onClose, loading, approveLoading, bridgeLoading } = props;
+
   return (
-    <div
-      className="p-10 max-w-2xl h-[870px] w-full border border-tertiary
-                rounded-2xl flex items-center justify-center bg-secondary/50 backdrop-blur-lg text-f-primary"
-    >
-      <div>
-        <Lottie
-          style={{ height: 300 }}
-          animationData={animationData}
-          loop={true}
-        />
-        <div className="text-center mas-title">
-          <label>{Intl.t('index.approve.loading')}</label>
+    <>
+      <div
+        className={`z-10 absolute flex-none max-w-2xl w-full h-[870px] blur-md`}
+      />
+      <div
+        className="absolute z-10 p-10 max-w-sm w-full min-h-96 border border-tertiary rounded-2xl
+              bg-secondary/50 backdrop-blur-lg text-f-primary"
+      >
+        <div className="flex justify-end pb-8">
+          <button
+            className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
+                      hover:bg-tertiary hover:text-c-primary"
+            type="button"
+            onClick={onClose}
+          >
+            <FiX className="w-5 h-5" />
+          </button>
+        </div>
+        <div
+          className={`relative flex flex-col items-center justify-start pb-10`}
+        >
+          {loadingState(loading, 'lg')}
+          <p className="mas-subtitle pt-6">
+            {Intl.t('index.loading-box.title')}
+          </p>
+          <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>
+        </div>
+        <div className="mb-6 flex justify-between">
+          <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
+          {loadingState(approveLoading)}
+        </div>
+        <div className="flex justify-between">
+          <p className="mas-body-2">{Intl.t('index.loading-box.bridge')}</p>
+          {loadingState(bridgeLoading)}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

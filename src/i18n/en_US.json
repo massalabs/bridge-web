@@ -92,17 +92,20 @@
     }
   },
   "get-tokens": {
-    "title": "Get Sepolia testnet tokens:",
+    "title": "Get {token} tokens:",
     "card": {
       "tDAI-description": "If you want to get tDAI tokens",
       "WETH-description": "If you want to get WETH tokens",
       "ETH-description": "If you want to get ETH tokens to pay fees",
-      "link": "Click here"
+      "XMA-description": "If you want to get XMA tokens",
+      "link": "Instructions",
+      "mint": "Mint {token}"
     },
     "tag": {
       "tDAI": "Get tDAI",
       "WETH": "Get wrapped Ethereum",
-      "ETH": "Get Ethereum"
+      "ETH": "Get Ethereum",
+      "XMA": "Get XMA tokens"
     }
   }
 }
