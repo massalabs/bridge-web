@@ -1,10 +1,9 @@
-import Intl from '@/i18n/i18n';
 import { maskAddress } from '@/utils/massaFormat';
 import { SelectMassaWalletAccount } from '@/components';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { useEffect, useState } from 'react';
-import copy from 'copy-to-clipboard';
-import { FiCopy } from 'react-icons/fi';
+import { Clipboard } from '@massalabs/react-ui-kit';
+import Intl from '@/i18n/i18n';
 
 export function ConnectedCard({ ...props }) {
   const { account } = props;
@@ -26,16 +25,15 @@ export function ConnectedCard({ ...props }) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4 w-full h-full">
         <SelectMassaWalletAccount {...props} />
-        <button
-          type="button"
-          onClick={() => copy(account?.address().toString())}
-          className="bg-secondary rounded-lg px-2 hover:bg-tertiary 
-                      mas-body flex items-center w-fit h-full justify-between gap-5"
-        >
-          {Intl.t('connect-wallet.connected-cards.wallet-address')}
-          {maskAddress(account?.address().toString())}
-          <FiCopy size={18} />
-        </button>
+        <Clipboard
+          customClass="h-14 rounded-lg !mas-body"
+          toggleHover={false}
+          rawContent={account?.address().toString()}
+          displayedContent={`${Intl.t(
+            'connect-wallet.connected-cards.wallet-address',
+          )}
+            ${maskAddress(account?.address().toString())}`}
+        />
       </div>
       <div>
         {Intl.t('connect-wallet.connected-cards.wallet-balance')}

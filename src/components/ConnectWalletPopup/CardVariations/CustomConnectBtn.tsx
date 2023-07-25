@@ -30,12 +30,13 @@ export function CustomConnectButton(): JSX.Element {
               'aria-hidden': true,
             })}
           >
-            {/* TODO : Change img size after button rework */}
             {(() => {
               if (!connected) {
                 return (
                   <Button onClick={openConnectModal} preIcon={<MetaMaskSvg />}>
-                    {Intl.t('connect-wallet.connected-metamask.title')}
+                    {Intl.t(
+                      'connect-wallet.connect-metamask.connect-to-metamask',
+                    )}
                   </Button>
                 );
               }
@@ -59,39 +60,33 @@ export function CustomConnectButton(): JSX.Element {
 
               return (
                 <>
-                  <div className="flex w-full gap-3">
+                  <div className="flex w-full gap-3 justify-around">
                     <Button
-                      customClass="w-fit"
                       onClick={openChainModal}
-                      type="button"
+                      preIcon={
+                        <img
+                          alt={chain.name ?? 'Chain icon'}
+                          src={chain.iconUrl}
+                        />
+                      }
                     >
-                      <div className="flex w-full gap-2">
-                        {chain.hasIcon && (
-                          <div>
-                            {chain.iconUrl && (
-                              <img
-                                className="w-6 h-6"
-                                alt={chain.name ?? 'Chain icon'}
-                                src={chain.iconUrl}
-                              />
-                            )}
-                          </div>
-                        )}
-                        {chain.name}
-                      </div>
+                      {chain.name}
                     </Button>
 
-                    {/* Can't use UI-Kit button here because it breaks the sepolia icon */}
-                    <button
+                    <Button
                       onClick={openAccountModal}
                       type="button"
                       className="bg-secondary rounded-lg px-2 hover:bg-tertiary 
-                      mas-body flex items-center w-fit justify-between gap-5"
+                      mas-body flex items-center justify-between gap-5 min-w-fit"
+                      posIcon={<FiEdit size={14} />}
                     >
-                      {Intl.t('connect-wallet.connected-cards.wallet-address')}
-                      {account.displayName}
-                      <FiEdit size={18} />
-                    </button>
+                      <div className="flex justify-between w-full">
+                        {Intl.t(
+                          'connect-wallet.connected-cards.wallet-address',
+                        )}
+                        {account.displayName}
+                      </div>
+                    </Button>
                   </div>
                   <div>
                     {account.displayBalance
