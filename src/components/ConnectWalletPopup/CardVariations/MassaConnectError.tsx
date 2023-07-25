@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import Intl from '@/i18n/i18n';
 
 export function MassaConnectError({ ...props }) {
-  const { accounts } = props;
+  const { accounts, isFetching } = props;
   const [isMassaStationConnected, setIsMassaStationConnected] =
     useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<JSX.Element | null>(null);
@@ -29,7 +29,7 @@ export function MassaConnectError({ ...props }) {
     getSomething();
   }, [isMassaStationConnected]);
 
-  return <>{errorMessage === null ? <FetchingStatus /> : errorMessage}</>;
+  return <>{isFetching ? <FetchingStatus /> : errorMessage}</>;
 }
 
 export function ErrorMassaStation() {
