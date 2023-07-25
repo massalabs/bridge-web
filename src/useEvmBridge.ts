@@ -34,13 +34,14 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
     state.token,
     state.account,
   ]);
+  const evmToken = token?.evmToken as `0x${string}`;
 
-  const { data: tokenData } = useToken({ address: token?.evmToken });
+  const { data: tokenData } = useToken({ address: evmToken });
   const decimals: number = tokenData?.decimals || 18;
   const evmUserAddress = accountAddress ? accountAddress : '0x00000';
 
   const balanceData = useBalance({
-    token: token?.evmToken,
+    token: evmToken,
     address: accountAddress,
   });
 
@@ -52,7 +53,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   }, [token]);
 
   const allowance = useContractRead({
-    address: token?.evmToken,
+    address: evmToken,
     abi: erc20ABI,
     functionName: 'allowance',
     args: [evmUserAddress, EVM_BRIDGE_ADDRESS],
@@ -63,7 +64,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
 
   const { write: approve, data: approveData } = useContractWrite({
     functionName: 'approve',
-    address: token?.evmToken,
+    address: evmToken,
     abi: erc20ABI,
     gas: MAX_GAS,
     args: [EVM_BRIDGE_ADDRESS, MAX_APPROVAL],
