@@ -1,25 +1,10 @@
 import { maskAddress } from '@/utils/massaFormat';
 import { SelectMassaWalletAccount } from '@/components';
-import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
-import { useEffect, useState } from 'react';
 import { Clipboard } from '@massalabs/react-ui-kit';
 import Intl from '@/i18n/i18n';
 
 export function ConnectedCard({ ...props }) {
-  const { account } = props;
-  const [balance, setBalance] = useState<IAccountBalanceResponse>();
-
-  async function fetchBalance(account: IAccount | null) {
-    try {
-      return await account?.balance();
-    } catch (error) {
-      console.error('Error while retrieving balance: ', error);
-    }
-  }
-
-  useEffect(() => {
-    fetchBalance(account).then((balance) => setBalance(balance));
-  }, [account]);
+  const { account, balance } = props;
 
   return (
     <div className="flex flex-col gap-4">

@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { providers, IAccount } from '@massalabs/wallet-provider';
+import {
+  providers,
+  IAccount,
+  IAccountBalanceResponse,
+} from '@massalabs/wallet-provider';
 import { MASSA_STATION } from '@/const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
 import { getMassaTokenSymbol } from '@/custom/token/token';
@@ -17,6 +21,8 @@ export interface AccountStoreState {
   token: IToken | null;
   tokens: IToken[];
   isFetching: boolean;
+  isMassaStationConnected: boolean;
+  balance: IAccountBalanceResponse;
 
   setAccount: (account: IAccount | null) => void;
   setToken: (token: IToken | null) => void;
@@ -34,6 +40,11 @@ const accountStore = (set: any, get: any) => ({
   token: null,
   account: null,
   isFetching: false,
+  balance: {
+    finalBalance: '',
+    candidateBalance: '',
+  },
+  isMassaStationConnected: false,
 
   setAvailableAccounts: (accounts: IAccount) => {
     set({ accounts: accounts });
@@ -85,10 +96,17 @@ const accountStore = (set: any, get: any) => ({
         });
       } else {
         const firstAccount = fetchedAccounts?.at(0);
+
+        let firstAccountBalance = null;
+        if (firstAccount) {
+          firstAccountBalance = await firstAccount?.balance();
+        }
         set({
           accounts: fetchedAccounts,
           account: firstAccount ?? null,
           isFetching: false,
+          balance: firstAccountBalance,
+          isMassaStationConnected: !!massaStationWallet,
         });
       }
     } catch (error) {
