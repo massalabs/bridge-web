@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { maskAddress } from '@/utils/massaFormat';
 import Intl from '@/i18n/i18n';
 import { toast } from '@massalabs/react-ui-kit';
 import { useAccountStore } from '@/store/store';
@@ -17,10 +16,11 @@ import {
 import { EVM_BRIDGE_ADDRESS } from '@/const/const';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 
+type loadingState = 'success' | 'error' | 'loading' | 'none';
 interface useEvmBridgeProps {
-  setLoading: Dispatch<
-    SetStateAction<'success' | 'error' | 'loading' | 'none'>
-  >;
+  setLoading: Dispatch<SetStateAction<loadingState>>;
+  setBridgeLoading: Dispatch<SetStateAction<loadingState>>;
+  setApproveLoading: Dispatch<SetStateAction<loadingState>>;
 }
 
 // TODO: Max u256 pour approval
@@ -28,7 +28,12 @@ const MAX_APPROVAL = 2n ** 256n - 1n;
 // TODO: fix gas limit
 const MAX_GAS = 1_000_000n;
 
-const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
+const useEvmBridge = ({
+  setLoading,
+  setBridgeLoading,
+  setApproveLoading,
+}: useEvmBridgeProps) => {
+  const [evmAmountToBridge, setEvmAmountToBridge] = useState<string>('0');
   const { address: accountAddress } = useAccount();
   const [token, massaAccount] = useAccountStore((state) => [
     state.token,
@@ -43,6 +48,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   const balanceData = useBalance({
     token: evmToken,
     address: accountAddress,
+    watch: true,
   });
 
   const [evmTokenBalance, setEvmTokenBalance] = useState<string>();
@@ -50,7 +56,7 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   useEffect(() => {
     if (!token) return;
     setEvmTokenBalance(balanceData.data?.formatted || '0');
-  }, [token]);
+  }, [token, balanceData.data?.formatted]);
 
   const allowance = useContractRead({
     address: evmToken,
@@ -70,10 +76,13 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
     args: [EVM_BRIDGE_ADDRESS, MAX_APPROVAL],
   });
 
-  const { isLoading: approvalIsPending, isSuccess: approvalIsSuccess } =
-    useWaitForTransaction({
-      hash: approveData?.hash,
-    });
+  const {
+    isLoading: approvalIsPending,
+    isSuccess: approvalIsSuccess,
+    isError: approvalIsError,
+  } = useWaitForTransaction({
+    hash: approveData?.hash,
+  });
 
   const { write: lock, ...lockState } = useContractWrite({
     abi: bridgeVaultAbi,
@@ -90,77 +99,29 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
     hash: lockState.data?.hash,
   });
 
-  useEffect(() => {
-    if (!approvalIsPending && approvalIsSuccess) {
-      // TODO: update Loading when ok
-      // setLoading(false);
-      // Personalize success message
-      toast.success(
-        Intl.t(`index.approve.success`, {
-          // TODO: What to put in maskAddress ?
-          from: maskAddress(String(accountAddress)),
-        }),
-      );
-    }
-  }, [approvalIsPending, approvalIsSuccess]);
-
-  useEffect(() => {
-    // If no allowance, error
-    if (!lockIsPending && lockIsSuccess) {
-      // TODO: update Loading when ok
-      // setLoading(false);
-      toast.success(
-        Intl.t(`index.bridge.success`, {
-          // TODO: What to put in maskAddress ?
-          from: maskAddress(String(accountAddress)),
-        }),
-      );
-    }
-    if (lockIsError) {
-      toast.error(Intl.t(`index.bridge.error.general`));
-      // TODO: update Loading when ok
-      // setLoading(false);
-    }
-    balanceData.refetch();
-    // Refetch token balance on massa side
-  }, [lockIsPending, lockIsSuccess]);
-
-  async function handleEvmApprove() {
-    if (!accountAddress) {
-      toast.error(Intl.t(`index.bridge.error.noAddress`));
-      return;
-    }
-
-    try {
-      // TODO: update Loading when ok
-      // setLoading(true);
-      approve();
-    } catch (error) {
-      // TODO: Improve error handling
-      console.log(error);
-      // TODO: update Loading when ok
-      // setLoading(false);
-      toast.error(Intl.t(`index.bridge.error.general`));
-    }
-  }
-
   async function handleBridgeEvm(amount: bigint) {
-    // TODO: Improve error handling
-    if (!amount) {
-      toast.error(Intl.t(`index.bridge.error.amount`));
-      console.log('no amount');
-      return;
-    }
     if (Number(evmTokenBalance) < Number(amount)) {
       toast.error(Intl.t(`index.bridge.error.lowBalance`));
       console.log('low balance');
       return;
     }
-    // TODO: update Loading when ok
-    // setLoading(true);
-
     try {
-      lock({
+      setApproveLoading('loading');
+      if (allowanceValue < BigInt(evmAmountToBridge)) await approve();
+      else {
+        setApproveLoading('success');
+        await handleLockEvm(BigInt(evmAmountToBridge));
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(Intl.t(`index.bridge.error.general`));
+    }
+  }
+
+  async function handleLockEvm(amount: bigint) {
+    setBridgeLoading('loading');
+    try {
+      await lock({
         args: [
           parseUnits(amount.toString(), decimals),
           massaAccount?.address(),
@@ -168,20 +129,42 @@ const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
         ],
       });
     } catch (error) {
-      // TODO: Improve error handling
       console.log(error);
-      // TODO: update Loading when ok
-      // setLoading(false);
       toast.error(Intl.t(`index.bridge.error.general`));
     }
   }
 
+  useEffect(() => {
+    if (approvalIsSuccess) {
+      setApproveLoading('success');
+      handleLockEvm(BigInt(evmAmountToBridge));
+    }
+    if (approvalIsError) {
+      setApproveLoading('error');
+    }
+  }, [approvalIsPending, approvalIsSuccess]);
+
+  useEffect(() => {
+    if (lockIsSuccess) {
+      setBridgeLoading('success');
+      setEvmAmountToBridge('0');
+      stopLoading();
+    }
+    if (lockIsError) {
+      setBridgeLoading('error');
+      stopLoading();
+    }
+  }, [lockIsPending, lockIsSuccess]);
+
+  function stopLoading() {
+    setApproveLoading('none');
+    setBridgeLoading('none');
+    setLoading('none');
+  }
   return {
-    tokenData,
-    allowanceValue,
     evmTokenBalance,
-    handleEvmApprove,
     handleBridgeEvm,
+    setEvmAmountToBridge,
   };
 };
 

@@ -128,14 +128,12 @@ export function Index() {
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
 
-  const {
-    evmTokenBalance,
-    handleBridgeEvm,
-    handleEvmApprove,
-    allowanceValue: evmAllowanceValue,
-  } = useEvmBridge({
-    setLoading,
-  });
+  const { evmTokenBalance, handleBridgeEvm, setEvmAmountToBridge } =
+    useEvmBridge({
+      setLoading,
+      setBridgeLoading,
+      setApproveLoading,
+    });
 
   useEffect(() => {
     getAccounts();
@@ -149,9 +147,12 @@ export function Index() {
     fetchBalance(account).then((balance) => setBalance(balance));
   }, [account]);
 
+  useEffect(() => {
+    if (amount) setEvmAmountToBridge(`${amount}`);
+  }, [amount]);
+
   function handleToggleLayout() {
     let isMassaToEvm = layout === MASSA_TO_EVM;
-
     setLayout(isMassaToEvm ? EVM_TO_MASSA : MASSA_TO_EVM);
   }
 
@@ -541,8 +542,7 @@ export function Index() {
       const approved = await handleApprove();
       if (approved) handleBridge();
     } else if (layout === EVM_TO_MASSA) {
-      if (evmAllowanceValue < BigInt(amount!)) await handleEvmApprove();
-      else handleBridgeEvm(BigInt(amount!));
+      handleBridgeEvm(BigInt(amount!));
     }
   }
 
