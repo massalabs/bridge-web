@@ -1,16 +1,19 @@
+import Intl from '@/i18n/i18n';
+
 export function MetamaskNotInstalled() {
+  const metamaskDownloadLink = 'https://metamask.io/download/';
   return (
     <>
-      <p> It seems like you don't have metamask installed</p>
-      <div>
-        {/* Linting removes space here so i have to add it manually*/}
-        Please follow this{' '}
+      <p>
+        {Intl.t('connect-wallet.connect-metamask.no-metamask')}
+        <br />{' '}
+        {Intl.t('connect-wallet.connect-metamask.download-metamask-action')}
         <u>
-          <a href="https://metamask.io/download/" target="_blank">
-            installation process
+          <a href={metamaskDownloadLink} target="_blank">
+            {Intl.t('connect-wallet.connect-metamask.installation-process')}
           </a>
         </u>
-      </div>
+      </p>
     </>
   );
 }

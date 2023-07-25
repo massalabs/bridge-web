@@ -1,5 +1,5 @@
 export * from './RessourceSidePanel';
-export * from './SelectMassaAccount';
-export * from './ConnectedCard';
+export * from './MassaSelect';
+export * from './MassaConnect';
 export * from './MetamaskNotInstalled';
 export * from './CustomConnectBtn';

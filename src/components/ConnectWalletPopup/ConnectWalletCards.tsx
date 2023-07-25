@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import {
   RessourceSidePanel,
@@ -11,29 +11,35 @@ import { useAccount } from 'wagmi';
 
 import Intl from '@/i18n/i18n';
 
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useNetworkStore } from '@/store/store';
 import { Connected, Disconnected } from '@/pages';
-import { MassaConnectError } from './CardVariations/MassaConnectError';
+import { MassaConnectError } from './CardVariations/MassaError';
 
 export function ConnectWalletCards() {
   const { isConnected: isEvmWalletConnected } = useAccount();
 
-  const [accounts, account, setAccount, isFetching] = useAccountStore(
-    (state) => [
-      state.accounts,
-      state.account,
-      state.setAccount,
-      state.isFetching,
-    ],
-  );
+  const [
+    accounts,
+    account,
+    setAccount,
+    isFetching,
+    balance,
+    isMassaStationConnected,
+  ] = useAccountStore((state) => [
+    state.accounts,
+    state.account,
+    state.setAccount,
+    state.isFetching,
+    state.balance,
+    state.isMassaStationConnected,
+  ]);
 
-  const [isMetamaskInstalled, setIsMetamaskInstalled] = useState<boolean>(
-    window.ethereum?.isConnected(),
+  const [isMetamaskInstalled, setIsMetamaskInstalled] = useNetworkStore(
+    (state) => [state.isMetamaskInstalled, state.setIsMetamaskInstalled],
   );
 
   useEffect(() => {
-    if (!window.ethereum) return;
-    setIsMetamaskInstalled(window.ethereum.isConnected());
+    setIsMetamaskInstalled(window.ethereum?.isConnected());
   }, [isMetamaskInstalled]);
 
   const massaWalletArgs = {
@@ -41,6 +47,8 @@ export function ConnectWalletCards() {
     account,
     setAccount,
     isFetching,
+    balance,
+    isMassaStationConnected,
   };
 
   return (
@@ -65,8 +73,7 @@ export function ConnectWalletCards() {
             <p>{Intl.t('connect-wallet.card-destination.to')}</p>
             {accounts?.length ? <Connected /> : <Disconnected />}
           </div>
-          {/*  Add user flow cases where there is no massastation, no wallet etc etc */}
-          {accounts?.length ? (
+          {!isFetching && accounts?.length ? (
             <ConnectedCard {...massaWalletArgs} />
           ) : (
             <MassaConnectError {...massaWalletArgs} />

@@ -1,32 +1,20 @@
-import { MASSA_STATION } from '@/const';
 import { FetchingStatus } from '@/pages/Index/Loading';
 import { linkToCreateWallet, linkToInstall } from '@/utils/const';
-import { providers } from '@massalabs/wallet-provider';
+
 import { useEffect, useState } from 'react';
 import Intl from '@/i18n/i18n';
 
 export function MassaConnectError({ ...props }) {
-  const { accounts, isFetching } = props;
-  const [isMassaStationConnected, setIsMassaStationConnected] =
-    useState<boolean>(false);
+  const { accounts, isFetching, isMassaStationConnected } = props;
+
   const [errorMessage, setErrorMessage] = useState<JSX.Element | null>(null);
 
-  async function getSomething() {
-    const providerList = await providers();
-    const massaStationWallet = providerList.find(
-      (provider: any) => provider.name() === MASSA_STATION,
-    );
-    setIsMassaStationConnected(!!massaStationWallet);
+  useEffect(() => {
     if (!isMassaStationConnected) {
-      setIsMassaStationConnected(!!massaStationWallet);
       setErrorMessage(<ErrorMassaStation />);
     } else if (isMassaStationConnected && accounts?.length <= 0) {
       setErrorMessage(<ErrorWallet />);
     }
-  }
-
-  useEffect(() => {
-    getSomething();
   }, [isMassaStationConnected]);
 
   return <>{isFetching ? <FetchingStatus /> : errorMessage}</>;
@@ -36,10 +24,7 @@ export function ErrorMassaStation() {
   return (
     <div className="truncate max-w-10 mas-body">
       <a href={linkToInstall} target="_blank">
-        <u>
-          {' '}
-          {Intl.t('connect-wallet.station-connect-error.download-station')}
-        </u>
+        <u>{Intl.t('connect-wallet.station-connect-error.download-station')}</u>
       </a>
       {Intl.t('connect-wallet.station-connect-error.error-station')}
     </div>
