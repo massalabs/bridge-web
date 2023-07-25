@@ -1,8 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Intl from '@/i18n/i18n';
 import { toast } from '@massalabs/react-ui-kit';
 import { useAccountStore } from '@/store/store';
 import { parseUnits } from 'viem';
+import { ILoadingState } from '@/const';
 
 import {
   useContractWrite,
@@ -16,11 +17,8 @@ import {
 import { EVM_BRIDGE_ADDRESS } from '@/const/const';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 
-type loadingState = 'success' | 'error' | 'loading' | 'none';
 interface useEvmBridgeProps {
-  setLoading: Dispatch<SetStateAction<loadingState>>;
-  setBridgeLoading: Dispatch<SetStateAction<loadingState>>;
-  setApproveLoading: Dispatch<SetStateAction<loadingState>>;
+  setLoading: (state: ILoadingState) => void;
 }
 
 // TODO: Max u256 pour approval
@@ -28,11 +26,7 @@ const MAX_APPROVAL = 2n ** 256n - 1n;
 // TODO: fix gas limit
 const MAX_GAS = 1_000_000n;
 
-const useEvmBridge = ({
-  setLoading,
-  setBridgeLoading,
-  setApproveLoading,
-}: useEvmBridgeProps) => {
+const useEvmBridge = ({ setLoading }: useEvmBridgeProps) => {
   const [evmAmountToBridge, setEvmAmountToBridge] = useState<string>('0');
   const { address: accountAddress } = useAccount();
   const [token, massaAccount] = useAccountStore((state) => [
@@ -106,10 +100,10 @@ const useEvmBridge = ({
       return;
     }
     try {
-      setApproveLoading('loading');
+      setLoading({ approve: 'loading' });
       if (allowanceValue < BigInt(evmAmountToBridge)) await approve();
       else {
-        setApproveLoading('success');
+        setLoading({ approve: 'success' });
         await handleLockEvm(BigInt(evmAmountToBridge));
       }
     } catch (error) {
@@ -119,7 +113,7 @@ const useEvmBridge = ({
   }
 
   async function handleLockEvm(amount: bigint) {
-    setBridgeLoading('loading');
+    setLoading({ bridge: 'loading' });
     try {
       await lock({
         args: [
@@ -136,30 +130,28 @@ const useEvmBridge = ({
 
   useEffect(() => {
     if (approvalIsSuccess) {
-      setApproveLoading('success');
+      setLoading({ approve: 'success' });
       handleLockEvm(BigInt(evmAmountToBridge));
     }
     if (approvalIsError) {
-      setApproveLoading('error');
+      setLoading({ approve: 'error' });
     }
   }, [approvalIsPending, approvalIsSuccess]);
 
   useEffect(() => {
     if (lockIsSuccess) {
-      setBridgeLoading('success');
+      setLoading({ bridge: 'success' });
       setEvmAmountToBridge('0');
       stopLoading();
     }
     if (lockIsError) {
-      setBridgeLoading('error');
+      setLoading({ bridge: 'error' });
       stopLoading();
     }
   }, [lockIsPending, lockIsSuccess]);
 
   function stopLoading() {
-    setApproveLoading('none');
-    setBridgeLoading('none');
-    setLoading('none');
+    setLoading({ approve: 'none', bridge: 'none', box: 'none' });
   }
   return {
     evmTokenBalance,

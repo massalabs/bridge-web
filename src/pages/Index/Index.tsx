@@ -20,7 +20,7 @@ import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
 import { formatStandard } from '@/utils/massaFormat';
 import useEvmBridge from '@/useEvmBridge';
 import { useAccount, useNetwork, useFeeData } from 'wagmi';
-import { LayoutType, StateType } from '@/const';
+import { LayoutType, ILoadingState } from '@/const';
 import { fetchBalance } from '@/bridge';
 
 const iconsNetworks = {
@@ -59,11 +59,20 @@ export function Index() {
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
   const [amount, setAmount] = useState<number | string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
-  const [loading, setLoading] = useState<StateType>('none');
-  const [approveLoading, setApproveLoading] = useState<StateType>('none');
-  const [bridgeLoading, setBridgeLoading] = useState<StateType>('none');
   const [error, setError] = useState<{ amount: string } | null>(null);
   const [evmWalletConnected, _] = useState<boolean>(true);
+
+  const [loading, _setLoading] = useState<ILoadingState>({
+    box: 'none',
+    approve: 'none',
+    bridge: 'none',
+  });
+
+  function setLoading(state: ILoadingState) {
+    _setLoading((prevState) => {
+      return { ...prevState, ...state };
+    });
+  }
 
   const isMassaWalletConnected = !!account;
 
@@ -73,11 +82,7 @@ export function Index() {
     useAccount();
 
   const { evmTokenBalance, handleBridgeEvm, setEvmAmountToBridge } =
-    useEvmBridge({
-      setLoading,
-      setBridgeLoading,
-      setApproveLoading,
-    });
+    useEvmBridge({ setLoading });
 
   useEffect(() => {
     getAccounts();
@@ -320,7 +325,9 @@ export function Index() {
   }
 
   async function handleApprove() {
-    setApproveLoading('loading');
+    setLoading({
+      approve: 'loading',
+    });
     try {
       const maxAmount = BigInt('2') ** BigInt('256') - BigInt('1');
       await increaseAllowance(
@@ -329,12 +336,16 @@ export function Index() {
         maxAmount,
       );
 
-      setApproveLoading('success');
+      setLoading({
+        approve: 'success',
+      });
     } catch (error) {
       console.log(error);
-      setApproveLoading('error');
-      setBridgeLoading('error');
-      setLoading('error');
+      setLoading({
+        approve: 'error',
+        bridge: 'error',
+        box: 'error',
+      });
 
       if (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -350,7 +361,9 @@ export function Index() {
   }
 
   async function handleBridge() {
-    setBridgeLoading('loading');
+    setLoading({
+      bridge: 'loading',
+    });
 
     try {
       let tokenPairs = new TokenPair(
@@ -361,15 +374,20 @@ export function Index() {
 
       await forwardBurn(account ?? undefined, tokenPairs);
 
-      setBridgeLoading('success');
-      setLoading('success');
+      setLoading({
+        bridge: 'success',
+        box: 'success',
+      });
       handleTimerClosePopUp();
 
       toast.success(Intl.t(`index.bridge.success`));
     } catch (error) {
       console.log(error);
-      setBridgeLoading('error');
-      setLoading('error');
+      setLoading({
+        bridge: 'error',
+        box: 'error',
+      });
+
       toast.error(Intl.t(`index.bridge.error.general`));
       return false;
     }
@@ -384,17 +402,21 @@ export function Index() {
   );
 
   function handleClosePopUp() {
-    setLoading('none');
-    setApproveLoading('none');
-    setBridgeLoading('none');
+    setLoading({
+      box: 'none',
+      approve: 'none',
+      bridge: 'none',
+    });
     setAmount('');
   }
 
   function handleTimerClosePopUp(timer = 1500) {
     setTimeout(() => {
-      setLoading('none');
-      setApproveLoading('none');
-      setBridgeLoading('none');
+      setLoading({
+        box: 'none',
+        approve: 'none',
+        bridge: 'none',
+      });
       setAmount('');
     }, timer);
   }
@@ -403,7 +425,9 @@ export function Index() {
     e.preventDefault();
     if (!validateBridge()) return;
 
-    setLoading('loading');
+    setLoading({
+      box: 'loading',
+    });
 
     if (layout === MASSA_TO_EVM) {
       // Allowance
@@ -414,16 +438,16 @@ export function Index() {
     }
   }
 
-  const isLoading = loading !== 'none' ? 'blur-md' : null;
+  const isLoading = loading.box !== 'none' ? 'blur-md' : null;
 
   return (
     <>
       {isLoading && (
         <LoadingBox
           onClose={handleClosePopUp}
-          loading={loading}
-          approveLoading={approveLoading}
-          bridgeLoading={bridgeLoading}
+          loading={loading.box}
+          approveLoading={loading.approve}
+          bridgeLoading={loading.bridge}
         />
       )}
       <div
@@ -501,11 +525,6 @@ export function Index() {
           </div>
         </div>
         <div>
-          {/* <p className="mas-caption mb-4">
-            {Intl.t(`index.total.approve`, {
-              amount: formatStandard(Number(0)),
-            })}
-          </p> */}
           <Button onClick={(e) => handleSubmit(e)}>
             {Intl.t(`index.button.bridge`)}
           </Button>
