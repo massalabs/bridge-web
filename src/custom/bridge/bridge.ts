@@ -3,12 +3,12 @@ import { IAccount } from '@massalabs/wallet-provider';
 import { TokenPair } from '../serializable/tokenPair';
 import { ForwardingRequest } from '../serializable/request';
 
-const CONTRACT_ADDRESS = 'AS1crhHVfdykXmoV73LFAaRgqLMRuLZEeJy8FQCQYc73NNnW3Utf';
+const CONTRACT_ADDRESS = 'AS1iRUPh5qxSYbJ4PBPbKWGSr49jiB7M6kf4hPy7whG2zjcYa7HR';
 
 export async function increaseAllowance(
   account: IAccount | undefined,
   tokenAddress: string,
-  amount: number,
+  amount: bigint,
 ): Promise<any> {
   if (!account) {
     throw new Error('Account is not defined');
@@ -16,7 +16,7 @@ export async function increaseAllowance(
   const result = await account?.callSC(
     tokenAddress,
     'increaseAllowance',
-    new Args().addString(account.address()).addU256(BigInt(amount)),
+    new Args().addString(CONTRACT_ADDRESS).addU256(amount),
     BigInt(100),
   );
   return result;

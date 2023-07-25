@@ -11,6 +11,12 @@
       "not-connected": "Not connected",
       "connected": "Connected"
     },
+    "loading-box": {
+      "title": "Bridge transfer",
+      "subtitle": "(it can take some seconds longer)",
+      "approve": "approve (give allowance) ",
+      "bridge": "bridge"
+    },
     "input": {
       "placeholder": {
         "amount": "Amount",
@@ -39,7 +45,7 @@
         "invalid-amount": "Invalid amount",
         "insuficient-funds": "Insuficient founds"
       },
-      "success": "Great! Bridge from {from} to {to} was executed successfully!",
+      "success": "Great! Bridge transfer executed successfully!",
       "loading": "We are briiiiiiiiidging..."
     },
     "balance": {
