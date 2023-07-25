@@ -14,7 +14,7 @@ export const { chains, publicClient } = configureChains(
     publicProvider(),
   ],
 );
-// -chxUrqdCqZWteAu27xRbxHzdnMt2VjW
+
 export const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
