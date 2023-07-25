@@ -111,9 +111,6 @@ export function Index() {
   }
 
   function EVMHeader() {
-    if (typeof window.ethereum === 'undefined') {
-      toast.error(Intl.t(`index.metamask.missing`));
-    }
     return (
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">

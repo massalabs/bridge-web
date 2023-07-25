@@ -52,11 +52,13 @@ export function ConnectWalletCards() {
             {isEvmWalletConnected ? <Connected /> : <Disconnected />}
           </div>
           {/* <ConnectEvmButton /> */}
-          {isMetamaskInstalled ? (
-            <CustomConnectButton />
-          ) : (
-            <MetamaskNotInstalled />
-          )}
+          <div className="w-full">
+            {isMetamaskInstalled ? (
+              <CustomConnectButton />
+            ) : (
+              <MetamaskNotInstalled />
+            )}
+          </div>
         </WalletCard>
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
@@ -83,7 +85,7 @@ export function WalletCard({ ...props }) {
 
   return (
     <div
-      className="bg-primary w-full h-60 p-6 
+      className="bg-primary max-w-full h-60 p-6 
                     rounded-2xl
                     flex flex-col justify-center items-center"
     >
