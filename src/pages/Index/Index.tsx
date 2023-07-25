@@ -608,7 +608,7 @@ export function Index() {
                 onValueChange={(value) => setAmount(value)}
                 suffix=""
                 error=""
-                disable={true}
+                disabled={true}
               />
             </div>
             <div className="w-1/3">{boxLayout(layout).down.token}</div>
