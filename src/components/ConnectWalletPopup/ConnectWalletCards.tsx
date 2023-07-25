@@ -5,6 +5,8 @@ import {
   ConnectedCard,
   MetamaskNotInstalled,
   CustomConnectButton,
+  Connected,
+  Disconnected,
 } from '@/components';
 
 import { useAccount } from 'wagmi';
@@ -12,7 +14,6 @@ import { useAccount } from 'wagmi';
 import Intl from '@/i18n/i18n';
 
 import { useAccountStore, useNetworkStore } from '@/store/store';
-import { Connected, Disconnected } from '@/pages';
 import { MassaConnectError } from './CardVariations/MassaError';
 
 export function ConnectWalletCards() {

@@ -23,7 +23,7 @@ export function Base() {
   );
 
   useEffect(() => {
-    navigate('testnet/index');
+    navigate('buildnet/index');
   }, [navigate]);
 
   // Store

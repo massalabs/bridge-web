@@ -1,28 +1,27 @@
-import { useState, SyntheticEvent, useEffect } from 'react';
+import { useState, SyntheticEvent, useEffect, ReactNode } from 'react';
 import Intl from '@/i18n/i18n';
 import {
   Dropdown,
   MassaLogo,
   MassaToken,
-  Tag,
   Currency,
   Button,
   toast,
 } from '@massalabs/react-ui-kit';
-import { FiRepeat, FiX, FiPauseCircle } from 'react-icons/fi';
-import { BsCheckLg } from 'react-icons/bs';
-import { RxCross2 } from 'react-icons/rx';
-import { GetTokensPopUpModal, Spinner } from '@/components';
-import { EVM_TO_MASSA, MASSA_TO_EVM, tagTypes } from '@/utils/const';
-import { useAccountStore } from '@/store/store';
+import { FiRepeat } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
-import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
+import { GetTokensPopUpModal, Connected, Disconnected } from '@/components';
+import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
+import { useAccountStore } from '@/store/store';
+import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
-import { useAccount, useNetwork, useFeeData } from 'wagmi';
-import { FetchingLine, FetchingStatus } from './Loading';
+import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
 import { formatStandard } from '@/utils/massaFormat';
 import useEvmBridge from '@/useEvmBridge';
+import { useAccount, useNetwork, useFeeData } from 'wagmi';
+import { LayoutType, StateType } from '@/const';
+import { fetchBalance } from '@/bridge';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -33,54 +32,6 @@ const iconsTokens = {
   MASSASTATION: <MassaLogo size={16} />,
   OTHER: <BsDiamondHalf />,
 };
-
-export function Connected() {
-  return (
-    <Tag type={tagTypes.success} content={Intl.t(`index.tag.connected`)} />
-  );
-}
-
-export function Disconnected() {
-  return (
-    <Tag type={tagTypes.error} content={Intl.t(`index.tag.not-connected`)} />
-  );
-}
-
-function SuccessCheck({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }) {
-  const isSmall = size === 'sm';
-  const isMedium = size === 'md';
-  const sizeClass = isSmall
-    ? 'w-6 h-6'
-    : isMedium
-    ? 'w-8 h-8'
-    : 'w-12 h-12 border-4';
-
-  return (
-    <div
-      className={`${sizeClass} rounded-full bg-s-success/30 flex justify-center items-center border-none`}
-    >
-      <BsCheckLg className="text-s-success w-full h-full p-1" />
-    </div>
-  );
-}
-
-function ErrorCheck({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }) {
-  const isSmall = size === 'sm';
-  const isMedium = size === 'md';
-  const sizeClass = isSmall
-    ? 'w-6 h-6'
-    : isMedium
-    ? 'w-8 h-8'
-    : 'w-12 h-12 border-4';
-
-  return (
-    <div
-      className={`${sizeClass} rounded-full bg-s-error/30 flex justify-center items-center border-none`}
-    >
-      <RxCross2 className="text-s-error w-full h-full p-1" />
-    </div>
-  );
-}
 
 export function Index() {
   const [
@@ -108,20 +59,13 @@ export function Index() {
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
   const [amount, setAmount] = useState<number | string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
-  const [loading, setLoading] = useState<
-    'loading' | 'error' | 'success' | 'none'
-  >('none');
-  const [approveLoading, setApproveLoading] = useState<
-    'loading' | 'error' | 'success' | 'none'
-  >('none');
-  const [bridgeLoading, setBridgeLoading] = useState<
-    'loading' | 'error' | 'success' | 'none'
-  >('none');
+  const [loading, setLoading] = useState<StateType>('none');
+  const [approveLoading, setApproveLoading] = useState<StateType>('none');
+  const [bridgeLoading, setBridgeLoading] = useState<StateType>('none');
   const [error, setError] = useState<{ amount: string } | null>(null);
+  const [evmWalletConnected, _] = useState<boolean>(true);
 
   const isMassaWalletConnected = !!account;
-
-  const [evmWalletConnected, _] = useState<boolean>(true);
 
   const { chains } = useNetwork();
   const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
@@ -310,80 +254,13 @@ export function Index() {
     );
   }
 
-  function LoadingBox() {
-    return (
-      <>
-        <div
-          className={`z-10 absolute flex-none max-w-2xl w-full h-[870px] blur-md`}
-        />
-        <div
-          className="absolute z-10 p-10 max-w-sm w-full max-h-96 h-full border border-tertiary rounded-2xl
-              bg-secondary/50 backdrop-blur-lg text-f-primary"
-        >
-          <div className="flex justify-end pb-8">
-            <button
-              className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
-                      hover:bg-tertiary hover:text-c-primary"
-              type="button"
-              onClick={handleClosePopUp}
-            >
-              <FiX className="w-5 h-5" />
-            </button>
-          </div>
-          <div
-            className={`relative flex flex-col items-center justify-start pb-10`}
-          >
-            {loadingState(loading, 'lg')}
-            <p className="mas-subtitle pt-6">
-              {Intl.t('index.loading-box.title')}
-            </p>
-            <p className="text-xs pb-6">
-              {Intl.t('index.loading-box.subtitle')}
-            </p>
-          </div>
-          <div className="mb-6 flex justify-between">
-            <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
-            {loadingState(approveLoading)}
-          </div>
-          <div className="mb-6 flex justify-between">
-            <p className="mas-body-2">{Intl.t('index.loading-box.bridge')}</p>
-            {loadingState(bridgeLoading)}
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  interface ILoading {
-    loading: JSX.Element;
-    error: JSX.Element;
-    success: JSX.Element;
-    none: JSX.Element;
-  }
-
-  type StateType = 'loading' | 'error' | 'success' | 'none';
-
-  function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
-    const loading: ILoading = {
-      loading: <Spinner size={size} />,
-      error: <ErrorCheck size={size} />,
-      success: <SuccessCheck size={size} />,
-      none: <FiPauseCircle size={24} />,
-    };
-
-    return loading[state];
-  }
-
   interface Layout {
-    header: JSX.Element;
-    wallet: JSX.Element;
-    token: JSX.Element;
-    fees: JSX.Element;
-    balance: JSX.Element;
+    header: ReactNode;
+    wallet: ReactNode;
+    token: ReactNode;
+    fees: ReactNode;
+    balance: ReactNode;
   }
-
-  // Define the layout types
-  type LayoutType = 'massaToEvm' | 'evmToMassa';
 
   function boxLayout(layout: LayoutType = 'massaToEvm'): {
     up: Layout;
@@ -395,7 +272,7 @@ export function Index() {
           header: <MassaHeader />,
           wallet: <MassaMiddle />,
           token: <MassaTokenOptions />,
-          fees: <></>,
+          fees: null,
           balance: <MassaBalance />,
         },
         down: {
@@ -403,7 +280,7 @@ export function Index() {
           wallet: <EVMMiddle />,
           token: <EVMTokenOptions />,
           fees: <EVMFees />,
-          balance: <></>,
+          balance: null,
         },
       },
       evmToMassa: {
@@ -411,7 +288,7 @@ export function Index() {
           header: <EVMHeader />,
           wallet: <EVMMiddle />,
           token: <EVMTokenOptions />,
-          fees: <></>,
+          fees: null,
           balance: <EVMBalance />,
         },
         down: {
@@ -419,7 +296,7 @@ export function Index() {
           wallet: <MassaMiddle />,
           token: <MassaTokenOptions />,
           fees: <MassaFees />,
-          balance: <></>,
+          balance: null,
         },
       },
     };
@@ -500,15 +377,6 @@ export function Index() {
     return true;
   }
 
-  async function fetchBalance(account: IAccount | null) {
-    try {
-      return await account?.balance();
-    } catch (error) {
-      console.error('Error while retrieving balance: ', error);
-      toast.error(Intl.t(`index.balance.error`));
-    }
-  }
-
   const selectedMassaTokenKey: number = parseInt(
     Object.keys(tokens).find(
       (_, idx) => tokens[idx].name.slice(0, -2) === token?.name.slice(0, -2),
@@ -542,7 +410,7 @@ export function Index() {
       const approved = await handleApprove();
       if (approved) handleBridge();
     } else if (layout === EVM_TO_MASSA) {
-      handleBridgeEvm(BigInt(amount!));
+      handleBridgeEvm(BigInt(amount ?? 0));
     }
   }
 
@@ -550,7 +418,14 @@ export function Index() {
 
   return (
     <>
-      {isLoading && <LoadingBox />}
+      {isLoading && (
+        <LoadingBox
+          onClose={handleClosePopUp}
+          loading={loading}
+          approveLoading={approveLoading}
+          bridgeLoading={bridgeLoading}
+        />
+      )}
       <div
         className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
             bg-secondary/50 backdrop-blur-lg text-f-primary ${isLoading}`}
@@ -626,18 +501,21 @@ export function Index() {
           </div>
         </div>
         <div>
-          <p className="mas-caption mb-4">
+          {/* <p className="mas-caption mb-4">
             {Intl.t(`index.total.approve`, {
               amount: formatStandard(Number(0)),
             })}
-          </p>
+          </p> */}
           <Button onClick={(e) => handleSubmit(e)}>
             {Intl.t(`index.button.bridge`)}
           </Button>
         </div>
       </div>
       {openTokensModal && (
-        <GetTokensPopUpModal setOpenModal={setOpenTokensModal} />
+        <GetTokensPopUpModal
+          setOpenModal={setOpenTokensModal}
+          layout={layout}
+        />
       )}
     </>
   );
