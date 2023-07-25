@@ -19,9 +19,10 @@ import { BsDiamondHalf } from 'react-icons/bs';
 import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
+import { useAccount, useNetwork, useFeeData } from 'wagmi';
 import { FetchingLine, FetchingStatus } from './Loading';
 import { formatStandard } from '@/utils/massaFormat';
-import { useAccount, useBalance, useNetwork, useFeeData } from 'wagmi';
+import useEvmBridge from '@/useEvmBridge';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -124,13 +125,15 @@ export function Index() {
 
   const { chains } = useNetwork();
   const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
-  const { isConnected: isEvmWalletConnected, address: EvmAddress } =
+  const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
-  const { data: evmBalanceObject } = useBalance({
-    address: EvmAddress,
-  });
 
-  const evmBalance = evmBalanceObject?.formatted;
+  const { evmTokenBalance, handleBridgeEvm, setEvmAmountToBridge } =
+    useEvmBridge({
+      setLoading,
+      setBridgeLoading,
+      setApproveLoading,
+    });
 
   useEffect(() => {
     getAccounts();
@@ -144,9 +147,12 @@ export function Index() {
     fetchBalance(account).then((balance) => setBalance(balance));
   }, [account]);
 
+  useEffect(() => {
+    if (amount) setEvmAmountToBridge(`${amount}`);
+  }, [amount]);
+
   function handleToggleLayout() {
     let isMassaToEvm = layout === MASSA_TO_EVM;
-
     setLayout(isMassaToEvm ? EVM_TO_MASSA : MASSA_TO_EVM);
   }
 
@@ -200,7 +206,7 @@ export function Index() {
     return (
       <div className="mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
-        <p className="mas-caption">{EvmAddress}</p>
+        <p className="mas-caption">{evmAddress}</p>
       </div>
     );
   }
@@ -282,7 +288,9 @@ export function Index() {
     return (
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
-        <p className="mas-body">{formatStandard(Number(evmBalance || 0))}</p>
+        <p className="mas-body">
+          {formatStandard(Number(evmTokenBalance || 0))}
+        </p>
       </div>
     );
   }
@@ -530,12 +538,11 @@ export function Index() {
     setLoading('loading');
 
     if (layout === MASSA_TO_EVM) {
+      // Allowance
       const approved = await handleApprove();
-
       if (approved) handleBridge();
     } else if (layout === EVM_TO_MASSA) {
-      // TODO: TO BE IMPLEMENTED
-      console.log('TODO: TO BE IMPLEMENTED');
+      handleBridgeEvm(BigInt(amount!));
     }
   }
 
