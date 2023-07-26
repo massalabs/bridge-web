@@ -18,10 +18,17 @@ import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
 import { formatStandard } from '@/utils/massaFormat';
-import useEvmBridge from '@/useEvmBridge';
-import { useAccount, useNetwork, useFeeData } from 'wagmi';
+import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import {
+  useAccount,
+  useNetwork,
+  useFeeData,
+  useWaitForTransaction,
+  useToken,
+} from 'wagmi';
 import { LayoutType, ILoadingState } from '@/const';
 import { fetchBalance } from '@/bridge';
+import { parseUnits } from 'viem';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -76,13 +83,59 @@ export function Index() {
 
   const isMassaWalletConnected = !!account;
 
+  // const [hashEVM, setHashEVM] = useState<`0x${string}`>();
   const { chains } = useNetwork();
   const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
+  const {
+    handleApprove: _handleApproveEVM,
+    handleLock: _handleLockEVM,
+    allowance: _allowanceEVM,
+    tokenBalance: _tokenBalanceEVM,
+    hashLock: _hashLockEVM,
+    hashApprove: _hashApproveEVM,
+  } = useEvmBridge();
+  const { isSuccess: lockIsSuccess, isError: lockIsError } =
+    useWaitForTransaction({ hash: _hashLockEVM });
 
-  const { evmTokenBalance, handleBridgeEvm, setEvmAmountToBridge } =
-    useEvmBridge({ setLoading });
+  const { isSuccess: approveIsSuccess, isError: approveIsError } =
+    useWaitForTransaction({ hash: _hashApproveEVM });
+
+  const selectedMassaTokenKey: number = parseInt(
+    Object.keys(tokens).find(
+      (_, idx) => tokens[idx].name.slice(0, -2) === token?.name.slice(0, -2),
+    ) || '0',
+  );
+
+  const evmToken = token?.evmToken as `0x${string}`;
+  const { data: tokenData } = useToken({ address: evmToken });
+  const decimals: number = tokenData?.decimals || 18;
+
+  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
+
+  useEffect(() => {
+    if (lockIsSuccess) {
+      setLoading({ box: 'success', bridge: 'success' });
+      handleTimerClosePopUp();
+      toast.success(Intl.t(`index.bridge.success`));
+    }
+    if (lockIsError) {
+      setLoading({ box: 'error', bridge: 'error' });
+      toast.error(Intl.t(`index.bridge.error.general`));
+    }
+  }, [lockIsSuccess, lockIsError]);
+
+  useEffect(() => {
+    if (approveIsSuccess) {
+      setLoading({ bridge: 'loading', approve: 'success' });
+      _handleLockEVM(BigInt(amount ?? 0));
+    }
+    if (approveIsError) {
+      setLoading({ box: 'error', approve: 'error', bridge: 'error' });
+      toast.error(Intl.t(`index.bridge.error.general`));
+    }
+  }, [approveIsSuccess, approveIsError]);
 
   useEffect(() => {
     getAccounts();
@@ -96,13 +149,8 @@ export function Index() {
     fetchBalance(account).then((balance) => setBalance(balance));
   }, [account]);
 
-  useEffect(() => {
-    if (amount) setEvmAmountToBridge(`${amount}`);
-  }, [amount]);
-
   function handleToggleLayout() {
-    let isMassaToEvm = layout === MASSA_TO_EVM;
-    setLayout(isMassaToEvm ? EVM_TO_MASSA : MASSA_TO_EVM);
+    setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
   }
 
   function EVMHeader() {
@@ -175,7 +223,7 @@ export function Index() {
     return (
       <Dropdown
         select={selectedMassaTokenKey}
-        readOnly={layout === MASSA_TO_EVM}
+        readOnly={IS_MASSA_TO_EVM}
         size="xs"
         options={tokens.map((token) => {
           return {
@@ -238,7 +286,7 @@ export function Index() {
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
         <p className="mas-body">
-          {formatStandard(Number(evmTokenBalance || 0))}
+          {formatStandard(Number(_tokenBalanceEVM || 0))}
         </p>
       </div>
     );
@@ -284,7 +332,7 @@ export function Index() {
           header: <EVMHeader />,
           wallet: <EVMMiddle />,
           token: <EVMTokenOptions />,
-          fees: <EVMFees />,
+          fees: <MassaFees />,
           balance: null,
         },
       },
@@ -300,7 +348,7 @@ export function Index() {
           header: <MassaHeader />,
           wallet: <MassaMiddle />,
           token: <MassaTokenOptions />,
-          fees: <MassaFees />,
+          fees: <EVMFees />,
           balance: null,
         },
       },
@@ -309,14 +357,26 @@ export function Index() {
     return layouts[layout];
   }
 
-  function validateBridge() {
+  function validate() {
     setError(null);
-    if (!amount) {
+
+    let _amount;
+    let _balance;
+
+    if (IS_MASSA_TO_EVM) {
+      _amount = amount;
+      _balance = balance?.candidateBalance;
+    } else {
+      _amount = amount;
+      _balance = _tokenBalanceEVM;
+    }
+
+    if (!_amount || Number(_amount) <= 0) {
       setError({ amount: Intl.t('index.approve.error.invalid-amount') });
       return false;
     }
 
-    if (Number(balance?.candidateBalance) < Number(amount)) {
+    if (Number(_balance) < Number(_amount)) {
       setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
       return false;
     }
@@ -324,7 +384,45 @@ export function Index() {
     return true;
   }
 
-  async function handleApprove() {
+  async function handleApproveEVM() {
+    try {
+      setLoading({ approve: 'loading' });
+
+      let _amount = parseUnits(amount?.toString() || '0', decimals);
+
+      if (_allowanceEVM < BigInt(_amount)) {
+        await _handleApproveEVM();
+        return false;
+      } else {
+        // already approved some amount
+        setLoading({ approve: 'success' });
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading({ box: 'error', approve: 'error', bridge: 'error' });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleBridgeEVM() {
+    setLoading({ bridge: 'loading' });
+
+    try {
+      await _handleLockEVM(BigInt(amount ?? 0));
+    } catch (error) {
+      console.log(error);
+      setLoading({ box: 'error', bridge: 'error' });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleApproveMASSA() {
     setLoading({
       approve: 'loading',
     });
@@ -360,7 +458,7 @@ export function Index() {
     return true;
   }
 
-  async function handleBridge() {
+  async function handleBridgeMASSA() {
     setLoading({
       bridge: 'loading',
     });
@@ -395,12 +493,6 @@ export function Index() {
     return true;
   }
 
-  const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find(
-      (_, idx) => tokens[idx].name.slice(0, -2) === token?.name.slice(0, -2),
-    ) || '0',
-  );
-
   function handleClosePopUp() {
     setLoading({
       box: 'none',
@@ -423,18 +515,24 @@ export function Index() {
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    if (!validateBridge()) return;
+    if (!validate()) return;
 
     setLoading({
       box: 'loading',
     });
 
-    if (layout === MASSA_TO_EVM) {
-      // Allowance
-      const approved = await handleApprove();
-      if (approved) handleBridge();
-    } else if (layout === EVM_TO_MASSA) {
-      handleBridgeEvm(BigInt(amount ?? 0));
+    if (IS_MASSA_TO_EVM) {
+      const approved = await handleApproveMASSA();
+
+      if (approved) {
+        handleBridgeMASSA();
+      }
+    } else {
+      const approved = await handleApproveEVM();
+
+      if (approved) {
+        handleBridgeEVM();
+      }
     }
   }
 
@@ -466,6 +564,7 @@ export function Index() {
                 onValueChange={(value) => setAmount(value)}
                 placeholder={Intl.t(`index.input.placeholder.amount`)}
                 suffix=""
+                allowDecimals={false}
                 error={error?.amount}
               />
             </div>
@@ -492,10 +591,11 @@ export function Index() {
         </div>
         <div className="mb-5 flex justify-center items-center">
           <Button
+            disabled={isFetching}
             variant="toggle"
             onClick={handleToggleLayout}
             customClass={`w-12 h-12 inline-block transition ease-in-out delay-10 ${
-              layout === MASSA_TO_EVM ? 'rotate-180' : ''
+              IS_MASSA_TO_EVM ? 'rotate-180' : ''
             }`}
           >
             <FiRepeat size={24} />
@@ -514,18 +614,19 @@ export function Index() {
                 onValueChange={(value) => setAmount(value)}
                 suffix=""
                 error=""
-                disabled={true}
+                disable={true}
               />
             </div>
             <div className="w-1/3">{boxLayout(layout).down.token}</div>
           </div>
           <div className="flex justify-between items-center">
-            {boxLayout(layout).down.fees}
+            {/* {boxLayout(layout).down.fees} */}
+            <br />
             {boxLayout(layout).down.balance}
           </div>
         </div>
         <div>
-          <Button onClick={(e) => handleSubmit(e)}>
+          <Button disabled={isFetching} onClick={(e) => handleSubmit(e)}>
             {Intl.t(`index.button.bridge`)}
           </Button>
         </div>
