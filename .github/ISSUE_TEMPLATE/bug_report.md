@@ -15,8 +15,8 @@ assignees: ''
 
 **Screenshots**
 
-**MassaStation version**
-The version of MassaStation the bug is present in.
+**Massa Bridge version**
+The version of Massa Bridge the bug is present in.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. MacOS, Windows...]
