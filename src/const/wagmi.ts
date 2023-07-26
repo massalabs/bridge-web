@@ -8,11 +8,8 @@ import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 const ALCHEMY_API_KEY = import.meta.env['VITE_ALCHEMY_API_KEY'] || '';
 export const { chains, publicClient } = configureChains(
   [sepolia],
-  [
-    // TODO Put massa Alchemy API key here
-    alchemyProvider({ apiKey: ALCHEMY_API_KEY }),
-    publicProvider(),
-  ],
+  [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()],
+  { batch: { multicall: true } },
 );
 
 export const connectors = connectorsForWallets([

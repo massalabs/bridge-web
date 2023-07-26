@@ -1,4 +1,8 @@
-import { Args, bytesToSerializableObjectArray } from '@massalabs/massa-web3';
+import {
+  Args,
+  IContractReadOperationResponse,
+  bytesToSerializableObjectArray,
+} from '@massalabs/massa-web3';
 import { IAccount } from '@massalabs/wallet-provider';
 import { TokenPair } from '../serializable/tokenPair';
 import { ForwardingRequest } from '../serializable/request';
@@ -9,23 +13,23 @@ export async function increaseAllowance(
   account: IAccount | undefined,
   tokenAddress: string,
   amount: bigint,
-): Promise<any> {
+): Promise<string> {
   if (!account) {
     throw new Error('Account is not defined');
   }
-  const result = await account?.callSC(
+  const opId = await account?.callSC(
     tokenAddress,
     'increaseAllowance',
     new Args().addString(CONTRACT_ADDRESS).addU256(amount),
     BigInt(100),
   );
-  return result;
+  return opId;
 }
 
 export async function forwardBurn(
-  account: IAccount | undefined,
-  tokenPair: TokenPair | undefined,
-): Promise<any> {
+  account?: IAccount,
+  tokenPair?: TokenPair,
+): Promise<string> {
   if (!account) {
     throw new Error('Account is not defined');
   }
@@ -33,16 +37,16 @@ export async function forwardBurn(
     throw new Error('TokenPair is not defined');
   }
 
-  const request = new ForwardingRequest('10', account.address(), tokenPair);
+  const request = new ForwardingRequest("10", account.address(), tokenPair);
 
-  const result = await account?.callSC(
+  const opId = await account?.callSC(
     CONTRACT_ADDRESS,
     'forwardBurn',
     new Args().addSerializable(request),
     BigInt(1000),
   );
 
-  return result;
+  return opId;
 }
 
 export async function getSupportedTokensList(
@@ -51,7 +55,7 @@ export async function getSupportedTokensList(
   if (!account) {
     throw new Error('Account is not defined');
   }
-  const returnObject = await account.callSC(
+  const returnObject: IContractReadOperationResponse = await account.callSC(
     CONTRACT_ADDRESS,
     'supportedTokensList',
     new Uint8Array(),
