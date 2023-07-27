@@ -470,7 +470,7 @@ export function Index() {
         token?.chainId,
       );
 
-      await forwardBurn(account ?? undefined, tokenPairs);
+      await forwardBurn(account ?? undefined, tokenPairs, amount?.toString());
 
       setLoading({
         bridge: 'success',
