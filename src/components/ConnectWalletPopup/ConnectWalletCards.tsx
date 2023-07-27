@@ -15,8 +15,8 @@ import Intl from '@/i18n/i18n';
 
 import { useAccountStore, useNetworkStore } from '@/store/store';
 import { MassaConnectError } from './CardVariations/MassaError';
-import { providers } from '@massalabs/wallet-provider';
-import { MASSA_STATION } from '@/const';
+// import { providers } from '@massalabs/wallet-provider';
+// import { MASSA_STATION } from '@/const';
 
 export function ConnectWalletCards() {
   const { isConnected: isEvmWalletConnected } = useAccount();
@@ -28,7 +28,7 @@ export function ConnectWalletCards() {
     isFetching,
     balance,
     isStationInstalled,
-    setStationInstalled,
+    // setStationInstalled,
   ] = useAccountStore((state) => [
     state.accounts,
     state.account,
@@ -36,24 +36,24 @@ export function ConnectWalletCards() {
     state.isFetching,
     state.balance,
     state.isStationInstalled,
-    state.setStationInstalled,
+    // state.setStationInstalled,
   ]);
 
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useNetworkStore(
     (state) => [state.isMetamaskInstalled, state.setIsMetamaskInstalled],
   );
 
-  async function getProviderList() {
-    const providerList = await providers();
-    const massaStationWallet = providerList.find(
-      (provider: any) => provider.name() === MASSA_STATION,
-    );
-    setStationInstalled(!!massaStationWallet);
-  }
+  // async function getProviderList() {
+  //   const providerList = await providers();
+  //   const massaStationWallet = providerList.find(
+  //     (provider) => provider.name() === MASSA_STATION,
+  //   );
+  //   setStationInstalled(!!massaStationWallet);
+  // }
 
   useEffect(() => {
     setIsMetamaskInstalled(window.ethereum?.isConnected());
-    getProviderList();
+    // getProviderList();
   }, [isMetamaskInstalled, isStationInstalled]);
 
   const massaWalletArgs = {
