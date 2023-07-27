@@ -6,8 +6,7 @@ import {
 import { IAccount } from '@massalabs/wallet-provider';
 import { TokenPair } from '../serializable/tokenPair';
 import { ForwardingRequest } from '../serializable/request';
-
-const CONTRACT_ADDRESS = 'AS1crhHVfdykXmoV73LFAaRgqLMRuLZEeJy8FQCQYc73NNnW3Utf';
+import { CONTRACT_ADDRESS } from '@/const';
 
 export async function increaseAllowance(
   account: IAccount | undefined,
