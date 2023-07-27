@@ -44,7 +44,6 @@ export async function forwardBurn(
     tokenPair,
   );
 
-  console.log('request: ', request);
   const opId = await account?.callSC(
     CONTRACT_ADDRESS,
     'forwardBurn',
