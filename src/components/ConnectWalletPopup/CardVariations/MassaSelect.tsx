@@ -18,7 +18,7 @@ export function SelectMassaWalletAccount({ ...props }) {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="min-w-[50%]">
       <Dropdown
         select={selectedAccountKey}
         options={accounts.map((account: IAccount) => {
