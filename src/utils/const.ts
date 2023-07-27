@@ -15,3 +15,6 @@ export const APPROVE = 'approve';
 
 export const MASSA_TO_EVM = 'massaToEvm';
 export const EVM_TO_MASSA = 'evmToMassa';
+
+export const U256_MAX = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+

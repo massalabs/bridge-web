@@ -34,7 +34,8 @@
       "error": {
         "general": "Euh! Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
-        "insuficient-funds": "Insuficient founds"
+        "insuficient-funds": "Insuficient founds",
+        "decimals-not-set": "Unable to retrieve token decimals"
       },
       "success": "Great! Amount approved!",
       "loading": "We are aproooooooving..."

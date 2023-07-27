@@ -11,9 +11,8 @@ import {
 } from 'wagmi';
 import { EVM_BRIDGE_ADDRESS } from '@/const/const';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
+import { U256_MAX } from '@/utils/const';
 
-// TODO: Max u256 pour approval
-const MAX_APPROVAL = 2n ** 256n - 1n;
 // TODO: fix gas limit
 const MAX_GAS = 1_000_000n;
 
@@ -27,7 +26,6 @@ const useEvmBridge = () => {
 
   const { data: tokenData } = useToken({ address: evmToken });
   const decimals: number = tokenData?.decimals || 18;
-  const evmUserAddress = accountAddress ? accountAddress : '0x00000';
 
   const balanceData = useBalance({
     token: evmToken,
@@ -35,14 +33,24 @@ const useEvmBridge = () => {
     watch: true,
   });
 
-  const _allowance = useContractRead({
-    address: evmToken,
-    abi: erc20ABI,
-    functionName: 'allowance',
-    args: [evmUserAddress, EVM_BRIDGE_ADDRESS],
-    enabled: Boolean(accountAddress && token?.evmToken),
-    watch: true,
-  });
+  let _allowance = 0n;
+  if (accountAddress) {
+    const res = useContractRead({
+      address: evmToken,
+      abi: erc20ABI,
+      functionName: 'allowance',
+      args: [accountAddress, EVM_BRIDGE_ADDRESS],
+      enabled: Boolean(accountAddress && token?.evmToken),
+      watch: true,
+    });
+    if (res.error) {
+      console.log(res.error)
+      //TODO: handle error?
+      //setError({ amount: Intl.t('index.approve.error.invalid-amount') });
+    }
+    _allowance = res.data ?? 0n;
+  }
+
 
   const [tokenBalance, setTokenBalance] = useState<string>();
   const [allowance, setAllowance] = useState<bigint>(0n);
@@ -58,15 +66,15 @@ const useEvmBridge = () => {
   useEffect(() => {
     if (!token) return;
 
-    setAllowance(BigInt(_allowance.data || 0n));
-  }, [token, _allowance?.data]);
+    setAllowance(_allowance || 0n);
+  }, [token, _allowance]);
 
   const approve = useContractWrite({
     functionName: 'approve',
     address: evmToken,
     abi: erc20ABI,
     gas: MAX_GAS,
-    args: [EVM_BRIDGE_ADDRESS, MAX_APPROVAL],
+    args: [EVM_BRIDGE_ADDRESS, U256_MAX],
   });
 
   const lock = useContractWrite({
@@ -77,15 +85,8 @@ const useEvmBridge = () => {
   });
 
   async function handleApprove() {
-    try {
       let { hash } = await approve.writeAsync();
       setHashApprove(hash);
-
-      return approve;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
   }
 
   async function handleLock(amount: bigint) {

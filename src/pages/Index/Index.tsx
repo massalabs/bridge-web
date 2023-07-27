@@ -11,7 +11,7 @@ import {
 import { FiRepeat } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { GetTokensPopUpModal, Connected, Disconnected } from '@/components';
-import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
+import { EVM_TO_MASSA, MASSA_TO_EVM, U256_MAX } from '@/utils/const';
 import { useAccountStore } from '@/store/store';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
@@ -64,7 +64,7 @@ export function Index() {
   // HOOKS
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
-  const [amount, setAmount] = useState<number | string | undefined>('');
+  const [amount, setAmount] = useState<string | undefined>();
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
   const [evmWalletConnected, _] = useState<boolean>(true);
@@ -110,7 +110,7 @@ export function Index() {
 
   const evmToken = token?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
-  const decimals: number = tokenData?.decimals || 18;
+  const decimals = tokenData?.decimals;
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
@@ -127,9 +127,9 @@ export function Index() {
   }, [lockIsSuccess, lockIsError]);
 
   useEffect(() => {
-    if (approveIsSuccess) {
+    if (amount && approveIsSuccess) {
       setLoading({ bridge: 'loading', approve: 'success' });
-      _handleLockEVM(BigInt(amount ?? 0));
+      _handleLockEVM(BigInt(amount));
     }
     if (approveIsError) {
       setLoading({ box: 'error', approve: 'error', bridge: 'error' });
@@ -360,23 +360,14 @@ export function Index() {
   function validate() {
     setError(null);
 
-    let _amount;
-    let _balance;
+    const _balance = IS_MASSA_TO_EVM ? balance?.candidateBalance : _tokenBalanceEVM;
 
-    if (IS_MASSA_TO_EVM) {
-      _amount = amount;
-      _balance = balance?.candidateBalance;
-    } else {
-      _amount = amount;
-      _balance = _tokenBalanceEVM;
-    }
-
-    if (!_amount || Number(_amount) <= 0) {
+    if (!amount || BigInt(amount) <= 0) {
       setError({ amount: Intl.t('index.approve.error.invalid-amount') });
       return false;
     }
 
-    if (Number(_balance) < Number(_amount)) {
+    if (!balance || BigInt(_balance!) < BigInt(amount)) {
       setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
       return false;
     }
@@ -388,9 +379,19 @@ export function Index() {
     try {
       setLoading({ approve: 'loading' });
 
-      let _amount = parseUnits(amount?.toString() || '0', decimals);
+      if (!amount || BigInt(amount) <= 0) {
+        setError({ amount: Intl.t('index.approve.error.invalid-amount') });
+        return false;
+      }
 
-      if (_allowanceEVM < BigInt(_amount)) {
+      if (!decimals) {
+        setError({ amount: Intl.t('index.approve.error.decimals-not-set') });
+        return false;
+      }
+
+      let _amount = parseUnits(amount, decimals);
+
+      if (_allowanceEVM < _amount) {
         await _handleApproveEVM();
         return false;
       } else {
@@ -410,8 +411,13 @@ export function Index() {
   async function handleBridgeEVM() {
     setLoading({ bridge: 'loading' });
 
+    if (!amount || BigInt(amount) <= 0) {
+      setError({ amount: Intl.t('index.approve.error.invalid-amount') });
+      return false;
+    }
+  
     try {
-      await _handleLockEVM(BigInt(amount ?? 0));
+      await _handleLockEVM(BigInt(amount));
     } catch (error) {
       console.log(error);
       setLoading({ box: 'error', bridge: 'error' });
@@ -426,12 +432,15 @@ export function Index() {
     setLoading({
       approve: 'loading',
     });
+    if(!account || !token) {
+      return false;
+    }
     try {
-      const maxAmount = BigInt('2') ** BigInt('256') - BigInt('1');
+
       await increaseAllowance(
-        account ?? undefined,
-        token?.massaToken ? token.massaToken : '',
-        maxAmount,
+        account,
+        token.massaToken,
+        U256_MAX,
       );
 
       setLoading({
@@ -462,15 +471,18 @@ export function Index() {
     setLoading({
       bridge: 'loading',
     });
+    if(!account || !token || !amount) {
+      return false;
+    }
 
     try {
       let tokenPairs = new TokenPair(
-        token?.massaToken,
-        token?.evmToken,
-        token?.chainId,
+        token.massaToken,
+        token.evmToken,
+        token.chainId,
       );
 
-      await forwardBurn(account ?? undefined, tokenPairs, amount?.toString());
+      await forwardBurn(account, tokenPairs, amount);
 
       setLoading({
         bridge: 'success',
@@ -499,7 +511,7 @@ export function Index() {
       approve: 'none',
       bridge: 'none',
     });
-    setAmount('');
+    setAmount(undefined);
   }
 
   function handleTimerClosePopUp(timer = 1500) {
@@ -509,7 +521,7 @@ export function Index() {
         approve: 'none',
         bridge: 'none',
       });
-      setAmount('');
+      setAmount(undefined);
     }, timer);
   }
 
@@ -520,6 +532,9 @@ export function Index() {
     setLoading({
       box: 'loading',
     });
+    if(!amount) {
+      return;
+    }
 
     if (IS_MASSA_TO_EVM) {
       const approved = await handleApproveMASSA();
@@ -564,7 +579,7 @@ export function Index() {
                 onValueChange={(value) => setAmount(value)}
                 placeholder={Intl.t(`index.input.placeholder.amount`)}
                 suffix=""
-                allowDecimals={false}
+                allowDecimals={true}
                 error={error?.amount}
               />
             </div>
