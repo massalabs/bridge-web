@@ -9,7 +9,9 @@
     "to": "To",
     "tag": {
       "not-connected": "Not connected",
-      "connected": "Connected"
+      "connected": "Connected",
+      "not-installed": "Not installed",
+      "no-accounts": "No accounts"
     },
     "loading-box": {
       "title": "Bridge transfer",

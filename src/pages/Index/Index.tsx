@@ -10,7 +10,13 @@ import {
 } from '@massalabs/react-ui-kit';
 import { FiRepeat } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
-import { GetTokensPopUpModal, Connected, Disconnected } from '@/components';
+import {
+  GetTokensPopUpModal,
+  Connected,
+  Disconnected,
+  NoAccounts,
+  NotInstalled,
+} from '@/components';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { useAccountStore } from '@/store/store';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
@@ -26,9 +32,10 @@ import {
   useWaitForTransaction,
   useToken,
 } from 'wagmi';
-import { LayoutType, ILoadingState } from '@/const';
+import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
 import { fetchBalance } from '@/bridge';
 import { parseUnits } from 'viem';
+import { providers } from '@massalabs/wallet-provider';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -50,6 +57,8 @@ export function Index() {
     setToken,
     token,
     isFetching,
+    setStationInstalled,
+    isStationInstalled,
   ] = useAccountStore((state) => [
     state.accounts,
     state.tokens,
@@ -59,6 +68,8 @@ export function Index() {
     state.setToken,
     state.token,
     state.isFetching,
+    state.setStationInstalled,
+    state.isStationInstalled,
   ]);
 
   // HOOKS
@@ -81,7 +92,7 @@ export function Index() {
     });
   }
 
-  const isMassaWalletConnected = !!account;
+  const hasNoAccounts = accounts?.length <= 0;
 
   const { chains } = useNetwork();
   const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
@@ -136,8 +147,17 @@ export function Index() {
     }
   }, [approveIsSuccess, approveIsError]);
 
+  async function getProviderList() {
+    const providerList = await providers();
+    const massaStationWallet = providerList.find(
+      (provider) => provider.name() === MASSA_STATION,
+    );
+    setStationInstalled(!!massaStationWallet);
+  }
+
   useEffect(() => {
     getAccounts();
+    getProviderList();
   }, []);
 
   useEffect(() => {
@@ -172,10 +192,17 @@ export function Index() {
   }
 
   function MassaHeader() {
+    function displayStatus() {
+      if (!isStationInstalled) return <NotInstalled />;
+      else if (hasNoAccounts) return <NoAccounts />;
+      return <Connected />;
+    }
+
     return (
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
           <Dropdown
+            readOnly={hasNoAccounts}
             options={[
               {
                 item: 'Massa Buildnet',
@@ -186,13 +213,7 @@ export function Index() {
         </div>
         <div className="flex items-center gap-3">
           <p className="mas-body">Massa Wallet</p>
-          {isFetching ? (
-            <FetchingStatus />
-          ) : isMassaWalletConnected ? (
-            <Connected />
-          ) : (
-            <Disconnected />
-          )}
+          {isFetching ? <FetchingStatus /> : displayStatus()}
         </div>
       </div>
     );
@@ -624,7 +645,6 @@ export function Index() {
             <div className="w-1/3">{boxLayout(layout).down.token}</div>
           </div>
           <div className="flex justify-between items-center">
-            {/* {boxLayout(layout).down.fees} */}
             <br />
             {boxLayout(layout).down.balance}
           </div>
