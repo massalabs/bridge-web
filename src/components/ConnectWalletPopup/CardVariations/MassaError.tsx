@@ -5,17 +5,17 @@ import { useEffect, useState } from 'react';
 import Intl from '@/i18n/i18n';
 
 export function MassaConnectError({ ...props }) {
-  const { accounts, isFetching, isMassaStationConnected } = props;
+  const { accounts, isFetching, isStationInstalled } = props;
 
   const [errorMessage, setErrorMessage] = useState<JSX.Element | null>(null);
 
   useEffect(() => {
-    if (!isMassaStationConnected) {
+    if (!isStationInstalled) {
       setErrorMessage(<ErrorMassaStation />);
-    } else if (isMassaStationConnected && accounts?.length <= 0) {
+    } else if (isStationInstalled && accounts?.length <= 0) {
       setErrorMessage(<ErrorWallet />);
     }
-  }, [isMassaStationConnected]);
+  }, [isStationInstalled]);
 
   return <>{isFetching ? <FetchingStatus /> : errorMessage}</>;
 }
