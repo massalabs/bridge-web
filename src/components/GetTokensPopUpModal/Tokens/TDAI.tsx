@@ -17,7 +17,7 @@ export function TDAI() {
     const { isSuccess } = waitForTransaction;
 
     if (isSuccess) {
-      toast.success(`Successfully minted`);
+      toast.success(Intl.t('get-tokens.success'));
     }
   }, [waitForTransaction.isSuccess]);
 
@@ -25,7 +25,7 @@ export function TDAI() {
     const { isError, error } = prepareContractWrite;
 
     if (isError && error) {
-      toast.error(`Error: ${ErrorsMap[error.name] || ErrorsMap.Failed}`);
+      toast.error(`${ErrorsMap[error.name] || ErrorsMap.General}`);
     }
   }, [prepareContractWrite.isError]);
 
@@ -33,7 +33,7 @@ export function TDAI() {
     const { isError, error } = contractWrite;
 
     if (isError && error) {
-      toast.error(`Error: ${ErrorsMap[error.name] || ErrorsMap.Failed}`);
+      toast.error(`${ErrorsMap[error.name] || ErrorsMap.General}`);
     }
   }, [contractWrite.isError]);
 
@@ -48,7 +48,7 @@ export function TDAI() {
         {Intl.t(`get-tokens.card.tDAI-description`)}
       </p>
       {waitForTransaction.isLoading || contractWrite.isLoading ? (
-        <p className="mas-menu-default mb-4">Minting...</p>
+        <p className="mas-menu-default mb-4">{Intl.t('get-tokens.minting')}</p>
       ) : (
         <p
           className="mas-menu-underline mb-4 cursor-pointer"

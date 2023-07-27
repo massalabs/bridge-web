@@ -93,6 +93,12 @@
   },
   "get-tokens": {
     "title": "Get {token} tokens:",
+    "minting": "Mintiiing...",
+    "success": "Yeah! Minted successfully",
+    "errors": {
+      "transaction-execution": "Mint action canceled or failed",
+      "general": "Euh! Something went wrong"
+    },
     "card": {
       "tDAI-description": "If you want to get tDAI tokens",
       "WETH-description": "If you want to get WETH tokens",
