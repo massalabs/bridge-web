@@ -124,6 +124,10 @@ export function Index() {
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
   useEffect(() => {
+    setError({ amount: '' });
+  }, [amount, layout, token]);
+
+  useEffect(() => {
     if (lockIsSuccess) {
       setLoading({ box: 'success', bridge: 'success' });
       handleTimerClosePopUp();
