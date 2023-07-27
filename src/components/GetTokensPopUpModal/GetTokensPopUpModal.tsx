@@ -1,6 +1,7 @@
 import Intl from '@/i18n/i18n';
 import { LayoutType } from '@/const';
 
+import { WETH, ETH, TDAI } from './Tokens';
 import { GradientCard } from '@/components';
 import {
   PopupModal,
@@ -9,61 +10,18 @@ import {
   Tag,
 } from '@massalabs/react-ui-kit';
 
+export interface IErrorsMap {
+  [key: string]: string;
+}
+
+export const ErrorsMap: IErrorsMap = {
+  TransactionExecutionError: 'Action canceled',
+  Failed: 'Something went wrong',
+};
+
 interface GetTokensModalProps {
   setOpenModal: (open: boolean) => void;
   layout: LayoutType | undefined;
-}
-
-function EVMToMassaContent() {
-  return (
-    <div className="flex items-start justify-center gap-5 mt-5 mb-10">
-      <GradientCard customClass="w-72 h-80">
-        <Tag
-          type="warning"
-          content={Intl.t(`get-tokens.tag.tDAI`)}
-          customClass="mb-4"
-        />
-        <p className="mas-menu-default text-center mb-4">
-          {Intl.t(`get-tokens.card.tDAI-description`)}
-        </p>
-        <p className="mas-menu-underline mb-4 cursor-pointer">
-          {Intl.t(`get-tokens.card.mint`, { token: 'tDAI' })}
-        </p>
-        <p className="mas-menu-underline mb-4 cursor-pointer">
-          {Intl.t(`get-tokens.card.link`)}
-        </p>
-      </GradientCard>
-      <GradientCard customClass="w-72 h-80">
-        <Tag
-          type="default"
-          content={Intl.t(`get-tokens.tag.WETH`)}
-          customClass="mb-4"
-        />
-        <p className="mas-menu-default text-center mb-4">
-          {Intl.t(`get-tokens.card.WETH-description`)}
-        </p>
-        <p className="mas-menu-underline mb-4 cursor-pointer">
-          {Intl.t(`get-tokens.card.mint`, { token: 'WETH' })}
-        </p>
-        <p className="mas-menu-underline mb-4 cursor-pointer">
-          {Intl.t(`get-tokens.card.link`)}
-        </p>
-      </GradientCard>
-      <GradientCard customClass="w-72 h-80">
-        <Tag
-          type="default"
-          content={Intl.t(`get-tokens.tag.ETH`)}
-          customClass="mb-4"
-        />
-        <p className="mas-menu-default text-center mb-4">
-          {Intl.t(`get-tokens.card.ETH-description`)}
-        </p>
-        <p className="mas-menu-underline mb-4 cursor-pointer">
-          {Intl.t(`get-tokens.card.link`)}
-        </p>
-      </GradientCard>
-    </div>
-  );
 }
 
 function MassaToEVMContent() {
@@ -106,7 +64,11 @@ export function GetTokensPopUpModal(props: GetTokensModalProps) {
       </PopupModalHeader>
       <PopupModalContent>
         {layout === 'evmToMassa' ? (
-          <EVMToMassaContent />
+          <div className="flex items-start justify-center gap-5 mt-5 mb-10">
+            <TDAI />
+            <WETH />
+            <ETH />
+          </div>
         ) : (
           <MassaToEVMContent />
         )}

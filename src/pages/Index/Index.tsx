@@ -83,7 +83,6 @@ export function Index() {
 
   const isMassaWalletConnected = !!account;
 
-  // const [hashEVM, setHashEVM] = useState<`0x${string}`>();
   const { chains } = useNetwork();
   const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
