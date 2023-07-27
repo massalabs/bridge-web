@@ -28,6 +28,7 @@ export async function increaseAllowance(
 
 export async function forwardBurn(
   account?: IAccount,
+  evmAddress?: string,
   tokenPair?: TokenPair,
   amount?: string,
 ): Promise<string> {
@@ -40,7 +41,7 @@ export async function forwardBurn(
 
   const request = new ForwardingRequest(
     amount?.toString(),
-    account.address(),
+    evmAddress,
     tokenPair,
   );
 
