@@ -44,7 +44,9 @@ export function LayoutBridge({ ...props }) {
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown readOnly={true} options={options} />
-          <Button onClick={() => setOpen(true)}>Connect Wallet</Button>
+          <Button customClass="h-[54px]" onClick={() => setOpen(true)}>
+            Connect Wallet
+          </Button>
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>

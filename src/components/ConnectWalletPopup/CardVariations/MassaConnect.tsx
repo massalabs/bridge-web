@@ -10,17 +10,19 @@ export function ConnectedCard({ ...props }) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4 w-full h-full">
         <SelectMassaWalletAccount {...props} />
-        <Clipboard
-          customClass="h-14 rounded-lg !mas-body"
-          toggleHover={false}
-          rawContent={account?.address().toString()}
-          displayedContent={`${Intl.t(
-            'connect-wallet.connected-cards.wallet-address',
-          )}
+        <div className="min-w-[50%] pr-4">
+          <Clipboard
+            customClass="h-14 rounded-lg text-center px-9 !mas-body"
+            toggleHover={false}
+            rawContent={account?.address().toString()}
+            displayedContent={`${Intl.t(
+              'connect-wallet.connected-cards.wallet-address',
+            )}
             ${maskAddress(account?.address().toString())}`}
-        />
+          />
+        </div>
       </div>
-      <div>
+      <div className="mas-body">
         {Intl.t('connect-wallet.connected-cards.wallet-balance')}
         {Number(balance?.candidateBalance || 0)} MAS
       </div>

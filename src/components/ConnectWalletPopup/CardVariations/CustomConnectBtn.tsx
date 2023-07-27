@@ -3,6 +3,8 @@ import { Button } from '@massalabs/react-ui-kit';
 import { MetaMaskSvg } from '@/assets';
 import Intl from '@/i18n/i18n';
 import { FiEdit } from 'react-icons/fi';
+import { BsDiamondHalf } from 'react-icons/bs';
+
 export function CustomConnectButton(): JSX.Element {
   return (
     <ConnectButton.Custom>
@@ -33,7 +35,12 @@ export function CustomConnectButton(): JSX.Element {
             {(() => {
               if (!connected) {
                 return (
-                  <Button onClick={openConnectModal} preIcon={<MetaMaskSvg />}>
+                  <Button
+                    variant="secondary"
+                    customClass="h-14 pt-4"
+                    onClick={openConnectModal}
+                    preIcon={<MetaMaskSvg />}
+                  >
                     {Intl.t(
                       'connect-wallet.connect-metamask.connect-to-metamask',
                     )}
@@ -46,13 +53,15 @@ export function CustomConnectButton(): JSX.Element {
                   <>
                     <div>
                       {Intl.t(
-                        'connect-wallet.connected-metamask.invalid-network',
+                        'connect-wallet.connect-metamask.invalid-network',
                       )}
                     </div>
-                    <Button onClick={openChainModal} type="button">
-                      {Intl.t(
-                        'connect-wallet.connected-metamask.change-network',
-                      )}
+                    <Button
+                      variant="secondary"
+                      customClass="h-14"
+                      onClick={openChainModal}
+                    >
+                      {Intl.t('connect-wallet.connect-metamask.change-network')}
                     </Button>
                   </>
                 );
@@ -60,35 +69,30 @@ export function CustomConnectButton(): JSX.Element {
 
               return (
                 <>
-                  <div className="flex w-full gap-3 justify-around">
-                    <Button
-                      onClick={openChainModal}
-                      preIcon={
-                        <img
-                          alt={chain.name ?? 'Chain icon'}
-                          src={chain.iconUrl}
-                        />
-                      }
-                    >
-                      {chain.name}
-                    </Button>
-
-                    <Button
-                      onClick={openAccountModal}
-                      type="button"
-                      className="bg-secondary rounded-lg px-2 hover:bg-tertiary 
-                      mas-body flex items-center justify-between gap-5 min-w-fit"
-                      posIcon={<FiEdit size={14} />}
-                    >
-                      <div className="flex justify-between w-full">
-                        {Intl.t(
-                          'connect-wallet.connected-cards.wallet-address',
-                        )}
-                        {account.displayName}
-                      </div>
-                    </Button>
+                  <div className="flex w-full gap-4">
+                    <div className="min-w-[50%]">
+                      <Button
+                        variant="secondary"
+                        customClass="h-14 pt-4 border-0 bg-secondary hover:bg-tertiary"
+                        onClick={openChainModal}
+                        preIcon={<BsDiamondHalf size={40} />}
+                      >
+                        {chain.name}
+                      </Button>
+                    </div>
+                    <div className="min-w-[50%] pr-4">
+                      <Button
+                        onClick={openAccountModal}
+                        type="button"
+                        className="bg-secondary rounded-lg hover:bg-tertiary h-14
+                       gap-5 w-full"
+                        posIcon={<FiEdit size={14} />}
+                      >
+                        {account.displayName}&nbsp;&nbsp;
+                      </Button>
+                    </div>
                   </div>
-                  <div>
+                  <div className="mas-body">
                     {account.displayBalance
                       ? ` ${Intl.t(
                           'connect-wallet.connected-cards.wallet-balance',

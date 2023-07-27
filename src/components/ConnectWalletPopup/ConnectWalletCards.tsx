@@ -54,7 +54,7 @@ export function ConnectWalletCards() {
 
   return (
     <div className="pb-10 flex flex-row gap-4 text-f-primary">
-      <div className="flex flex-col gap-4 min-w-[480px]">
+      <div className="flex flex-col gap-4 min-w-[65%]">
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
             <p> {Intl.t('connect-wallet.card-destination.from')} </p>
