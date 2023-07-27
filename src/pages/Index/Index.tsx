@@ -78,7 +78,6 @@ export function Index() {
   const [amount, setAmount] = useState<number | string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
-  const [evmWalletConnected, _] = useState<boolean>(true);
 
   const [loading, _setLoading] = useState<ILoadingState>({
     box: 'none',
@@ -177,9 +176,9 @@ export function Index() {
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
           <Dropdown
-            readOnly={!evmWalletConnected}
+            readOnly={!isEvmWalletConnected}
             options={
-              chains
+              chains.length
                 ? chains.map((chain) => ({
                     item: chain.name,
                     icon: iconsNetworks['Sepolia'],
@@ -607,7 +606,7 @@ export function Index() {
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              {evmWalletConnected ? (
+              {isEvmWalletConnected ? (
                 <h3
                   className="mas-h3 text-f-disabled-1 underline cursor-pointer"
                   onClick={() => setOpenTokensModal(true)}
