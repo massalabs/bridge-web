@@ -177,10 +177,20 @@ export function Index() {
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
           <Dropdown
-            options={chains.map((chain) => ({
-              item: chain.name,
-              icon: iconsNetworks['Sepolia'],
-            }))}
+            readOnly={!evmWalletConnected}
+            options={
+              chains
+                ? chains.map((chain) => ({
+                    item: chain.name,
+                    icon: iconsNetworks['Sepolia'],
+                  }))
+                : [
+                    {
+                      icon: iconsNetworks['Sepolia'],
+                      item: 'Sepolia',
+                    },
+                  ]
+            }
           />
         </div>
         <div className="flex items-center gap-3">
