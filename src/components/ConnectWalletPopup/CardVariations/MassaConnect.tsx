@@ -24,10 +24,7 @@ export function ConnectedCard({ ...props }) {
             customClass="h-14 rounded-lg text-center px-9 !mas-body"
             toggleHover={false}
             rawContent={account?.address().toString()}
-            displayedContent={`${Intl.t(
-              'connect-wallet.connected-cards.wallet-address',
-            )}
-            ${maskAddress(account?.address().toString())}`}
+            displayedContent={maskAddress(account?.address().toString())}
           />
         </div>
       </div>
