@@ -21,14 +21,15 @@ export interface AccountStoreState {
   token: IToken | null;
   tokens: IToken[];
   isFetching: boolean;
-  isMassaStationConnected: boolean;
   balance: IAccountBalanceResponse;
+  isStationInstalled: boolean;
 
   setAccount: (account: IAccount | null) => void;
   setToken: (token: IToken | null) => void;
 
   setAvailableAccounts: (accounts: any) => void;
   setAvailableTokens: (tokens: any) => void;
+  setStationInstalled: (isStationInstalled: boolean) => void;
 
   getAccounts: () => void;
   getTokens: () => void;
@@ -44,7 +45,7 @@ const accountStore = (set: any, get: any) => ({
     finalBalance: '',
     candidateBalance: '',
   },
-  isMassaStationConnected: false,
+  isStationInstalled: false,
 
   setAvailableAccounts: (accounts: IAccount) => {
     set({ accounts: accounts });
@@ -53,6 +54,9 @@ const accountStore = (set: any, get: any) => ({
   setAvailableTokens: (tokens: IToken) => {
     set({ tokens: tokens });
   },
+
+  setStationInstalled: (isStationInstalled: boolean) =>
+    set({ isStationInstalled: isStationInstalled }),
 
   getTokens: async () => {
     set({ isFetching: true });
@@ -106,7 +110,6 @@ const accountStore = (set: any, get: any) => ({
           account: firstAccount ?? null,
           isFetching: false,
           balance: firstAccountBalance,
-          isMassaStationConnected: !!massaStationWallet,
         });
       }
     } catch (error) {
