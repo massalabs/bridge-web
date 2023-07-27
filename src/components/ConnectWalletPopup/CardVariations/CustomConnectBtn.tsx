@@ -88,7 +88,7 @@ export function CustomConnectButton(): JSX.Element {
                        gap-5 w-full"
                         posIcon={<FiEdit size={14} />}
                       >
-                        {account.displayName}&nbsp;&nbsp;
+                        {account.displayName}&nbsp;&nbsp;&nbsp;
                       </Button>
                     </div>
                   </div>

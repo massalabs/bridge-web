@@ -16,7 +16,7 @@ export function WETH() {
     const { isSuccess } = waitForTransaction;
 
     if (isSuccess) {
-      toast.success(`Successfully minted`);
+      toast.success(Intl.t('get-tokens.success'));
     }
   }, [waitForTransaction.isSuccess]);
 
@@ -24,7 +24,7 @@ export function WETH() {
     const { isError, error } = prepareContractWrite;
 
     if (isError && error) {
-      toast.error(`Error: ${ErrorsMap[error.name] || ErrorsMap.Failed}`);
+      toast.error(`${ErrorsMap[error.name] || ErrorsMap.General}`);
     }
   }, [prepareContractWrite.isError]);
 
@@ -32,7 +32,7 @@ export function WETH() {
     const { isError, error } = contractWrite;
 
     if (isError && error) {
-      toast.error(`Error: ${ErrorsMap[error.name] || ErrorsMap.Failed}`);
+      toast.error(`${ErrorsMap[error.name] || ErrorsMap.General}`);
     }
   }, [contractWrite.isError]);
 
@@ -40,14 +40,14 @@ export function WETH() {
     <GradientCard customClass="w-72 h-80">
       <Tag
         type="default"
-        content={Intl.t(`get-tokens.tag.WETH`)}
+        content={Intl.t('get-tokens.tag.WETH')}
         customClass="mb-4"
       />
       <p className="mas-menu-default text-center mb-4">
         {Intl.t(`get-tokens.card.WETH-description`)}
       </p>
       {waitForTransaction.isLoading || contractWrite.isLoading ? (
-        <p className="mas-menu-default mb-4">Minting...</p>
+        <p className="mas-menu-default mb-4">{Intl.t('get-tokens.minting')}</p>
       ) : (
         <p
           className="mas-menu-underline mb-4 cursor-pointer"

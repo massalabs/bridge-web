@@ -15,8 +15,8 @@ export interface IErrorsMap {
 }
 
 export const ErrorsMap: IErrorsMap = {
-  TransactionExecutionError: 'Action canceled',
-  Failed: 'Something went wrong',
+  TransactionExecutionError: Intl.t('get-tokens.errors.transaction-execution'),
+  General: Intl.t('get-tokens.errors.general'),
 };
 
 interface GetTokensModalProps {
