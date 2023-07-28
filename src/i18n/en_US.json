@@ -78,9 +78,8 @@
       "title": "Metamask",
       "invalid-network": "Your network is invalid, please pick another one",
       "change-network": "change your network",
-      "no-metamask": "It seems like you don't have metamask installed.",
-      "download-metamask-action": "Please follow this ",
-      "installation-process": "installation process"
+      "no-metamask": "It seems like you don't have Metamask installed.",
+      "install-metamask": "Install Metamask"
     },
     "station-connect-error": {
       "error-station": " in order to connect your wallet.",
