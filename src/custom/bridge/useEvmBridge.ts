@@ -9,6 +9,7 @@ import {
 } from 'wagmi';
 import { EVM_BRIDGE_ADDRESS } from '@/const/const';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
+import { parseAmount } from '@/utils/parseAmount';
 
 // TODO: Max u256 pour approval
 const MAX_APPROVAL = 2n ** 256n - 1n;
@@ -84,10 +85,14 @@ const useEvmBridge = () => {
     }
   }
 
-  async function handleLock(amount: bigint) {
+  async function handleLock(amount: string) {
     try {
       let { hash } = await lock.writeAsync({
-        args: [amount.toString(), massaAccount?.address(), token?.evmToken],
+        args: [
+          parseAmount(amount).toString(),
+          massaAccount?.address(),
+          token?.evmToken,
+        ],
       });
       setHashLock(hash);
 
