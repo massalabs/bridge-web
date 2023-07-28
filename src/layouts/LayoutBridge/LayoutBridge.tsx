@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import Intl from '@/i18n/i18n';
 import {
   Button,
   Dropdown,
@@ -7,9 +7,17 @@ import {
   BridgeLogo,
 } from '@massalabs/react-ui-kit';
 import { ConnectWalletPopup } from '@/components/ConnectWalletPopup/ConnectWalletPopup';
+import { useAccount } from 'wagmi';
+import { useAccountStore } from '@/store/store';
 
 export function LayoutBridge({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
+
+  const { isConnected: isEvmWalletConnected } = useAccount();
+
+  const [accounts] = useAccountStore((state) => [state.accounts]);
+
+  const hasAccounts = accounts?.length > 0;
 
   const options = [
     {
@@ -33,20 +41,41 @@ export function LayoutBridge({ ...props }) {
     setOpen,
   };
 
+  function ConnectedWallet() {
+    return (
+      <Button
+        variant="secondary"
+        customClass="h-[54px]"
+        onClick={() => setOpen(true)}
+      >
+        {Intl.t('connect-wallet.connected')}
+      </Button>
+    );
+  }
+
+  function NotConnectedWallet() {
+    return (
+      <Button customClass="h-[54px]" onClick={() => setOpen(true)}>
+        {Intl.t('connect-wallet.title')}
+      </Button>
+    );
+  }
+
   return (
     <div
       className="bg-fixed bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
       from-bright-blue to-deep-blue to-60% overflow-auto w-full min-h-screen
       "
     >
-      {/* Header Element */}
       <div className="flex flex-row items-center justify-between px-11 py-8 w-full h-fit fixed z-10 backdrop-blur-sm">
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown readOnly={true} options={options} />
-          <Button customClass="h-[54px]" onClick={() => setOpen(true)}>
-            Connect Wallet
-          </Button>
+          {isEvmWalletConnected && hasAccounts ? (
+            <ConnectedWallet />
+          ) : (
+            <NotConnectedWallet />
+          )}
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
