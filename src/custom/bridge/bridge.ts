@@ -4,8 +4,9 @@ import {
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
 import { IAccount } from '@massalabs/wallet-provider';
-import { TokenPair } from '../serializable/tokenPair';
+
 import { ForwardingRequest } from '../serializable/request';
+import { TokenPair } from '../serializable/tokenPair';
 import { CONTRACT_ADDRESS } from '@/const';
 
 export async function increaseAllowance(

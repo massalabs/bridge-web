@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 
+import { useAccount } from 'wagmi';
+
+import { MassaConnectError } from './CardVariations/MassaError';
 import {
   RessourceSidePanel,
   ConnectedCard,
@@ -8,15 +11,8 @@ import {
   Connected,
   Disconnected,
 } from '@/components';
-
-import { useAccount } from 'wagmi';
-
 import Intl from '@/i18n/i18n';
-
 import { useAccountStore, useNetworkStore } from '@/store/store';
-import { MassaConnectError } from './CardVariations/MassaError';
-// import { providers } from '@massalabs/wallet-provider';
-// import { MASSA_STATION } from '@/const';
 
 export function ConnectWalletCards() {
   const { isConnected: isEvmWalletConnected } = useAccount();
@@ -28,7 +24,6 @@ export function ConnectWalletCards() {
     isFetching,
     balance,
     isStationInstalled,
-    // setStationInstalled,
   ] = useAccountStore((state) => [
     state.accounts,
     state.account,
@@ -36,25 +31,15 @@ export function ConnectWalletCards() {
     state.isFetching,
     state.balance,
     state.isStationInstalled,
-    // state.setStationInstalled,
   ]);
 
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useNetworkStore(
     (state) => [state.isMetamaskInstalled, state.setIsMetamaskInstalled],
   );
 
-  // async function getProviderList() {
-  //   const providerList = await providers();
-  //   const massaStationWallet = providerList.find(
-  //     (provider) => provider.name() === MASSA_STATION,
-  //   );
-  //   setStationInstalled(!!massaStationWallet);
-  // }
-
   useEffect(() => {
     setIsMetamaskInstalled(window.ethereum?.isConnected());
-    // getProviderList();
-  }, [isMetamaskInstalled, isStationInstalled]);
+  }, [isMetamaskInstalled]);
 
   const massaWalletArgs = {
     accounts,
@@ -73,7 +58,6 @@ export function ConnectWalletCards() {
             <p> {Intl.t('connect-wallet.card-destination.from')} </p>
             {isEvmWalletConnected ? <Connected /> : <Disconnected />}
           </div>
-          {/* <ConnectEvmButton /> */}
           <div className="w-full">
             {isMetamaskInstalled ? (
               <CustomConnectButton />
@@ -106,9 +90,8 @@ export function WalletCard({ ...props }) {
 
   return (
     <div
-      className="bg-primary max-w-full h-60 p-6 
-                    rounded-2xl
-                    flex flex-col justify-center items-center"
+      className="bg-primary max-w-full h-60 p-6 rounded-2xl
+        flex flex-col justify-center items-center"
     >
       <div className="flex flex-col w-full mas-body">{children}</div>
     </div>

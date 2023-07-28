@@ -1,8 +1,8 @@
+import { useEffect, useState } from 'react';
+
+import Intl from '@/i18n/i18n';
 import { FetchingStatus } from '@/pages/Index/Loading';
 import { linkToCreateWallet, linkToInstall } from '@/utils/const';
-
-import { useEffect, useState } from 'react';
-import Intl from '@/i18n/i18n';
 
 export function MassaConnectError({ ...props }) {
   const { accounts, isFetching, isStationInstalled } = props;

@@ -1,5 +1,5 @@
 import { useState, SyntheticEvent, useEffect, ReactNode } from 'react';
-import Intl from '@/i18n/i18n';
+
 import {
   Dropdown,
   MassaLogo,
@@ -8,23 +8,11 @@ import {
   Button,
   toast,
 } from '@massalabs/react-ui-kit';
-import { FiRepeat } from 'react-icons/fi';
-import { BsDiamondHalf } from 'react-icons/bs';
-import {
-  GetTokensPopUpModal,
-  Connected,
-  Disconnected,
-  NoAccounts,
-  NotInstalled,
-} from '@/components';
-import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
-import { useAccountStore } from '@/store/store';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
-import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
-import { TokenPair } from '@/custom/serializable/tokenPair';
-import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
-import { Unit, formatStandard } from '@/utils/massaFormat';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { providers } from '@massalabs/wallet-provider';
+import { BsDiamondHalf } from 'react-icons/bs';
+import { FiRepeat } from 'react-icons/fi';
+import { parseUnits } from 'viem';
 import {
   useAccount,
   useNetwork,
@@ -32,10 +20,24 @@ import {
   useWaitForTransaction,
   useToken,
 } from 'wagmi';
-import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
+
+import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
 import { fetchBalance } from '@/bridge';
-import { parseUnits } from 'viem';
-import { providers } from '@massalabs/wallet-provider';
+import {
+  GetTokensPopUpModal,
+  Connected,
+  Disconnected,
+  NoAccounts,
+  NotInstalled,
+} from '@/components';
+import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
+import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
+import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { TokenPair } from '@/custom/serializable/tokenPair';
+import Intl from '@/i18n/i18n';
+import { useAccountStore } from '@/store/store';
+import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
+import { Unit, formatStandard } from '@/utils/massaFormat';
 import { parseAmount } from '@/utils/parseAmount';
 
 const iconsNetworks = {

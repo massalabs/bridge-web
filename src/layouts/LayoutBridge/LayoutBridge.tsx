@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import Intl from '@/i18n/i18n';
+
 import {
   Button,
   Dropdown,
   ThemeMode,
   BridgeLogo,
 } from '@massalabs/react-ui-kit';
-import { ConnectWalletPopup } from '@/components/ConnectWalletPopup/ConnectWalletPopup';
 import { useAccount } from 'wagmi';
+
+import { ConnectWalletPopup } from '@/components';
+import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
 export function LayoutBridge({ ...props }) {

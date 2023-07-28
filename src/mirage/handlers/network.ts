@@ -1,4 +1,5 @@
 import { Server, Response } from 'miragejs';
+
 import { AppSchema } from '../types';
 
 export function routesForNetwork(server: Server) {

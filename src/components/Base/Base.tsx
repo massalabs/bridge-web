@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useLocalStorage } from '@/custom/useLocalStorage';
-import { useConfigStore } from '@/store/store';
 
 import { Toast } from '@massalabs/react-ui-kit';
+import { Outlet, useNavigate } from 'react-router-dom';
+
+import { useLocalStorage } from '@/custom/useLocalStorage';
 import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
+import { useConfigStore } from '@/store/store';
 
 export interface IOutletContextType {
   themeIcon: JSX.Element;

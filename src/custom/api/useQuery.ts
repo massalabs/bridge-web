@@ -1,10 +1,6 @@
-// STYLES
-
-// EXTERNALS
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
-// LOCALS
+import { useLocation } from 'react-router-dom';
 
 export function useQuery() {
   const { search } = useLocation();

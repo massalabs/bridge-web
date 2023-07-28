@@ -1,9 +1,10 @@
 import { ReactNode, useEffect, useState } from 'react';
-import Intl from '@/i18n/i18n';
+
 import { FiX, FiPauseCircle } from 'react-icons/fi';
 
 import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
 import { StateType } from '@/const';
+import Intl from '@/i18n/i18n';
 
 interface ILoading {
   loading: ReactNode;

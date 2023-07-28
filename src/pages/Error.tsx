@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+
 import Intl from '@/i18n/i18n';
 
 export function Error() {

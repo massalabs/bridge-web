@@ -1,10 +1,5 @@
-// STYLES
-
-// EXTERNALS
-import axios from 'axios';
 import { UseMutationResult, useMutation } from '@tanstack/react-query';
-
-// LOCALS
+import axios from 'axios';
 
 export function useDelete<T>(
   resource: string,

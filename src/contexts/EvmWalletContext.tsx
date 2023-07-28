@@ -1,11 +1,13 @@
 import '@rainbow-me/rainbowkit/styles.css';
+import { PropsWithChildren } from 'react';
+
 import {
   RainbowKitProvider,
   darkTheme,
   lightTheme,
 } from '@rainbow-me/rainbowkit';
-import { PropsWithChildren } from 'react';
 import { WagmiConfig } from 'wagmi';
+
 import { chains, config } from '@/const/wagmi';
 import { useConfigStore } from '@/store/store';
 

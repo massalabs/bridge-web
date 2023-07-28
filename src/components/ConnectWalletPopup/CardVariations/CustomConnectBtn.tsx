@@ -1,9 +1,10 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from '@massalabs/react-ui-kit';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { BsDiamondHalf } from 'react-icons/bs';
+import { FiEdit } from 'react-icons/fi';
+
 import { MetaMaskSvg } from '@/assets';
 import Intl from '@/i18n/i18n';
-import { FiEdit } from 'react-icons/fi';
-import { BsDiamondHalf } from 'react-icons/bs';
 import { formatBalance } from '@/utils/utils';
 
 export function CustomConnectButton(): JSX.Element {

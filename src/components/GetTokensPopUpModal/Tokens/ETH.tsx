@@ -1,7 +1,7 @@
-import Intl from '@/i18n/i18n';
+import { Tag } from '@massalabs/react-ui-kit';
 
 import { GradientCard } from '@/components';
-import { Tag } from '@massalabs/react-ui-kit';
+import Intl from '@/i18n/i18n';
 
 export function ETH() {
   return (
