@@ -36,7 +36,7 @@ import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
 import { fetchBalance } from '@/bridge';
 import { parseUnits } from 'viem';
 import { providers } from '@massalabs/wallet-provider';
-import { formatAmount, parseAmount } from '@/utils/parseAmount';
+import { parseAmount } from '@/utils/parseAmount';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -154,7 +154,8 @@ export function Index() {
   useEffect(() => {
     if (approveIsSuccess) {
       setLoading({ bridge: 'loading', approve: 'success' });
-      _handleLockEVM(BigInt(amount ?? 0));
+
+      _handleLockEVM(parseAmount(amount?.toString() ?? '0'));
     }
     if (approveIsError) {
       setLoading({ box: 'error', approve: 'error', bridge: 'error' });
@@ -523,7 +524,7 @@ export function Index() {
         account ?? undefined,
         evmAddress,
         tokenPairs,
-        formatAmount(amount?.toString() ?? '0'),
+        parseAmount(amount?.toString() ?? '0', 9).toString(),
       );
 
       setLoading({

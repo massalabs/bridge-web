@@ -7,7 +7,7 @@ export function parseAmount(amount: string, decimals = 18): bigint {
 }
 
 export function formatAmount(amount: string, decimals = 18): string {
-  return new Intl.NumberFormat('en-IN', {
+  return new Intl.NumberFormat('en-US', {
     maximumSignificantDigits: decimals,
   }).format(stringToBigInt(amount));
 }
