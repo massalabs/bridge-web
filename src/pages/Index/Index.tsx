@@ -23,7 +23,7 @@ import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
-import { formatStandard } from '@/utils/massaFormat';
+import { Unit, formatStandard } from '@/utils/massaFormat';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import {
   useAccount,
@@ -36,6 +36,7 @@ import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
 import { fetchBalance } from '@/bridge';
 import { parseUnits } from 'viem';
 import { providers } from '@massalabs/wallet-provider';
+import { formatAmount, parseAmount } from '@/utils/parseAmount';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -119,13 +120,24 @@ export function Index() {
 
   const evmToken = token?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
-  const decimals: number = tokenData?.decimals || 18;
+
+  const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
   useEffect(() => {
     setError({ amount: '' });
-  }, [amount, layout, token]);
+
+    if (IS_MASSA_TO_EVM) {
+      setDecimals(9);
+    } else {
+      setDecimals(tokenData?.decimals || 18);
+    }
+  }, [amount, layout, token?.name, tokenData?.decimals]);
+
+  useEffect(() => {
+    setAmount('');
+  }, [layout, token?.name]);
 
   useEffect(() => {
     if (lockIsSuccess) {
@@ -169,7 +181,7 @@ export function Index() {
 
   useEffect(() => {
     fetchBalance(account).then((balance) => setBalance(balance));
-  }, [account]);
+  }, [account, token?.name]);
 
   function handleToggleLayout() {
     setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
@@ -180,7 +192,7 @@ export function Index() {
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
           <Dropdown
-            readOnly={!isEvmWalletConnected}
+            readOnly={!isEvmWalletConnected || isFetching}
             options={
               chains.length
                 ? chains.map((chain) => ({
@@ -215,7 +227,7 @@ export function Index() {
       <div className="mb-4 flex items-center justify-between">
         <div className="w-1/2">
           <Dropdown
-            readOnly={hasNoAccounts}
+            readOnly={hasNoAccounts || isFetching}
             options={[
               {
                 item: 'Massa Buildnet',
@@ -256,7 +268,7 @@ export function Index() {
     return (
       <Dropdown
         select={selectedMassaTokenKey}
-        readOnly={IS_MASSA_TO_EVM}
+        readOnly={IS_MASSA_TO_EVM || isFetching}
         size="xs"
         options={tokens.map((token) => {
           return {
@@ -273,7 +285,7 @@ export function Index() {
     return (
       <Dropdown
         select={selectedMassaTokenKey}
-        readOnly={layout === EVM_TO_MASSA}
+        readOnly={!IS_MASSA_TO_EVM || isFetching}
         size="xs"
         options={tokens.map((token) => {
           return {
@@ -318,9 +330,13 @@ export function Index() {
     return (
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
-        <p className="mas-body">
-          {formatStandard(Number(_tokenBalanceEVM || 0))}
-        </p>
+        <div className="mas-body">
+          {isFetching ? (
+            <FetchingLine />
+          ) : (
+            formatAmount(_tokenBalanceEVM ?? '0', decimals)
+          )}
+        </div>
       </div>
     );
   }
@@ -333,7 +349,7 @@ export function Index() {
           {isFetching ? (
             <FetchingLine />
           ) : (
-            formatStandard(Number(balance?.candidateBalance || 0))
+            formatStandard(Number(balance?.candidateBalance || 0), Unit.MAS, 9)
           )}
         </div>
       </div>
@@ -397,19 +413,19 @@ export function Index() {
     let _balance;
 
     if (IS_MASSA_TO_EVM) {
-      _amount = amount;
-      _balance = balance?.candidateBalance;
+      _amount = parseAmount(amount?.toString() ?? '0');
+      _balance = parseAmount(balance?.candidateBalance ?? '0');
     } else {
-      _amount = amount;
-      _balance = _tokenBalanceEVM;
+      _amount = parseAmount(amount?.toString() ?? '0');
+      _balance = parseAmount(_tokenBalanceEVM ?? '0');
     }
 
-    if (!_amount || Number(_amount) <= 0) {
+    if (!_amount || _amount <= 0) {
       setError({ amount: Intl.t('index.approve.error.invalid-amount') });
       return false;
     }
 
-    if (Number(_balance) < Number(_amount)) {
+    if (_balance < _amount) {
       setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
       return false;
     }
@@ -444,7 +460,7 @@ export function Index() {
     setLoading({ bridge: 'loading' });
 
     try {
-      await _handleLockEVM(BigInt(amount ?? 0));
+      await _handleLockEVM(parseAmount(amount?.toString() ?? '0'));
     } catch (error) {
       console.log(error);
       setLoading({ box: 'error', bridge: 'error' });
@@ -507,7 +523,7 @@ export function Index() {
         account ?? undefined,
         evmAddress,
         tokenPairs,
-        amount?.toString(),
+        formatAmount(amount?.toString() ?? '0'),
       );
 
       setLoading({
@@ -597,12 +613,13 @@ export function Index() {
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
               <Currency
+                disable={isFetching}
                 name="amount"
                 value={amount}
                 onValueChange={(value) => setAmount(value)}
                 placeholder={Intl.t(`index.input.placeholder.amount`)}
                 suffix=""
-                allowDecimals={false}
+                decimalsLimit={decimals}
                 error={error?.amount}
               />
             </div>
@@ -615,7 +632,7 @@ export function Index() {
                   className="mas-h3 text-f-disabled-1 underline cursor-pointer"
                   onClick={() => setOpenTokensModal(true)}
                 >
-                  Get tokens
+                  {Intl.t(`index.get-tokens`)}
                 </h3>
               ) : (
                 <>
@@ -651,6 +668,7 @@ export function Index() {
                 value={amount}
                 onValueChange={(value) => setAmount(value)}
                 suffix=""
+                decimalsLimit={decimals}
                 error=""
                 disable={true}
               />

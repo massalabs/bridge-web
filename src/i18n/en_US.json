@@ -5,6 +5,7 @@
     "loading": "loading..."
   },
   "index": {
+    "get-tokens": "Get tokens",
     "from": "From",
     "to": "To",
     "tag": {
