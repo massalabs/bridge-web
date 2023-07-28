@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Intl from '@/i18n/i18n';
 import { FiX, FiPauseCircle } from 'react-icons/fi';
 
@@ -28,10 +28,23 @@ interface ILoadingBoxProps {
   loading: StateType;
   approveLoading: StateType;
   bridgeLoading: StateType;
+  massaToEvm: boolean;
 }
 
 export function LoadingBox(props: ILoadingBoxProps) {
-  const { onClose, loading, approveLoading, bridgeLoading } = props;
+  const { onClose, loading, approveLoading, bridgeLoading, massaToEvm } = props;
+  const [direction, setDirection] = useState('EVM');
+  const [getTokensLink, setGetTokensLink] = useState('');
+
+  useEffect(() => {
+    if (massaToEvm) {
+      setDirection('Massa');
+      setGetTokensLink('https://bridge.massa.net/buildnet/index');
+    } else {
+      setDirection('EVM');
+      setGetTokensLink('https://getEvmTokens.com');
+    }
+  }, [massaToEvm]);
 
   return (
     <>
@@ -61,6 +74,59 @@ export function LoadingBox(props: ILoadingBoxProps) {
           </p>
           <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>
         </div>
+        <BridgeFinalStatus
+          bridgeLoading={bridgeLoading}
+          approveLoading={approveLoading}
+          direction={direction}
+          getTokensLink={getTokensLink}
+        />
+      </div>
+    </>
+  );
+}
+
+export function BridgeFinalStatus({
+  bridgeLoading,
+  approveLoading,
+  direction,
+  getTokensLink,
+}: {
+  bridgeLoading: StateType;
+  approveLoading: StateType;
+  direction: string;
+  getTokensLink?: string;
+}) {
+  if (bridgeLoading === 'success') {
+    return (
+      <div className="text-center">
+        <p>
+          {Intl.t('index.loading-box.redirection', { direction: direction })}
+        </p>
+        <br />
+        <p>{Intl.t('index.loading-box.add-tokens-message')}</p>
+        <br />
+        <u>
+          <a href={getTokensLink} target="_blank">
+            {Intl.t('index.loading-box.add-tokens')}
+          </a>
+        </u>
+      </div>
+    );
+  } else if (bridgeLoading === 'error') {
+    return (
+      <div className="text-center">
+        <p> {Intl.t('index.loading-box.error')}</p>
+        <br />
+        <u>
+          <a href="mailto:support@bridge.massa.net" target="_blank">
+            {Intl.t('index.loading-box.massa-support')}
+          </a>
+        </u>
+      </div>
+    );
+  } else {
+    return (
+      <>
         <div className="mb-6 flex justify-between">
           <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
           {loadingState(approveLoading)}
@@ -69,9 +135,9 @@ export function LoadingBox(props: ILoadingBoxProps) {
           <p className="mas-body-2">{Intl.t('index.loading-box.bridge')}</p>
           {loadingState(bridgeLoading)}
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 }
 
 export function FetchingRound() {

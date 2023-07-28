@@ -142,12 +142,11 @@ export function Index() {
   useEffect(() => {
     if (lockIsSuccess) {
       setLoading({ box: 'success', bridge: 'success' });
+
       handleTimerClosePopUp();
-      toast.success(Intl.t(`index.bridge.success`));
     }
     if (lockIsError) {
       setLoading({ box: 'error', bridge: 'error' });
-      toast.error(Intl.t(`index.bridge.error.general`));
     }
   }, [lockIsSuccess, lockIsError]);
 
@@ -559,7 +558,7 @@ export function Index() {
     setAmount('');
   }
 
-  function handleTimerClosePopUp(timer = 1500) {
+  function handleTimerClosePopUp(timer = 10000) {
     setTimeout(() => {
       setLoading({
         box: 'none',
@@ -602,7 +601,8 @@ export function Index() {
           onClose={handleClosePopUp}
           loading={loading.box}
           approveLoading={loading.approve}
-          bridgeLoading={loading.bridge}
+          bridgeLoading={loading.bridge} // error, success, loading, none
+          massaToEvm={IS_MASSA_TO_EVM}
         />
       )}
       <div
