@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -6,10 +6,29 @@ import {
   ThemeMode,
   BridgeLogo,
 } from '@massalabs/react-ui-kit';
+
 import { ConnectWalletPopup } from '@/components/ConnectWalletPopup/ConnectWalletPopup';
+import { useAccount } from 'wagmi';
+import { useAccountStore } from '@/store/store';
+import { FiCheck } from 'react-icons/fi';
 
 export function LayoutBridge({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
+
+  const { isConnected: isEvmWalletConnected } = useAccount();
+
+  const [accounts, isStationInstalled] = useAccountStore((state) => [
+    state.accounts,
+    state.isStationInstalled,
+  ]);
+
+  const [bridgeConnected, setBridgeConnected] = useState(false);
+
+  useEffect(() => {
+    if (accounts?.length > 0 && isStationInstalled && isEvmWalletConnected) {
+      setBridgeConnected(true);
+    }
+  }, [accounts, isStationInstalled, isEvmWalletConnected]);
 
   const options = [
     {
@@ -44,9 +63,19 @@ export function LayoutBridge({ ...props }) {
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown readOnly={true} options={options} />
-          <Button customClass="h-[54px]" onClick={() => setOpen(true)}>
-            Connect Wallet
-          </Button>
+          {bridgeConnected ? (
+            <Button
+              customClass="h-[54px]"
+              posIcon={bridgeConnected ? <FiCheck /> : null}
+              onClick={() => setOpen(true)}
+            >
+              Connected
+            </Button>
+          ) : (
+            <Button customClass="h-[54px]" onClick={() => setOpen(true)}>
+              Connect Wallets
+            </Button>
+          )}
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>

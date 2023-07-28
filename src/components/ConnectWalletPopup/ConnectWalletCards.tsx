@@ -28,7 +28,6 @@ export function ConnectWalletCards() {
     isFetching,
     balance,
     isStationInstalled,
-    // setStationInstalled,
   ] = useAccountStore((state) => [
     state.accounts,
     state.account,
@@ -36,24 +35,14 @@ export function ConnectWalletCards() {
     state.isFetching,
     state.balance,
     state.isStationInstalled,
-    // state.setStationInstalled,
   ]);
 
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useNetworkStore(
     (state) => [state.isMetamaskInstalled, state.setIsMetamaskInstalled],
   );
 
-  // async function getProviderList() {
-  //   const providerList = await providers();
-  //   const massaStationWallet = providerList.find(
-  //     (provider) => provider.name() === MASSA_STATION,
-  //   );
-  //   setStationInstalled(!!massaStationWallet);
-  // }
-
   useEffect(() => {
     setIsMetamaskInstalled(window.ethereum?.isConnected());
-    // getProviderList();
   }, [isMetamaskInstalled, isStationInstalled]);
 
   const massaWalletArgs = {
@@ -73,7 +62,6 @@ export function ConnectWalletCards() {
             <p> {Intl.t('connect-wallet.card-destination.from')} </p>
             {isEvmWalletConnected ? <Connected /> : <Disconnected />}
           </div>
-          {/* <ConnectEvmButton /> */}
           <div className="w-full">
             {isMetamaskInstalled ? (
               <CustomConnectButton />
