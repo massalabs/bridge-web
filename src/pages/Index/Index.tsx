@@ -155,7 +155,7 @@ export function Index() {
     if (approveIsSuccess) {
       setLoading({ bridge: 'loading', approve: 'success' });
 
-      _handleLockEVM(parseAmount(amount?.toString() ?? '0'));
+      handleBridgeEVM();
     }
     if (approveIsError) {
       setLoading({ box: 'error', approve: 'error', bridge: 'error' });
@@ -461,9 +461,10 @@ export function Index() {
     setLoading({ bridge: 'loading' });
 
     try {
-      await _handleLockEVM(parseAmount(amount?.toString() ?? '0'));
+      await _handleLockEVM(amount?.toString() ?? '0');
     } catch (error) {
       console.log(error);
+      toast.error(Intl.t(`index.bridge.error.general`));
       setLoading({ box: 'error', bridge: 'error' });
 
       return false;
@@ -489,6 +490,7 @@ export function Index() {
       });
     } catch (error) {
       console.log(error);
+      toast.error(Intl.t(`index.approve.error.general`));
       setLoading({
         approve: 'error',
         bridge: 'error',

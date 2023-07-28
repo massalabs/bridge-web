@@ -5,13 +5,3 @@ export function parseAmount(amount: string, decimals = 18): bigint {
 
   return _amount;
 }
-
-export function formatAmount(amount: string, decimals = 18): string {
-  return new Intl.NumberFormat('en-US', {
-    maximumSignificantDigits: decimals,
-  }).format(stringToBigInt(amount));
-}
-
-function stringToBigInt(str: string): bigint {
-  return BigInt(str.replace('.', ''));
-}
