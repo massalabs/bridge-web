@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useAccountStore } from '@/store/store';
-import { parseUnits } from 'viem';
 import {
   useContractWrite,
   useContractRead,
   useAccount,
   useBalance,
   erc20ABI,
-  useToken,
 } from 'wagmi';
 import { EVM_BRIDGE_ADDRESS } from '@/const/const';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
@@ -25,8 +23,6 @@ const useEvmBridge = () => {
   ]);
   const evmToken = token?.evmToken as `0x${string}`;
 
-  const { data: tokenData } = useToken({ address: evmToken });
-  const decimals: number = tokenData?.decimals || 18;
   const evmUserAddress = accountAddress ? accountAddress : '0x00000';
 
   const balanceData = useBalance({
@@ -91,11 +87,7 @@ const useEvmBridge = () => {
   async function handleLock(amount: bigint) {
     try {
       let { hash } = await lock.writeAsync({
-        args: [
-          parseUnits(amount.toString(), decimals),
-          massaAccount?.address(),
-          token?.evmToken,
-        ],
+        args: [amount.toString(), massaAccount?.address(), token?.evmToken],
       });
       setHashLock(hash);
 
