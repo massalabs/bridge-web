@@ -197,13 +197,13 @@ export function Index() {
             options={
               chains.length
                 ? chains.map((chain) => ({
-                    item: chain.name,
+                    item: chain.name + ' Testnet',
                     icon: iconsNetworks['Sepolia'],
                   }))
                 : [
                     {
                       icon: iconsNetworks['Sepolia'],
-                      item: 'Sepolia',
+                      item: 'Sepolia Testnet',
                     },
                   ]
             }
