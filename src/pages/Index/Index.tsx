@@ -334,7 +334,7 @@ export function Index() {
           {isFetching ? (
             <FetchingLine />
           ) : (
-            formatAmount(_tokenBalanceEVM ?? '0', decimals)
+            formatStandard(Number(_tokenBalanceEVM ?? 0), Unit.MAS, 9)
           )}
         </div>
       </div>
@@ -349,7 +349,7 @@ export function Index() {
           {isFetching ? (
             <FetchingLine />
           ) : (
-            formatStandard(Number(balance?.candidateBalance || 0), Unit.MAS, 9)
+            formatStandard(Number(balance?.candidateBalance ?? 0), Unit.MAS, 9)
           )}
         </div>
       </div>
