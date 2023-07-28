@@ -63,6 +63,7 @@
   },
   "connect-wallet": {
     "title": "Connect wallets",
+    "connected": "Connected wallets",
     "description": "Connect 1 wallet on Sepolia testnet and 1 on Massa buildnet, to bridge tokens between networks.",
     "button": "Connect",
     "card-destination": {
