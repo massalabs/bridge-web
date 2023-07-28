@@ -4,6 +4,7 @@ import { MetaMaskSvg } from '@/assets';
 import Intl from '@/i18n/i18n';
 import { FiEdit } from 'react-icons/fi';
 import { BsDiamondHalf } from 'react-icons/bs';
+import { formatBalance } from '@/utils/utils';
 
 export function CustomConnectButton(): JSX.Element {
   return (
@@ -25,6 +26,7 @@ export function CustomConnectButton(): JSX.Element {
           account &&
           chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
+
         return (
           <div
             className="flex flex-col gap-4"
@@ -96,7 +98,7 @@ export function CustomConnectButton(): JSX.Element {
                     {account.displayBalance
                       ? ` ${Intl.t(
                           'connect-wallet.connected-cards.wallet-balance',
-                        )} ${account.balanceFormatted} ETH`
+                        )} ${formatBalance(account.balanceFormatted)} ETH`
                       : ''}
                   </div>
                 </>
