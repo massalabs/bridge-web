@@ -18,7 +18,12 @@
       "title": "Bridge transfer",
       "subtitle": "(it can take some seconds longer)",
       "approve": "approve (give allowance) ",
-      "bridge": "bridge"
+      "bridge": "bridge",
+      "redirection": "Go to your {direction} wallet to check the token balance.",
+      "add-tokens-message": "You might need to add the token manually to your wallet.",
+      "add-tokens": "Add tokens to the wallet",
+      "error": "Something went wrong. Drop us a message at:",
+      "massa-support": "support@bridge.massa.net"
     },
     "input": {
       "placeholder": {
