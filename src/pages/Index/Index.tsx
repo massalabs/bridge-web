@@ -129,7 +129,7 @@ export function Index() {
     setError({ amount: '' });
 
     if (IS_MASSA_TO_EVM) {
-      setDecimals(9);
+      setDecimals(18);
     } else {
       setDecimals(tokenData?.decimals || 18);
     }
@@ -526,7 +526,7 @@ export function Index() {
         account ?? undefined,
         evmAddress,
         tokenPairs,
-        parseAmount(amount?.toString() ?? '0', 9).toString(),
+        parseAmount(amount?.toString() ?? '0').toString(),
       );
 
       setLoading({
