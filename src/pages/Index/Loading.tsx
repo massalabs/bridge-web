@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 
 import { FiX, FiPauseCircle } from 'react-icons/fi';
 
 import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
-import { StateType } from '@/const';
+import { ILoadingState, StateType } from '@/const';
 import Intl from '@/i18n/i18n';
 
 interface ILoading {
@@ -26,26 +26,12 @@ function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
 
 interface ILoadingBoxProps {
   onClose: () => void;
-  loading: StateType;
-  approveLoading: StateType;
-  bridgeLoading: StateType;
+  loading: ILoadingState;
   massaToEvm: boolean;
 }
 
 export function LoadingBox(props: ILoadingBoxProps) {
-  const { onClose, loading, approveLoading, bridgeLoading, massaToEvm } = props;
-  const [direction, setDirection] = useState('EVM');
-  const [getTokensLink, setGetTokensLink] = useState('');
-
-  useEffect(() => {
-    if (massaToEvm) {
-      setDirection('Massa');
-      setGetTokensLink('https://bridge.massa.net/buildnet/index');
-    } else {
-      setDirection('EVM');
-      setGetTokensLink('https://getEvmTokens.com');
-    }
-  }, [massaToEvm]);
+  const { onClose, loading, massaToEvm } = props;
 
   return (
     <>
@@ -69,51 +55,52 @@ export function LoadingBox(props: ILoadingBoxProps) {
         <div
           className={`relative flex flex-col items-center justify-start pb-10`}
         >
-          {loadingState(loading, 'lg')}
+          {loadingState(loading.box, 'lg')}
           <p className="mas-subtitle pt-6">
             {Intl.t('index.loading-box.title')}
           </p>
           <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>
         </div>
-        <BridgeFinalStatus
-          bridgeLoading={bridgeLoading}
-          approveLoading={approveLoading}
-          direction={direction}
-          getTokensLink={getTokensLink}
-        />
+        <BridgeFinalStatus loading={loading} massaToEvm={massaToEvm} />
       </div>
     </>
   );
 }
 
 export function BridgeFinalStatus({
-  bridgeLoading,
-  approveLoading,
-  direction,
-  getTokensLink,
+  loading,
+  massaToEvm,
 }: {
-  bridgeLoading: StateType;
-  approveLoading: StateType;
-  direction: string;
-  getTokensLink?: string;
+  loading: ILoadingState;
+  massaToEvm: boolean;
 }) {
-  if (bridgeLoading === 'success') {
+  const massa = Intl.t('general.massa');
+  const evm = Intl.t('general.evm');
+  const getMassaTokenLink = Intl.t('index.loading-box.massa-tokens-link');
+  const getEvmTokenLink = Intl.t('index.loading-box.evm-tokens-link');
+
+  if (loading.bridge === 'success') {
     return (
       <div className="text-center">
         <p>
-          {Intl.t('index.loading-box.redirection', { direction: direction })}
+          {Intl.t('index.loading-box.redirection', {
+            direction: massaToEvm ? massa : evm,
+          })}
         </p>
         <br />
         <p>{Intl.t('index.loading-box.add-tokens-message')}</p>
         <br />
         <u>
-          <a href={getTokensLink} target="_blank">
+          <a
+            href={massaToEvm ? getMassaTokenLink : getEvmTokenLink}
+            target="_blank"
+          >
             {Intl.t('index.loading-box.add-tokens')}
           </a>
         </u>
       </div>
     );
-  } else if (bridgeLoading === 'error') {
+  } else if (loading.bridge === 'error') {
     return (
       <div className="text-center">
         <p> {Intl.t('index.loading-box.error')}</p>
@@ -130,11 +117,11 @@ export function BridgeFinalStatus({
       <>
         <div className="mb-6 flex justify-between">
           <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
-          {loadingState(approveLoading)}
+          {loadingState(loading.approve)}
         </div>
         <div className="flex justify-between">
           <p className="mas-body-2">{Intl.t('index.loading-box.bridge')}</p>
-          {loadingState(bridgeLoading)}
+          {loadingState(loading.aprove)}
         </div>
       </>
     );
