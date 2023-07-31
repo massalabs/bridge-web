@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAccountStore } from '@/store/store';
+
 import {
   useContractWrite,
   useContractRead,
@@ -7,8 +7,10 @@ import {
   useBalance,
   erc20ABI,
 } from 'wagmi';
-import { EVM_BRIDGE_ADDRESS } from '@/const/const';
+
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
+import { EVM_BRIDGE_ADDRESS } from '@/const/const';
+import { useAccountStore } from '@/store/store';
 import { parseAmount } from '@/utils/parseAmount';
 
 // TODO: Max u256 pour approval

@@ -1,4 +1,5 @@
 import { Tag } from '@massalabs/react-ui-kit';
+
 import Intl from '@/i18n/i18n';
 
 export function RessourceSidePanel() {

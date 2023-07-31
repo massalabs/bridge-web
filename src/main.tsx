@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
 import {
   RouterProvider,
@@ -6,17 +8,16 @@ import {
   createRoutesFromElements,
   Route,
 } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
 
 // import { ENV } from '@/const/env/env';
+import { EvmWalletContext } from './contexts/EvmWalletContext';
 import { Base, Network } from '@/components';
 // import { mockServer } from '@/mirage';
-import { Error, NotFound, Index } from '@/pages/index';
 import { PAGES } from '@/const/pages/pages';
-import { EvmWalletContext } from './contexts/EvmWalletContext';
+import { Error, NotFound, Index } from '@/pages/index';
 
 // const baseENV = import.meta.env.VITE_ENV;
 

@@ -1,14 +1,14 @@
-import Intl from '@/i18n/i18n';
-import { LayoutType } from '@/const';
-
-import { WETH, ETH, TDAI } from './Tokens';
-import { GradientCard } from '@/components';
 import {
   PopupModal,
   PopupModalHeader,
   PopupModalContent,
   Tag,
 } from '@massalabs/react-ui-kit';
+
+import { WETH, ETH, TDAI } from './Tokens';
+import { GradientCard } from '@/components';
+import { LayoutType } from '@/const';
+import Intl from '@/i18n/i18n';
 
 export interface IErrorsMap {
   [key: string]: string;

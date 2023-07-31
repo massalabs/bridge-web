@@ -1,6 +1,5 @@
 import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
 import { IAccount } from '@massalabs/wallet-provider';
-
 import { BsDiamondHalf } from 'react-icons/bs';
 
 export function SelectMassaWalletAccount({ ...props }) {

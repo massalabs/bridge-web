@@ -1,7 +1,7 @@
-import Intl from '@/i18n/i18n';
+import { toast } from '@massalabs/react-ui-kit';
 import { IAccount } from '@massalabs/wallet-provider';
 
-import { toast } from '@massalabs/react-ui-kit';
+import Intl from '@/i18n/i18n';
 
 export async function fetchBalance(account: IAccount | null) {
   try {

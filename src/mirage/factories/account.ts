@@ -1,5 +1,6 @@
-import { Factory } from 'miragejs';
 import { faker } from '@faker-js/faker';
+import { Factory } from 'miragejs';
+
 import { AccountObject } from '../../models/AccountModel';
 
 export const accountFactory = Factory.extend<AccountObject>({

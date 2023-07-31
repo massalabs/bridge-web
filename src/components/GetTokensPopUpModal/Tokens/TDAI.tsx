@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import Intl from '@/i18n/i18n';
-import { useMintToken } from '@/custom/bridge/useMintToken';
 
-import { GradientCard } from '@/components';
-import { TDAI_CONTRACT_ADDRESS } from '@/const';
-import { ErrorsMap } from '@/components';
 import { Tag, toast } from '@massalabs/react-ui-kit';
+
+import { GradientCard, ErrorsMap } from '@/components';
+import { TDAI_CONTRACT_ADDRESS } from '@/const';
+import { useMintToken } from '@/custom/bridge/useMintToken';
+import Intl from '@/i18n/i18n';
 
 export function TDAI() {
   const [selectedToken, setSelectedToken] = useState(TDAI_CONTRACT_ADDRESS);

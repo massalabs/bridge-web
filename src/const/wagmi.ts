@@ -1,9 +1,8 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, sepolia } from 'wagmi';
-import { publicProvider } from '@wagmi/core/providers/public';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
+import { publicProvider } from '@wagmi/core/providers/public';
+import { configureChains, createConfig, sepolia } from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
 
 const ALCHEMY_API_KEY = import.meta.env['VITE_ALCHEMY_API_KEY'] || '';
 export const { chains, publicClient } = configureChains(

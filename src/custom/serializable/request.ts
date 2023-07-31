@@ -3,6 +3,7 @@ import {
   IDeserializedResult,
   ISerializable,
 } from '@massalabs/massa-web3';
+
 import { TokenPair } from './tokenPair';
 
 export class ForwardingRequest implements ISerializable<ForwardingRequest> {

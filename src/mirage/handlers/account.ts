@@ -1,4 +1,5 @@
 import { Server } from 'miragejs';
+
 import { AppSchema } from '../types';
 
 export function routesForAccounts(server: Server) {

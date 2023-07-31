@@ -1,10 +1,12 @@
-import { maskAddress } from '@/utils/massaFormat';
-import { SelectMassaWalletAccount } from '@/components';
-import { Clipboard } from '@massalabs/react-ui-kit';
-import Intl from '@/i18n/i18n';
 import { useEffect, useState } from 'react';
-import { fetchBalance } from '@/bridge';
+
+import { Clipboard } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
+
+import { fetchBalance } from '@/bridge';
+import { SelectMassaWalletAccount } from '@/components';
+import Intl from '@/i18n/i18n';
+import { maskAddress } from '@/utils/massaFormat';
 
 export function ConnectedCard({ ...props }) {
   const { account } = props;

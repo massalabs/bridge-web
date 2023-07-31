@@ -1,7 +1,7 @@
 import { Model } from 'miragejs';
 import { ModelDefinition } from 'miragejs/-types';
-import { AccountObject } from '../../models/AccountModel';
 
+import { AccountObject } from '../../models/AccountModel';
 import { NetworkModel } from '../../models/NetworkModel';
 
 const accountModel: ModelDefinition<AccountObject> = Model.extend({});

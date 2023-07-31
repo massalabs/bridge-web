@@ -48,6 +48,7 @@ class I18n {
     } else if (lang === INTL.FR_fr) {
       return frFR;
     } else {
+      // eslint-disable-next-line no-console
       console.warn(
         `I18n::_getCopy:: We may not support yet ${lang}. Loading 'en_US' then... `,
       );

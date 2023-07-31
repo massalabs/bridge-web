@@ -4,6 +4,7 @@ import {
   IAccount,
   IAccountBalanceResponse,
 } from '@massalabs/wallet-provider';
+
 import { MASSA_STATION } from '@/const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
 import { getMassaTokenSymbol } from '@/custom/token/token';
