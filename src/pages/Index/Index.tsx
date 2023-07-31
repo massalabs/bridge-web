@@ -37,8 +37,8 @@ import { TokenPair } from '@/custom/serializable/tokenPair';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
-import { Unit, formatStandard } from '@/utils/massaFormat';
-import { parseAmount } from '@/utils/parseAmount';
+import { formatStandard } from '@/utils/massaFormat';
+import { formatAmount, parseAmount } from '@/utils/parseAmount';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -129,12 +129,7 @@ export function Index() {
 
   useEffect(() => {
     setError({ amount: '' });
-
-    if (IS_MASSA_TO_EVM) {
-      setDecimals(18);
-    } else {
-      setDecimals(tokenData?.decimals || 18);
-    }
+    setDecimals(tokenData?.decimals || 18);
   }, [amount, layout, token?.name, tokenData?.decimals]);
 
   useEffect(() => {
@@ -274,7 +269,7 @@ export function Index() {
         size="xs"
         options={tokens.map((token) => {
           return {
-            item: token.name.slice(0, -2),
+            item: token.symbol.slice(0, -2),
             icon: iconsTokens['OTHER'],
             onClick: () => setToken(token),
           };
@@ -291,7 +286,7 @@ export function Index() {
         size="xs"
         options={tokens.map((token) => {
           return {
-            item: token.name,
+            item: token.symbol,
             icon: iconsTokens['MASSASTATION'],
             onClick: () => setToken(token),
           };
@@ -333,11 +328,7 @@ export function Index() {
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
-          {isFetching ? (
-            <FetchingLine />
-          ) : (
-            formatStandard(Number(_tokenBalanceEVM ?? 0), Unit.MAS, 9)
-          )}
+          {isFetching ? <FetchingLine /> : _tokenBalanceEVM ?? '0'}
         </div>
       </div>
     );
@@ -348,11 +339,7 @@ export function Index() {
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
-          {isFetching ? (
-            <FetchingLine />
-          ) : (
-            formatStandard(Number(balance?.candidateBalance ?? 0), Unit.MAS, 9)
-          )}
+          {isFetching ? <FetchingLine /> : formatAmount(token?.balance ?? '0')}
         </div>
       </div>
     );
@@ -686,7 +673,12 @@ export function Index() {
           </div>
         </div>
         <div>
-          <Button disabled={isFetching} onClick={(e) => handleSubmit(e)}>
+          <Button
+            disabled={
+              isFetching || !isStationInstalled || !isEvmWalletConnected
+            }
+            onClick={(e) => handleSubmit(e)}
+          >
             {Intl.t(`index.button.bridge`)}
           </Button>
         </div>
