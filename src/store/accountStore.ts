@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ClientFactory, DefaultProviderUrls } from '@massalabs/massa-web3';
 import {
   providers,
   IAccount,
@@ -8,13 +9,23 @@ import {
 
 import { MASSA_STATION } from '@/const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
-import { getMassaTokenSymbol } from '@/custom/token/token';
+import {
+  getAllowance,
+  getMassaTokenSymbol,
+  getDecimals,
+  getMassaTokenName,
+  getBalance,
+} from '@/custom/token/token';
 
 export interface IToken {
   name: string;
+  allowance: string;
+  decimals: string;
+  symbol: string;
   massaToken: string;
   evmToken: string;
   chainId: number;
+  balance: string;
 }
 
 export interface AccountStoreState {
@@ -49,6 +60,11 @@ const accountStore = (set: any, get: any) => ({
   },
   isStationInstalled: false,
 
+  clientFactory: ClientFactory.createDefaultClient(
+    DefaultProviderUrls.BUILDNET,
+    false,
+  ),
+
   setAvailableAccounts: (accounts: IAccount) => {
     set({ accounts: accounts });
   },
@@ -63,16 +79,33 @@ const accountStore = (set: any, get: any) => ({
   getTokens: async () => {
     set({ isFetching: true });
 
+    let clientFactory = await get().clientFactory;
+
     let firstAccount = get().accounts?.at(0);
 
-    if (firstAccount) {
+    if (clientFactory && firstAccount) {
       let overriddenFetchAvailableTokens: IToken[] = [];
-      let supportedTokens = await getSupportedTokensList(firstAccount);
+      let supportedTokens = await getSupportedTokensList(clientFactory);
 
       const tokenNamePromises = supportedTokens.map(async (tokenPair) => {
         overriddenFetchAvailableTokens.push({
           ...tokenPair,
-          name: await getMassaTokenSymbol(tokenPair.massaToken, firstAccount),
+          name: await getMassaTokenName(tokenPair.massaToken, clientFactory),
+          symbol: await getMassaTokenSymbol(
+            tokenPair.massaToken,
+            clientFactory,
+          ),
+          decimals: await getDecimals(tokenPair.massaToken, clientFactory),
+          allowance: await getAllowance(
+            tokenPair.massaToken,
+            clientFactory,
+            firstAccount,
+          ),
+          balance: await getBalance(
+            tokenPair.massaToken,
+            clientFactory,
+            firstAccount,
+          ),
         });
       });
       await Promise.all(tokenNamePromises);

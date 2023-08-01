@@ -1,6 +1,8 @@
 import {
   Args,
-  IContractReadOperationResponse,
+  IClient,
+  IReadData,
+  ISmartContractsClient,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
 import { IAccount } from '@massalabs/wallet-provider';
@@ -17,11 +19,13 @@ export async function increaseAllowance(
   if (!account) {
     throw new Error('Account is not defined');
   }
-  const opId = await account?.callSC(
+  const opId = await account.callSC(
     tokenAddress,
     'increaseAllowance',
     new Args().addString(CONTRACT_ADDRESS).addU256(amount),
-    BigInt(100),
+    amount,
+    BigInt(0),
+    BigInt(1000000),
   );
   return opId;
 }
@@ -50,24 +54,24 @@ export async function forwardBurn(
     'forwardBurn',
     new Args().addSerializable(request),
     BigInt(1000),
+    BigInt(0),
+    BigInt(1000000),
   );
 
   return opId;
 }
 
 export async function getSupportedTokensList(
-  account: IAccount | undefined,
+  client: IClient,
 ): Promise<TokenPair[]> {
-  if (!account) {
-    throw new Error('Account is not defined');
-  }
-  const returnObject: IContractReadOperationResponse = await account.callSC(
-    CONTRACT_ADDRESS,
-    'supportedTokensList',
-    new Uint8Array(),
-    BigInt(0),
-    { isNPE: true, maxGas: BigInt(1000000) },
-  );
+  const smartContractsClient: ISmartContractsClient = client.smartContracts();
+
+  const returnObject = await smartContractsClient.readSmartContract({
+    maxGas: BigInt(1000000),
+    targetAddress: CONTRACT_ADDRESS,
+    targetFunction: 'supportedTokensList',
+    parameter: [],
+  } as IReadData);
 
   return bytesToSerializableObjectArray(returnObject.returnValue, TokenPair);
 }
