@@ -3,6 +3,7 @@ import {
   providers,
   IAccount,
   IAccountBalanceResponse,
+  IProvider,
 } from '@massalabs/wallet-provider';
 
 import { MASSA_STATION } from '@/const';
@@ -87,12 +88,17 @@ const accountStore = (set: any, get: any) => ({
   },
 
   getAccounts: async () => {
-    try {
-      set({ isFetching: true });
+    console.log('getAccounts');
+    set({ isFetching: true });
 
+    try {
+      console.log('Before providers');
       const providerList = await providers();
+      console.log('After providers');
+      console.log('providerList: ', providerList);
+
       const massaStationWallet = providerList.find(
-        (provider: any) => provider.name() === MASSA_STATION,
+        (provider: IProvider) => provider.name() === MASSA_STATION,
       );
       const fetchedAccounts = await massaStationWallet?.accounts();
       if (fetchedAccounts?.length === 0) {
@@ -115,9 +121,10 @@ const accountStore = (set: any, get: any) => ({
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      set({ isFetching: false });
     }
+    // finally {
+    //   set({ isFetching: false });
+    // }
   },
 
   setAccount: (account: IAccount | null) => set({ account }),
