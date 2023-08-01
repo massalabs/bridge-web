@@ -1,15 +1,8 @@
 import currency from 'currency.js';
-import { parseUnits } from 'viem';
 
 export interface IFormatted {
   in2decimals: string;
   full: string;
-}
-
-export function parseAmount(amount: string, decimals = 18): bigint {
-  let _amount = parseUnits(amount?.toString() || '0', decimals);
-
-  return _amount;
 }
 
 export function formatAmount(amount: string, decimals = 18): IFormatted {

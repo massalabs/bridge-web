@@ -12,18 +12,15 @@ import { TokenPair } from '../serializable/tokenPair';
 import { CONTRACT_ADDRESS } from '@/const';
 
 export async function increaseAllowance(
-  account: IAccount | undefined,
+  account: IAccount,
   tokenAddress: string,
   amount: bigint,
 ): Promise<string> {
-  if (!account) {
-    throw new Error('Account is not defined');
-  }
   const opId = await account.callSC(
     tokenAddress,
     'increaseAllowance',
     new Args().addString(CONTRACT_ADDRESS).addU256(amount),
-    amount,
+    BigInt(0),
     BigInt(0),
     BigInt(1000000),
   );
@@ -31,25 +28,18 @@ export async function increaseAllowance(
 }
 
 export async function forwardBurn(
-  account?: IAccount,
-  evmAddress?: string,
-  tokenPair?: TokenPair,
-  amount?: string,
+  account: IAccount,
+  evmAddress: string,
+  tokenPair: TokenPair,
+  amount: bigint,
 ): Promise<string> {
-  if (!account) {
-    throw new Error('Account is not defined');
-  }
-  if (!tokenPair) {
-    throw new Error('TokenPair is not defined');
-  }
-
   const request = new ForwardingRequest(
-    amount?.toString(),
+    amount.toString(),
     evmAddress,
     tokenPair,
   );
 
-  const opId = await account?.callSC(
+  return account.callSC(
     CONTRACT_ADDRESS,
     'forwardBurn',
     new Args().addSerializable(request),
@@ -57,8 +47,6 @@ export async function forwardBurn(
     BigInt(0),
     BigInt(1000000),
   );
-
-  return opId;
 }
 
 export async function getSupportedTokensList(

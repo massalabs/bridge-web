@@ -20,7 +20,7 @@ import {
 export interface IToken {
   name: string;
   allowance: string;
-  decimals: string;
+  decimals: number;
   symbol: string;
   massaToken: string;
   evmToken: string;
@@ -96,16 +96,16 @@ const accountStore = (set: any, get: any) => ({
             clientFactory,
           ),
           decimals: await getDecimals(tokenPair.massaToken, clientFactory),
-          allowance: await getAllowance(
-            tokenPair.massaToken,
-            clientFactory,
-            firstAccount,
-          ),
-          balance: await getBalance(
-            tokenPair.massaToken,
-            clientFactory,
-            firstAccount,
-          ),
+          allowance: (
+            await getAllowance(
+              tokenPair.massaToken,
+              clientFactory,
+              firstAccount,
+            )
+          ).toString(),
+          balance: (
+            await getBalance(tokenPair.massaToken, clientFactory, firstAccount)
+          ).toString(),
         });
       });
       await Promise.all(tokenNamePromises);

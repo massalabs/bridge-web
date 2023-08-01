@@ -10,3 +10,7 @@ export const TDAI_CONTRACT_ADDRESS =
   '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';
 export const WETH_CONTRACT_ADDRESS =
   '0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424';
+
+export const U256_MAX = BigInt(
+  '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+);
