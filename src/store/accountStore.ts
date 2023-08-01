@@ -96,35 +96,41 @@ const accountStore = (set: any, get: any) => ({
       const providerList = await providers();
       console.log('After providers');
       console.log('providerList: ', providerList);
+      if (providerList.length === 0) {
+        set({ isFetching: false, isStationInstalled: false });
+        return;
+      }
 
       const massaStationWallet = providerList.find(
         (provider: IProvider) => provider.name() === MASSA_STATION,
       );
+      if (massaStationWallet) set({ isStationInstalled: true });
       console.log('massaStationWallet: ', massaStationWallet);
       const fetchedAccounts = await massaStationWallet?.accounts();
       console.log('fetchedAccounts: ', fetchedAccounts);
-      if (fetchedAccounts?.length === 0) {
-        set({
-          isFetching: false,
-        });
-      } else {
-        const firstAccount = fetchedAccounts?.at(0);
+      // if (fetchedAccounts?.length === 0) {
+      //   set({
+      //     isFetching: false,
+      //   });
+      // } else {
+      if (fetchedAccounts && fetchedAccounts.length > 0) {
+        const firstAccount = fetchedAccounts.at(0);
         console.log('firstAccount: ', firstAccount);
 
         let firstAccountBalance = null;
         if (firstAccount) {
-          firstAccountBalance = await firstAccount?.balance();
+          firstAccountBalance = await firstAccount.balance();
         }
         set({
           accounts: fetchedAccounts,
           account: firstAccount ?? null,
-          isFetching: false,
           balance: firstAccountBalance,
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
+    set({ isFetching: false });
     // finally {
     //   set({ isFetching: false });
     // }
