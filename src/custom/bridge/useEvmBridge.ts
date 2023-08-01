@@ -40,7 +40,7 @@ const useEvmBridge = () => {
     watch: true,
   });
 
-  const [tokenBalance, setTokenBalance] = useState<string>();
+  const [tokenBalance, setTokenBalance] = useState<bigint>();
   const [allowance, setAllowance] = useState<bigint>(0n);
   const [hashLock, setHashLock] = useState<`0x${string}`>();
   const [hashApprove, setHashApprove] = useState<`0x${string}`>();
@@ -48,12 +48,12 @@ const useEvmBridge = () => {
   useEffect(() => {
     if (!token) return;
 
-    setTokenBalance(balanceData.data?.value.toString() ?? '0');
+    setTokenBalance(balanceData.data?.value ?? 0n);
   }, [token, balanceData.data?.value]);
   useEffect(() => {
     if (!token) return;
 
-    setAllowance(BigInt(_allowance.data || 0n));
+    setAllowance(_allowance.data || 0n);
   }, [token, _allowance?.data]);
 
   const approve = useContractWrite({

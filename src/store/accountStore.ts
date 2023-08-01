@@ -19,13 +19,13 @@ import {
 
 export interface IToken {
   name: string;
-  allowance: string;
+  allowance: bigint;
   decimals: number;
   symbol: string;
   massaToken: string;
   evmToken: string;
   chainId: number;
-  balance: string;
+  balance: bigint;
 }
 
 export interface AccountStoreState {
@@ -96,16 +96,16 @@ const accountStore = (set: any, get: any) => ({
             clientFactory,
           ),
           decimals: await getDecimals(tokenPair.massaToken, clientFactory),
-          allowance: (
-            await getAllowance(
-              tokenPair.massaToken,
-              clientFactory,
-              firstAccount,
-            )
-          ).toString(),
-          balance: (
-            await getBalance(tokenPair.massaToken, clientFactory, firstAccount)
-          ).toString(),
+          allowance: await getAllowance(
+            tokenPair.massaToken,
+            clientFactory,
+            firstAccount,
+          ),
+          balance: await getBalance(
+            tokenPair.massaToken,
+            clientFactory,
+            firstAccount,
+          ),
         });
       });
       await Promise.all(tokenNamePromises);
