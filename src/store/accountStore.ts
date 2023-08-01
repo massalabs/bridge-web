@@ -100,13 +100,16 @@ const accountStore = (set: any, get: any) => ({
       const massaStationWallet = providerList.find(
         (provider: IProvider) => provider.name() === MASSA_STATION,
       );
+      console.log('massaStationWallet: ', massaStationWallet);
       const fetchedAccounts = await massaStationWallet?.accounts();
+      console.log('fetchedAccounts: ', fetchedAccounts);
       if (fetchedAccounts?.length === 0) {
         set({
           isFetching: false,
         });
       } else {
         const firstAccount = fetchedAccounts?.at(0);
+        console.log('firstAccount: ', firstAccount);
 
         let firstAccountBalance = null;
         if (firstAccount) {
