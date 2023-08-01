@@ -9,11 +9,9 @@ import {
   toast,
   Tooltip,
 } from '@massalabs/react-ui-kit';
-import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { providers } from '@massalabs/wallet-provider';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { FiRepeat } from 'react-icons/fi';
-import { parseUnits } from 'viem';
 import {
   useAccount,
   useNetwork,
@@ -23,7 +21,6 @@ import {
 } from 'wagmi';
 
 import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
-import { fetchBalance } from '@/bridge';
 import {
   GetTokensPopUpModal,
   Connected,
@@ -78,7 +75,6 @@ export function Index() {
 
   // HOOKS
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
-  const [balance, setBalance] = useState<IAccountBalanceResponse>();
   const [amount, setAmount] = useState<number | string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
@@ -176,10 +172,6 @@ export function Index() {
   useEffect(() => {
     getTokens();
   }, [accounts]);
-
-  useEffect(() => {
-    fetchBalance(account).then((balance) => setBalance(balance));
-  }, [account, token?.name]);
 
   function handleToggleLayout() {
     setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
@@ -423,10 +415,10 @@ export function Index() {
 
     if (IS_MASSA_TO_EVM) {
       _amount = parseAmount(amount?.toString() ?? '0');
-      _balance = parseAmount(balance?.candidateBalance ?? '0');
+      _balance = BigInt(token?.balance ?? 0);
     } else {
       _amount = parseAmount(amount?.toString() ?? '0');
-      _balance = parseAmount(_tokenBalanceEVM ?? '0');
+      _balance = BigInt(_tokenBalanceEVM ?? 0);
     }
 
     if (!_amount || _amount <= 0) {
@@ -446,7 +438,7 @@ export function Index() {
     try {
       setLoading({ approve: 'loading' });
 
-      let _amount = parseUnits(amount?.toString() || '0', decimals);
+      let _amount = parseAmount(amount?.toString() ?? '0');
 
       if (_allowanceEVM < BigInt(_amount)) {
         await _handleApproveEVM();
