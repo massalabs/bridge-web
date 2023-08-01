@@ -12,6 +12,7 @@ import {
 import { providers } from '@massalabs/wallet-provider';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { FiRepeat } from 'react-icons/fi';
+import { parseUnits } from 'viem';
 import {
   useAccount,
   useNetwork,
@@ -75,7 +76,7 @@ export function Index() {
 
   // HOOKS
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
-  const [amount, setAmount] = useState<number | string | undefined>('');
+  const [amount, setAmount] = useState<string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
 
@@ -324,7 +325,7 @@ export function Index() {
           {isFetching ? (
             <FetchingLine />
           ) : (
-            <TokenBalance amount={_tokenBalanceEVM ?? '0'} />
+            <TokenBalance amount={_tokenBalanceEVM} />
           )}
         </div>
       </div>
@@ -339,16 +340,20 @@ export function Index() {
           {isFetching ? (
             <FetchingLine />
           ) : (
-            <TokenBalance amount={token?.balance ?? '0'} />
+            <TokenBalance amount={token?.balance} />
           )}
         </div>
       </div>
     );
   }
 
-  function TokenBalance({ ...props }) {
+  function TokenBalance({ ...props }: { amount?: bigint }) {
     let { amount } = props;
-    let { in2decimals, full } = formatAmount(amount);
+
+    let { in2decimals, full } = formatAmount(
+      amount ? amount.toString() : '0',
+      decimals,
+    );
 
     return (
       <div className="flex items-center">
@@ -418,17 +423,17 @@ export function Index() {
     let _balance;
 
     if (IS_MASSA_TO_EVM) {
-      if (!balance) {
+      if (!token) {
         return false;
       }
-      _amount = parseUnits(amount.toString(), decimals);
-      _balance = parseUnits(balance.candidateBalance, decimals);
+      _amount = parseUnits(amount, decimals);
+      _balance = token.balance;
     } else {
       if (!_tokenBalanceEVM) {
         return false;
       }
-      _amount = parseUnits(amount.toString(), decimals);
-      _balance = parseUnits(_tokenBalanceEVM, decimals);
+      _amount = parseUnits(amount, decimals);
+      _balance = _tokenBalanceEVM;
     }
 
     if (_amount <= 0n) {
@@ -452,11 +457,10 @@ export function Index() {
         return false;
       }
 
-      let _amount = parseUnits(amount.toString(), decimals);
+      let _amount = parseUnits(amount, decimals);
 
       if (_allowanceEVM < _amount) {
         await _handleApproveEVM();
-        return false; // ??
       }
 
       // already approved requested amount
@@ -479,7 +483,7 @@ export function Index() {
     }
 
     try {
-      await _handleLockEVM(parseUnits(amount.toString(), decimals));
+      await _handleLockEVM(parseUnits(amount, decimals));
     } catch (error) {
       console.log(error);
       toast.error(Intl.t(`index.bridge.error.general`));
@@ -502,7 +506,15 @@ export function Index() {
       if (!token) {
         throw new Error('Token is not defined');
       }
-      await increaseAllowance(account, token.massaToken, U256_MAX);
+      if (!amount) {
+        throw new Error('Amount is not defined');
+      }
+
+      let _amount = parseUnits(amount, decimals);
+
+      if (token.allowance < _amount) {
+        await increaseAllowance(account, token.massaToken, U256_MAX);
+      }
 
       setLoading({
         approve: 'success',
@@ -558,7 +570,7 @@ export function Index() {
         account,
         evmAddress,
         tokenPairs,
-        parseUnits(amount.toString(), decimals),
+        parseUnits(amount, decimals),
       );
 
       setLoading({
