@@ -51,8 +51,8 @@ const useEvmBridge = () => {
   useEffect(() => {
     if (!token) return;
 
-    setTokenBalance(balanceData.data?.formatted ?? '0');
-  }, [token, balanceData.data?.formatted]);
+    setTokenBalance(balanceData.data?.value.toString() ?? '0');
+  }, [token, balanceData.data?.value]);
   useEffect(() => {
     if (!token) return;
 
