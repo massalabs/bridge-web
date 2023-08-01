@@ -7,6 +7,7 @@ import {
   Currency,
   Button,
   toast,
+  Tooltip,
 } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { providers } from '@massalabs/wallet-provider';
@@ -328,7 +329,11 @@ export function Index() {
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
-          {isFetching ? <FetchingLine /> : _tokenBalanceEVM ?? '0'}
+          {isFetching ? (
+            <FetchingLine />
+          ) : (
+            <TokenBalance amount={_tokenBalanceEVM ?? '0'} />
+          )}
         </div>
       </div>
     );
@@ -339,8 +344,23 @@ export function Index() {
       <div className="flex items-center gap-2">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
-          {isFetching ? <FetchingLine /> : formatAmount(token?.balance ?? '0')}
+          {isFetching ? (
+            <FetchingLine />
+          ) : (
+            <TokenBalance amount={token?.balance ?? '0'} />
+          )}
         </div>
+      </div>
+    );
+  }
+
+  function TokenBalance({ ...props }) {
+    let { amount } = props;
+    let { in2decimals, full } = formatAmount(amount);
+
+    return (
+      <div className="flex items-center">
+        {in2decimals} <Tooltip content={full} />
       </div>
     );
   }

@@ -1,4 +1,10 @@
+import currency from 'currency.js';
 import { parseUnits } from 'viem';
+
+export interface IFormatted {
+  in2decimals: string;
+  full: string;
+}
 
 export function parseAmount(amount: string, decimals = 18): bigint {
   let _amount = parseUnits(amount?.toString() || '0', decimals);
@@ -6,26 +12,26 @@ export function parseAmount(amount: string, decimals = 18): bigint {
   return _amount;
 }
 
-export function formatAmount(amount: string, decimals = 18): string {
-  const parseAmount = BigInt(amount.substring(0, amount.length - decimals));
+export function formatAmount(amount: string, decimals = 18): IFormatted {
+  const decimal = '.';
 
-  return new Intl.NumberFormat('en-US', {
-    maximumSignificantDigits: decimals,
-  })
-    .format(parseAmount)
-    .concat(
-      '.' +
-        new Intl.NumberFormat('en-US', {
-          maximumSignificantDigits: 2,
-        }).format(
-          BigInt(amount.substring(amount.length - decimals)) /
-            BigInt(10 ** decimals),
-        ),
-    );
-}
+  const integerPart = amount.substring(0, amount.length - decimals);
+  const decimalPart = amount.substring(amount.length - decimals);
 
-export function formatEvmAmount(amount: string, decimals = 2): string {
-  return new Intl.NumberFormat('en-US', {
-    maximumSignificantDigits: decimals,
-  }).format(Number(amount));
+  const formattedIntegerPart = currency(`${integerPart}`, {
+    separator: ',',
+    decimal: decimal,
+    symbol: '',
+    precision: 0,
+  }).format();
+  const formattedDecimalPart = decimalPart;
+
+  return {
+    in2decimals: currency(`${integerPart}.${decimalPart}`, {
+      separator: ',',
+      decimal: decimal,
+      symbol: '',
+    }).format(),
+    full: `${formattedIntegerPart}${decimal}${formattedDecimalPart}`,
+  };
 }
