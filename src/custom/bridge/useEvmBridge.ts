@@ -9,12 +9,9 @@ import {
 } from 'wagmi';
 
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { EVM_BRIDGE_ADDRESS } from '@/const/const';
+import { EVM_BRIDGE_ADDRESS, U256_MAX } from '@/const/const';
 import { useAccountStore } from '@/store/store';
-import { parseAmount } from '@/utils/parseAmount';
 
-// TODO: Max u256 pour approval
-const MAX_APPROVAL = 2n ** 256n - 1n;
 // TODO: fix gas limit
 const MAX_GAS = 1_000_000n;
 
@@ -64,7 +61,7 @@ const useEvmBridge = () => {
     address: evmToken,
     abi: erc20ABI,
     gas: MAX_GAS,
-    args: [EVM_BRIDGE_ADDRESS, MAX_APPROVAL],
+    args: [EVM_BRIDGE_ADDRESS, U256_MAX],
   });
 
   const lock = useContractWrite({
@@ -86,14 +83,10 @@ const useEvmBridge = () => {
     }
   }
 
-  async function handleLock(amount: string) {
+  async function handleLock(amount: bigint) {
     try {
       let { hash } = await lock.writeAsync({
-        args: [
-          parseAmount(amount).toString(),
-          massaAccount?.address(),
-          token?.evmToken,
-        ],
+        args: [amount.toString(), massaAccount?.address(), token?.evmToken],
       });
       setHashLock(hash);
 

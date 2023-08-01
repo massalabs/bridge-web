@@ -28,7 +28,7 @@ import {
   NoAccounts,
   NotInstalled,
 } from '@/components';
-import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
+import { LayoutType, ILoadingState, MASSA_STATION, U256_MAX } from '@/const';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
@@ -36,7 +36,7 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
-import { formatAmount, parseAmount } from '@/utils/parseAmount';
+import { formatAmount } from '@/utils/parseAmount';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -410,18 +410,28 @@ export function Index() {
   function validate() {
     setError(null);
 
+    if (!amount) {
+      return false;
+    }
+
     let _amount;
     let _balance;
 
     if (IS_MASSA_TO_EVM) {
-      _amount = parseAmount(amount?.toString() ?? '0');
-      _balance = BigInt(token?.balance ?? 0);
+      if (!balance) {
+        return false;
+      }
+      _amount = parseUnits(amount.toString(), decimals);
+      _balance = parseUnits(balance.candidateBalance, decimals);
     } else {
-      _amount = parseAmount(amount?.toString() ?? '0');
-      _balance = BigInt(_tokenBalanceEVM ?? 0);
+      if (!_tokenBalanceEVM) {
+        return false;
+      }
+      _amount = parseUnits(amount.toString(), decimals);
+      _balance = parseUnits(_tokenBalanceEVM, decimals);
     }
 
-    if (!_amount || _amount <= 0) {
+    if (_amount <= 0n) {
       setError({ amount: Intl.t('index.approve.error.invalid-amount') });
       return false;
     }
@@ -438,15 +448,19 @@ export function Index() {
     try {
       setLoading({ approve: 'loading' });
 
-      let _amount = parseAmount(amount?.toString() ?? '0');
-
-      if (_allowanceEVM < BigInt(_amount)) {
-        await _handleApproveEVM();
+      if (!amount) {
         return false;
-      } else {
-        // already approved some amount
-        setLoading({ approve: 'success' });
       }
+
+      let _amount = parseUnits(amount.toString(), decimals);
+
+      if (_allowanceEVM < _amount) {
+        await _handleApproveEVM();
+        return false; // ??
+      }
+
+      // already approved requested amount
+      setLoading({ approve: 'success' });
     } catch (error) {
       console.log(error);
       setLoading({ box: 'error', approve: 'error', bridge: 'error' });
@@ -460,8 +474,12 @@ export function Index() {
   async function handleBridgeEVM() {
     setLoading({ bridge: 'loading' });
 
+    if (!amount) {
+      return false;
+    }
+
     try {
-      await _handleLockEVM(amount?.toString() ?? '0');
+      await _handleLockEVM(parseUnits(amount.toString(), decimals));
     } catch (error) {
       console.log(error);
       toast.error(Intl.t(`index.bridge.error.general`));
@@ -478,18 +496,13 @@ export function Index() {
       approve: 'loading',
     });
     try {
-      const maxAmount = BigInt('2') ** BigInt('256') - BigInt('1');
-
-      let _amount = parseAmount(amount?.toString() ?? '0');
-      let allowance = BigInt(token?.allowance ?? 0);
-
-      if (allowance < _amount) {
-        await increaseAllowance(
-          account ?? undefined,
-          token?.massaToken ? token.massaToken : '',
-          maxAmount,
-        );
+      if (!account) {
+        throw new Error('Account is not defined');
       }
+      if (!token) {
+        throw new Error('Token is not defined');
+      }
+      await increaseAllowance(account, token.massaToken, U256_MAX);
 
       setLoading({
         approve: 'success',
@@ -522,17 +535,30 @@ export function Index() {
     });
 
     try {
+      if (!account) {
+        throw new Error('Account is not defined');
+      }
+      if (!token) {
+        throw new Error('Token is not defined');
+      }
+      if (!evmAddress) {
+        throw new Error('Evm account is not defined');
+      }
+      if (!amount) {
+        throw new Error('amount is not defined');
+      }
+
       let tokenPairs = new TokenPair(
-        token?.massaToken,
-        token?.evmToken,
-        token?.chainId,
+        token.massaToken,
+        token.evmToken,
+        token.chainId,
       );
 
       await forwardBurn(
-        account ?? undefined,
+        account,
         evmAddress,
         tokenPairs,
-        parseAmount(amount?.toString() ?? '0').toString(),
+        parseUnits(amount.toString(), decimals),
       );
 
       setLoading({
