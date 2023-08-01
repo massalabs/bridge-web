@@ -79,42 +79,37 @@ const accountStore = (set: any, get: any) => ({
   getTokens: async () => {
     set({ isFetching: true });
 
-    let clientFactory = await get().clientFactory;
+    const clientFactory = await get().clientFactory;
 
-    let firstAccount = get().accounts?.at(0);
+    const firstAccount = get().accounts?.at(0);
 
     if (clientFactory && firstAccount) {
-      let overriddenFetchAvailableTokens: IToken[] = [];
-      let supportedTokens = await getSupportedTokensList(clientFactory);
+      const supportedTokens = await getSupportedTokensList(clientFactory);
 
-      const tokenNamePromises = supportedTokens.map(async (tokenPair) => {
-        overriddenFetchAvailableTokens.push({
-          ...tokenPair,
-          name: await getMassaTokenName(tokenPair.massaToken, clientFactory),
-          symbol: await getMassaTokenSymbol(
-            tokenPair.massaToken,
-            clientFactory,
-          ),
-          decimals: await getDecimals(tokenPair.massaToken, clientFactory),
-          allowance: await getAllowance(
-            tokenPair.massaToken,
-            clientFactory,
-            firstAccount,
-          ),
-          balance: await getBalance(
-            tokenPair.massaToken,
-            clientFactory,
-            firstAccount,
-          ),
-        });
-      });
-      await Promise.all(tokenNamePromises);
-
-      const firstToken = overriddenFetchAvailableTokens?.at(0);
+      const tokens: IToken[] = await Promise.all(
+        supportedTokens.map(async (tokenPair) => {
+          const [name, symbol, decimals, allowance, balance] =
+            await Promise.all([
+              getMassaTokenName(tokenPair.massaToken, clientFactory),
+              getMassaTokenSymbol(tokenPair.massaToken, clientFactory),
+              getDecimals(tokenPair.massaToken, clientFactory),
+              getAllowance(tokenPair.massaToken, clientFactory, firstAccount),
+              getBalance(tokenPair.massaToken, clientFactory, firstAccount),
+            ]);
+          return {
+            ...tokenPair,
+            name,
+            symbol,
+            decimals,
+            allowance,
+            balance,
+          };
+        }),
+      );
 
       set({
-        tokens: overriddenFetchAvailableTokens,
-        token: firstToken ?? null,
+        tokens: tokens,
+        token: tokens.length ? tokens[0] : null,
         isFetching: false,
       });
     }
