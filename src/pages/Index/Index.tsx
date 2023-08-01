@@ -461,6 +461,7 @@ export function Index() {
 
       if (_allowanceEVM < _amount) {
         await _handleApproveEVM();
+        return false;
       }
 
       // already approved requested amount
@@ -478,11 +479,10 @@ export function Index() {
   async function handleBridgeEVM() {
     setLoading({ bridge: 'loading' });
 
-    if (!amount) {
-      return false;
-    }
-
     try {
+      if (!amount) {
+        throw new Error('Amount is not defined');
+      }
       await _handleLockEVM(parseUnits(amount, decimals));
     } catch (error) {
       console.log(error);
