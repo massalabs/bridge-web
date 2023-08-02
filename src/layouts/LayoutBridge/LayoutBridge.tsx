@@ -17,7 +17,10 @@ export function LayoutBridge({ ...props }) {
 
   const { isConnected: isEvmWalletConnected } = useAccount();
 
-  const [accounts] = useAccountStore((state) => [state.accounts]);
+  const [accounts, isFetching] = useAccountStore((state) => [
+    state.accounts,
+    state.isFetching,
+  ]);
 
   const hasAccounts = accounts?.length > 0;
 
@@ -46,6 +49,7 @@ export function LayoutBridge({ ...props }) {
   function ConnectedWallet() {
     return (
       <Button
+        disabled={isFetching}
         variant="secondary"
         customClass="h-[54px]"
         onClick={() => setOpen(true)}
@@ -57,7 +61,11 @@ export function LayoutBridge({ ...props }) {
 
   function NotConnectedWallet() {
     return (
-      <Button customClass="h-[54px]" onClick={() => setOpen(true)}>
+      <Button
+        disabled={isFetching}
+        customClass="h-[54px]"
+        onClick={() => setOpen(true)}
+      >
         {Intl.t('connect-wallet.title')}
       </Button>
     );
