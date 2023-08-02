@@ -33,7 +33,7 @@ export interface IToken {
 }
 
 export interface AccountStoreState {
-  account: IAccount | null;
+  connectedAccount: IAccount | null;
   massaClient: Client | null;
   accounts: IAccount[];
   token: IToken | null;
@@ -42,7 +42,7 @@ export interface AccountStoreState {
   balance: IAccountBalanceResponse;
   isStationInstalled: boolean;
 
-  setAccount: (account: IAccount | null) => void;
+  setConnectedAccount: (account?: IAccount) => void;
   setToken: (token: IToken | null) => void;
 
   setAvailableAccounts: (accounts: any) => void;
@@ -58,7 +58,7 @@ const accountStore = (set: any, get: any) => ({
   tokens: [],
   token: null,
   massaClient: null,
-  account: null,
+  connectedAccount: null,
   isFetching: false,
   balance: {
     finalBalance: '',
@@ -87,9 +87,9 @@ const accountStore = (set: any, get: any) => ({
 
     const clientFactory = await get().clientFactory;
 
-    const firstAccount = get().accounts?.at(0);
+    const connectedAccount = get().connectedAccount;
 
-    if (clientFactory && firstAccount) {
+    if (clientFactory && connectedAccount) {
       const supportedTokens = await getSupportedTokensList(clientFactory);
 
       const tokens: IToken[] = await Promise.all(
@@ -99,8 +99,12 @@ const accountStore = (set: any, get: any) => ({
               getMassaTokenName(tokenPair.massaToken, clientFactory),
               getMassaTokenSymbol(tokenPair.massaToken, clientFactory),
               getDecimals(tokenPair.massaToken, clientFactory),
-              getAllowance(tokenPair.massaToken, clientFactory, firstAccount),
-              getBalance(tokenPair.massaToken, clientFactory, firstAccount),
+              getAllowance(
+                tokenPair.massaToken,
+                clientFactory,
+                connectedAccount,
+              ),
+              getBalance(tokenPair.massaToken, clientFactory, connectedAccount),
             ]);
           return {
             ...tokenPair,
@@ -150,7 +154,7 @@ const accountStore = (set: any, get: any) => ({
         set({
           massaClient: client,
           accounts: fetchedAccounts,
-          account: fetchedAccounts[0],
+          connectedAccount: fetchedAccounts[0],
           balance: firstAccountBalance,
         });
       }
@@ -162,7 +166,14 @@ const accountStore = (set: any, get: any) => ({
     set({ isFetching: false });
   },
 
-  setAccount: (account: IAccount | null) => set({ account }),
+  setConnectedAccount: async (connectedAccount?: IAccount) => {
+    const defaultBalance = { finalBalance: '0', candidateBalance: '0' };
+    const balance = connectedAccount
+      ? await connectedAccount.balance()
+      : defaultBalance;
+    set({ connectedAccount, balance });
+  },
+
   setToken: (token: IToken | null) => set({ token }),
 });
 

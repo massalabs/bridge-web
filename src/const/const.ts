@@ -15,7 +15,6 @@ export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
 
-
 // Transaction fees
 export const forwardBurnFees = {
   fee: 0n,

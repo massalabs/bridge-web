@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { IAccountBalanceResponse, IAccount } from '@massalabs/wallet-provider';
 import { useAccount } from 'wagmi';
 
 import { MassaConnectError } from './CardVariations/MassaError';
@@ -14,20 +15,29 @@ import {
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
 
+export type MassaWalletArgs = {
+  accounts: IAccount[];
+  connectedAccount: IAccount | null;
+  setConnectedAccount: (account?: IAccount) => void;
+  isFetching: boolean;
+  balance: IAccountBalanceResponse;
+  isStationInstalled: boolean;
+};
+
 export function ConnectWalletCards() {
   const { isConnected: isEvmWalletConnected } = useAccount();
 
   const [
     accounts,
-    account,
-    setAccount,
+    connectedAccount,
+    setConnectedAccount,
     isFetching,
     balance,
     isStationInstalled,
   ] = useAccountStore((state) => [
     state.accounts,
-    state.account,
-    state.setAccount,
+    state.connectedAccount,
+    state.setConnectedAccount,
     state.isFetching,
     state.balance,
     state.isStationInstalled,
@@ -41,10 +51,10 @@ export function ConnectWalletCards() {
     setIsMetamaskInstalled(window.ethereum?.isConnected());
   }, [isMetamaskInstalled]);
 
-  const massaWalletArgs = {
+  const massaWalletArgs: MassaWalletArgs = {
     accounts,
-    account,
-    setAccount,
+    connectedAccount,
+    setConnectedAccount,
     isFetching,
     balance,
     isStationInstalled,
@@ -69,9 +79,9 @@ export function ConnectWalletCards() {
         <WalletCard>
           <div className="flex justify-between w-full mb-4">
             <p>{Intl.t('connect-wallet.card-destination.to')}</p>
-            {accounts?.length ? <Connected /> : <Disconnected />}
+            {accounts.length ? <Connected /> : <Disconnected />}
           </div>
-          {!isFetching && accounts?.length ? (
+          {accounts.length ? (
             <ConnectedCard {...massaWalletArgs} />
           ) : (
             <MassaConnectError {...massaWalletArgs} />

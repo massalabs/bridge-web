@@ -2,13 +2,13 @@ import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
 import { IAccount } from '@massalabs/wallet-provider';
 import { BsDiamondHalf } from 'react-icons/bs';
 
-export function SelectMassaWalletAccount({ ...props }) {
-  const { accounts, account, setAccount } = props;
+import { MassaWalletArgs } from '..';
 
-  const selectedAccountKey: number = parseInt(
-    Object.keys(accounts).find(
-      (_, idx) => accounts[idx].name() === account?.name(),
-    ) || '0',
+export function SelectMassaWalletAccount({ ...props }: MassaWalletArgs) {
+  const { accounts, connectedAccount, setConnectedAccount } = props;
+
+  const selectedAccountKey: number = accounts.findIndex(
+    (account) => account.name() === connectedAccount?.name(),
   );
 
   const iconsAccounts = {
@@ -24,7 +24,7 @@ export function SelectMassaWalletAccount({ ...props }) {
           return {
             item: account.name(),
             icon: iconsAccounts['MASSASTATION'],
-            onClick: () => setAccount(account),
+            onClick: () => setConnectedAccount(account),
           };
         })}
       />
