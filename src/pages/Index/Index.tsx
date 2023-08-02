@@ -157,13 +157,28 @@ export function Index() {
     }
   }, [approveIsSuccess, approveIsError]);
 
-  async function getProviderList() {
+  const getProviderList = async () => {
     const providerList = await providers();
-    const massaStationWallet = providerList.find(
+    console.log('providerList', providerList);
+    const massaStationWallet = providerList.some(
       (provider) => provider.name() === MASSA_STATION,
     );
-    setStationInstalled(!!massaStationWallet);
-  }
+    console.log('setStationInstalled', massaStationWallet);
+    setStationInstalled(massaStationWallet);
+  };
+
+  let intervalId: NodeJS.Timer;
+  const updateStationState = () => {
+    intervalId = setInterval(() => {
+      console.log('Refreshing state');
+      getProviderList();
+    }, 3000);
+  };
+
+  useEffect(() => {
+    updateStationState();
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     getAccounts();

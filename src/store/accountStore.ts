@@ -120,6 +120,7 @@ const accountStore = (set: any, get: any) => ({
 
     try {
       const providerList = await providers();
+      console.log('getAccounts providerList', providerList);
 
       if (providerList.length === 0) {
         set({ isFetching: false, isStationInstalled: false });
