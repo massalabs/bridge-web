@@ -6,7 +6,7 @@ export const waitOperationEvents = async (
 ): Promise<IEvent[]> => {
   await client
     .smartContracts()
-    .awaitRequiredOperationStatus(opId, EOperationStatus.FINAL);
+    .awaitRequiredOperationStatus(opId, EOperationStatus.INCLUDED_PENDING);
 
   return client.smartContracts().getFilteredScOutputEvents({
     emitter_address: null,
@@ -14,6 +14,6 @@ export const waitOperationEvents = async (
     end: null,
     original_caller_address: null,
     original_operation_id: opId,
-    is_final: true,
+    is_final: null,
   });
 };
