@@ -416,6 +416,7 @@ export function Index() {
     setError(null);
 
     if (!amount) {
+      setError({ amount: Intl.t('index.approve.error.invalid-amount') });
       return false;
     }
 

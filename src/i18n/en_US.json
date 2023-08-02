@@ -42,7 +42,7 @@
       "error": {
         "general": "Euh! Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
-        "insuficient-funds": "Insuficient founds"
+        "insuficient-funds": "Insuficient funds"
       },
       "success": "Great! Amount approved!",
       "loading": "We are approving..."
@@ -51,7 +51,7 @@
       "error": {
         "general": "Euh! Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
-        "insuficient-funds": "Insuficient founds"
+        "insuficient-funds": "Insuficient funds"
       },
       "success": "Great! Bridge transfer executed successfully!",
       "loading": "We are bridging..."
