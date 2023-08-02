@@ -479,11 +479,17 @@ export function Index() {
     });
     try {
       const maxAmount = BigInt('2') ** BigInt('256') - BigInt('1');
-      await increaseAllowance(
-        account ?? undefined,
-        token?.massaToken ? token.massaToken : '',
-        maxAmount,
-      );
+
+      let _amount = parseAmount(amount?.toString() ?? '0');
+      let allowance = BigInt(token?.allowance ?? 0);
+
+      if (allowance < _amount) {
+        await increaseAllowance(
+          account ?? undefined,
+          token?.massaToken ? token.massaToken : '',
+          maxAmount,
+        );
+      }
 
       setLoading({
         approve: 'success',
