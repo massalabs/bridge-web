@@ -58,7 +58,7 @@ export function Index() {
     getAccounts,
     getTokens,
     massaClient,
-    account,
+    connectedAccount,
     setToken,
     token,
     isFetching,
@@ -70,7 +70,7 @@ export function Index() {
     state.getAccounts,
     state.getTokens,
     state.massaClient,
-    state.account,
+    state.connectedAccount,
     state.setToken,
     state.token,
     state.isFetching,
@@ -165,7 +165,7 @@ export function Index() {
     );
 
     setStationInstalled(massaStationWallet);
-  };
+  }
 
   useEffect(() => {
     getAccounts();
@@ -174,7 +174,7 @@ export function Index() {
 
   useEffect(() => {
     getTokens();
-  }, [accounts]);
+  }, [connectedAccount]);
 
   function handleToggleLayout() {
     setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
@@ -251,7 +251,7 @@ export function Index() {
       <div className="mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
         <div className="mas-caption">
-          {isFetching ? <FetchingLine /> : account?.address()}
+          {isFetching ? <FetchingLine /> : connectedAccount?.address()}
         </div>
       </div>
     );
@@ -557,7 +557,7 @@ export function Index() {
         throw new Error('Token is not defined');
       }
       if (!evmAddress) {
-        throw new Error('Evm account is not defined');
+        throw new Error('Evm address is not defined');
       }
       if (!amount) {
         throw new Error('amount is not defined');

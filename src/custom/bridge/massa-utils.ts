@@ -1,14 +1,14 @@
 import { Client, EOperationStatus, IEvent } from '@massalabs/massa-web3';
 
-export const waitOperationEvents = async (
+export async function waitOperationEvents(
   client: Client,
   opId: string,
-): Promise<IEvent[]> => {
+): Promise<IEvent[]> {
   await client
     .smartContracts()
     .awaitRequiredOperationStatus(opId, EOperationStatus.INCLUDED_PENDING);
 
-  return client.smartContracts().getFilteredScOutputEvents({
+  const events = await client.smartContracts().getFilteredScOutputEvents({
     emitter_address: null,
     start: null,
     end: null,
@@ -16,4 +16,10 @@ export const waitOperationEvents = async (
     original_operation_id: opId,
     is_final: null,
   });
-};
+
+  if (events.some((e) => e.context.is_error)) {
+    events.map((l) => console.log(`>>>> ${l.data}`));
+    throw new Error(`Waiting for operation ${opId} ended with error:`);
+  }
+  return events;
+}

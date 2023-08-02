@@ -4,18 +4,18 @@ import { Clipboard } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { fetchBalance } from '@/bridge';
-import { SelectMassaWalletAccount } from '@/components';
+import { SelectMassaWalletAccount, MassaWalletArgs } from '@/components';
 import Intl from '@/i18n/i18n';
 import { maskAddress } from '@/utils/massaFormat';
 
-export function ConnectedCard({ ...props }) {
-  const { account } = props;
+export function ConnectedCard({ ...props }: MassaWalletArgs) {
+  const { connectedAccount } = props;
 
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
 
   useEffect(() => {
-    fetchBalance(account).then((balance) => setBalance(balance));
-  }, [account]);
+    fetchBalance(connectedAccount).then((balance) => setBalance(balance));
+  }, [connectedAccount]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -25,8 +25,8 @@ export function ConnectedCard({ ...props }) {
           <Clipboard
             customClass="h-14 rounded-lg text-center px-9 !mas-body"
             toggleHover={false}
-            rawContent={account?.address().toString()}
-            displayedContent={maskAddress(account?.address().toString())}
+            rawContent={connectedAccount?.address() ?? ''}
+            displayedContent={maskAddress(connectedAccount?.address() ?? '')}
           />
         </div>
       </div>

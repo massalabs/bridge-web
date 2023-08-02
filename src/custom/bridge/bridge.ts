@@ -10,30 +10,29 @@ import {
 import { waitOperationEvents } from './massa-utils';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
-import { CONTRACT_ADDRESS, forwardBurnFees, increaseAllowanceFee } from '@/const';
+import {
+  CONTRACT_ADDRESS,
+  forwardBurnFees,
+  increaseAllowanceFee,
+} from '@/const';
 
 export async function increaseAllowance(
   client: Client,
   targetAddress: string,
   amount: bigint,
 ): Promise<string> {
-  const opId = await client
-    .smartContracts()
-    .callSmartContract({
-      targetAddress,
-      functionName: 'increaseAllowance',
-      parameter: new Args()
-        .addString(CONTRACT_ADDRESS)
-        .addU256(amount)
-        .serialize(),
-      ...increaseAllowanceFee
-    });
+  const opId = await client.smartContracts().callSmartContract({
+    targetAddress,
+    functionName: 'increaseAllowance',
+    parameter: new Args()
+      .addString(CONTRACT_ADDRESS)
+      .addU256(amount)
+      .serialize(),
+    ...increaseAllowanceFee,
+  });
 
-  const events = await waitOperationEvents(client, opId);
-  if (events.some((e) => e.context.is_error)) {
-    events.map((l) => console.log(`>>>> ${l.data}`));
-    throw new Error(`Waiting for operation ${opId} ended with error:`);
-  }
+  await waitOperationEvents(client, opId);
+
   return opId;
 }
 
@@ -56,11 +55,7 @@ export async function forwardBurn(
     ...forwardBurnFees,
   });
 
-  const events = await waitOperationEvents(client, opId);
-  if (events.some((e) => e.context.is_error)) {
-    events.map((l) => console.log(`>>>> ${l.data}`));
-    throw new Error(`Waiting for operation ${opId} ended with error:`);
-  }
+  await waitOperationEvents(client, opId);
   return opId;
 }
 
