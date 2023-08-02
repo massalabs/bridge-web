@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
+import currency from 'currency.js';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { FiRepeat } from 'react-icons/fi';
 import { parseUnits } from 'viem';
@@ -74,7 +75,6 @@ export function Index() {
     state.isStationInstalled,
   ]);
 
-  // HOOKS
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
   const [amount, setAmount] = useState<string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
@@ -355,9 +355,15 @@ export function Index() {
       decimals,
     );
 
+    let symbol = IS_MASSA_TO_EVM ? token?.symbol : token?.symbol.slice(0, -2);
+
     return (
       <div className="flex items-center">
-        {in2decimals} <Tooltip content={full} />
+        {in2decimals}{' '}
+        <Tooltip
+          customClass="mas-caption w-fit whitespace-nowrap"
+          content={full + ' ' + symbol}
+        />
       </div>
     );
   }
@@ -638,6 +644,22 @@ export function Index() {
     }
   }
 
+  function handlePercent(percent: number) {
+    if (!token?.balance || !_tokenBalanceEVM) return;
+
+    let amount = IS_MASSA_TO_EVM
+      ? formatAmount(token?.balance.toString()).full
+      : formatAmount(_tokenBalanceEVM.toString()).full;
+    let newAmount = (
+      currency(amount, { symbol: '', precision: decimals }).value * percent
+    ).toString();
+
+    if (percent === 1) {
+      newAmount = amount.replace(/,|\([^()]*\)/g, '');
+    }
+    setAmount(newAmount.toString());
+  }
+
   const isLoading = loading.box !== 'none' ? 'blur-md' : null;
 
   return (
@@ -671,8 +693,36 @@ export function Index() {
                 decimalsLimit={decimals}
                 error={error?.amount}
               />
+              <div className="flex flex-row-reverse">
+                <ul className="flex flex-row mas-body2">
+                  <li
+                    onClick={() => handlePercent(0.25)}
+                    className="mr-3.5 hover:cursor-pointer"
+                  >
+                    25%
+                  </li>
+                  <li
+                    onClick={() => handlePercent(0.5)}
+                    className="mr-3.5 hover:cursor-pointer"
+                  >
+                    50%
+                  </li>
+                  <li
+                    onClick={() => handlePercent(0.75)}
+                    className="mr-3.5 hover:cursor-pointer"
+                  >
+                    75%
+                  </li>
+                  <li
+                    onClick={() => handlePercent(1)}
+                    className="mr-3.5 hover:cursor-pointer"
+                  >
+                    Max
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div className="w-1/3">{boxLayout(layout).up.token}</div>
+            <div className="w-1/3 mb-4">{boxLayout(layout).up.token}</div>
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
