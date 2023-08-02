@@ -6,3 +6,4 @@ export * from './GetTokensPopUpModal/GetTokensPopUpModal';
 export * from './Spinner/Spinner';
 export * from './IconsCheck';
 export * from './Status';
+export * from './Footer/Footer';
