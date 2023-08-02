@@ -14,3 +14,17 @@ export const WETH_CONTRACT_ADDRESS =
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
+
+
+// Transaction fees
+export const forwardBurnFees = {
+  fee: 0n,
+  coins: 100000n,
+  maxGas: 1000000n,
+};
+
+export const increaseAllowanceFee = {
+  fee: 0n,
+  coins: 1000n,
+  maxGas: 1000000n,
+};

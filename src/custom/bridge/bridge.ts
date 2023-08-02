@@ -10,7 +10,7 @@ import {
 import { waitOperationEvents } from './massa-utils';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
-import { CONTRACT_ADDRESS } from '@/const';
+import { CONTRACT_ADDRESS, forwardBurnFees, increaseAllowanceFee } from '@/const';
 
 export async function increaseAllowance(
   client: Client,
@@ -26,9 +26,7 @@ export async function increaseAllowance(
         .addString(CONTRACT_ADDRESS)
         .addU256(amount)
         .serialize(),
-      fee: 100n,
-      coins: 1000n,
-      maxGas: 1000000n,
+      ...increaseAllowanceFee
     });
 
   const events = await waitOperationEvents(client, opId);
@@ -55,9 +53,7 @@ export async function forwardBurn(
     targetAddress: CONTRACT_ADDRESS,
     functionName: 'forwardBurn',
     parameter: new Args().addSerializable(request).serialize(),
-    fee: 0n,
-    coins: 100000n,
-    maxGas: 1000000n,
+    ...forwardBurnFees,
   });
 
   const events = await waitOperationEvents(client, opId);
