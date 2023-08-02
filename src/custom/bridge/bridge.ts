@@ -23,7 +23,7 @@ export async function increaseAllowance(
     tokenAddress,
     'increaseAllowance',
     new Args().addString(CONTRACT_ADDRESS).addU256(amount),
-    amount,
+    BigInt(1000),
     BigInt(0),
     BigInt(1000000),
   );
