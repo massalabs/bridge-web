@@ -1,5 +1,6 @@
 import { useState, SyntheticEvent, useEffect, ReactNode } from 'react';
 
+import { Client } from '@massalabs/massa-web3';
 import {
   Dropdown,
   MassaLogo,
@@ -56,6 +57,7 @@ export function Index() {
     tokens,
     getAccounts,
     getTokens,
+    massaClient,
     account,
     setToken,
     token,
@@ -67,6 +69,7 @@ export function Index() {
     state.tokens,
     state.getAccounts,
     state.getTokens,
+    state.massaClient,
     state.account,
     state.setToken,
     state.token,
@@ -157,11 +160,12 @@ export function Index() {
 
   async function getProviderList() {
     const providerList = await providers();
-    const massaStationWallet = providerList.find(
+    const massaStationWallet = providerList.some(
       (provider) => provider.name() === MASSA_STATION,
     );
-    setStationInstalled(!!massaStationWallet);
-  }
+
+    setStationInstalled(massaStationWallet);
+  };
 
   useEffect(() => {
     getAccounts();
@@ -500,14 +504,11 @@ export function Index() {
     return true;
   }
 
-  async function handleApproveMASSA() {
+  async function handleApproveMASSA(client: Client) {
     setLoading({
       approve: 'loading',
     });
     try {
-      if (!account) {
-        throw new Error('Account is not defined');
-      }
       if (!token) {
         throw new Error('Token is not defined');
       }
@@ -518,7 +519,7 @@ export function Index() {
       let _amount = parseUnits(amount, decimals);
 
       if (token.allowance < _amount) {
-        await increaseAllowance(account, token.massaToken, U256_MAX);
+        await increaseAllowance(client, token.massaToken, U256_MAX);
       }
 
       setLoading({
@@ -546,15 +547,12 @@ export function Index() {
     return true;
   }
 
-  async function handleBridgeMASSA() {
+  async function handleBridgeMASSA(client: Client) {
     setLoading({
       bridge: 'loading',
     });
 
     try {
-      if (!account) {
-        throw new Error('Account is not defined');
-      }
       if (!token) {
         throw new Error('Token is not defined');
       }
@@ -572,7 +570,7 @@ export function Index() {
       );
 
       await forwardBurn(
-        account,
+        client,
         evmAddress,
         tokenPairs,
         parseUnits(amount, decimals),
@@ -615,10 +613,13 @@ export function Index() {
     });
 
     if (IS_MASSA_TO_EVM) {
-      const approved = await handleApproveMASSA();
+      if (!massaClient) {
+        return;
+      }
+      const approved = await handleApproveMASSA(massaClient);
 
       if (approved) {
-        handleBridgeMASSA();
+        handleBridgeMASSA(massaClient);
       }
     } else {
       const approved = await handleApproveEVM();

@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ClientFactory, DefaultProviderUrls } from '@massalabs/massa-web3';
+import {
+  Client,
+  ClientFactory,
+  DefaultProviderUrls,
+} from '@massalabs/massa-web3';
 import {
   providers,
   IAccount,
@@ -30,6 +34,7 @@ export interface IToken {
 
 export interface AccountStoreState {
   account: IAccount | null;
+  massaClient: Client | null;
   accounts: IAccount[];
   token: IToken | null;
   tokens: IToken[];
@@ -52,6 +57,7 @@ const accountStore = (set: any, get: any) => ({
   accounts: [],
   tokens: [],
   token: null,
+  massaClient: null,
   account: null,
   isFetching: false,
   balance: {
@@ -135,15 +141,16 @@ const accountStore = (set: any, get: any) => ({
       const fetchedAccounts = await massaStationWallet?.accounts();
 
       if (fetchedAccounts && fetchedAccounts.length > 0) {
-        const firstAccount = fetchedAccounts.at(0);
+        const firstAccountBalance = await fetchedAccounts[0].balance();
 
-        let firstAccountBalance = null;
-        if (firstAccount) {
-          firstAccountBalance = await firstAccount.balance();
-        }
+        const client = await ClientFactory.fromWalletProvider(
+          providerList[0],
+          fetchedAccounts[0],
+        );
         set({
+          massaClient: client,
           accounts: fetchedAccounts,
-          account: firstAccount,
+          account: fetchedAccounts[0],
           balance: firstAccountBalance,
         });
       }

@@ -1,34 +1,46 @@
 import {
   Args,
+  Client,
   IClient,
   IReadData,
   ISmartContractsClient,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
-import { IAccount } from '@massalabs/wallet-provider';
 
+import { waitOperationEvents } from './massa-utils';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
 import { CONTRACT_ADDRESS } from '@/const';
 
 export async function increaseAllowance(
-  account: IAccount,
-  tokenAddress: string,
+  client: Client,
+  targetAddress: string,
   amount: bigint,
 ): Promise<string> {
-  const opId = await account.callSC(
-    tokenAddress,
-    'increaseAllowance',
-    new Args().addString(CONTRACT_ADDRESS).addU256(amount),
-    BigInt(0),
-    BigInt(0),
-    BigInt(1000000),
-  );
+  const opId = await client
+    .smartContracts()
+    .callSmartContract({
+      targetAddress,
+      functionName: 'increaseAllowance',
+      parameter: new Args()
+        .addString(CONTRACT_ADDRESS)
+        .addU256(amount)
+        .serialize(),
+      fee: 100n,
+      coins: 1000n,
+      maxGas: 1000000n,
+    });
+
+  const events = await waitOperationEvents(client, opId);
+  if (events.some((e) => e.context.is_error)) {
+    events.map((l) => console.log(`>>>> ${l.data}`));
+    throw new Error(`Waiting for operation ${opId} ended with error:`);
+  }
   return opId;
 }
 
 export async function forwardBurn(
-  account: IAccount,
+  client: Client,
   evmAddress: string,
   tokenPair: TokenPair,
   amount: bigint,
@@ -39,14 +51,21 @@ export async function forwardBurn(
     tokenPair,
   );
 
-  return account.callSC(
-    CONTRACT_ADDRESS,
-    'forwardBurn',
-    new Args().addSerializable(request),
-    BigInt(1000),
-    BigInt(0),
-    BigInt(1000000),
-  );
+  const opId = await client.smartContracts().callSmartContract({
+    targetAddress: CONTRACT_ADDRESS,
+    functionName: 'forwardBurn',
+    parameter: new Args().addSerializable(request).serialize(),
+    fee: 0n,
+    coins: 100000n,
+    maxGas: 1000000n,
+  });
+
+  const events = await waitOperationEvents(client, opId);
+  if (events.some((e) => e.context.is_error)) {
+    events.map((l) => console.log(`>>>> ${l.data}`));
+    throw new Error(`Waiting for operation ${opId} ended with error:`);
+  }
+  return opId;
 }
 
 export async function getSupportedTokensList(
