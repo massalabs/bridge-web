@@ -6,8 +6,7 @@ import {
   ISmartContractsClient,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
-
-import { waitOperationEvents } from './massa-utils';
+import { waitIncludedOperation } from './massa-utils';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
 import {
@@ -31,7 +30,7 @@ export async function increaseAllowance(
     ...increaseAllowanceFee,
   });
 
-  await waitOperationEvents(client, opId);
+  await waitIncludedOperation(client, opId);
 
   return opId;
 }
@@ -55,7 +54,7 @@ export async function forwardBurn(
     ...forwardBurnFees,
   });
 
-  await waitOperationEvents(client, opId);
+  await waitIncludedOperation(client, opId);
   return opId;
 }
 
