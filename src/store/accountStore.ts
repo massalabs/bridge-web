@@ -167,11 +167,29 @@ const accountStore = (set: any, get: any) => ({
   },
 
   setConnectedAccount: async (connectedAccount?: IAccount) => {
-    const defaultBalance = { finalBalance: '0', candidateBalance: '0' };
-    const balance = connectedAccount
-      ? await connectedAccount.balance()
-      : defaultBalance;
-    set({ connectedAccount, balance });
+    if (!connectedAccount) {
+      const defaultBalance = { finalBalance: '0', candidateBalance: '0' };
+      set({
+        connectedAccount,
+        massaClient: undefined,
+        balance: defaultBalance,
+      });
+      return;
+    }
+
+    const providerList = await providers();
+
+    if (!providerList.length) {
+      set({ connectedAccount: undefined, massaClient: undefined });
+      return;
+    }
+    const balance = await connectedAccount.balance();
+    const massaClient = await ClientFactory.fromWalletProvider(
+      // if we want to support multiple providers like bearby, we need to pass the selected one here
+      providerList[0],
+      connectedAccount,
+    );
+    set({ connectedAccount, massaClient, balance });
   },
 
   setToken: (token: IToken | null) => set({ token }),

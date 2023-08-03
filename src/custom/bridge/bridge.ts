@@ -6,6 +6,7 @@ import {
   ISmartContractsClient,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
+
 import { waitIncludedOperation } from './massa-utils';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
