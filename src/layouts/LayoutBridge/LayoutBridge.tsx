@@ -8,7 +8,7 @@ import {
 } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
 
-import { ConnectWalletPopup } from '@/components';
+import { ConnectWalletPopup, Footer } from '@/components';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
@@ -94,7 +94,8 @@ export function LayoutBridge({ ...props }) {
       >
         {children}
       </div>
-      {open ? <ConnectWalletPopup {...popupArgs} /> : null}
+      {open && <ConnectWalletPopup {...popupArgs} />}
+      <Footer selectedTheme={selectedTheme} />
     </div>
   );
 }
