@@ -21,6 +21,7 @@ import {
   useFeeData,
   useWaitForTransaction,
   useToken,
+  useSwitchNetwork,
 } from 'wagmi';
 
 import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
@@ -31,6 +32,7 @@ import {
   NoAccounts,
   NotInstalled,
 } from '@/components';
+import { WrongChain } from '@/components/Status/WrongChain/WrongChain';
 import { LayoutType, ILoadingState, MASSA_STATION, U256_MAX } from '@/const';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -97,7 +99,8 @@ export function Index() {
 
   const hasNoAccounts = accounts?.length <= 0;
 
-  const { chains } = useNetwork();
+  const { chain, chains } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
   const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -128,10 +131,22 @@ export function Index() {
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
+  const SEPOLIA_CHAIN_ID = chains
+    .filter((c: { network: string }) => c.network === 'sepolia')
+    .at(0)?.id;
+
+  const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
+
   useEffect(() => {
     setError({ amount: '' });
     setDecimals(tokenData?.decimals || 18);
   }, [amount, layout, token?.name, tokenData?.decimals]);
+
+  useEffect(() => {
+    if (!IS_EVM_SEPOLIA_CHAIN) {
+      toast.error(Intl.t('connect-wallet.connect-metamask.wrong-chain'));
+    }
+  }, [chain]);
 
   useEffect(() => {
     setAmount('');
@@ -182,10 +197,12 @@ export function Index() {
 
   function EVMHeader() {
     return (
-      <div className="mb-4 flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <div className="w-1/2">
           <Dropdown
-            readOnly={!isEvmWalletConnected || isFetching}
+            readOnly={
+              !isEvmWalletConnected || isFetching || !IS_EVM_SEPOLIA_CHAIN
+            }
             options={
               chains.length
                 ? chains.map((chain) => ({
@@ -202,8 +219,16 @@ export function Index() {
           />
         </div>
         <div className="flex items-center gap-3">
-          <p className="mas-body">EVM wallet</p>
-          {isEvmWalletConnected ? <Connected /> : <Disconnected />}
+          <p className="mas-body">Metamask</p>
+          {isEvmWalletConnected ? (
+            !IS_EVM_SEPOLIA_CHAIN ? (
+              <WrongChain />
+            ) : (
+              <Connected />
+            )
+          ) : (
+            <Disconnected />
+          )}
         </div>
       </div>
     );
@@ -239,9 +264,19 @@ export function Index() {
 
   function EVMMiddle() {
     return (
-      <div className="mb-4 flex items-center gap-2">
-        <p className="mas-body2">Wallet address:</p>
-        <p className="mas-caption">{evmAddress}</p>
+      <div>
+        {IS_EVM_SEPOLIA_CHAIN ? null : (
+          <div
+            className="flex justify-end mas-h3 text-f-disabled-1 underline cursor-pointer"
+            onClick={() => switchNetwork?.(SEPOLIA_CHAIN_ID)}
+          >
+            {Intl.t(`connect-wallet.connect-metamask.switch-network`)}
+          </div>
+        )}
+        <div className="mt-4 mb-4 flex items-center gap-2">
+          <p className="mas-body2">Wallet address:</p>
+          <p className="mas-caption">{evmAddress}</p>
+        </div>
       </div>
     );
   }
@@ -766,7 +801,10 @@ export function Index() {
         <div>
           <Button
             disabled={
-              isFetching || !isStationInstalled || !isEvmWalletConnected
+              isFetching ||
+              !isStationInstalled ||
+              !isEvmWalletConnected ||
+              !IS_EVM_SEPOLIA_CHAIN
             }
             onClick={(e) => handleSubmit(e)}
           >
