@@ -14,7 +14,8 @@
       "not-connected": "Not connected",
       "connected": "Connected",
       "not-installed": "Not installed",
-      "no-accounts": "No accounts"
+      "no-accounts": "No accounts",
+      "wrong-chain": "Unsupported chain"
     },
     "loading-box": {
       "title": "Bridge transfer",
@@ -44,7 +45,7 @@
     },
     "approve": {
       "error": {
-        "general": "Euh! Something went wrong! Please, try again!",
+        "general": "Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
         "insuficient-funds": "Insuficient funds"
       },
@@ -53,7 +54,7 @@
     },
     "bridge": {
       "error": {
-        "general": "Euh! Something went wrong! Please, try again!",
+        "general": "Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
         "insuficient-funds": "Insuficient funds"
       },
@@ -61,7 +62,7 @@
       "loading": "We are bridging..."
     },
     "balance": {
-      "error": "Euh! We couldn't fetch your balance! Please, try again!"
+      "error": "We couldn't fetch your balance! Please, try again!"
     }
   },
   "unexpected-error": {
@@ -88,8 +89,10 @@
       "title": "Metamask",
       "invalid-network": "Your network is invalid, please pick another one",
       "change-network": "change your network",
+      "switch-network": "switch chain",
       "no-metamask": "It seems like you don't have Metamask installed.",
-      "install-metamask": "Install Metamask"
+      "install-metamask": "Install Metamask",
+      "wrong-chain": "You are connected in a wrong chain in Metamask. Switch to Sepolia"
     },
     "station-connect-error": {
       "error-station": " in order to connect your wallet.",
@@ -108,7 +111,7 @@
     "success": "Yeah! Minted successfully",
     "errors": {
       "transaction-execution": "Mint action canceled or failed",
-      "general": "Euh! Something went wrong"
+      "general": "Something went wrong"
     },
     "card": {
       "tDAI-description": "If you want to get tDAI tokens",
