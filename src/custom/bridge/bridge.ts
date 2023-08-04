@@ -16,6 +16,18 @@ import {
   increaseAllowanceFee,
 } from '@/const';
 
+export interface IStatus {
+  [key: string]: string;
+}
+
+export const STATUS = <IStatus>{
+  0: 'INCLUDED_PENDING',
+  1: 'AWAITING_INCLUSION',
+  2: 'FINAL',
+  3: 'INCONSISTENT',
+  4: 'NOT_FOUND',
+};
+
 export async function increaseAllowance(
   client: Client,
   targetAddress: string,
@@ -72,4 +84,13 @@ export async function getSupportedTokensList(
   } as IReadData);
 
   return bytesToSerializableObjectArray(returnObject.returnValue, TokenPair);
+}
+
+export async function getOperationStatus(
+  client: IClient,
+  opId: string,
+): Promise<string> {
+  let operationStatus = await client.smartContracts().getOperationStatus(opId);
+
+  return STATUS[operationStatus];
 }
