@@ -32,7 +32,7 @@ export function Footer(props: FooterProps) {
           </li>
           <li>
             <a
-              onClick={() => window.open('https://station.massa', '_blank')}
+              onClick={() => window.open('https://station.massa.net', '_blank')}
               className="mas-menu-default no-underline cursor-pointer flex items-center gap-2"
             >
               <MassaStationIconSvg selectedTheme={selectedTheme} />
