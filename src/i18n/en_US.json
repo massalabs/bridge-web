@@ -3,8 +3,8 @@
     "click-here": "Click here",
     "select-this-account": "Select this account",
     "loading": "loading...",
-    "massa": "Massa",
-    "evm": "EVM"
+    "massa": "Massa Buidnet",
+    "sepolia": "Sepolia"
   },
   "index": {
     "get-tokens": "Get tokens",
@@ -18,15 +18,27 @@
       "wrong-chain": "Unsupported chain"
     },
     "loading-box": {
-      "title": "Bridge transfer",
-      "subtitle": "(it can take some seconds longer)",
+      "title-bridge": "Bridge",
+      "title-redeem": "Redeem",
+      "subtitle": "(it can take some seconds)",
       "approve": "approve (give allowance) ",
       "bridge": "bridge",
+      "redeem": "redeem",
+      "lock": "lock",
+      "mint": "mint",
+      "burn": "burn",
+      "awaiting-inclusion": "burn (awaiting inclusion...)",
+      "included-pending": "burn (included pending)",
+      "burned-final": "burned (final)",
+      "inconsistent-not-found": "burn (inconsistent or not found)",
       "massa-tokens-link": "https://bridge.massa.net/buildnet/index",
       "evm-tokens-link": "https://getEvmTokens.com",
-      "redirection": "Go to your {direction} wallet to check the token balance.",
+      "redeemed": "You have successfully redeemed:",
+      "minted": "You have successfully minted:",
+      "from-to": "from {from} to {to}",
+      "check": "Check the balance in your Metamask wallet.",
       "add-tokens-message": "You might need to add the token manually to your wallet.",
-      "add-tokens": "Add tokens to the wallet",
+      "add-tokens": "instructions",
       "error": "Something went wrong. Drop us a message at:",
       "massa-support": "support@bridge.massa.net"
     },

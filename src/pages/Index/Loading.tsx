@@ -5,6 +5,7 @@ import { FiX, FiPauseCircle } from 'react-icons/fi';
 import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
 import Intl from '@/i18n/i18n';
+import { IToken } from '@/store/accountStore';
 
 interface ILoading {
   loading: ReactNode;
@@ -13,25 +14,19 @@ interface ILoading {
   none: ReactNode;
 }
 
-function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
-  const loading: ILoading = {
-    loading: <Spinner size={size} />,
-    error: <ErrorCheck size={size} />,
-    success: <SuccessCheck size={size} />,
-    none: <FiPauseCircle size={24} />,
-  };
-
-  return loading[state];
-}
-
 interface ILoadingBoxProps {
-  onClose: () => void;
+  onClose?: () => void;
   loading: ILoadingState;
   massaToEvm: boolean;
+  amount: string;
+  redeemSteps: string;
+  token: IToken | null;
 }
 
 export function LoadingBox(props: ILoadingBoxProps) {
   const { onClose, loading, massaToEvm } = props;
+
+  const IS_BOX_SUCCESS = loading.box === 'success';
 
   return (
     <>
@@ -57,75 +52,121 @@ export function LoadingBox(props: ILoadingBoxProps) {
         >
           {loadingState(loading.box, 'lg')}
           <p className="mas-subtitle pt-6">
-            {Intl.t('index.loading-box.title')}
+            {massaToEvm
+              ? Intl.t('index.loading-box.title-redeem')
+              : Intl.t('index.loading-box.title-bridge')}
           </p>
-          <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>
+          {IS_BOX_SUCCESS ? null : (
+            <p className="text-xs pb-6">
+              {Intl.t('index.loading-box.subtitle')}
+            </p>
+          )}
         </div>
-        <BridgeFinalStatus loading={loading} massaToEvm={massaToEvm} />
+        {IS_BOX_SUCCESS ? (
+          <Ran {...props} />
+        ) : massaToEvm ? (
+          <RunningMassaEVM {...props} />
+        ) : (
+          <RunningEVMMassa {...props} />
+        )}
       </div>
     </>
   );
 }
 
-export function BridgeFinalStatus({
-  loading,
-  massaToEvm,
-}: {
-  loading: ILoadingState;
-  massaToEvm: boolean;
-}) {
+function RunningMassaEVM(props: ILoadingBoxProps) {
+  const { loading, redeemSteps } = props;
+
+  return (
+    <>
+      <div className="flex justify-between mb-6 ">
+        <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
+        {loadingState(loading.approve)}
+      </div>
+      <div className="flex justify-between mb-6 ">
+        <p className="mas-body-2">{redeemSteps}</p>
+        {loadingState(loading.burn)}
+      </div>
+      <div className="flex justify-between mb-6 ">
+        <p className="mas-body-2">{Intl.t('index.loading-box.redeem')}</p>
+        {loadingState(loading.redeem)}
+      </div>
+    </>
+  );
+}
+
+function RunningEVMMassa(props: ILoadingBoxProps) {
+  const { loading } = props;
+
+  return (
+    <>
+      <div className="flex justify-between mb-6 ">
+        <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
+        {loadingState(loading.approve)}
+      </div>
+      <div className="flex justify-between mb-6 ">
+        <p className="mas-body-2">{Intl.t('index.loading-box.lock')}</p>
+        {loadingState(loading.lock)}
+      </div>
+      <div className="flex justify-between mb-6 ">
+        <p className="mas-body-2">{Intl.t('index.loading-box.mint')}</p>
+        {loadingState(loading.mint)}
+      </div>
+    </>
+  );
+}
+
+function Ran(props: ILoadingBoxProps) {
+  const { massaToEvm, amount, token } = props;
+
   const massa = Intl.t('general.massa');
-  const evm = Intl.t('general.evm');
+  const sepolia = Intl.t('general.sepolia');
   const getMassaTokenLink = Intl.t('index.loading-box.massa-tokens-link');
   const getEvmTokenLink = Intl.t('index.loading-box.evm-tokens-link');
 
-  if (loading.bridge === 'success') {
-    return (
-      <div className="text-center">
-        <p>
-          {Intl.t('index.loading-box.redirection', {
-            direction: massaToEvm ? massa : evm,
-          })}
-        </p>
-        <br />
-        <p>{Intl.t('index.loading-box.add-tokens-message')}</p>
-        <br />
-        <u>
-          <a
-            href={massaToEvm ? getMassaTokenLink : getEvmTokenLink}
-            target="_blank"
-          >
-            {Intl.t('index.loading-box.add-tokens')}
-          </a>
-        </u>
-      </div>
-    );
-  } else if (loading.bridge === 'error') {
-    return (
-      <div className="text-center">
-        <p> {Intl.t('index.loading-box.error')}</p>
-        <br />
-        <u>
-          <a href="mailto:support@bridge.massa.net" target="_blank">
-            {Intl.t('index.loading-box.massa-support')}
-          </a>
-        </u>
-      </div>
-    );
-  } else {
-    return (
-      <>
-        <div className="mb-6 flex justify-between">
-          <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
-          {loadingState(loading.approve)}
+  return (
+    <div className="mas-body2 text-center">
+      <div className="mb-10">
+        {massaToEvm
+          ? Intl.t('index.loading-box.redeemed')
+          : Intl.t('index.loading-box.minted')}
+        <div className="mas-subtitle p-2">
+          {amount} [{token?.symbol}]
         </div>
-        <div className="flex justify-between">
-          <p className="mas-body-2">{Intl.t('index.loading-box.bridge')}</p>
-          {loadingState(loading.aprove)}
-        </div>
-      </>
-    );
-  }
+        {Intl.t('index.loading-box.from-to', {
+          from: massaToEvm ? massa : sepolia,
+          to: massaToEvm ? sepolia : massa,
+        })}
+      </div>
+      <p className="mb-6">{Intl.t('index.loading-box.check')}</p>
+
+      <div className="mb-1">
+        {Intl.t('index.loading-box.add-tokens-message')}
+      </div>
+      <u>
+        <a
+          href={massaToEvm ? getMassaTokenLink : getEvmTokenLink}
+          target="_blank"
+        >
+          {Intl.t('index.loading-box.add-tokens')}
+        </a>
+      </u>
+    </div>
+  );
+}
+
+export function BridgeError() {
+  return (
+    <div className="text-center">
+      <p> {Intl.t('index.loading-box.error')}</p>
+      <br />
+      <u>
+        <a href="mailto:support@bridge.massa.net" target="_blank">
+          {Intl.t('index.loading-box.massa-support')}
+        </a>
+      </u>
+    </div>
+  );
 }
 
 export function FetchingRound() {
@@ -139,7 +180,7 @@ export function FetchingRound() {
 
 export function FetchingLine() {
   return (
-    <div className={`shadow rounded-md w-24 pt-1`}>
+    <div className={`shadow rounded-md w-24 pt-0.5`}>
       <div className="animate-pulse flex">
         <div className="flex-1 space-y-6 py-1">
           <div className="h-2 bg-c-disabled-1 rounded"></div>
@@ -155,4 +196,15 @@ export function FetchingStatus() {
       {Intl.t('general.loading')}.
     </div>
   );
+}
+
+function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
+  const loading: ILoading = {
+    loading: <Spinner size={size} />,
+    error: <ErrorCheck size={size} />,
+    success: <SuccessCheck size={size} />,
+    none: <FiPauseCircle size={24} />,
+  };
+
+  return loading[state];
 }

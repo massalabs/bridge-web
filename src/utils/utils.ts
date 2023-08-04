@@ -20,3 +20,12 @@ export function formatBalance(
     return 'Invalid input: ' + balanceFormatted;
   }
 }
+
+export function isJSON(str: string): boolean {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}

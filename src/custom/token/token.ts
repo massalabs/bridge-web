@@ -4,7 +4,6 @@ import {
   byteToU8,
   IEvent,
   IClient,
-  IEventFilter,
 } from '@massalabs/massa-web3';
 import { IAccount } from '@massalabs/wallet-provider';
 import { bytesToU256 } from '@massalabs/web3-utils';
@@ -69,9 +68,11 @@ export async function getFilteredScOutputEvents(
   let returnObject = await client.smartContracts().getFilteredScOutputEvents({
     start: null,
     end: null,
-    emitter_address: CONTRACT_ADDRESS,
+    original_caller_address: CONTRACT_ADDRESS,
+    original_operation_id: null,
+    emitter_address: null,
     is_final: true,
-  } as IEventFilter);
+  });
 
   return returnObject;
 }

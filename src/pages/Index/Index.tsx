@@ -14,7 +14,7 @@ import { providers } from '@massalabs/wallet-provider';
 import currency from 'currency.js';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { FiRepeat } from 'react-icons/fi';
-import { parseUnits } from 'viem';
+import { parseUnits, Log as IEventLog } from 'viem';
 import {
   useAccount,
   useNetwork,
@@ -22,9 +22,11 @@ import {
   useWaitForTransaction,
   useToken,
   useSwitchNetwork,
+  useContractEvent,
 } from 'wagmi';
 
 import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
+import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import {
   GetTokensPopUpModal,
   Connected,
@@ -33,15 +35,28 @@ import {
   NotInstalled,
 } from '@/components';
 import { WrongChain } from '@/components/Status/WrongChain/WrongChain';
-import { LayoutType, ILoadingState, MASSA_STATION, U256_MAX } from '@/const';
-import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
+import {
+  LayoutType,
+  ILoadingState,
+  MASSA_STATION,
+  U256_MAX,
+  EVM_BRIDGE_ADDRESS,
+} from '@/const';
+import {
+  forwardBurn,
+  getOperationStatus,
+  increaseAllowance,
+} from '@/custom/bridge/bridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
+import { getFilteredScOutputEvents } from '@/custom/token/token';
 import Intl from '@/i18n/i18n';
+import { IToken } from '@/store/accountStore';
 import { useAccountStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
+import { isJSON } from '@/utils/utils';
 
 const iconsNetworks = {
   Sepolia: <BsDiamondHalf size={40} />,
@@ -80,15 +95,29 @@ export function Index() {
     state.isStationInstalled,
   ]);
 
+  const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
   const [amount, setAmount] = useState<string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
 
+  const [burnMassaOperation, setBurnMassaOperation] = useState<string>('');
+  const [bridgeMassaOperation, setBridgeMassaOperation] = useState<
+    string | undefined
+  >('');
+  const [eventsEVM, setEventsEVM] = useState<IEventLog[]>([]);
+  const [redeemSteps, setRedeemSteps] = useState<string>(
+    Intl.t('index.loading-box.burn'),
+  );
+
   const [loading, _setLoading] = useState<ILoadingState>({
     box: 'none',
-    approve: 'none',
     bridge: 'none',
+    approve: 'none',
+    burn: 'none',
+    redeem: 'none',
+    lock: 'none',
+    mint: 'none',
   });
 
   function setLoading(state: ILoadingState) {
@@ -112,8 +141,11 @@ export function Index() {
     hashLock: _hashLockEVM,
     hashApprove: _hashApproveEVM,
   } = useEvmBridge();
-  const { isSuccess: lockIsSuccess, isError: lockIsError } =
-    useWaitForTransaction({ hash: _hashLockEVM });
+  const {
+    data: lockData,
+    isSuccess: lockIsSuccess,
+    isError: lockIsError,
+  } = useWaitForTransaction({ hash: _hashLockEVM });
 
   const { isSuccess: approveIsSuccess, isError: approveIsError } =
     useWaitForTransaction({ hash: _hashApproveEVM });
@@ -128,6 +160,13 @@ export function Index() {
   const { data: tokenData } = useToken({ address: evmToken });
 
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
+
+  const unwatch = useContractEvent({
+    address: EVM_BRIDGE_ADDRESS,
+    abi: bridgeVaultAbi,
+    eventName: 'Redeemed',
+    listener: (events: IEventLog[]) => setEventsEVM(events),
+  });
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
@@ -154,29 +193,63 @@ export function Index() {
 
   useEffect(() => {
     if (lockIsSuccess) {
-      setLoading({ box: 'success', bridge: 'success' });
+      setLoading({ lock: 'success' });
+      let data = lockData;
+      setBridgeMassaOperation(data?.transactionHash);
     }
     if (lockIsError) {
-      setLoading({ box: 'error', bridge: 'error' });
+      setLoading({ box: 'error', lock: 'error', mint: 'error' });
     }
   }, [lockIsSuccess, lockIsError]);
 
   useEffect(() => {
-    if (approveIsSuccess) {
-      setLoading({ bridge: 'loading', approve: 'success' });
+    if (bridgeMassaOperation) monitorMintMassaEvents();
+  }, [bridgeMassaOperation]);
 
+  useEffect(() => {
+    if (approveIsSuccess) {
+      setLoading({ approve: 'success' });
       handleBridgeEVM();
     }
     if (approveIsError) {
-      setLoading({ box: 'error', approve: 'error', bridge: 'error' });
+      setLoading({
+        box: 'error',
+        approve: 'error',
+        lock: 'error',
+        mint: 'error',
+      });
       toast.error(Intl.t(`index.bridge.error.general`));
     }
   }, [approveIsSuccess, approveIsError]);
 
+  useEffect(() => {
+    if (burnMassaOperation) monitorBurnMassaEvents(burnMassaOperation);
+  }, [burnMassaOperation]);
+
+  useEffect(() => {
+    if (eventsEVM.length) {
+      let filteredEvent = eventsEVM.some(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        (ev) => ev.args.burnOpId === burnMassaOperation,
+      );
+
+      if (filteredEvent) {
+        setLoading({
+          box: 'success',
+          redeem: 'success',
+        });
+        toast.success(Intl.t(`index.bridge.success`));
+
+        unwatch?.();
+      }
+    }
+  }, [eventsEVM]);
+
   async function getProviderList() {
     const providerList = await providers();
     const massaStationWallet = providerList.some(
-      (provider) => provider.name() === MASSA_STATION,
+      (provider: { name: () => string }) => provider.name() === MASSA_STATION,
     );
 
     setStationInstalled(massaStationWallet);
@@ -205,7 +278,7 @@ export function Index() {
             }
             options={
               chains.length
-                ? chains.map((chain) => ({
+                ? chains.map((chain: { name: string }) => ({
                     item: chain.name + ' Testnet',
                     icon: iconsNetworks['Sepolia'],
                   }))
@@ -298,7 +371,7 @@ export function Index() {
         select={selectedMassaTokenKey}
         readOnly={IS_MASSA_TO_EVM || isFetching}
         size="xs"
-        options={tokens.map((token) => {
+        options={tokens.map((token: IToken) => {
           return {
             item: token.symbol.slice(0, -2),
             icon: iconsTokens['OTHER'],
@@ -315,7 +388,7 @@ export function Index() {
         select={selectedMassaTokenKey}
         readOnly={!IS_MASSA_TO_EVM || isFetching}
         size="xs"
-        options={tokens.map((token) => {
+        options={tokens.map((token: IToken) => {
           return {
             item: token.symbol,
             icon: iconsTokens['MASSASTATION'],
@@ -356,7 +429,7 @@ export function Index() {
 
   function EVMBalance() {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 h-6">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
           {isFetching ? (
@@ -371,7 +444,7 @@ export function Index() {
 
   function MassaBalance() {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 h-6">
         <p className="mas-body2">Balance:</p>
         <div className="mas-body">
           {isFetching ? (
@@ -508,11 +581,15 @@ export function Index() {
         return false;
       }
 
-      // already approved requested amount
       setLoading({ approve: 'success' });
     } catch (error) {
       console.log(error);
-      setLoading({ box: 'error', approve: 'error', bridge: 'error' });
+      setLoading({
+        box: 'error',
+        approve: 'error',
+        lock: 'error',
+        mint: 'error',
+      });
 
       return false;
     }
@@ -521,7 +598,7 @@ export function Index() {
   }
 
   async function handleBridgeEVM() {
-    setLoading({ bridge: 'loading' });
+    setLoading({ lock: 'loading' });
 
     try {
       if (!amount) {
@@ -531,7 +608,7 @@ export function Index() {
     } catch (error) {
       console.log(error);
       toast.error(Intl.t(`index.bridge.error.general`));
-      setLoading({ box: 'error', bridge: 'error' });
+      setLoading({ box: 'error', lock: 'error', mint: 'error' });
 
       return false;
     }
@@ -564,9 +641,10 @@ export function Index() {
       console.log(error);
       toast.error(Intl.t(`index.approve.error.general`));
       setLoading({
-        approve: 'error',
-        bridge: 'error',
         box: 'error',
+        approve: 'error',
+        burn: 'error',
+        redeem: 'error',
       });
 
       if (
@@ -583,10 +661,6 @@ export function Index() {
   }
 
   async function handleBridgeMASSA(client: Client) {
-    setLoading({
-      bridge: 'loading',
-    });
-
     try {
       if (!token) {
         throw new Error('Token is not defined');
@@ -604,7 +678,7 @@ export function Index() {
         token.chainId,
       );
 
-      await forwardBurn(
+      let operationId = await forwardBurn(
         client,
         evmAddress,
         tokenPairs,
@@ -612,19 +686,19 @@ export function Index() {
       );
 
       setLoading({
-        bridge: 'success',
-        box: 'success',
+        burn: 'loading',
       });
-
-      toast.success(Intl.t(`index.bridge.success`));
+      setBurnMassaOperation(operationId);
+      setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
     } catch (error) {
       console.log(error);
       setLoading({
-        bridge: 'error',
         box: 'error',
+        burn: 'error',
+        redeem: 'error',
       });
-
       toast.error(Intl.t(`index.bridge.error.general`));
+
       return false;
     }
 
@@ -635,10 +709,15 @@ export function Index() {
     setLoading({
       box: 'none',
       approve: 'none',
+      burn: 'none',
+      redeem: 'none',
+      lock: 'none',
+      mint: 'none',
       bridge: 'none',
     });
     setAmount('');
   }
+
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
@@ -654,13 +733,13 @@ export function Index() {
       const approved = await handleApproveMASSA(massaClient);
 
       if (approved) {
-        handleBridgeMASSA(massaClient);
+        await handleBridgeMASSA(massaClient);
       }
     } else {
       const approved = await handleApproveEVM();
 
       if (approved) {
-        handleBridgeEVM();
+        await handleBridgeEVM();
       }
     }
   }
@@ -681,6 +760,86 @@ export function Index() {
     setAmount(newAmount.toString());
   }
 
+  async function monitorBurnMassaEvents(operationId: string) {
+    setLoading({
+      burn: 'loading',
+    });
+
+    if (massaClient) {
+      let i = setInterval(async () => {
+        let eventStatus = await getOperationStatus(massaClient, operationId);
+
+        if (eventStatus === 'INCLUDED_PENDING') {
+          setRedeemSteps(Intl.t('index.loading-box.included-pending'));
+          setLoading({
+            burn: 'loading',
+          });
+        } else if (eventStatus === 'FINAL') {
+          setLoading({
+            burn: 'success',
+            redeem: 'loading',
+          });
+          setRedeemSteps(Intl.t('index.loading-box.burned-final'));
+          clearInterval(i);
+        } else if (['INCONSISTENT', 'NOT_FOUND'].includes(eventStatus)) {
+          setRedeemSteps(Intl.t('index.loading-box.inconsistent-not-found'));
+          setLoading({
+            box: 'error',
+            burn: 'error',
+          });
+          clearInterval(i);
+        }
+      }, 5000);
+
+      _setInterval(i);
+    }
+  }
+
+  async function monitorMintMassaEvents() {
+    setLoading({
+      mint: 'loading',
+    });
+
+    let fetchInterval = 5; // seconds
+    let timeout = 150; // seconds
+    let timeElapsed = 0;
+
+    if (massaClient) {
+      let i = setInterval(async () => {
+        let events = await getFilteredScOutputEvents(massaClient);
+
+        let filteredEvent = events.some(
+          (ev) =>
+            isJSON(ev.data) &&
+            JSON.parse(ev.data).eventName === 'TOKEN_MINTED' &&
+            JSON.parse(ev.data).txId === bridgeMassaOperation,
+        );
+
+        if (filteredEvent) {
+          setLoading({
+            box: 'success',
+            mint: 'success',
+          });
+          clearInterval(i);
+        }
+
+        if (timeElapsed * fetchInterval >= timeout) {
+          setLoading({
+            box: 'error',
+            mint: 'error',
+          });
+          clearInterval(i);
+
+          return;
+        }
+
+        timeElapsed += 1;
+      }, fetchInterval * 1000);
+
+      _setInterval(i);
+    }
+  }
+
   const isLoading = loading.box !== 'none' ? 'blur-md' : null;
 
   return (
@@ -690,6 +849,9 @@ export function Index() {
           onClose={handleClosePopUp}
           loading={loading}
           massaToEvm={IS_MASSA_TO_EVM}
+          amount={amount ?? '0'}
+          redeemSteps={redeemSteps}
+          token={token}
         />
       )}
       <div
