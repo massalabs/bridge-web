@@ -60,7 +60,6 @@ export function TDAI() {
           {Intl.t(`get-tokens.card.mint`, { token: 'tDAI' })}
         </p>
       )}
-
     </GradientCard>
   );
 }
