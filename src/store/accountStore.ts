@@ -41,6 +41,7 @@ export interface AccountStoreState {
   isFetching: boolean;
   balance: IAccountBalanceResponse;
   isStationInstalled: boolean;
+  providersFetched: IProvider[];
 
   setConnectedAccount: (account?: IAccount) => void;
   setToken: (token: IToken | null) => void;
@@ -48,7 +49,9 @@ export interface AccountStoreState {
   setAvailableAccounts: (accounts: any) => void;
   setAvailableTokens: (tokens: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
+  startRefetch: () => void;
 
+  loadAccounts: (providerList: IProvider[]) => void;
   getAccounts: () => void;
   getTokens: () => void;
 }
@@ -65,6 +68,7 @@ const accountStore = (set: any, get: any) => ({
     candidateBalance: '',
   },
   isStationInstalled: false,
+  providersFetched: [],
 
   clientFactory: ClientFactory.createDefaultClient(
     DefaultProviderUrls.BUILDNET,
@@ -79,8 +83,17 @@ const accountStore = (set: any, get: any) => ({
     set({ tokens: tokens });
   },
 
-  setStationInstalled: (isStationInstalled: boolean) =>
-    set({ isStationInstalled: isStationInstalled }),
+  setStationInstalled: (isStationInstalled: boolean) => {
+    set({ isStationInstalled: isStationInstalled });
+  },
+
+  startRefetch: async () => {
+    set({ providersFetched: await providers() });
+
+    setInterval(async () => {
+      set({ providersFetched: await providers() });
+    }, 5000);
+  },
 
   getTokens: async () => {
     set({ isFetching: true });
@@ -125,6 +138,50 @@ const accountStore = (set: any, get: any) => ({
     }
   },
 
+  loadAccounts: async (providerList: IProvider[]) => {
+    const massaStationWallet = providerList.find(
+      (provider: IProvider) => provider.name() === MASSA_STATION,
+    );
+
+    if (massaStationWallet) set({ isStationInstalled: true });
+
+    const fetchedAccounts = await massaStationWallet?.accounts();
+
+    if (fetchedAccounts && fetchedAccounts.length > 0) {
+      const firstAccountBalance = await fetchedAccounts[0].balance();
+
+      const client = await ClientFactory.fromWalletProvider(
+        providerList[0],
+        fetchedAccounts[0],
+      );
+
+      const previousConnectedAccount: IAccount = get().connectedAccount;
+
+      if (
+        !previousConnectedAccount ||
+        previousConnectedAccount?.name !== fetchedAccounts[0]?.name
+      ) {
+        set({
+          massaClient: client,
+          accounts: fetchedAccounts,
+          connectedAccount: fetchedAccounts[0],
+          balance: firstAccountBalance,
+        });
+      }
+    } else {
+      set({
+        massaClient: null,
+        accounts: [],
+        connectedAccount: null,
+        balance: {
+          finalBalance: '',
+          candidateBalance: '',
+        },
+        isFetching: false,
+      });
+    }
+  },
+
   getAccounts: async () => {
     set({ isFetching: true });
 
@@ -135,29 +192,7 @@ const accountStore = (set: any, get: any) => ({
         set({ isFetching: false, isStationInstalled: false });
         return;
       }
-
-      const massaStationWallet = providerList.find(
-        (provider: IProvider) => provider.name() === MASSA_STATION,
-      );
-
-      if (massaStationWallet) set({ isStationInstalled: true });
-
-      const fetchedAccounts = await massaStationWallet?.accounts();
-
-      if (fetchedAccounts && fetchedAccounts.length > 0) {
-        const firstAccountBalance = await fetchedAccounts[0].balance();
-
-        const client = await ClientFactory.fromWalletProvider(
-          providerList[0],
-          fetchedAccounts[0],
-        );
-        set({
-          massaClient: client,
-          accounts: fetchedAccounts,
-          connectedAccount: fetchedAccounts[0],
-          balance: firstAccountBalance,
-        });
-      }
+      await get().loadAccounts(providerList);
     } catch (error) {
       console.error(error);
 

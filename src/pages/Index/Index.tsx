@@ -81,6 +81,9 @@ export function Index() {
     isFetching,
     setStationInstalled,
     isStationInstalled,
+    startRefetch,
+    providersFetched,
+    loadAccounts,
   ] = useAccountStore((state) => [
     state.accounts,
     state.tokens,
@@ -93,6 +96,9 @@ export function Index() {
     state.isFetching,
     state.setStationInstalled,
     state.isStationInstalled,
+    state.startRefetch,
+    state.providersFetched,
+    state.loadAccounts,
   ]);
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
@@ -251,13 +257,25 @@ export function Index() {
     const massaStationWallet = providerList.some(
       (provider: { name: () => string }) => provider.name() === MASSA_STATION,
     );
-
-    setStationInstalled(massaStationWallet);
+    setStationInstalled(!!massaStationWallet);
   }
+
+  useEffect(() => {
+    if (providersFetched.length > 0) {
+      loadAccounts(providersFetched);
+
+      providersFetched.some((provider: { name: () => string }) => {
+        provider.name() === MASSA_STATION && setStationInstalled(true);
+      });
+    } else {
+      setStationInstalled(false);
+    }
+  }, [providersFetched]);
 
   useEffect(() => {
     getAccounts();
     getProviderList();
+    startRefetch();
   }, []);
 
   useEffect(() => {
