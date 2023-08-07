@@ -60,9 +60,6 @@ export function WETH() {
           {Intl.t(`get-tokens.card.mint`, { token: 'WETH' })}
         </p>
       )}
-      <p className="mas-menu-underline mb-4 cursor-pointer">
-        {Intl.t(`get-tokens.card.link`)}
-      </p>
     </GradientCard>
   );
 }

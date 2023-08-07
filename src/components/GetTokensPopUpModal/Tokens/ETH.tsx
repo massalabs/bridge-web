@@ -14,9 +14,9 @@ export function ETH() {
       <p className="mas-menu-default text-center mb-4">
         {Intl.t(`get-tokens.card.ETH-description`)}
       </p>
-      <p className="mas-menu-underline mb-4 cursor-pointer">
+      <a href='https://sepoliafaucet.com/' target="_blank" className="mas-menu-underline mb-4 cursor-pointer">
         {Intl.t(`get-tokens.card.link`)}
-      </p>
+      </a>
     </GradientCard>
   );
 }

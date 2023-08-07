@@ -1,6 +1,7 @@
 import { Tag } from '@massalabs/react-ui-kit';
 
 import Intl from '@/i18n/i18n';
+import { linkToCreateWallet } from '@/utils/const';
 
 export function RessourceSidePanel() {
   return (
@@ -24,12 +25,12 @@ export function RessourceSidePanel() {
       </div>
       <div className="w-full bg-slate-500 bg-opacity-5 border border-1"></div>
       <div className="flex flex-col justify-center items-center gap-4 mas-menu-default">
-        <Tag type="success" content="Create a Massa Wallet" />
+        <Tag type="success" content="Get Massa Wallet" />
         <div className="text-center">
           {Intl.t('connect-wallet.ressource-sidepanel.add-massa')}
         </div>
         <br />
-        <a href="www.mylink.com" target="_blank">
+        <a href={linkToCreateWallet} target="_blank">
           <u> {Intl.t('general.click-here')}</u>
         </a>
       </div>

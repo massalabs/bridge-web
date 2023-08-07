@@ -15,13 +15,13 @@
       "connected": "Connected",
       "not-installed": "Not installed",
       "no-accounts": "No accounts",
-      "wrong-chain": "Unsupported chain"
+      "wrong-chain": "Unsupported network"
     },
     "loading-box": {
-      "title-bridge": "Bridge",
-      "title-redeem": "Redeem",
-      "subtitle": "(it can take some seconds)",
-      "approve": "approve (give allowance) ",
+      "title-bridge": "Processing bridge transfer...",
+      "title-redeem": "Processing redeem...",
+      "subtitle": "(It can take up to 2 minutes...)",
+      "approve": "approval",
       "bridge": "bridge",
       "redeem": "redeem",
       "lock": "lock",
@@ -29,15 +29,15 @@
       "burn": "burn",
       "awaiting-inclusion": "burn (awaiting inclusion...)",
       "included-pending": "burn (included pending)",
-      "burned-final": "burned (final)",
+      "burned-final": "burn (final)",
       "inconsistent-not-found": "burn (inconsistent or not found)",
       "massa-tokens-link": "https://bridge.massa.net/buildnet/index",
       "evm-tokens-link": "https://getEvmTokens.com",
-      "redeemed": "You have successfully redeemed:",
-      "minted": "You have successfully minted:",
+      "redeemed": "Successfully redeemed:",
+      "minted": "Successfully minted:",
       "from-to": "from {from} to {to}",
       "check": "Check the balance in your Metamask wallet.",
-      "add-tokens-message": "You might need to add the token manually to your wallet.",
+      "add-tokens-message": "You might need to manually add the token to your wallet.",
       "add-tokens": "instructions",
       "error": "Something went wrong. Drop us a message at:",
       "massa-support": "support@bridge.massa.net"
@@ -59,26 +59,26 @@
       "error": {
         "general": "Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
-        "insuficient-funds": "Insuficient funds"
+        "insuficient-funds": "Insuficient balance"
       },
-      "success": "Great! Amount approved!",
-      "loading": "We are approving..."
+      "success": "Approval successfully granted",
+      "loading": "Processing approval..."
     },
     "bridge": {
       "error": {
         "general": "Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
-        "insuficient-funds": "Insuficient funds"
+        "insuficient-funds": "Insuficient balance"
       },
-      "success": "Great! Bridge transfer executed successfully!",
-      "loading": "We are bridging..."
+      "success": "Bridge transfer successfully executed!",
+      "loading": "Processing bridge transfer..."
     },
     "balance": {
       "error": "We couldn't fetch your balance! Please, try again!"
     }
   },
   "unexpected-error": {
-    "title": "Ops!",
+    "title": "OOps!",
     "description": "An unexpected error has occurred",
     "link": "Go back to the main page!",
     "no-wallet": "No wallet is associated with your Massa Account. Please create one and try again!"
@@ -86,25 +86,23 @@
   "connect-wallet": {
     "title": "Connect wallets",
     "connected": "Connected wallets",
-    "description": "Connect 1 wallet on Sepolia testnet and 1 on Massa buildnet, to bridge tokens between networks.",
+    "description": "Connect your wallets to start bridging tokens. One EVM wallet and one Massa wallet are required.",
     "button": "Connect",
     "card-destination": {
       "from": "Sepolia wallet",
       "to": "Massa wallet"
     },
     "connected-cards": {
-      "wallet-balance": "balance: ",
-      "change-wallet": "Change Wallet"
+      "wallet-balance": "balance: "
     },
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
       "title": "Metamask",
-      "invalid-network": "Your network is invalid, please pick another one",
-      "change-network": "change your network",
-      "switch-network": "switch chain",
+      "invalid-network": "Current network is not supported. Please, switch to Sepolia testnet.",
+      "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
       "install-metamask": "Install Metamask",
-      "wrong-chain": "You are connected in a wrong chain in Metamask. Switch to Sepolia"
+      "wrong-chain": "Current network is not supported. Please, switch to Sepolia testnet."
     },
     "station-connect-error": {
       "error-station": " in order to connect your wallet.",
@@ -113,8 +111,8 @@
       "add-wallet": "Create a Wallet"
     },
     "ressource-sidepanel": {
-      "add-sepolia": "If you want to add sepolia on your Metamask",
-      "add-massa": "If you want to add to create a Massa Wallet"
+      "add-sepolia": "Add sepolia test network to your metamask wallet",
+      "add-massa": "Get Massa Wallet"
     }
   },
   "get-tokens": {
@@ -122,22 +120,22 @@
     "minting": "Minting...",
     "success": "Yeah! Minted successfully",
     "errors": {
-      "transaction-execution": "Mint action canceled or failed",
+      "transaction-execution": "Minting transaction failed or cancelled",
       "general": "Something went wrong"
     },
     "card": {
-      "tDAI-description": "If you want to get tDAI tokens",
-      "WETH-description": "If you want to get WETH tokens",
-      "ETH-description": "If you want to get ETH tokens to pay fees",
-      "XMA-description": "If you want to get XMA tokens",
-      "link": "Instructions",
+      "tDAI-description": "Get tDAI tokens",
+      "WETH-description": "Get WETH tokens",
+      "ETH-description": "Get sepoliaETH to pay for transaction fees",
+      "XMA-description": "Get XMA tokens",
+      "link": "Faucet",
       "mint": "Mint {token}"
     },
     "tag": {
       "tDAI": "Get tDAI",
-      "WETH": "Get wrapped Ethereum",
-      "ETH": "Get Ethereum",
-      "XMA": "Get XMA tokens"
+      "WETH": "Get wETH",
+      "ETH": "Get ETH",
+      "XMA": "Get XMA"
     }
   }
 }
