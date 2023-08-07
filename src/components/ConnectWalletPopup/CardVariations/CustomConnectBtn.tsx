@@ -64,7 +64,7 @@ export function CustomConnectButton(): JSX.Element {
                       customClass="h-14"
                       onClick={openChainModal}
                     >
-                      {Intl.t('connect-wallet.connect-metamask.change-network')}
+                      {Intl.t('connect-wallet.connect-metamask.switch-network')}
                     </Button>
                   </>
                 );

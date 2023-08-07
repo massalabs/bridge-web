@@ -6,9 +6,9 @@ export const tagTypes = {
 };
 
 export const linkToInstall =
-  'https://github.com/massalabs/station/blob/main/INSTALLATION.md';
+  'https://station.massa.net/';
 export const linkToCreateWallet =
-  'https://station.massa/plugin/massa-labs/massa-wallet/web-app/index';
+  'https://station.massa.net/';
 
 export const BRIDGE = 'bridge';
 export const APPROVE = 'approve';

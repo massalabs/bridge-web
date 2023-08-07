@@ -60,9 +60,7 @@ export function TDAI() {
           {Intl.t(`get-tokens.card.mint`, { token: 'tDAI' })}
         </p>
       )}
-      <p className="mas-menu-underline mb-4 cursor-pointer">
-        {Intl.t(`get-tokens.card.link`)}
-      </p>
+
     </GradientCard>
   );
 }
