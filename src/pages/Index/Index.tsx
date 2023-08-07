@@ -373,7 +373,7 @@ export function Index() {
         size="xs"
         options={tokens.map((token: IToken) => {
           return {
-            item: token.symbol.slice(0, -2),
+            item: token.symbol,
             icon: iconsTokens['OTHER'],
             onClick: () => setToken(token),
           };
