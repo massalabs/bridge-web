@@ -5,10 +5,8 @@ export const tagTypes = {
   info: 'info',
 };
 
-export const linkToInstall =
-  'https://station.massa.net/';
-export const linkToCreateWallet =
-  'https://station.massa.net/';
+export const linkToInstall = 'https://station.massa.net/';
+export const linkToCreateWallet = 'https://station.massa.net/';
 
 export const BRIDGE = 'bridge';
 export const APPROVE = 'approve';
