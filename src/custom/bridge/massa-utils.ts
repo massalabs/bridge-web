@@ -25,14 +25,26 @@ async function isOperationIncluded(
   );
 }
 
+async function isOperationFinal(
+  client: Client,
+  opId: string,
+): Promise<boolean> {
+  const status = await getOperationStatus(client, opId);
+  return status === EOperationStatus.FINAL;
+}
+
 export async function waitIncludedOperation(
   client: Client,
   opId: string,
+  onlyFinal = false,
 ): Promise<void> {
   const start = Date.now();
   let counterMs = 0;
   while (counterMs < WAIT_STATUS_TIMEOUT) {
-    if (await isOperationIncluded(client, opId)) {
+    const done = onlyFinal
+      ? await isOperationFinal(client, opId)
+      : await isOperationIncluded(client, opId);
+    if (done) {
       const events = await client.smartContracts().getFilteredScOutputEvents({
         emitter_address: null,
         start: null,
