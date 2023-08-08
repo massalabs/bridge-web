@@ -117,7 +117,7 @@ function EVMHeader() {
       <div className="flex items-center gap-3">
         <p className="mas-body">Metamask</p>
         {isConnected ? (
-          !IS_EVM_SEPOLIA_CHAIN ? (
+          !IS_EVM_SEPOLIA_CHAIN && isConnected ? (
             <WrongChain />
           ) : (
             <Connected />
