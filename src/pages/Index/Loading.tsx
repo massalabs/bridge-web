@@ -121,8 +121,8 @@ function Ran(props: ILoadingBoxProps) {
 
   const massa = Intl.t('general.massa');
   const sepolia = Intl.t('general.sepolia');
-  const getMassaTokenLink = Intl.t('index.loading-box.massa-tokens-link');
-  const getEvmTokenLink = Intl.t('index.loading-box.evm-tokens-link');
+  const getMassaTokenLink = Intl.t('index.loading-box.massa-faucet-link');
+  const getEvmTokenLink = Intl.t('index.loading-box.sepolia-faucet-link');
 
   return (
     <div className="mas-body2 text-center">
