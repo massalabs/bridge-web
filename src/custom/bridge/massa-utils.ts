@@ -61,7 +61,9 @@ function isTokenMintedEvent(event: IEvent, lockTxId: string) {
   if (!eventData) {
     return false;
   }
-  return eventData?.eventName === 'TOKEN_MINTED' && eventData?.txId === lockTxId;
+  return (
+    eventData?.eventName === 'TOKEN_MINTED' && eventData?.txId === lockTxId
+  );
 }
 
 export async function waitForMintEvent(
