@@ -10,22 +10,12 @@ import Intl from '@/i18n/i18n';
 export function ConnectWalletPopup({ ...props }) {
   const { setOpen } = props;
 
-  const args = {
-    onOpen: () => {
-      return null;
-    },
-    onClose: () => {
-      setOpen(false);
-    },
-  };
-
   return (
     <PopupModal
       customClass="w-fit max-w-4xl"
       customClassNested="border border-tertiary bg-secondary/50 backdrop-blur-lg"
       fullMode={true}
-      onOpen={args.onOpen}
-      onClose={args.onClose}
+      onClose={() => setOpen(false)}
     >
       <PopupModalHeader>
         <div className="text-f-primary flex flex-col mb-4">

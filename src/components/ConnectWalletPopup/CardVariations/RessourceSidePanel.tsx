@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
+import { linkToCreateWallet } from '@/utils/const';
 
 function SepoliaInstructions() {
   return (
@@ -33,7 +34,7 @@ function MassaStationInstructions() {
 }
 
 export function RessourceSidePanel() {
-  const { isConnected } = useAccount();
+  const { isConnected: isEvmWalletConnected } = useAccount();
 
   const [accounts, isStationInstalled] = useAccountStore((state) => [
     state.accounts,
@@ -41,9 +42,9 @@ export function RessourceSidePanel() {
   ]);
 
   const isOnlyMetamaskConnected =
-    isConnected && !isStationInstalled && accounts.length === 0;
+    isEvmWalletConnected && !isStationInstalled && accounts.length === 0;
   const isOnlyMassaConnected =
-    isStationInstalled && !isConnected && accounts.length > 0;
+    isStationInstalled && !isEvmWalletConnected && accounts.length > 0;
 
   return (
     <div
@@ -79,10 +80,10 @@ export function RessourceSidePanel() {
             </p>
             <a
               className="mas-menu-underline"
-              href="www.mylink.com"
+              href={linkToCreateWallet}
               target="_blank"
             >
-              <u>{Intl.t('general.click-here')}</u>
+              {Intl.t('general.click-here')}
             </a>
           </div>
         </>
