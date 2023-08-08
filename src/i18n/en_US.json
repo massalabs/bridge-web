@@ -4,7 +4,9 @@
     "select-this-account": "Select this account",
     "loading": "loading...",
     "massa": "Massa Buidnet",
-    "sepolia": "Sepolia"
+    "sepolia": "Sepolia",
+    "download": "Download",
+    "instructions": "Instructions"
   },
   "index": {
     "get-tokens": "Get tokens",
@@ -119,8 +121,9 @@
       "add-wallet": "Create a Wallet"
     },
     "ressource-sidepanel": {
-      "add-sepolia": "Add sepolia test network to your metamask wallet",
-      "add-massa": "Get Massa Wallet"
+      "add-sepolia": "If you want to add sepolia on your Metamask",
+      "add-massa": "If you want to create Massa Wallet",
+      "download-massa-station": "Download Massa Station and create Massa Wallet"
     }
   },
   "get-tokens": {

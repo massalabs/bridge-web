@@ -25,7 +25,7 @@ export type MassaWalletArgs = {
 };
 
 export function ConnectWalletCards() {
-  const { isConnected: isEvmWalletConnected } = useAccount();
+  const { isConnected } = useAccount();
 
   const [
     accounts,
@@ -60,13 +60,22 @@ export function ConnectWalletCards() {
     isStationInstalled,
   };
 
+  const bothNotConnected =
+    !isConnected || !isStationInstalled || accounts.length === 0;
+
+  const gridColsTemplate = bothNotConnected ? 'grid-cols-3' : 'grid-cols-2';
+
   return (
-    <div className="pb-10 flex flex-row gap-4 text-f-primary">
-      <div className="flex flex-col gap-4 min-w-[65%]">
+    <div
+      className={`pb-10 text-f-primary grid ${gridColsTemplate} grid-rows-2 gap-4`}
+    >
+      <div className="col-span-2">
         <WalletCard>
-          <div className="flex justify-between w-full mb-4">
-            <p> {Intl.t('connect-wallet.card-destination.from')} </p>
-            {isEvmWalletConnected ? <Connected /> : <Disconnected />}
+          <div className="flex justify-between items-center mb-4">
+            <p className="mas-body">
+              {Intl.t('connect-wallet.card-destination.from')}
+            </p>
+            {isConnected ? <Connected /> : <Disconnected />}
           </div>
           <div className="w-full">
             {isMetamaskInstalled ? (
@@ -76,9 +85,13 @@ export function ConnectWalletCards() {
             )}
           </div>
         </WalletCard>
+      </div>
+      <div className="col-span-2 col-start-1 row-start-2">
         <WalletCard>
-          <div className="flex justify-between w-full mb-4">
-            <p>{Intl.t('connect-wallet.card-destination.to')}</p>
+          <div className="flex justify-between items-center mb-4">
+            <p className="mas-body">
+              {Intl.t('connect-wallet.card-destination.to')}
+            </p>
             {accounts.length ? <Connected /> : <Disconnected />}
           </div>
           {accounts.length ? (
@@ -88,7 +101,11 @@ export function ConnectWalletCards() {
           )}
         </WalletCard>
       </div>
-      <RessourceSidePanel />
+      {bothNotConnected && (
+        <div className="row-span-2 col-start-3 row-start-1">
+          <RessourceSidePanel />
+        </div>
+      )}
     </div>
   );
 }
@@ -99,10 +116,7 @@ export function WalletCard({ ...props }) {
   const { children } = props;
 
   return (
-    <div
-      className="bg-primary max-w-full h-60 p-6 rounded-2xl
-        flex flex-col justify-center items-center"
-    >
+    <div className="bg-primary h-60 p-6 rounded-2xl flex flex-col justify-center items-center">
       <div className="flex flex-col w-full mas-body">{children}</div>
     </div>
   );
