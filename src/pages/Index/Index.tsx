@@ -1,40 +1,23 @@
-import { useState, SyntheticEvent, useEffect, ReactNode } from 'react';
+import { useState, SyntheticEvent, useEffect } from 'react';
 
 import { Client } from '@massalabs/massa-web3';
-import {
-  Dropdown,
-  MassaLogo,
-  MassaToken,
-  Currency,
-  Button,
-  toast,
-  Tooltip,
-} from '@massalabs/react-ui-kit';
+import { Currency, Button, toast } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import currency from 'currency.js';
-import { BsDiamondHalf } from 'react-icons/bs';
 import { FiRepeat } from 'react-icons/fi';
 import { parseUnits, Log as IEventLog } from 'viem';
 import {
   useAccount,
   useNetwork,
-  useFeeData,
   useWaitForTransaction,
   useToken,
-  useSwitchNetwork,
   useContractEvent,
 } from 'wagmi';
 
-import { FetchingLine, FetchingStatus, LoadingBox } from './Loading';
+import { boxLayout } from './boxLayout/boxLayout';
+import { LoadingBox } from './Loading';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import {
-  GetTokensPopUpModal,
-  Connected,
-  Disconnected,
-  NoAccounts,
-  NotInstalled,
-} from '@/components';
-import { WrongChain } from '@/components/Status/WrongChain/WrongChain';
+import { GetTokensPopUpModal } from '@/components';
 import {
   LayoutType,
   ILoadingState,
@@ -51,32 +34,18 @@ import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { getFilteredScOutputEvents } from '@/custom/token/token';
 import Intl from '@/i18n/i18n';
-import { IToken } from '@/store/accountStore';
 import { useAccountStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
 import { isJSON } from '@/utils/utils';
 
-const iconsNetworks = {
-  Sepolia: <BsDiamondHalf size={40} />,
-  OTHER: <BsDiamondHalf />,
-};
-
-const iconsTokens = {
-  MASSASTATION: <MassaLogo size={16} />,
-  OTHER: <BsDiamondHalf />,
-};
-
 export function Index() {
   const [
-    accounts,
-    tokens,
     getAccounts,
     getTokens,
     massaClient,
     connectedAccount,
-    setToken,
     token,
     isFetching,
     setStationInstalled,
@@ -85,13 +54,10 @@ export function Index() {
     providersFetched,
     loadAccounts,
   ] = useAccountStore((state) => [
-    state.accounts,
-    state.tokens,
     state.getAccounts,
     state.getTokens,
     state.massaClient,
     state.connectedAccount,
-    state.setToken,
     state.token,
     state.isFetching,
     state.setStationInstalled,
@@ -132,11 +98,7 @@ export function Index() {
     });
   }
 
-  const hasNoAccounts = accounts?.length <= 0;
-
   const { chain, chains } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
-  const { data: evmFeeData, isLoading: isLoadingEVMFeeData } = useFeeData();
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
   const {
@@ -155,12 +117,6 @@ export function Index() {
 
   const { isSuccess: approveIsSuccess, isError: approveIsError } =
     useWaitForTransaction({ hash: _hashApproveEVM });
-
-  const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find(
-      (_, idx) => tokens[idx].name.slice(0, -2) === token?.name.slice(0, -2),
-    ) || '0',
-  );
 
   const evmToken = token?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
@@ -284,266 +240,6 @@ export function Index() {
 
   function handleToggleLayout() {
     setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
-  }
-
-  function EVMHeader() {
-    return (
-      <div className="flex items-center justify-between">
-        <div className="w-1/2">
-          <Dropdown
-            readOnly={
-              !isEvmWalletConnected || isFetching || !IS_EVM_SEPOLIA_CHAIN
-            }
-            options={
-              chains.length
-                ? chains.map((chain: { name: string }) => ({
-                    item: chain.name + ' Testnet',
-                    icon: iconsNetworks['Sepolia'],
-                  }))
-                : [
-                    {
-                      icon: iconsNetworks['Sepolia'],
-                      item: 'Sepolia Testnet',
-                    },
-                  ]
-            }
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <p className="mas-body">Metamask</p>
-          {isEvmWalletConnected ? (
-            !IS_EVM_SEPOLIA_CHAIN ? (
-              <WrongChain />
-            ) : (
-              <Connected />
-            )
-          ) : (
-            <Disconnected />
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  function MassaHeader() {
-    function displayStatus() {
-      if (!isStationInstalled) return <NotInstalled />;
-      else if (hasNoAccounts) return <NoAccounts />;
-      return <Connected />;
-    }
-
-    return (
-      <div className="mb-4 flex items-center justify-between">
-        <div className="w-1/2">
-          <Dropdown
-            readOnly={hasNoAccounts || isFetching}
-            options={[
-              {
-                item: 'Massa Buildnet',
-                icon: <MassaToken />,
-              },
-            ]}
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <p className="mas-body">Massa Wallet</p>
-          {isFetching ? <FetchingStatus /> : displayStatus()}
-        </div>
-      </div>
-    );
-  }
-
-  function EVMMiddle() {
-    return (
-      <div>
-        {IS_EVM_SEPOLIA_CHAIN ? null : (
-          <div
-            className="flex justify-end mas-h3 text-f-disabled-1 underline cursor-pointer"
-            onClick={() => switchNetwork?.(SEPOLIA_CHAIN_ID)}
-          >
-            {Intl.t(`connect-wallet.connect-metamask.switch-network`)}
-          </div>
-        )}
-        <div className="mt-4 mb-4 flex items-center gap-2">
-          <p className="mas-body2">Wallet address:</p>
-          <p className="mas-caption">{evmAddress}</p>
-        </div>
-      </div>
-    );
-  }
-
-  function MassaMiddle() {
-    return (
-      <div className="mb-4 flex items-center gap-2">
-        <p className="mas-body2">Wallet address:</p>
-        <div className="mas-caption">
-          {isFetching ? <FetchingLine /> : connectedAccount?.address()}
-        </div>
-      </div>
-    );
-  }
-
-  function EVMTokenOptions() {
-    return (
-      <Dropdown
-        select={selectedMassaTokenKey}
-        readOnly={IS_MASSA_TO_EVM || isFetching}
-        size="xs"
-        options={tokens.map((token: IToken) => {
-          return {
-            item: token.symbol,
-            icon: iconsTokens['OTHER'],
-            onClick: () => setToken(token),
-          };
-        })}
-      />
-    );
-  }
-
-  function MassaTokenOptions() {
-    return (
-      <Dropdown
-        select={selectedMassaTokenKey}
-        readOnly={!IS_MASSA_TO_EVM || isFetching}
-        size="xs"
-        options={tokens.map((token: IToken) => {
-          return {
-            item: token.symbol,
-            icon: iconsTokens['MASSASTATION'],
-            onClick: () => setToken(token),
-          };
-        })}
-      />
-    );
-  }
-
-  function EVMFees() {
-    return (
-      <div>
-        <div className="flex items-center gap-2">
-          <p className="mas-body2">Total EVM fees:</p>
-          <div className="mas-body">
-            {isLoadingEVMFeeData ? (
-              <FetchingLine />
-            ) : (
-              evmFeeData?.formatted.maxFeePerGas
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function MassaFees() {
-    return (
-      <div>
-        <div className="flex items-center gap-2">
-          <p className="mas-body2">Total Massa fees:</p>
-          <p className="mas-body">{formatStandard(Number(0))}</p>
-        </div>
-      </div>
-    );
-  }
-
-  function EVMBalance() {
-    return (
-      <div className="flex items-center gap-2 h-6">
-        <p className="mas-body2">Balance:</p>
-        <div className="mas-body">
-          {isFetching ? (
-            <FetchingLine />
-          ) : (
-            <TokenBalance amount={_tokenBalanceEVM} />
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  function MassaBalance() {
-    return (
-      <div className="flex items-center gap-2 h-6">
-        <p className="mas-body2">Balance:</p>
-        <div className="mas-body">
-          {isFetching ? (
-            <FetchingLine />
-          ) : (
-            <TokenBalance amount={token?.balance} />
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  function TokenBalance({ ...props }: { amount?: bigint }) {
-    let { amount } = props;
-
-    let { in2decimals, full } = formatAmount(
-      amount ? amount.toString() : '0',
-      decimals,
-    );
-
-    let symbol = IS_MASSA_TO_EVM ? token?.symbol : token?.symbol.slice(0, -2);
-
-    return (
-      <div className="flex items-center">
-        {in2decimals}{' '}
-        <Tooltip
-          customClass="mas-caption w-fit whitespace-nowrap"
-          content={full + ' ' + symbol}
-        />
-      </div>
-    );
-  }
-
-  interface Layout {
-    header: ReactNode;
-    wallet: ReactNode;
-    token: ReactNode;
-    fees: ReactNode;
-    balance: ReactNode;
-  }
-
-  function boxLayout(layout: LayoutType = 'massaToEvm'): {
-    up: Layout;
-    down: Layout;
-  } {
-    const layouts = {
-      massaToEvm: {
-        up: {
-          header: <MassaHeader />,
-          wallet: <MassaMiddle />,
-          token: <MassaTokenOptions />,
-          fees: null,
-          balance: <MassaBalance />,
-        },
-        down: {
-          header: <EVMHeader />,
-          wallet: <EVMMiddle />,
-          token: <EVMTokenOptions />,
-          fees: <MassaFees />,
-          balance: null,
-        },
-      },
-      evmToMassa: {
-        up: {
-          header: <EVMHeader />,
-          wallet: <EVMMiddle />,
-          token: <EVMTokenOptions />,
-          fees: null,
-          balance: <EVMBalance />,
-        },
-        down: {
-          header: <MassaHeader />,
-          wallet: <MassaMiddle />,
-          token: <MassaTokenOptions />,
-          fees: <EVMFees />,
-          balance: null,
-        },
-      },
-    };
-
-    return layouts[layout];
   }
 
   function validate() {
