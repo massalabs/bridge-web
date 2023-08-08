@@ -19,14 +19,10 @@
     },
     "faq": {
       "get-tokens": {
-        "get-eth": {
-          "title": "Get testnet/buildnet tokens",
-          "category-title": "Get ETH on Sepolia",
-          "category-content-one": "You need to own some testnet ETH to be able to pay for the transaction fees to bridge tokens from Sepolia Testnet to Massa Buildnet. You can get 0.5 ETH using this ",
-          "link-one": "sepolia faucet",
-          "category-content-two": " provided by Alchemy. You can find step-by-step instructions in ",
-          "link-two": " this article."
-        }
+        "title": "Get testnet/buildnet tokens"
+      },
+      "add-tokens": {
+        "title": "Add tokens to your testnet/buildnet wallets"
       }
     },
     "loading-box": {
