@@ -30,15 +30,14 @@ import {
   getOperationStatus,
   increaseAllowance,
 } from '@/custom/bridge/bridge';
+import { waitForMintEvent } from '@/custom/bridge/massa-utils';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
-import { getFilteredScOutputEvents } from '@/custom/token/token';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
-import { isJSON } from '@/utils/utils';
 
 export function Index() {
   const [
@@ -510,47 +509,34 @@ export function Index() {
   }
 
   async function monitorMintMassaEvents() {
+    if (!massaClient || !bridgeMassaOperation) {
+      return;
+    }
+
     setLoading({
       mint: 'loading',
     });
 
-    let fetchInterval = 5; // seconds
-    let timeout = 150; // seconds
-    let timeElapsed = 0;
+    try {
+      const success = await waitForMintEvent(massaClient, bridgeMassaOperation);
 
-    if (massaClient) {
-      let i = setInterval(async () => {
-        let events = await getFilteredScOutputEvents(massaClient);
-
-        let filteredEvent = events.some(
-          (ev) =>
-            isJSON(ev.data) &&
-            JSON.parse(ev.data).eventName === 'TOKEN_MINTED' &&
-            JSON.parse(ev.data).txId === bridgeMassaOperation,
-        );
-
-        if (filteredEvent) {
-          setLoading({
-            box: 'success',
-            mint: 'success',
-          });
-          clearInterval(i);
-        }
-
-        if (timeElapsed * fetchInterval >= timeout) {
-          setLoading({
-            box: 'error',
-            mint: 'error',
-          });
-          clearInterval(i);
-
-          return;
-        }
-
-        timeElapsed += 1;
-      }, fetchInterval * 1000);
-
-      _setInterval(i);
+      if (success) {
+        setLoading({
+          box: 'success',
+          mint: 'success',
+        });
+      } else {
+        setLoading({
+          box: 'error',
+          mint: 'error',
+        });
+      }
+    } catch (error) {
+      // timeout error
+      setLoading({
+        box: 'error',
+        mint: 'error',
+      });
     }
   }
 

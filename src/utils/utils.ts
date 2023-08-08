@@ -21,11 +21,11 @@ export function formatBalance(
   }
 }
 
-export function isJSON(str: string): boolean {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function safeJsonParse(str: string): any {
   try {
-    JSON.parse(str);
+    return JSON.parse(str);
   } catch (e) {
-    return false;
+    return undefined;
   }
-  return true;
 }

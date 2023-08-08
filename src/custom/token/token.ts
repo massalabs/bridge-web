@@ -65,7 +65,7 @@ export async function getDecimals(
 export async function getFilteredScOutputEvents(
   client: IClient,
 ): Promise<IEvent[]> {
-  let returnObject = await client.smartContracts().getFilteredScOutputEvents({
+  return client.smartContracts().getFilteredScOutputEvents({
     start: null,
     end: null,
     original_caller_address: CONTRACT_ADDRESS,
@@ -73,8 +73,6 @@ export async function getFilteredScOutputEvents(
     emitter_address: null,
     is_final: true,
   });
-
-  return returnObject;
 }
 
 export async function getBalance(
