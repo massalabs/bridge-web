@@ -297,13 +297,14 @@ export function Index() {
 
       setLoading({ approve: 'success' });
     } catch (error) {
-      console.log(error);
       setLoading({
         box: 'error',
         approve: 'error',
         lock: 'error',
         mint: 'error',
       });
+
+      if (error) handleErrorMessage(error.toString());
 
       return false;
     }
@@ -320,9 +321,9 @@ export function Index() {
       }
       await _handleLockEVM(parseUnits(amount, decimals));
     } catch (error) {
-      console.log(error);
-      toast.error(Intl.t(`index.bridge.error.general`));
       setLoading({ box: 'error', lock: 'error', mint: 'error' });
+
+      if (error) handleErrorMessage(error.toString());
 
       return false;
     }
@@ -352,8 +353,6 @@ export function Index() {
         approve: 'success',
       });
     } catch (error) {
-      console.log(error);
-      toast.error(Intl.t(`index.approve.error.general`));
       setLoading({
         box: 'error',
         approve: 'error',
@@ -361,13 +360,8 @@ export function Index() {
         redeem: 'error',
       });
 
-      if (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        error?.message?.split('message:').pop().trim() !==
-        'Unable to unprotect wallet'
-      )
-        toast.error(Intl.t(`index.approve.error.general`));
+      if (error) handleErrorMessage(error.toString());
+
       return false;
     }
 
@@ -405,18 +399,34 @@ export function Index() {
       setBurnMassaOperation(operationId);
       setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
     } catch (error) {
-      console.log(error);
       setLoading({
         box: 'error',
         burn: 'error',
         redeem: 'error',
       });
-      toast.error(Intl.t(`index.bridge.error.general`));
+
+      if (error) handleErrorMessage(error.toString());
 
       return false;
     }
 
     return true;
+  }
+
+  function handleErrorMessage(error: string) {
+    const ERRORS_MESSAGES = [
+      'unable to unprotect wallet',
+      'TransactionExecutionError: User rejected the request',
+    ];
+
+    const regex = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
+
+    if (regex.test(error)) {
+      handleClosePopUp();
+      return;
+    } else {
+      toast.error(Intl.t(`index.bridge.error.general`));
+    }
   }
 
   function handleClosePopUp() {
@@ -553,6 +563,10 @@ export function Index() {
       _setInterval(i);
     }
   }
+
+  useEffect(() => {
+    if (loading.box === 'none') handleClosePopUp();
+  }, [loading.box]);
 
   const isLoading = loading.box !== 'none' ? 'blur-md' : null;
 
