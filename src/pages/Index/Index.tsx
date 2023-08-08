@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent, useEffect } from 'react';
+import { useState, SyntheticEvent, useEffect, useRef } from 'react';
 
 import { Client } from '@massalabs/massa-web3';
 import { Currency, Button, toast } from '@massalabs/react-ui-kit';
@@ -26,12 +26,11 @@ import {
   U256_MAX,
   EVM_BRIDGE_ADDRESS,
 } from '@/const';
+import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import {
-  forwardBurn,
-  getOperationStatus,
-  increaseAllowance,
-} from '@/custom/bridge/bridge';
-import { waitForMintEvent } from '@/custom/bridge/massa-utils';
+  waitForMintEvent,
+  waitIncludedOperation,
+} from '@/custom/bridge/massa-utils';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import Intl from '@/i18n/i18n';
@@ -73,11 +72,10 @@ export function Index() {
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
 
-  const [burnMassaOperation, setBurnMassaOperation] = useState<string>('');
+  const burnMassaOperation = useRef<string | undefined>();
   const [bridgeMassaOperation, setBridgeMassaOperation] = useState<
     string | undefined
   >('');
-  const [eventsEVM, setEventsEVM] = useState<IEventLog[]>([]);
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
@@ -122,13 +120,6 @@ export function Index() {
   const { data: tokenData } = useToken({ address: evmToken });
 
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
-
-  const unwatch = useContractEvent({
-    address: EVM_BRIDGE_ADDRESS,
-    abi: bridgeVaultAbi,
-    eventName: 'Redeemed',
-    listener: (events: IEventLog[]) => setEventsEVM(events),
-  });
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
@@ -184,29 +175,15 @@ export function Index() {
     }
   }, [approveIsSuccess, approveIsError]);
 
-  useEffect(() => {
-    if (burnMassaOperation) monitorBurnMassaEvents(burnMassaOperation);
-  }, [burnMassaOperation]);
-
-  useEffect(() => {
-    if (eventsEVM.length) {
-      let filteredEvent = eventsEVM.some(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        (ev) => ev.args.burnOpId === burnMassaOperation,
-      );
-
-      if (filteredEvent) {
-        setLoading({
-          box: 'success',
-          redeem: 'success',
-        });
-        toast.success(Intl.t(`index.bridge.success`));
-
-        unwatch?.();
-      }
-    }
-  }, [eventsEVM]);
+  const unwatch = useContractEvent({
+    address: EVM_BRIDGE_ADDRESS,
+    abi: bridgeVaultAbi,
+    eventName: 'Redeemed',
+    listener(events) {
+      handleRedeemEvent(events);
+      unwatch?.();
+    },
+  });
 
   async function getProviderList() {
     const providerList = await providers();
@@ -361,11 +338,29 @@ export function Index() {
       });
 
       if (error) handleErrorMessage(error.toString());
-
       return false;
     }
 
     return true;
+  }
+
+  async function handleRedeemEvent(events: IEventLog[]) {
+    if (!burnMassaOperation.current) {
+      return;
+    }
+    const found = events.some(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ev) => (ev as any).args.burnOpId === burnMassaOperation.current,
+    );
+
+    if (found) {
+      setLoading({
+        box: 'success',
+        redeem: 'success',
+      });
+      toast.success(Intl.t(`index.bridge.success`));
+      burnMassaOperation.current = undefined;
+    }
   }
 
   async function handleBridgeMASSA(client: Client) {
@@ -380,24 +375,35 @@ export function Index() {
         throw new Error('amount is not defined');
       }
 
-      let tokenPairs = new TokenPair(
+      const tokenPairs = new TokenPair(
         token.massaToken,
         token.evmToken,
         token.chainId,
       );
 
-      let operationId = await forwardBurn(
+      setLoading({
+        burn: 'loading',
+      });
+      setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
+
+      const operationId = await forwardBurn(
         client,
         evmAddress,
         tokenPairs,
         parseUnits(amount, decimals),
       );
+      // Start evm event listener
+      burnMassaOperation.current = operationId;
 
+      // operation is INCLUDED_PENDING
+      setRedeemSteps(Intl.t('index.loading-box.included-pending'));
+      await waitIncludedOperation(client, operationId, true);
+      // operation is FINAL
       setLoading({
-        burn: 'loading',
+        burn: 'success',
+        redeem: 'loading',
       });
-      setBurnMassaOperation(operationId);
-      setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
+      setRedeemSteps(Intl.t('index.loading-box.burned-final'));
     } catch (error) {
       setLoading({
         box: 'error',
@@ -482,41 +488,6 @@ export function Index() {
       newAmount = amount.replace(/,|\([^()]*\)/g, '');
     }
     setAmount(newAmount.toString());
-  }
-
-  async function monitorBurnMassaEvents(operationId: string) {
-    setLoading({
-      burn: 'loading',
-    });
-
-    if (massaClient) {
-      let i = setInterval(async () => {
-        let eventStatus = await getOperationStatus(massaClient, operationId);
-
-        if (eventStatus === 'INCLUDED_PENDING') {
-          setRedeemSteps(Intl.t('index.loading-box.included-pending'));
-          setLoading({
-            burn: 'loading',
-          });
-        } else if (eventStatus === 'FINAL') {
-          setLoading({
-            burn: 'success',
-            redeem: 'loading',
-          });
-          setRedeemSteps(Intl.t('index.loading-box.burned-final'));
-          clearInterval(i);
-        } else if (['INCONSISTENT', 'NOT_FOUND'].includes(eventStatus)) {
-          setRedeemSteps(Intl.t('index.loading-box.inconsistent-not-found'));
-          setLoading({
-            box: 'error',
-            burn: 'error',
-          });
-          clearInterval(i);
-        }
-      }, 5000);
-
-      _setInterval(i);
-    }
   }
 
   async function monitorMintMassaEvents() {

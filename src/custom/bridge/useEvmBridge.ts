@@ -89,7 +89,6 @@ const useEvmBridge = () => {
         args: [amount.toString(), massaAccount?.address(), token?.evmToken],
       });
       setHashLock(hash);
-
       return lock;
     } catch (error) {
       console.log(error);
