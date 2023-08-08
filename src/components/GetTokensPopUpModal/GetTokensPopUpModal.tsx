@@ -36,9 +36,13 @@ function MassaToEVMContent() {
         <p className="mas-menu-default text-center m-5">
           {Intl.t(`get-tokens.card.XMA-description`)}
         </p>
-        <p className="mas-menu-underline m-5 cursor-pointer">
+        <a
+          href={Intl.t(`index.loading-box.massa-faucet-link`)}
+          target="_blank"
+          className="mas-menu-underline mb-4 cursor-pointer"
+        >
           {Intl.t(`get-tokens.card.link`)}
-        </p>
+        </a>
       </GradientCard>
     </div>
   );

@@ -15,7 +15,7 @@ export function ETH() {
         {Intl.t(`get-tokens.card.ETH-description`)}
       </p>
       <a
-        href="https://sepoliafaucet.com/"
+        href={Intl.t(`index.loading-box.sepolia-faucet-link`)}
         target="_blank"
         className="mas-menu-underline mb-4 cursor-pointer"
       >
