@@ -17,6 +17,14 @@
       "no-accounts": "No accounts",
       "wrong-chain": "Unsupported network"
     },
+    "faq": {
+      "get-tokens": {
+        "title": "Get testnet/buildnet tokens"
+      },
+      "add-tokens": {
+        "title": "Add tokens to your testnet/buildnet wallets"
+      }
+    },
     "loading-box": {
       "title-bridge": "Processing bridge transfer...",
       "title-redeem": "Processing redeem...",
