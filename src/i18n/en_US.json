@@ -135,17 +135,17 @@
       "general": "Something went wrong"
     },
     "card": {
-      "tDAI-description": "Get tDAI tokens",
-      "WETH-description": "Get WETH tokens",
-      "ETH-description": "Get sepoliaETH to pay for transaction fees",
+      "tDAI-description": "Send a request to mint tDAI to your wallet",
+      "WETH-description": "Send a request to mint WETH to your wallet",
+      "ETH-description": "Get ETH on Sepolia to pay the fees",
       "XMA-description": "Get XMA tokens",
       "link": "Faucet",
       "mint": "Mint {token}"
     },
     "tag": {
       "tDAI": "Get tDAI",
-      "WETH": "Get wETH",
-      "ETH": "Get ETH",
+      "WETH": "Get wrapped Ethereum",
+      "ETH": "Get Ethereum",
       "XMA": "Get XMA"
     }
   }
