@@ -17,10 +17,9 @@ export function LayoutBridge({ ...props }) {
 
   const { isConnected: isEvmWalletConnected } = useAccount();
 
-  const [accounts, isFetching] = useAccountStore((state) => [
-    state.accounts,
-    state.isFetching,
-  ]);
+  const [accounts, isFetching, isStationInstalled] = useAccountStore(
+    (state) => [state.accounts, state.isFetching, state.isStationInstalled],
+  );
 
   const hasAccounts = accounts?.length > 0;
 
@@ -81,7 +80,7 @@ export function LayoutBridge({ ...props }) {
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown readOnly={true} options={options} />
-          {isEvmWalletConnected && hasAccounts ? (
+          {isEvmWalletConnected && hasAccounts && isStationInstalled ? (
             <ConnectedWallet />
           ) : (
             <NotConnectedWallet />
