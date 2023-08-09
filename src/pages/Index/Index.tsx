@@ -135,7 +135,7 @@ export function Index() {
   }, [amount, layout, token?.name, tokenData?.decimals]);
 
   useEffect(() => {
-    if (!IS_EVM_SEPOLIA_CHAIN) {
+    if (!IS_EVM_SEPOLIA_CHAIN && isEvmWalletConnected) {
       toast.error(Intl.t('connect-wallet.connect-metamask.wrong-chain'));
     }
   }, [chain]);
