@@ -52,7 +52,9 @@ export function LoadingBox(props: ILoadingBoxProps) {
         >
           {loadingState(loading.box, 'lg')}
           <p className="mas-subtitle pt-6">
-            {massaToEvm
+            {IS_BOX_SUCCESS
+              ? Intl.t('index.loading-box.success')
+              : massaToEvm
               ? Intl.t('index.loading-box.title-redeem')
               : Intl.t('index.loading-box.title-bridge')}
           </p>
@@ -131,7 +133,7 @@ function Ran(props: ILoadingBoxProps) {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.minted')}
         <div className="mas-subtitle p-2">
-          {amount} [{token?.symbol}]
+          {amount} {token?.symbol}
         </div>
         {Intl.t('index.loading-box.from-to', {
           from: massaToEvm ? massa : sepolia,

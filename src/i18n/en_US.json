@@ -30,7 +30,7 @@
     "loading-box": {
       "title-bridge": "Processing bridge transfer...",
       "title-redeem": "Processing redeem...",
-      "subtitle": "(It can take up to 2 minutes...)",
+      "subtitle": "(It can take up to 2 minutes)",
       "approve": "approval",
       "bridge": "bridge",
       "redeem": "redeem",
@@ -43,14 +43,15 @@
       "inconsistent-not-found": "burn (inconsistent or not found)",
       "massa-faucet-link": "https://discord.gg/FS2NVAum",
       "sepolia-faucet-link": "https://sepoliafaucet.com/",
-      "redeemed": "Successfully redeemed:",
-      "minted": "Successfully minted:",
+      "redeemed": "You have successfully redeemed:",
+      "minted": "You have successfully minted:",
       "from-to": "from {from} to {to}",
       "check": "Check the balance in your Metamask wallet.",
       "add-tokens-message": "You might need to manually add the token to your wallet.",
-      "add-tokens": "instructions",
+      "add-tokens": "Instructions",
       "error": "Something went wrong. Drop us a message at:",
-      "massa-support": "support@bridge.massa.net"
+      "massa-support": "support@bridge.massa.net",
+      "success": "Success!"
     },
     "input": {
       "placeholder": {
