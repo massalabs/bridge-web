@@ -5,14 +5,18 @@ export interface IFormatted {
   full: string;
 }
 
-export function formatAmount(amount: string, decimals = 18): IFormatted {
+export function formatAmount(
+  amount: string,
+  decimals = 18,
+  separator = ',',
+): IFormatted {
   const decimal = '.';
 
   const integerPart = amount.substring(0, amount.length - decimals);
   const decimalPart = amount.substring(amount.length - decimals);
 
   const formattedIntegerPart = currency(`${integerPart}`, {
-    separator: ',',
+    separator: separator,
     decimal: decimal,
     symbol: '',
     precision: 0,
@@ -21,7 +25,7 @@ export function formatAmount(amount: string, decimals = 18): IFormatted {
 
   return {
     in2decimals: currency(`${integerPart}.${decimalPart}`, {
-      separator: ',',
+      separator: separator,
       decimal: decimal,
       symbol: '',
     }).format(),

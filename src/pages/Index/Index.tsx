@@ -3,7 +3,7 @@ import { useState, SyntheticEvent, useEffect, useRef } from 'react';
 import { Client } from '@massalabs/massa-web3';
 import { Currency, Button, toast } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
-import currency from 'currency.js';
+import { Big } from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
 import { parseUnits, Log as IEventLog } from 'viem';
 import {
@@ -477,17 +477,17 @@ export function Index() {
   function handlePercent(percent: number) {
     if (!token?.balance || !_tokenBalanceEVM) return;
 
-    let amount = IS_MASSA_TO_EVM
-      ? formatAmount(token?.balance.toString()).full
-      : formatAmount(_tokenBalanceEVM.toString()).full;
-    let newAmount = (
-      currency(amount, { symbol: '', precision: decimals }).value * percent
-    ).toString();
+    const amount = IS_MASSA_TO_EVM
+      ? formatAmount(token?.balance.toString(), decimals, '').full
+      : formatAmount(_tokenBalanceEVM.toString(), decimals, '').full;
 
-    if (percent === 1) {
-      newAmount = amount.replace(/,|\([^()]*\)/g, '');
-    }
-    setAmount(newAmount.toString());
+    const x = new Big(amount);
+    const y = new Big(percent);
+
+    const res = x.times(y);
+    res.toString().split('.')[1].length > decimals
+      ? setAmount(res.toFixed(decimals).toString())
+      : setAmount(res.toString());
   }
 
   async function monitorMintMassaEvents() {
