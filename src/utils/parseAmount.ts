@@ -12,6 +12,10 @@ export function formatAmount(
 ): IFormatted {
   const decimal = '.';
 
+  if (amount.length < decimals) {
+    amount = padWithZeros(amount, decimals + 1);
+  }
+
   const integerPart = amount.substring(0, amount.length - decimals);
   const decimalPart = amount.substring(amount.length - decimals);
 
@@ -31,4 +35,8 @@ export function formatAmount(
     }).format(),
     full: `${formattedIntegerPart}${decimal}${formattedDecimalPart}`,
   };
+}
+
+function padWithZeros(input: string, length: number): string {
+  return input.padStart(length, '0');
 }
