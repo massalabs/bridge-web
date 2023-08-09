@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { Tag, toast } from '@massalabs/react-ui-kit';
 
 import { GradientCard, ErrorsMap } from '@/components';
-import { TDAI_CONTRACT_ADDRESS, WETH_CONTRACT_ADDRESS } from '@/const';
+import { WETH_CONTRACT_ADDRESS } from '@/const';
 import { useMintToken } from '@/custom/bridge/useMintToken';
 import Intl from '@/i18n/i18n';
 
 export function WETH() {
-  const [selectedToken, setSelectedToken] = useState(TDAI_CONTRACT_ADDRESS);
+  const [selectedToken, setSelectedToken] = useState(WETH_CONTRACT_ADDRESS);
 
   const { contractWrite, waitForTransaction, prepareContractWrite } =
     useMintToken({ tokenAddress: selectedToken });
