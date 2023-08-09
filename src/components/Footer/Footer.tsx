@@ -14,7 +14,7 @@ export function Footer(props: FooterProps) {
 
   return (
     <footer className="py-20 px-28 text-f-primary">
-      <div className="pt-10 flex justify-between border-t border-neutral/40">
+      <div className="pt-10 flex justify-between items-center border-t border-neutral/40">
         <BridgeLogo
           theme={selectedTheme}
           onClick={() => navigate('buildnet/index')}
