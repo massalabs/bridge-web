@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Tag, toast } from '@massalabs/react-ui-kit';
 
-import { GradientCard, ErrorsMap } from '@/components';
+import { GradientCard, handleErrorMessage } from '@/components';
 import { WETH_CONTRACT_ADDRESS } from '@/const';
 import { useMintToken } from '@/custom/bridge/useMintToken';
 import Intl from '@/i18n/i18n';
@@ -25,7 +25,7 @@ export function WETH() {
     const { isError, error } = prepareContractWrite;
 
     if (isError && error) {
-      toast.error(`${ErrorsMap[error.name] || ErrorsMap.General}`);
+      handleErrorMessage(error.message);
     }
   }, [prepareContractWrite.isError]);
 
@@ -33,7 +33,7 @@ export function WETH() {
     const { isError, error } = contractWrite;
 
     if (isError && error) {
-      toast.error(`${ErrorsMap[error.name] || ErrorsMap.General}`);
+      handleErrorMessage(error.message);
     }
   }, [contractWrite.isError]);
 

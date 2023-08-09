@@ -3,6 +3,7 @@ import {
   PopupModalHeader,
   PopupModalContent,
   Tag,
+  toast,
 } from '@massalabs/react-ui-kit';
 
 import { WETH, ETH, TDAI } from './Tokens';
@@ -22,6 +23,18 @@ export const ErrorsMap: IErrorsMap = {
 interface GetTokensModalProps {
   setOpenModal: (open: boolean) => void;
   layout: LayoutType | undefined;
+}
+
+export function handleErrorMessage(error: string) {
+  const ERRORS_MESSAGES = ['User rejected the request'];
+
+  const regex = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
+
+  if (regex.test(error)) {
+    return;
+  } else {
+    toast.error(Intl.t('get-tokens.errors.general'));
+  }
 }
 
 function MassaToEVMContent() {
