@@ -146,25 +146,27 @@ const accountStore = (set: any, get: any) => ({
     if (massaStationWallet) set({ isStationInstalled: true });
 
     const fetchedAccounts = await massaStationWallet?.accounts();
+    const storedAccount = _getFromStorage('massa-bridge-account-address');
 
     if (fetchedAccounts && fetchedAccounts.length > 0) {
-      const firstAccountBalance = await fetchedAccounts[0].balance();
-
+      const selectedAccount =
+        fetchedAccounts.find((fa) => fa.address() === storedAccount) ||
+        fetchedAccounts[0];
+      const firstAccountBalance = await selectedAccount.balance();
       const client = await ClientFactory.fromWalletProvider(
         providerList[0],
-        fetchedAccounts[0],
+        selectedAccount,
       );
-
       const previousConnectedAccount: IAccount = get().connectedAccount;
 
       if (
         !previousConnectedAccount ||
-        previousConnectedAccount?.name !== fetchedAccounts[0]?.name
+        previousConnectedAccount?.name !== selectedAccount?.name
       ) {
         set({
           massaClient: client,
           accounts: fetchedAccounts,
-          connectedAccount: fetchedAccounts[0],
+          connectedAccount: selectedAccount,
           balance: firstAccountBalance,
         });
       }
@@ -224,10 +226,22 @@ const accountStore = (set: any, get: any) => ({
       providerList[0],
       connectedAccount,
     );
+
+    _setInStorage('massa-bridge-account-address', connectedAccount.address());
     set({ connectedAccount, massaClient, balance });
   },
 
   setToken: (token: IToken | null) => set({ token }),
 });
+
+function _setInStorage(key: string, value: string): void {
+  if (typeof Storage !== 'undefined') {
+    localStorage.setItem(key, value);
+  }
+}
+
+function _getFromStorage(key: string): string {
+  return localStorage.getItem(key) || '';
+}
 
 export default accountStore;
