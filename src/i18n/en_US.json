@@ -118,8 +118,10 @@
     "station-connect-error": {
       "error-station": " in order to connect your wallet.",
       "download-station": "Download Masstation",
-      "error-wallet": "Please create a wallet at the following link ",
-      "add-wallet": "Create a Wallet"
+      "error-wallet": "Create a wallet at the  ",
+      "add-wallet": "following link.",
+      "error-account": "Create an account at the ",
+      "add-account": "following link."
     },
     "ressource-sidepanel": {
       "add-sepolia": "If you want to add sepolia on your Metamask",

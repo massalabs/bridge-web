@@ -2,10 +2,16 @@ import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
 import { IAccount } from '@massalabs/wallet-provider';
 import { BsDiamondHalf } from 'react-icons/bs';
 
-import { MassaWalletArgs } from '..';
+import { useAccountStore } from '@/store/store';
 
-export function SelectMassaWalletAccount({ ...props }: MassaWalletArgs) {
-  const { accounts, connectedAccount, setConnectedAccount } = props;
+export function SelectMassaWalletAccount() {
+  const [accounts, connectedAccount, setConnectedAccount] = useAccountStore(
+    (state) => [
+      state.accounts,
+      state.connectedAccount,
+      state.setConnectedAccount,
+    ],
+  );
 
   const selectedAccountKey: number = accounts.findIndex(
     (account) => account.name() === connectedAccount?.name(),

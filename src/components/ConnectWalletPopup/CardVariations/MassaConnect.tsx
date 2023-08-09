@@ -4,12 +4,15 @@ import { Clipboard } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { fetchBalance } from '@/bridge';
-import { SelectMassaWalletAccount, MassaWalletArgs } from '@/components';
+import { SelectMassaWalletAccount } from '@/components';
 import Intl from '@/i18n/i18n';
+import { useAccountStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
 
-export function ConnectedCard({ ...props }: MassaWalletArgs) {
-  const { connectedAccount } = props;
+export function ConnectedCard() {
+  const [connectedAccount] = useAccountStore((state) => [
+    state.connectedAccount,
+  ]);
 
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
 
@@ -20,7 +23,7 @@ export function ConnectedCard({ ...props }: MassaWalletArgs) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4 w-full h-full">
-        <SelectMassaWalletAccount {...props} />
+        <SelectMassaWalletAccount />
         <div className="min-w-[50%] pr-4">
           <Clipboard
             customClass="h-14 rounded-lg text-center px-9 !mas-body"
