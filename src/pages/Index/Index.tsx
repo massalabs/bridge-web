@@ -36,7 +36,6 @@ import { TokenPair } from '@/custom/serializable/tokenPair';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
-import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
 
 export function Index() {
@@ -599,18 +598,13 @@ export function Index() {
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              {isEvmWalletConnected ? (
+              {isEvmWalletConnected && (
                 <h3
                   className="mas-h3 text-f-disabled-1 underline cursor-pointer"
                   onClick={() => setOpenTokensModal(true)}
                 >
                   {Intl.t(`index.get-tokens`)}
                 </h3>
-              ) : (
-                <>
-                  <p className="mas-body2">Total fees:</p>
-                  <p className="mas-body">{formatStandard(Number(0))}</p>
-                </>
               )}
             </div>
             {boxLayout(layout).up.balance}
