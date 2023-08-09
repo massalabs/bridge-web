@@ -472,7 +472,15 @@ export function Index() {
   }
 
   function handlePercent(percent: number) {
-    if (!token?.balance || !_tokenBalanceEVM) return;
+    if (!token) return;
+
+    if (
+      (IS_MASSA_TO_EVM && token.balance <= 0) ||
+      (!IS_MASSA_TO_EVM && _tokenBalanceEVM <= 0)
+    ) {
+      setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
+      return;
+    }
 
     const amount = IS_MASSA_TO_EVM
       ? formatAmount(token?.balance.toString(), decimals, '').full
@@ -482,6 +490,7 @@ export function Index() {
     const y = new Big(percent);
 
     const res = x.times(y);
+
     res.toString().split('.')[1].length > decimals
       ? setAmount(res.toFixed(decimals).toString())
       : setAmount(res.toString());
