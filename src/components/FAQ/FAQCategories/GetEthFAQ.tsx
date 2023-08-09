@@ -28,10 +28,13 @@ export function GetEthFAQ() {
         <FAQContent>
           <div>
             Massa Bridge supports bridging 2 ERC-20 tokens — WETH and tDAI —
-            from Sepolia Testnet to Massa Buildnet, at the moment. You can Mint
-            tokes in the dAPP above by clicking ‘Get tokens’ once you connect
-            your Metamask wallet. Here’s a step-by-step guide how-to get tokens
-            manually:
+            from Sepolia Testnet to Massa Buildnet, at the moment. <br />
+            <br />
+            You can Mint tokens in the dAPP above by clicking ‘Get tokens’ once
+            you connect your Metamask wallet.
+            <br />
+            <br /> If you want to do it manually here’s a step-by-step guide
+            how-to get tokens manually:
             <br /> <br />
             <div>
               <div className="text-neutral">Step 1:</div>
