@@ -490,8 +490,8 @@ export function Index() {
 
     const res = x.times(y);
 
-    res.toString().split('.')[1].length > decimals
-      ? setAmount(res.toFixed(decimals).toString())
+    res.toFixed().split('.')[1].length > decimals
+      ? setAmount(res.toFixed(decimals))
       : setAmount(res.toString());
   }
 
