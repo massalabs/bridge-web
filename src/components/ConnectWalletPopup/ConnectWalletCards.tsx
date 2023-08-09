@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { IAccountBalanceResponse, IAccount } from '@massalabs/wallet-provider';
 import { useAccount } from 'wagmi';
 
 import { MassaConnectError } from './CardVariations/MassaError';
@@ -11,35 +10,17 @@ import {
   CustomConnectButton,
   Connected,
   Disconnected,
+  UninstalledDisconnected,
+  NoAccounts,
 } from '@/components';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
 
-export type MassaWalletArgs = {
-  accounts: IAccount[];
-  connectedAccount: IAccount | null;
-  setConnectedAccount: (account?: IAccount) => void;
-  isFetching: boolean;
-  balance: IAccountBalanceResponse;
-  isStationInstalled: boolean;
-};
-
 export function ConnectWalletCards() {
   const { isConnected } = useAccount();
 
-  const [
-    accounts,
-    connectedAccount,
-    setConnectedAccount,
-    isFetching,
-    balance,
-    isStationInstalled,
-  ] = useAccountStore((state) => [
+  const [accounts, isStationInstalled] = useAccountStore((state) => [
     state.accounts,
-    state.connectedAccount,
-    state.setConnectedAccount,
-    state.isFetching,
-    state.balance,
     state.isStationInstalled,
   ]);
 
@@ -51,19 +32,18 @@ export function ConnectWalletCards() {
     setIsMetamaskInstalled(window.ethereum?.isConnected());
   }, [isMetamaskInstalled]);
 
-  const massaWalletArgs: MassaWalletArgs = {
-    accounts,
-    connectedAccount,
-    setConnectedAccount,
-    isFetching,
-    balance,
-    isStationInstalled,
-  };
-
   const bothNotConnected =
     !isConnected || !isStationInstalled || accounts.length === 0;
 
   const gridColsTemplate = bothNotConnected ? 'grid-cols-3' : 'grid-cols-2';
+
+  const hasNoAccounts = accounts?.length <= 0;
+
+  function displayStatus() {
+    if (!isStationInstalled) return <UninstalledDisconnected />;
+    else if (hasNoAccounts) return <NoAccounts />;
+    return <Connected />;
+  }
 
   return (
     <div
@@ -92,12 +72,12 @@ export function ConnectWalletCards() {
             <p className="mas-body">
               {Intl.t('connect-wallet.card-destination.to')}
             </p>
-            {accounts.length ? <Connected /> : <Disconnected />}
+            {displayStatus()}
           </div>
-          {accounts.length ? (
-            <ConnectedCard {...massaWalletArgs} />
+          {!isStationInstalled || hasNoAccounts ? (
+            <MassaConnectError />
           ) : (
-            <MassaConnectError {...massaWalletArgs} />
+            <ConnectedCard />
           )}
         </WalletCard>
       </div>
