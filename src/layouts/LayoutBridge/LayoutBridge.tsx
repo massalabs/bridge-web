@@ -25,7 +25,7 @@ export function LayoutBridge({ ...props }) {
 
   const options = [
     {
-      item: 'buildnet',
+      item: 'Buildnet',
     },
   ];
 

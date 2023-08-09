@@ -4,9 +4,9 @@ import { NetworkModel } from '../../models/NetworkModel';
 
 export const networkFactory = Factory.extend<NetworkModel>({
   availableNetworks() {
-    return ['testnet', 'buildnet', 'labnet'];
+    return ['Testnet', 'Buildnet', 'Labnet'];
   },
   currentNetwork() {
-    return 'buildnet';
+    return 'Buildnet';
   },
 });
