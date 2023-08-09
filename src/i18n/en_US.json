@@ -135,7 +135,7 @@
     "success": "Yeah! Minted successfully",
     "errors": {
       "transaction-execution": "Minting transaction failed or cancelled",
-      "general": "Something went wrong"
+      "general": "Something went wrong! Please, try again!"
     },
     "card": {
       "tDAI-description": "Send a request to mint tDAI to your wallet",
