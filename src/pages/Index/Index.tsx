@@ -18,7 +18,7 @@ import { boxLayout } from './boxLayout/boxLayout';
 import { LoadingBox } from './Loading';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { GetTokensPopUpModal } from '@/components';
-import { GetTokensFAQ } from '@/components/FAQ/GetTokensFAQ';
+import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import {
   LayoutType,
   ILoadingState,
@@ -663,7 +663,7 @@ export function Index() {
           layout={layout}
         />
       )}
-      <GetTokensFAQ />
+      {!isLoading && <TokensFAQ />}
     </>
   );
 }
