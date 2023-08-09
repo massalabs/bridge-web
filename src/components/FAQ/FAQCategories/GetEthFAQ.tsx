@@ -33,8 +33,7 @@ export function GetEthFAQ() {
             You can Mint tokens in the dAPP above by clicking ‘Get tokens’ once
             you connect your Metamask wallet.
             <br />
-            <br /> If you want to do it manually here’s a step-by-step guide
-            how-to get tokens manually:
+            <br /> If you want to do it manually here’s a step-by-step guide:
             <br /> <br />
             <div>
               <div className="text-neutral">Step 1:</div>
