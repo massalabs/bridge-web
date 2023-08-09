@@ -3,7 +3,7 @@ import { FAQ } from '@massalabs/react-ui-kit';
 import { AddTokensFAQ, GetEthFAQ } from './FAQCategories';
 import Intl from '@/i18n/i18n';
 
-export function GetTokensFAQ() {
+export function TokensFAQ() {
   return (
     <div className="w-1/2 flex flex-col gap-5 items-center">
       <div>
