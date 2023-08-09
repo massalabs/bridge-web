@@ -237,9 +237,6 @@ export function Index() {
       _amount = parseUnits(amount, decimals);
       _balance = token.balance;
     } else {
-      if (!_tokenBalanceEVM) {
-        return false;
-      }
       _amount = parseUnits(amount, decimals);
       _balance = _tokenBalanceEVM;
     }

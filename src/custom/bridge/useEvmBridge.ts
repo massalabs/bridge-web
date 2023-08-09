@@ -40,7 +40,7 @@ const useEvmBridge = () => {
     watch: true,
   });
 
-  const [tokenBalance, setTokenBalance] = useState<bigint>();
+  const [tokenBalance, setTokenBalance] = useState<bigint>(0n);
   const [allowance, setAllowance] = useState<bigint>(0n);
   const [hashLock, setHashLock] = useState<`0x${string}`>();
   const [hashApprove, setHashApprove] = useState<`0x${string}`>();
