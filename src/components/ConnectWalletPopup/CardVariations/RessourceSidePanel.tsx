@@ -12,7 +12,11 @@ function SepoliaInstructions() {
       <p className="text-center mas-menu-default w-60">
         {Intl.t('connect-wallet.ressource-sidepanel.add-sepolia')}
       </p>
-      <a className="mas-menu-underline" href="www.mylink.com" target="_blank">
+      <a
+        className="mas-menu-underline"
+        href="https://support.metamask.io/hc/en-us/articles/13946422437147-How-to-view-testnets-in-MetaMask"
+        target="_blank"
+      >
         {Intl.t('general.instructions')}
       </a>
     </div>
@@ -26,7 +30,11 @@ function MassaStationInstructions() {
       <p className="text-center mas-menu-default w-60">
         {Intl.t('connect-wallet.ressource-sidepanel.download-massa-station')}
       </p>
-      <a className="mas-menu-underline" href="www.mylink.com" target="_blank">
+      <a
+        className="mas-menu-underline"
+        href="https://station.massa.net"
+        target="_blank"
+      >
         {Intl.t('general.download')}
       </a>
     </div>
@@ -66,7 +74,7 @@ export function RessourceSidePanel() {
             </p>
             <a
               className="mas-menu-underline"
-              href="www.mylink.com"
+              href="https://support.metamask.io/hc/en-us/articles/13946422437147-How-to-view-testnets-in-MetaMask"
               target="_blank"
             >
               {Intl.t('general.click-here')}
