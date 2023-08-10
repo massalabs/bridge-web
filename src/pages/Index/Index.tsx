@@ -448,28 +448,26 @@ export function Index() {
     e.preventDefault();
     if (!validate()) return;
 
-    // setLoading({
-    //   box: 'loading',
-    // });
+    setLoading({
+      box: 'loading',
+    });
 
-    console.log(amount);
+    if (IS_MASSA_TO_EVM) {
+      if (!massaClient) {
+        return;
+      }
+      const approved = await handleApproveMASSA(massaClient);
 
-    // if (IS_MASSA_TO_EVM) {
-    //   if (!massaClient) {
-    //     return;
-    //   }
-    //   const approved = await handleApproveMASSA(massaClient);
+      if (approved) {
+        await handleBridgeMASSA(massaClient);
+      }
+    } else {
+      const approved = await handleApproveEVM();
 
-    //   if (approved) {
-    //     await handleBridgeMASSA(massaClient);
-    //   }
-    // } else {
-    //   const approved = await handleApproveEVM();
-
-    //   if (approved) {
-    //     await handleBridgeEVM();
-    //   }
-    // }
+      if (approved) {
+        await handleBridgeEVM();
+      }
+    }
   }
 
   function handlePercent(percent: number) {
@@ -489,27 +487,9 @@ export function Index() {
 
     const x = new Big(amount);
     const y = new Big(percent);
+    const res = x.times(y).round(decimals).toFixed();
 
-    const res = x.times(y);
-
-    // TEST
-    if (res.toFixed().indexOf('.') === -1) {
-      setAmount(res.toFixed());
-    } else {
-      setAmount(res.toFixed().split('.')[0] + '.' + res.toFixed().split('.')[1].substring(0, decimals));
-    }
-
-    // Case when number can be > decimals
-    // setAmount(res.toFixed());
-
-    // OLD
-    // if (res.toFixed().indexOf('.') === -1) {
-    //   setAmount(res.toFixed());
-    // } else {
-    //   res.toFixed().split('.')[1]  .length > decimals
-    //     ? setAmount(res.toFixed(decimals))
-    //     : setAmount(res.toString());
-    // }
+    setAmount(res);
   }
 
   async function monitorMintMassaEvents() {
@@ -576,12 +556,10 @@ export function Index() {
                 disable={isFetching}
                 name="amount"
                 value={amount}
-                // onValueChange=(value) => setAmount(value)}
-                onChange={(e) => setAmount(e.target.value)}
+                onValueChange={(o) => setAmount(o.value)}
                 placeholder={Intl.t(`index.input.placeholder.amount`)}
                 suffix=""
                 decimalScale={decimals}
-                // decimalsLimit={decimals}
                 error={error?.amount}
               />
               <div className="flex flex-row-reverse">
@@ -651,11 +629,9 @@ export function Index() {
                 placeholder={Intl.t(`index.input.placeholder.receive`)}
                 name="receive"
                 value={amount}
-                // onValueChange={(value) => setAmount(value)}
-                onChange={(e) => setAmount(e.target.value)}
+                onValueChange={(o) => setAmount(o.value)}
                 suffix=""
                 decimalScale={decimals}
-                // decimalsLimit={decimals}
                 error=""
                 disable={true}
               />
