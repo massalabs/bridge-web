@@ -490,9 +490,13 @@ export function Index() {
 
     const res = x.times(y);
 
-    res.toFixed().split('.')[1].length > decimals
-      ? setAmount(res.toFixed(decimals))
-      : setAmount(res.toString());
+    if (res.toFixed().indexOf('.') === -1) {
+      setAmount(res.toString());
+    } else {
+      res.toFixed().split('.')[1].length > decimals
+        ? setAmount(res.toFixed(decimals))
+        : setAmount(res.toString());
+    }
   }
 
   async function monitorMintMassaEvents() {
