@@ -1,7 +1,7 @@
 import { useState, SyntheticEvent, useEffect, useRef } from 'react';
 
 import { Client } from '@massalabs/massa-web3';
-import { Currency, Button, toast } from '@massalabs/react-ui-kit';
+import { Button, toast, Money } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import { Big } from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
@@ -487,16 +487,9 @@ export function Index() {
 
     const x = new Big(amount);
     const y = new Big(percent);
+    const res = x.times(y).round(decimals).toFixed();
 
-    const res = x.times(y);
-
-    if (res.toFixed().indexOf('.') === -1) {
-      setAmount(res.toString());
-    } else {
-      res.toFixed().split('.')[1].length > decimals
-        ? setAmount(res.toFixed(decimals))
-        : setAmount(res.toString());
-    }
+    setAmount(res);
   }
 
   async function monitorMintMassaEvents() {
@@ -559,14 +552,14 @@ export function Index() {
           {boxLayout(layout).up.wallet}
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
-              <Currency
+              <Money
                 disable={isFetching}
                 name="amount"
                 value={amount}
-                onValueChange={(value) => setAmount(value)}
+                onValueChange={(o) => setAmount(o.value)}
                 placeholder={Intl.t(`index.input.placeholder.amount`)}
                 suffix=""
-                decimalsLimit={decimals}
+                decimalScale={decimals}
                 error={error?.amount}
               />
               <div className="flex flex-row-reverse">
@@ -632,13 +625,13 @@ export function Index() {
           {boxLayout(layout).down.wallet}
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
-              <Currency
+              <Money
                 placeholder={Intl.t(`index.input.placeholder.receive`)}
                 name="receive"
                 value={amount}
-                onValueChange={(value) => setAmount(value)}
+                onValueChange={(o) => setAmount(o.value)}
                 suffix=""
-                decimalsLimit={decimals}
+                decimalScale={decimals}
                 error=""
                 disable={true}
               />
