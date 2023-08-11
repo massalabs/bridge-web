@@ -21,7 +21,6 @@ import {
   Disconnected,
   NoAccounts,
   WrongChain,
-  UninstalledDisconnected,
 } from '@/components';
 import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -138,7 +137,7 @@ function MassaHeader() {
   const hasNoAccounts = accounts?.length <= 0;
 
   function displayStatus() {
-    if (!isStationInstalled) return <UninstalledDisconnected />;
+    if (!isStationInstalled) return <Disconnected />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }

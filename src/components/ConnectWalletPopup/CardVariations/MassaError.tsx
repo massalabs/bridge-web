@@ -11,7 +11,7 @@ interface IErrorObject {
   [key: string]: {
     url: string;
     content: string;
-    link: string;
+    link?: string;
   };
 }
 
@@ -19,7 +19,6 @@ const ErrorObject: IErrorObject = {
   errorMassaStation: {
     url: linkToInstall,
     content: Intl.t('connect-wallet.station-connect-error.error-station'),
-    link: Intl.t('connect-wallet.station-connect-error.download-station'),
   },
   errorAccount: {
     url: linkToCreateAccount,
@@ -53,21 +52,13 @@ function DisplayError() {
     : 'errorWallet';
 
   return (
-    <div className="truncate max-w-10 mas-body">
+    <div className="max-w-10 mas-body">
       {errorMessage === 'errorMassaStation' ? (
-        <>
-          <a
-            className="mas-menu-underline"
-            href={ErrorObject[errorMessage].url}
-            target="_blank"
-          >
-            {ErrorObject[errorMessage].link}
-          </a>
-          {ErrorObject[errorMessage].content}
-        </>
+        ErrorObject[errorMessage].content
       ) : (
         <>
           {ErrorObject[errorMessage].content}
+          <br />
           <a
             className="mas-menu-underline"
             href={ErrorObject[errorMessage].url}

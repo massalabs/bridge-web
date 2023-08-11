@@ -10,7 +10,6 @@ import {
   CustomConnectButton,
   Connected,
   Disconnected,
-  UninstalledDisconnected,
   NoAccounts,
 } from '@/components';
 import Intl from '@/i18n/i18n';
@@ -32,15 +31,17 @@ export function ConnectWalletCards() {
     setIsMetamaskInstalled(window.ethereum?.isConnected());
   }, [isMetamaskInstalled]);
 
-  const bothNotConnected =
-    !isConnected || !isStationInstalled || accounts.length === 0;
-
-  const gridColsTemplate = bothNotConnected ? 'grid-cols-3' : 'grid-cols-2';
-
+  const bothNotConnected = !isConnected && !isStationInstalled;
+  const isOnlyMetamaskConnected = isConnected && !isStationInstalled;
+  const isOnlyMassaConnectedWithAccounts =
+    !isConnected && isStationInstalled && accounts.length > 0;
   const hasNoAccounts = accounts?.length <= 0;
 
+  // debugger;
+  const gridColsTemplate = bothNotConnected ? 'grid-cols-3' : 'grid-cols-2';
+
   function displayStatus() {
-    if (!isStationInstalled) return <UninstalledDisconnected />;
+    if (!isStationInstalled) return <Disconnected />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }
@@ -81,7 +82,9 @@ export function ConnectWalletCards() {
           )}
         </WalletCard>
       </div>
-      {bothNotConnected && (
+      {(bothNotConnected ||
+        isOnlyMetamaskConnected ||
+        isOnlyMassaConnectedWithAccounts) && (
         <div className="row-span-2 col-start-3 row-start-1">
           <RessourceSidePanel />
         </div>

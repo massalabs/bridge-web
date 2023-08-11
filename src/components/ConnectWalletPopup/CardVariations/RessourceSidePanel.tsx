@@ -51,8 +51,7 @@ export function RessourceSidePanel() {
 
   const isOnlyMetamaskConnected =
     isEvmWalletConnected && !isStationInstalled && accounts.length === 0;
-  const isOnlyMassaConnected =
-    isStationInstalled && !isEvmWalletConnected && accounts.length > 0;
+  const isBothNotConnected = !isStationInstalled && !isEvmWalletConnected;
 
   return (
     <div
@@ -61,11 +60,7 @@ export function RessourceSidePanel() {
         bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-bright-blue to-deep-blue to-60%
         flex flex-col justify-center items-center gap-11`}
     >
-      {isOnlyMetamaskConnected ? (
-        <MassaStationInstructions />
-      ) : isOnlyMassaConnected ? (
-        <SepoliaInstructions />
-      ) : (
+      {isBothNotConnected ? (
         <>
           <div className="flex flex-col justify-center items-center gap-5">
             <Tag type="info" content="Add Sepolia testnet" />
@@ -95,6 +90,10 @@ export function RessourceSidePanel() {
             </a>
           </div>
         </>
+      ) : isOnlyMetamaskConnected ? (
+        <MassaStationInstructions />
+      ) : (
+        <SepoliaInstructions />
       )}
     </div>
   );
