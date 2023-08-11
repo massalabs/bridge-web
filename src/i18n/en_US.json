@@ -116,12 +116,11 @@
       "wrong-chain": "Current network is not supported. Please, switch to Sepolia testnet."
     },
     "station-connect-error": {
-      "error-station": " in order to connect your wallet.",
-      "download-station": "Download Masstation",
+      "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it on the right.",
       "error-wallet": "Create a wallet at the  ",
       "add-wallet": "following link.",
-      "error-account": "Create an account at the ",
-      "add-account": "following link."
+      "error-account": "No wallet accounts found in Massa Wallet. ",
+      "add-account": "Create an account"
     },
     "ressource-sidepanel": {
       "add-sepolia": "If you want to add sepolia on your Metamask",

@@ -16,13 +16,7 @@ import {
 } from 'wagmi';
 
 import { FetchingLine, FetchingStatus } from '../Loading';
-import {
-  Connected,
-  Disconnected,
-  NoAccounts,
-  WrongChain,
-  UninstalledDisconnected,
-} from '@/components';
+import { Connected, Disconnected, NoAccounts, WrongChain } from '@/components';
 import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
@@ -138,7 +132,7 @@ function MassaHeader() {
   const hasNoAccounts = accounts?.length <= 0;
 
   function displayStatus() {
-    if (!isStationInstalled) return <UninstalledDisconnected />;
+    if (!isStationInstalled) return <Disconnected />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }
