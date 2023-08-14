@@ -1,6 +1,16 @@
 import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
 
+import { IToken } from '@/store/accountStore';
+import { useAccountStore } from '@/store/store';
+
 export function AddTokensFAQ() {
+  const [tokens] = useAccountStore((state) => [state.tokens]);
+
+  const tokenNames: string[] = tokens.map((token: IToken) => token.symbol);
+
+  // change al hashes to address
+
+  console.log(tokenNames);
   return (
     <>
       <FAQCategory categoryTitle={'Add tokens to your Massa wallet'}>
