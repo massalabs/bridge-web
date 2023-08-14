@@ -7,11 +7,9 @@ export function MetamaskNotInstalled() {
       <p>
         {Intl.t('connect-wallet.connect-metamask.no-metamask')}
         <br />
-        <u>
-          <a href={metamaskDownloadLink} target="_blank">
-            {Intl.t('connect-wallet.connect-metamask.install-metamask')}
-          </a>
-        </u>
+        <a className="underline" href={metamaskDownloadLink} target="_blank">
+          {Intl.t('connect-wallet.connect-metamask.install-metamask')}
+        </a>
       </p>
     </>
   );

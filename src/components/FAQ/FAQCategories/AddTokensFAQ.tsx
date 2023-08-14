@@ -22,7 +22,7 @@ export function AddTokensFAQ() {
           <br /> <br />
           <div className="text-neutral">Step 3:</div>
           <br />
-          Provide token hashes for: <br /> mtDAI: <br /> mWETH:
+          Provide token address for: <br /> mtDAI: <br /> mWETH:
           <br /> <br />
           <div className="text-neutral">Step 4:</div>
           <br />
@@ -44,8 +44,7 @@ export function AddTokensFAQ() {
           >
             tDAI
           </a>
-          , provide this address hash:
-          0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0
+          , provide this address : 0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0
           <br />
           Symbol: tDAI
           <br />
