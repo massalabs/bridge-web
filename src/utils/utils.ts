@@ -13,7 +13,7 @@ export function formatBalance(
     }
     const balance: number = parseFloat(balanceFormatted);
 
-    const formattedBalance: string = balance.toFixed(6);
+    const formattedBalance: string = balance.toFixed(7);
 
     return formattedBalance;
   } catch (error) {

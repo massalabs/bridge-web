@@ -1,122 +1,168 @@
 import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
 
+import {
+  TDAI_CONTRACT_ADDRESS,
+  WETH_CONTRACT_ADDRESS,
+  supportedtokens,
+} from '@/const';
+
 export function GetEthFAQ() {
   return (
     <>
-      {' '}
       <FAQCategory categoryTitle={'Get ETH on Sepolia'}>
         <FAQContent>
-          <div>
-            You need to own some testnet ETH to be able to pay for the
-            transaction fees to bridge tokens from Sepolia Testnet to Massa
-            Buildnet. You can get 0.5 ETH using this{' '}
-            <a className="underline" href="https://sepoliafaucet.com/">
-              Sepolia faucet
-            </a>{' '}
-            provided by Alchemy. You can find step-by-step instructions in{' '}
-            <a
-              className="underline"
-              href="https://www.web3.university/article/sepolia-eth"
-            >
-              this article
-            </a>
-            .
+          <div className="flex flex-col">
+            <p className="pr-1.5">
+              You need to own some testnet ETH to be able to pay for the
+              transaction fees to bridge tokens from Sepolia Testnet to Massa
+              Buildnet. You can get 0.5 ETH using this
+              <a
+                className="underline pl-1.5 pr-1.5"
+                href="https://sepoliafaucet.com/"
+                target="_blank"
+              >
+                Sepolia faucet
+              </a>
+              provided by Alchemy. You can find step-by-step instructions in
+              <a
+                className="underline pl-1.5"
+                href="https://www.web3.university/article/sepolia-eth"
+                target="_blank"
+              >
+                this article
+              </a>
+              .
+            </p>
           </div>
         </FAQContent>
       </FAQCategory>
       <FAQCategory categoryTitle={'Get WETH and tDAI on Sepolia'}>
         <FAQContent>
-          <div>
-            Massa Bridge supports bridging 2 ERC-20 tokens — WETH and tDAI —
-            from Sepolia Testnet to Massa Buildnet, at the moment. <br />
-            <br />
-            You can Mint tokens in the dAPP above by clicking ‘Get tokens’ once
-            you connect your Metamask wallet.
-            <br />
-            <br /> If you want to do it manually here’s a step-by-step guide:
-            <br /> <br />
-            <div>
+          <div className="flex flex-col gap-6">
+            <p>
+              Massa Bridge supports bridging two ERC-20 tokens —{' '}
+              {supportedtokens.WETH} and {supportedtokens.tDai} — from Sepolia
+              Testnet to Massa Buildnet, at the moment.
+            </p>
+            <p>
+              You can Mint tokens in the dAPP above by clicking ‘Get tokens’
+              once you connect your Metamask wallet.
+            </p>
+            <p>If you want to do it manually here’s a step-by-step guide:</p>
+            <div className="flex flex-col gap-3">
               <div className="text-neutral">Step 1:</div>
-              <br />
-              Go to Sepolia explorer’s page for{' '}
-              <a
-                className="underline"
-                href="https://sepolia.etherscan.io/address/0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424#writeContract"
-              >
-                WETH
-              </a>
-              , or for{' '}
-              <a
-                className="underline"
-                href="https://sepolia.etherscan.io/token/0x53844f9577c2334e541aec7df7174ece5df1fcf0#writeContract"
-              >
-                tDAI
-              </a>
-              .
-              <br /> <br />
-              <div className="text-neutral">Step 2:</div>
-              <br />
-              On the same page, connect your Metamask wallet by clicking on the
-              ‘Connect to Web3’ button, under ‘Write Contract’ tab. You should
-              be connected to a Metamask wallet on Sepolia network.
-              <br /> <br />
+              <p>
+                Go to Sepolia explorer’s page for
+                <a
+                  className="underline pl-1.5"
+                  href={`https://sepolia.etherscan.io/token/${WETH_CONTRACT_ADDRESS}#writeContract`}
+                  target="_blank"
+                >
+                  {supportedtokens.WETH}
+                </a>
+                , or for
+                <a
+                  className="underline pl-1.5"
+                  href={`https://sepolia.etherscan.io/token/${TDAI_CONTRACT_ADDRESS}#writeContract`}
+                  target="_blank"
+                >
+                  {supportedtokens.tDai}
+                </a>
+                .
+              </p>
+              You can mint tokens directly to your wallet from there.
+            </div>
+            <div className="flex flex-col gap-3">
+              <p className="text-neutral">Step 2: </p>
+              <p>
+                On the same page, connect your Metamask wallet by clicking on
+                the ‘Connect to Web3’ button, under ‘Write Contract’ tab.
+              </p>
+              <p>
+                You should be connected to a Metamask wallet on Sepolia network.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
               <div className="text-neutral">Step 3:</div>
-              <br />
-              Click on option 4. ‘create’. This will open the input field for
-              the ‘to(address)’.
-              <br /> <br />
+              <p>Click on option 4. ‘create’.</p>
+              <p> This will open the input field for the ‘to(address)’.</p>
+            </div>
+            <div className="flex flex-col gap-3">
               <div className="text-neutral">Step 4:</div>
-              <br />
-              Provide the hash of your connected Metamask’s wallet. Then click
-              on ‘Write’ button. This will, naturally, initiate signing of the
-              transaction in your Metamask.
-              <br /> <br />
+              <p>
+                Provide the address of your connected Metamask’s wallet. Then
+                click on ‘Write’ button.
+              </p>
+              <p>
+                This will, naturally, initiate signing of the transaction in
+                your Metamask.
+              </p>
+            </div>
+            <div>
               <div className="text-neutral">Step 5:</div>
-              <br />
-              Sign the transaction in Metamask. For this you need to have some
-              ETH on Sepolia. If you don’t have enough ETH, get some using a
-              Sepolia faucet. You can find step-by-step instructions in{' '}
-              <a
-                className="underline"
-                href="https://www.web3.university/article/sepolia-eth"
-              >
-                this article
-              </a>
-              .
-              <br /> <br />
+              <p>
+                Sign the transaction in Metamask. For this you need to have some
+                ETH on Sepolia.
+              </p>
+              <p>
+                If you don’t have enough ETH, get some using a Sepolia faucet.
+                You can find step-by-step instructions in
+                <a
+                  className="underline pl-1.5"
+                  href="https://www.web3.university/article/sepolia-eth"
+                  target="_blank"
+                >
+                  this article
+                </a>
+                .
+              </p>
+            </div>
+            <div>
               <div className="text-neutral">Step 6:</div>
-              <br />
-              To see balances of WETH and tDAI in your Metamask, you need to
-              manually add a token to Metamask. Check how-to here.
+              <p>
+                To see balances of {supportedtokens.WETH} and{' '}
+                {supportedtokens.tDai} in your Metamask, you need to manually
+                add a token to Metamask. Check how-to here.
+              </p>
             </div>
           </div>
         </FAQContent>
       </FAQCategory>
       <FAQCategory categoryTitle={'Get XMA on Massa Buildnet wallet'}>
         <FAQContent>
-          To Redeem tokens from Massa Buildnet to Sepolia testnet, you need some
-          Massa coins (XMA) to pay for the transaction fees.
-          <br /> <br />
-          <div className="text-neutral">Step 1:</div>
-          <br />
-          Go to the Buildnet faucet provided in this{' '}
-          <a
-            className="underline"
-            href="https://discord.com/channels/828270821042159636/1097797634065956915"
-          >
-            Discord channel
-          </a>
-          .
-          <br /> <br />
-          <div className="text-neutral">Step 2:</div>
-          <br />
-          Provide the hash of your account address in a message.
-          <br /> You can find it in details of your Massa wallet account.
-          <br /> <br />
-          <div className="text-neutral">Step 3:</div>
-          <br />
-          In a few moments you should see that your Massa wallet balance
-          changed.
+          <div className="flex flex-col gap-6">
+            <p>
+              To Redeem tokens from Massa Buildnet to Sepolia testnet, you need
+              some Massa coins (XMA) to pay for the transaction fees.
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-neutral">Step 1:</p>
+              <p>
+                Go to the Buildnet faucet provided in this
+                <a
+                  className="underline pl-1.5"
+                  href="https://discord.com/channels/828270821042159636/1097797634065956915"
+                  target="_blank"
+                >
+                  Discord channel
+                </a>
+                .
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="text-neutral">Step 2:</div>
+              <p> Provide the address of your account address in a message.</p>
+              <p> You can find it in details of your Massa wallet account.</p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="text-neutral">Step 3:</div>
+              <p>
+                In a few moments you should see that your Massa wallet balance
+                changed.
+              </p>
+            </div>
+          </div>
         </FAQContent>
       </FAQCategory>
     </>

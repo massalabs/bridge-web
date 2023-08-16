@@ -15,3 +15,7 @@ export const APPROVE = 'approve';
 
 export const MASSA_TO_EVM = 'massaToEvm';
 export const EVM_TO_MASSA = 'evmToMassa';
+
+export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
+
+export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';

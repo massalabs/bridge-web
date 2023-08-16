@@ -50,7 +50,7 @@ function MassaToEVMContent() {
           {Intl.t(`get-tokens.card.XMA-description`)}
         </p>
         <a
-          href={Intl.t(`index.loading-box.massa-faucet-link`)}
+          href="https://discord.gg/FS2NVAum"
           target="_blank"
           className="mas-menu-underline mb-4 cursor-pointer"
         >

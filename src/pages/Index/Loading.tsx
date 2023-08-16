@@ -6,6 +6,7 @@ import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
+import { MASSA_FAUCET_LINK, SEPOLIA_FAUCET_LINK } from '@/utils/const';
 
 interface ILoading {
   loading: ReactNode;
@@ -123,8 +124,8 @@ function Ran(props: ILoadingBoxProps) {
 
   const massa = Intl.t('general.massa');
   const sepolia = Intl.t('general.sepolia');
-  const getMassaTokenLink = Intl.t('index.loading-box.massa-faucet-link');
-  const getEvmTokenLink = Intl.t('index.loading-box.sepolia-faucet-link');
+  const getMassaTokenLink = MASSA_FAUCET_LINK;
+  const getEvmTokenLink = SEPOLIA_FAUCET_LINK;
 
   return (
     <div className="mas-body2 text-center">
