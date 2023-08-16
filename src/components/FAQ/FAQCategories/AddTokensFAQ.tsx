@@ -74,7 +74,7 @@ export function AddTokensFAQ() {
                 >
                   provided here
                 </a>
-                <p>by Metamask</p>
+                by Metamask.
               </div>
               <div className="flex flex-col">
                 <p>
