@@ -1,11 +1,6 @@
 import { ReactNode } from 'react';
 
-import {
-  Dropdown,
-  MassaLogo,
-  MassaToken,
-  Tooltip,
-} from '@massalabs/react-ui-kit';
+import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
 import {
   useAccount,
@@ -145,7 +140,7 @@ function MassaHeader() {
           options={[
             {
               item: 'Massa Buildnet',
-              icon: <MassaToken />,
+              icon: <MassaLogo />,
             },
           ]}
         />
