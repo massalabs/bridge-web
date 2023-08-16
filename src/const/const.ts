@@ -6,8 +6,10 @@ export const EVM_BRIDGE_ADDRESS = '0xA1B36b1f6Badc0EFdD8100c1ed6E1c9770F7Df84';
 // SMART CONTRACTS ADDRESSES
 export const CONTRACT_ADDRESS =
   'AS1hZpUH6TPiRxHtTKqAfXDmZ7Afa7UfS4rtYN7NxVwAaSAphCET';
+
 export const TDAI_CONTRACT_ADDRESS =
   '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';
+
 export const WETH_CONTRACT_ADDRESS =
   '0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424';
 
@@ -26,4 +28,9 @@ export const increaseAllowanceFee = {
   fee: 0n,
   coins: 1000n,
   maxGas: 1000000n,
+};
+
+export const supportedtokens = {
+  tDai: 'tDAI',
+  WETH: 'WETH',
 };

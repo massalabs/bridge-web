@@ -2,6 +2,7 @@ import { Tag } from '@massalabs/react-ui-kit';
 
 import { GradientCard } from '@/components';
 import Intl from '@/i18n/i18n';
+import { SEPOLIA_FAUCET_LINK } from '@/utils/const';
 
 export function ETH() {
   return (
@@ -15,7 +16,7 @@ export function ETH() {
         {Intl.t(`get-tokens.card.ETH-description`)}
       </p>
       <a
-        href={Intl.t(`index.loading-box.sepolia-faucet-link`)}
+        href={SEPOLIA_FAUCET_LINK}
         target="_blank"
         className="mas-menu-underline mb-4 cursor-pointer"
       >

@@ -41,8 +41,6 @@
       "included-pending": "burn (included pending)",
       "burned-final": "burn (final)",
       "inconsistent-not-found": "burn (inconsistent or not found)",
-      "massa-faucet-link": "https://discord.gg/FS2NVAum",
-      "sepolia-faucet-link": "https://sepoliafaucet.com/",
       "redeemed": "You have successfully redeemed:",
       "minted": "You have successfully minted:",
       "from-to": "from {from} to {to}",
@@ -123,7 +121,7 @@
       "add-account": "Create an account"
     },
     "ressource-sidepanel": {
-      "add-sepolia": "If you want to add sepolia on your Metamask",
+      "add-sepolia": "If you want to add Sepolia on your Metamask",
       "add-massa": "If you want to create Massa Wallet",
       "download-massa-station": "Download Massa Station and create Massa Wallet"
     }
