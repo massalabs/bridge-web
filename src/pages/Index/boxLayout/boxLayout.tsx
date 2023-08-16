@@ -1,11 +1,6 @@
 import { ReactNode } from 'react';
 
-import {
-  Dropdown,
-  MassaLogo,
-  MassaToken,
-  Tooltip,
-} from '@massalabs/react-ui-kit';
+import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
 import {
   useAccount,
@@ -16,6 +11,9 @@ import {
 } from 'wagmi';
 
 import { FetchingLine, FetchingStatus } from '../Loading';
+import { EthSvg } from '@/assets/EthSvg';
+import { TDaiSvg } from '@/assets/TDaiSvg';
+import { WEthSvg } from '@/assets/WEthSvg';
 import { Connected, Disconnected, NoAccounts, WrongChain } from '@/components';
 import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -34,9 +32,24 @@ interface Layout {
   balance: ReactNode;
 }
 
-const iconsTokens = {
-  MASSASTATION: <MassaLogo size={16} />,
-  OTHER: <BsDiamondHalf />,
+export interface IIcons {
+  [key: string]: object;
+}
+
+const iconsNetworks = {
+  MASSASTATION: <MassaLogo size={40} />,
+  SEPOLIA: <BsDiamondHalf size={40} />,
+};
+
+const iconsTokens: IIcons = {
+  massaToEvm: {
+    tDAI: <EthSvg />,
+    WETH: <EthSvg />,
+  },
+  evmToMassa: {
+    tDAI: <TDaiSvg />,
+    WETH: <WEthSvg />,
+  },
 };
 
 function getChainId(network = 'sepolia') {
@@ -83,11 +96,6 @@ function EVMHeader() {
   const SEPOLIA_CHAIN_ID = getChainId();
   const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
 
-  const iconsNetworks = {
-    Sepolia: <BsDiamondHalf size={40} />,
-    OTHER: <BsDiamondHalf />,
-  };
-
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
@@ -97,11 +105,11 @@ function EVMHeader() {
             chains.length
               ? chains.map((chain: { name: string }) => ({
                   item: chain.name + ' Testnet',
-                  icon: iconsNetworks['Sepolia'],
+                  icon: iconsNetworks['SEPOLIA'],
                 }))
               : [
                   {
-                    icon: iconsNetworks['Sepolia'],
+                    icon: iconsNetworks['SEPOLIA'],
                     item: 'Sepolia Testnet',
                   },
                 ]
@@ -145,7 +153,7 @@ function MassaHeader() {
           options={[
             {
               item: 'Massa Buildnet',
-              icon: <MassaToken />,
+              icon: iconsNetworks['MASSASTATION'],
             },
           ]}
         />
@@ -226,7 +234,9 @@ function EVMTokenOptions({ ...props }) {
       options={tokens.map((token: IToken) => {
         return {
           item: token.symbol,
-          icon: iconsTokens['OTHER'],
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          icon: iconsTokens['evmToMassa'][token.symbol],
           onClick: () => setToken(token),
         };
       })}
@@ -259,7 +269,9 @@ function MassaTokenOptions({ ...props }) {
       options={tokens.map((token: IToken) => {
         return {
           item: token.symbol,
-          icon: iconsTokens['MASSASTATION'],
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          icon: iconsTokens['massaToEvm'][token.symbol],
           onClick: () => setToken(token),
         };
       })}
