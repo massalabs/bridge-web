@@ -7,7 +7,7 @@ import { fetchBalance } from '@/bridge';
 import { SelectMassaWalletAccount } from '@/components';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
-import { maskAddress } from '@/utils/massaFormat';
+import { Unit, formatStandard, maskAddress } from '@/utils/massaFormat';
 
 export function ConnectedCard() {
   const [connectedAccount] = useAccountStore((state) => [
@@ -35,7 +35,12 @@ export function ConnectedCard() {
       </div>
       <div className="mas-body">
         {Intl.t('connect-wallet.connected-cards.wallet-balance')}
-        {balance?.candidateBalance || 0} MAS
+        {formatStandard(
+          Number(balance?.candidateBalance || 0),
+          Unit.MAS,
+          9,
+        )}{' '}
+        XMA
       </div>
     </div>
   );
