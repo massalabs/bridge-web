@@ -356,6 +356,7 @@ export function Index() {
       });
       toast.success(Intl.t(`index.bridge.success`));
       burnMassaOperation.current = undefined;
+      getTokens();
     }
   }
 
@@ -509,6 +510,7 @@ export function Index() {
           box: 'success',
           mint: 'success',
         });
+        getTokens();
       } else {
         setLoading({
           box: 'error',
@@ -653,7 +655,9 @@ export function Index() {
             }
             onClick={(e) => handleSubmit(e)}
           >
-            {Intl.t(`index.button.bridge`)}
+            {IS_MASSA_TO_EVM
+              ? Intl.t(`index.button.redeem`)
+              : Intl.t(`index.button.bridge`)}
           </Button>
         </div>
       </div>
