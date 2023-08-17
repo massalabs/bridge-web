@@ -60,7 +60,7 @@ function getChainId(network = 'sepolia') {
 }
 
 function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
-  let { amount, layout } = props;
+  let { amount } = props;
 
   const [token] = useAccountStore((state) => [state.token]);
 
@@ -72,16 +72,13 @@ function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
     amount ? amount.toString() : '0',
     decimals,
   );
-  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
-
-  let symbol = IS_MASSA_TO_EVM ? token?.symbol : token?.symbol.slice(0, -2);
 
   return (
     <div className="flex items-center">
-      {in2decimals}{' '}
+      {in2decimals}
       <Tooltip
         customClass="mas-caption w-fit whitespace-nowrap"
-        content={full + ' ' + symbol}
+        content={full + ' ' + token?.symbol ?? ''}
       />
     </div>
   );
