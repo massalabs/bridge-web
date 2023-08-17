@@ -22,7 +22,7 @@ export function AddTokensFAQ() {
                 >
                   Open Massa Wallet
                 </a>
-                <p> and select the account to which your bridged tokens.</p>
+                <p> and select the account to which you bridged tokens.</p>
               </div>
             </div>
             <div className="flex flex-col gap-3">
@@ -37,17 +37,17 @@ export function AddTokensFAQ() {
               </p>
               <p> Use these Smart contract addresses to see your balance: </p>
               <p>
-                [token name]({supportedtokens.tDai}) - <br />
+                ({supportedtokens.tDai}) - <br />
                 AS12TRoScMdwLK8Ypt6NBAppyzCFw7QeG5e3xFvxpCAnAnYLfuM
               </p>
               <p>
-                [token name] ({supportedtokens.WETH}) -<br />
+                ({supportedtokens.WETH}) -<br />
                 AS12f7ENiyqABrC4yTeAsKVyneRyG1MJ1w7dy6xFo5tn3xmytBMNz
               </p>
             </div>
             <div className="flex flex-col gap-3">
               <p className="text-neutral">Step 4:</p>
-              <p>Click ‘Add token’. </p>
+              <p>Click on ‘Add token’. </p>
               <p>
                 You should see the fungible token and its corresponding balance
                 for your wallet account.

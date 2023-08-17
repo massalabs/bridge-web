@@ -40,9 +40,11 @@ export function GetEthFAQ() {
         <FAQContent>
           <div className="flex flex-col gap-6">
             <p>
-              Massa Bridge supports bridging two ERC-20 tokens —{' '}
+              Massa Bridge currently supports bridging two ERC-20 tokens —{' '}
               {supportedtokens.WETH} and {supportedtokens.tDai} — from Sepolia
-              Testnet to Massa Buildnet, at the moment.
+              Testnet to Massa Buildnet. You can Mint testnet tokes in the dApp
+              above by clicking ‘Get tokens’ once you connect your Metamask
+              wallet.
             </p>
             <p>
               You can Mint tokens in the dAPP above by clicking ‘Get tokens’
@@ -122,7 +124,8 @@ export function GetEthFAQ() {
               <p>
                 To see balances of {supportedtokens.WETH} and{' '}
                 {supportedtokens.tDai} in your Metamask, you need to manually
-                add a token to Metamask. Check how-to here.
+                add a token to Metamask. Check how-to below.
+                {/* Add redirect Link when it is implemented*/}
               </p>
             </div>
           </div>
@@ -152,7 +155,7 @@ export function GetEthFAQ() {
             </div>
             <div className="flex flex-col gap-3">
               <div className="text-neutral">Step 2:</div>
-              <p> Provide the address of your account address in a message.</p>
+              <p> Provide your account address in a message.</p>
               <p> You can find it in details of your Massa wallet account.</p>
             </div>
             <div className="flex flex-col gap-3">
