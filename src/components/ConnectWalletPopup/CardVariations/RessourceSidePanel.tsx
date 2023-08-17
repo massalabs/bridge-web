@@ -49,8 +49,7 @@ export function RessourceSidePanel() {
     state.isStationInstalled,
   ]);
 
-  const isOnlyMetamaskConnected =
-    isEvmWalletConnected && !isStationInstalled && accounts.length === 0;
+  const isOnlyMetamaskConnected = isEvmWalletConnected && !isStationInstalled;
   const isBothNotConnected = !isStationInstalled && !isEvmWalletConnected;
 
   return (
@@ -90,7 +89,7 @@ export function RessourceSidePanel() {
             </a>
           </div>
         </>
-      ) : isOnlyMetamaskConnected ? (
+      ) : isOnlyMetamaskConnected && accounts ? (
         <MassaStationInstructions />
       ) : (
         <SepoliaInstructions />

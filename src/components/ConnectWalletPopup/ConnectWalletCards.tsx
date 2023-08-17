@@ -37,7 +37,6 @@ export function ConnectWalletCards() {
     !isConnected && isStationInstalled && accounts.length > 0;
   const hasNoAccounts = accounts?.length <= 0;
 
-  // debugger;
   const gridColsTemplate = bothNotConnected ? 'grid-cols-3' : 'grid-cols-2';
 
   function displayStatus() {

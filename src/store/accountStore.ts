@@ -143,7 +143,12 @@ const accountStore = (set: any, get: any) => ({
       (provider: IProvider) => provider.name() === MASSA_STATION,
     );
 
-    if (massaStationWallet) set({ isStationInstalled: true });
+    if (massaStationWallet) {
+      set({ isStationInstalled: true });
+    } else {
+      set({ isStationInstalled: false });
+      return;
+    }
 
     const fetchedAccounts = await massaStationWallet?.accounts();
     const storedAccount = _getFromStorage('massa-bridge-account-address');
