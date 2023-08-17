@@ -37,11 +37,11 @@ export function AddTokensFAQ() {
               </p>
               <p> Use these Smart contract addresses to see your balance: </p>
               <p>
-                ({supportedtokens.tDai}) -
+                {supportedtokens.tDai} -
                 AS12TRoScMdwLK8Ypt6NBAppyzCFw7QeG5e3xFvxpCAnAnYLfuM
               </p>
               <p>
-                ({supportedtokens.WETH}) -
+                {supportedtokens.WETH} -
                 AS12f7ENiyqABrC4yTeAsKVyneRyG1MJ1w7dy6xFo5tn3xmytBMNz
               </p>
             </div>
