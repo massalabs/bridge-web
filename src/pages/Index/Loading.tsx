@@ -6,7 +6,6 @@ import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
-import { MASSA_FAUCET_LINK, SEPOLIA_FAUCET_LINK } from '@/utils/const';
 
 interface ILoading {
   loading: ReactNode;
@@ -120,19 +119,17 @@ function RunningEVMMassa(props: ILoadingBoxProps) {
 }
 
 function Ran(props: ILoadingBoxProps) {
-  const { massaToEvm, amount, token } = props;
+  const { massaToEvm, amount, token, onClose } = props;
 
   const massa = Intl.t('general.massa');
   const sepolia = Intl.t('general.sepolia');
-  const getMassaTokenLink = MASSA_FAUCET_LINK;
-  const getEvmTokenLink = SEPOLIA_FAUCET_LINK;
 
   return (
     <div className="mas-body2 text-center">
       <div className="mb-10">
         {massaToEvm
           ? Intl.t('index.loading-box.redeemed')
-          : Intl.t('index.loading-box.minted')}
+          : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
           {amount} {token?.symbol}
         </div>
@@ -141,17 +138,22 @@ function Ran(props: ILoadingBoxProps) {
           to: massaToEvm ? sepolia : massa,
         })}
       </div>
-      <p className="mb-6">{Intl.t('index.loading-box.check')}</p>
+      <p className="mb-6">
+        {Intl.t('index.loading-box.check', {
+          name: massaToEvm ? 'Metamask' : 'Massa',
+        })}
+      </p>
 
       <div className="mb-1">
         {Intl.t('index.loading-box.add-tokens-message')}
       </div>
       <u>
         <a
-          href={massaToEvm ? getMassaTokenLink : getEvmTokenLink}
-          target="_blank"
+          onClick={onClose}
+          // fill in correct links to FAQ pages
+          href={massaToEvm ? 'Add to Metamask' : 'add to massa'}
         >
-          {Intl.t('index.loading-box.add-tokens')}
+          {Intl.t('index.loading-box.instructions')}
         </a>
       </u>
     </div>
