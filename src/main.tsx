@@ -12,10 +12,8 @@ import {
 import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
 
-// import { ENV } from '@/const/env/env';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
 import { Base, Network } from '@/components';
-// import { mockServer } from '@/mirage';
 import { PAGES } from '@/const/pages/pages';
 import { Error, NotFound, Index } from '@/pages/index';
 

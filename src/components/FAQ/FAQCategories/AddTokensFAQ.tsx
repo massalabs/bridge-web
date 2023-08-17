@@ -9,6 +9,7 @@ import {
 export function AddTokensFAQ() {
   return (
     <>
+      {/* 1 */}
       <FAQCategory categoryTitle={'Add tokens to your Massa wallet'}>
         <FAQContent>
           <div className="flex flex-col gap-6">
@@ -56,6 +57,7 @@ export function AddTokensFAQ() {
           </div>
         </FAQContent>
       </FAQCategory>
+      {/* 2 */}
       <FAQCategory categoryTitle={'Add tokens to your Metamask'}>
         <FAQContent>
           <div className="flex flex-col gap-6">

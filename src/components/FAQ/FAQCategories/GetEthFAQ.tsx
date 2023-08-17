@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
 
 import {
@@ -5,13 +7,28 @@ import {
   WETH_CONTRACT_ADDRESS,
   supportedtokens,
 } from '@/const';
+import { useQuery } from '@/custom/api/useQuery';
 
 export function GetEthFAQ() {
+  const query = useQuery();
+
+  const faq1 = query.get('faq') === '1';
+
+  const section1Ref = useRef(null);
+
+  function scrollToSection1() {
+    section1Ref.current.scrollIntoView({ behavior: 'smooth' });
+  }
+
   return (
     <>
-      <FAQCategory categoryTitle={'Get ETH on Sepolia'}>
+      <FAQCategory
+        id="get-eth-sepolia"
+        state={faq1}
+        categoryTitle={'Get ETH on Sepolia'}
+      >
         <FAQContent>
-          <div className="flex flex-col">
+          <div ref={section1Ref} className="flex flex-col">
             <p className="pr-1.5">
               You need to own some testnet ETH to be able to pay for the
               transaction fees to bridge tokens from Sepolia Testnet to Massa

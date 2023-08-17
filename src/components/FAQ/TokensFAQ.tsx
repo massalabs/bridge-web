@@ -9,7 +9,7 @@ export function TokensFAQ() {
       <div>
         <p className="mas-title text-neutral">FAQ</p>
       </div>
-      <FAQ title={Intl.t('index.faq.get-tokens.title')}>
+      <FAQ state={true} title={Intl.t('index.faq.get-tokens.title')}>
         <GetEthFAQ />
       </FAQ>
 

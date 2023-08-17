@@ -148,13 +148,17 @@ function Ran(props: ILoadingBoxProps) {
         {Intl.t('index.loading-box.add-tokens-message')}
       </div>
       <u>
-        <a
-          onClick={onClose}
-          // fill in correct links to FAQ pages
-          href={massaToEvm ? 'Add to Metamask' : 'add to massa'}
-        >
-          {Intl.t('index.loading-box.instructions')}
-        </a>
+        <div onClick={onClose}>
+          <a
+            href={
+              massaToEvm
+                ? 'https://bridge.massa.net/buildnet/index?faq=1'
+                : 'https://bridge.massa.net/buildnet/index?faq=1'
+            }
+          >
+            {Intl.t('index.loading-box.instructions')}
+          </a>
+        </div>
       </u>
     </div>
   );
