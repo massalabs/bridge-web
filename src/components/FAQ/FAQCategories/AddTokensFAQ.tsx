@@ -37,11 +37,11 @@ export function AddTokensFAQ() {
               </p>
               <p> Use these Smart contract addresses to see your balance: </p>
               <p>
-                ({supportedtokens.tDai}) - <br />
+                ({supportedtokens.tDai}) -
                 AS12TRoScMdwLK8Ypt6NBAppyzCFw7QeG5e3xFvxpCAnAnYLfuM
               </p>
               <p>
-                ({supportedtokens.WETH}) -<br />
+                ({supportedtokens.WETH}) -
                 AS12f7ENiyqABrC4yTeAsKVyneRyG1MJ1w7dy6xFo5tn3xmytBMNz
               </p>
             </div>
@@ -65,7 +65,7 @@ export function AddTokensFAQ() {
             </p>
             <div className="flex flex-col gap-3">
               <div className="text-neutral">Step 1:</div>
-              <div className="pb-6">
+              <div>
                 Follow the instructions on <b>How to add a custom token </b>
                 <a
                   className="underline pr-1.5"
