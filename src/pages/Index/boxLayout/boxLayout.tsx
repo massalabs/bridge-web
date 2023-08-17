@@ -218,9 +218,8 @@ function EVMTokenOptions({ ...props }) {
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find(
-      (_, idx) => tokens[idx].name.slice(0, -2) === token?.name.slice(0, -2),
-    ) || '0',
+    Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
+      '0',
   );
 
   return (
@@ -253,9 +252,8 @@ function MassaTokenOptions({ ...props }) {
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find(
-      (_, idx) => tokens[idx].name.slice(0, -2) === token?.name.slice(0, -2),
-    ) || '0',
+    Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
+      '0',
   );
 
   return (
