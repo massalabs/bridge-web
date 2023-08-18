@@ -1,5 +1,3 @@
-const baseURL = import.meta.env.VITE_BASE_URL;
-
 export enum FAQsections {
   getTokens = 'getTokens',
   addTokens = 'addTokens',
@@ -14,17 +12,17 @@ export enum FAQcategories {
 }
 
 export const faqURL = {
-  faq: `${baseURL}?section=faq`,
+  faq: `?section=faq`,
   getTokens: {
-    base: `${baseURL}?section=getTokens`,
-    getEthOnSep: `${baseURL}?section=getTokens&category=${FAQcategories.getEthOnSep}`,
-    getWethAndtDai: `${baseURL}?section=getTokens&category=${FAQcategories.getWethAndtDai}`,
-    getXmaOnMassa: `${baseURL}?section=getTokens&category=${FAQcategories.getXmaOnMassa}`,
+    base: `?section=getTokens`,
+    getEthOnSep: `?section=getTokens&category=${FAQcategories.getEthOnSep}`,
+    getWethAndtDai: `?section=getTokens&category=${FAQcategories.getWethAndtDai}`,
+    getXmaOnMassa: `?section=getTokens&category=${FAQcategories.getXmaOnMassa}`,
   },
   addTokens: {
-    base: `${baseURL}?section=addTokens`,
-    addToMassa: `${baseURL}?section=addTokens&category=${FAQcategories.addToMassa}`,
-    addToMetamask: `${baseURL}?section=addTokens&category=${FAQcategories.addToMetamask}`,
+    base: `?section=addTokens`,
+    addToMassa: `?section=addTokens&category=${FAQcategories.addToMassa}`,
+    addToMetamask: `?section=addTokens&category=${FAQcategories.addToMetamask}`,
   },
 };
 

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import { FiX, FiPauseCircle } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
@@ -149,17 +150,17 @@ function Ran(props: ILoadingBoxProps) {
         {Intl.t('index.loading-box.add-tokens-message')}
       </div>
       <u>
-        <div onClick={onClose}>
-          <a
-            href={
-              massaToEvm
-                ? faqURL.addTokens.addToMetamask
-                : faqURL.addTokens.addToMassa
-            }
-          >
-            {Intl.t('index.loading-box.instructions')}
-          </a>
-        </div>
+        <Link
+          onClick={onClose}
+          to={{
+            search: massaToEvm
+              ? faqURL.addTokens.addToMetamask
+              : faqURL.addTokens.addToMassa,
+          }}
+          className="underline"
+        >
+          {Intl.t('unexpected-error.link')}
+        </Link>
       </u>
     </div>
   );
