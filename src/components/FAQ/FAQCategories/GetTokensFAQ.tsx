@@ -46,7 +46,9 @@ export function GetTokensFAQ(props: FAQProps) {
       </FAQCategory>
       <FAQCategory
         state={isEqual(category, FAQcategories.getWethAndtDai)}
-        categoryTitle={Intl.t('index.faq.get-tokens.categories.get-Eth-On-Sep')}
+        categoryTitle={Intl.t(
+          'index.faq.get-tokens.categories.get-Weth-And-tDai',
+        )}
       >
         <FAQContent>
           <div className="flex flex-col gap-6">
