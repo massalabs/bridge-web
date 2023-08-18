@@ -4,6 +4,7 @@ import { FiX, FiPauseCircle } from 'react-icons/fi';
 
 import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
+import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
 
@@ -148,13 +149,17 @@ function Ran(props: ILoadingBoxProps) {
         {Intl.t('index.loading-box.add-tokens-message')}
       </div>
       <u>
-        <a
-          onClick={onClose}
-          // fill in correct links to FAQ pages
-          href={massaToEvm ? 'Add to Metamask' : 'add to massa'}
-        >
-          {Intl.t('index.loading-box.instructions')}
-        </a>
+        <div onClick={onClose}>
+          <a
+            href={
+              massaToEvm
+                ? faqURL.addTokens.addToMetamask
+                : faqURL.addTokens.addToMassa
+            }
+          >
+            {Intl.t('index.loading-box.instructions')}
+          </a>
+        </div>
       </u>
     </div>
   );

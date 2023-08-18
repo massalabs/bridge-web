@@ -1,15 +1,22 @@
 import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
 
+import { isEqual } from '@/components';
 import {
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
   supportedtokens,
 } from '@/const';
+import { FAQProps, FAQcategories } from '@/const/faq';
+import Intl from '@/i18n/i18n';
 
-export function AddTokensFAQ() {
+export function AddTokensFAQ(props: FAQProps) {
+  const { category } = props;
   return (
     <>
-      <FAQCategory categoryTitle={'Add tokens to your Massa wallet'}>
+      <FAQCategory
+        state={isEqual(category, FAQcategories.addToMassa)}
+        categoryTitle={Intl.t('index.faq.add-tokens.categories.add-To-Massa')}
+      >
         <FAQContent>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3">
@@ -56,7 +63,12 @@ export function AddTokensFAQ() {
           </div>
         </FAQContent>
       </FAQCategory>
-      <FAQCategory categoryTitle={'Add tokens to your Metamask'}>
+      <FAQCategory
+        state={isEqual(category, FAQcategories.addToMetamask)}
+        categoryTitle={Intl.t(
+          'index.faq.add-tokens.categories.add-To-Metamask',
+        )}
+      >
         <FAQContent>
           <div className="flex flex-col gap-6">
             <p>
