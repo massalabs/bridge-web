@@ -25,6 +25,14 @@ import { Error, NotFound, Index } from '@/pages/index';
 //   mockServer(baseENV);
 // }
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt#use_within_json
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line no-extend-native
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter(

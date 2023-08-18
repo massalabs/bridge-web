@@ -20,6 +20,7 @@ import {
   getMassaTokenName,
   getBalance,
 } from '@/custom/token/token';
+import { BRIDGE_ACCOUNT_ADDRESS, BRIDGE_TOKEN } from '@/utils/const';
 
 export interface IToken {
   name: string;
@@ -102,6 +103,10 @@ const accountStore = (set: any, get: any) => ({
 
     const connectedAccount = get().connectedAccount;
 
+    const storedToken = _getFromStorage(BRIDGE_TOKEN)
+      ? JSON.parse(_getFromStorage(BRIDGE_TOKEN))
+      : undefined;
+
     if (clientFactory && connectedAccount) {
       const supportedTokens = await getSupportedTokensList(clientFactory);
 
@@ -130,11 +135,13 @@ const accountStore = (set: any, get: any) => ({
         }),
       );
 
-      set({
-        tokens: tokens,
-        token: tokens.length ? tokens[0] : null,
-        isFetching: false,
-      });
+      const selectedToken = tokens.find(
+        (token: IToken) => token.name === storedToken?.name,
+      );
+      const token = tokens.length ? selectedToken || tokens[0] : null;
+
+      set({ tokens, token, isFetching: false });
+      _setInStorage(BRIDGE_TOKEN, JSON.stringify(token));
     }
   },
 
@@ -151,7 +158,7 @@ const accountStore = (set: any, get: any) => ({
     }
 
     const fetchedAccounts = await massaStationWallet?.accounts();
-    const storedAccount = _getFromStorage('massa-bridge-account-address');
+    const storedAccount = _getFromStorage(BRIDGE_ACCOUNT_ADDRESS);
 
     if (fetchedAccounts && fetchedAccounts.length > 0) {
       const selectedAccount =
@@ -232,11 +239,14 @@ const accountStore = (set: any, get: any) => ({
       connectedAccount,
     );
 
-    _setInStorage('massa-bridge-account-address', connectedAccount.address());
+    _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
     set({ connectedAccount, massaClient, balance });
   },
 
-  setToken: (token: IToken | null) => set({ token }),
+  setToken: (token: IToken | null) => {
+    set({ token });
+    _setInStorage(BRIDGE_TOKEN, JSON.stringify(token));
+  },
 });
 
 function _setInStorage(key: string, value: string): void {
