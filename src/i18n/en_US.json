@@ -21,10 +21,19 @@
     },
     "faq": {
       "get-tokens": {
-        "title": "Get testnet/buildnet tokens"
+        "title": "Get testnet/buildnet tokens",
+        "categories": {
+          "get-Eth-On-Sep": "Get ETH on Sepolia",
+          "get-Weth-And-tDai": "Get WETH and tDAI on Sepolia",
+          "get-Xma-On-Massa": "Get XMA on Massa Buildnet wallet"
+        }
       },
       "add-tokens": {
-        "title": "Add tokens to your testnet/buildnet wallets"
+        "title": "Add tokens to your testnet/buildnet wallets",
+        "categories": {
+          "add-To-Massa": "Add tokens to your Massa wallet",
+          "add-To-Metamask": "Add tokens to your Metamask"
+        }
       }
     },
     "loading-box": {

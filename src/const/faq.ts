@@ -28,10 +28,6 @@ export const faqURL = {
   },
 };
 
-export function isEqual(value1: string | null, value2: string) {
-  return value1 === value2;
-}
-
 export interface FAQProps {
   category: string | null;
 }

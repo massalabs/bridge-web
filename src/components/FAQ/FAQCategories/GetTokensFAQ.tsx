@@ -1,11 +1,13 @@
 import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
 
+import { isEqual } from '@/components';
 import {
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
   supportedtokens,
 } from '@/const';
-import { FAQProps, FAQcategories, faqURL, isEqual } from '@/const/faq';
+import { FAQProps, FAQcategories, faqURL } from '@/const/faq';
+import Intl from '@/i18n/i18n';
 
 export function GetTokensFAQ(props: FAQProps) {
   const { category } = props;
@@ -14,7 +16,7 @@ export function GetTokensFAQ(props: FAQProps) {
     <>
       <FAQCategory
         state={isEqual(category, FAQcategories.getEthOnSep)}
-        categoryTitle={'Get ETH on Sepolia'}
+        categoryTitle={Intl.t('index.faq.get-tokens.categories.get-Eth-On-Sep')}
       >
         <FAQContent>
           <div className="flex flex-col">
@@ -44,7 +46,7 @@ export function GetTokensFAQ(props: FAQProps) {
       </FAQCategory>
       <FAQCategory
         state={isEqual(category, FAQcategories.getWethAndtDai)}
-        categoryTitle={'Get WETH and tDAI on Sepolia'}
+        categoryTitle={Intl.t('index.faq.get-tokens.categories.get-Eth-On-Sep')}
       >
         <FAQContent>
           <div className="flex flex-col gap-6">
@@ -148,7 +150,9 @@ export function GetTokensFAQ(props: FAQProps) {
       </FAQCategory>
       <FAQCategory
         state={isEqual(category, FAQcategories.getXmaOnMassa)}
-        categoryTitle={'Get XMA on Massa Buildnet wallet'}
+        categoryTitle={Intl.t(
+          'index.faq.get-tokens.categories.get-Xma-On-Massa',
+        )}
       >
         <FAQContent>
           <div className="flex flex-col gap-6">
