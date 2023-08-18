@@ -140,8 +140,8 @@ const accountStore = (set: any, get: any) => ({
       );
       const token = tokens.length ? selectedToken || tokens[0] : null;
 
-      set({ tokens, token, isFetching: false });
-      _setInStorage(BRIDGE_TOKEN, JSON.stringify(token));
+      set({ tokens, isFetching: false });
+      get().setToken(token);
     }
   },
 
