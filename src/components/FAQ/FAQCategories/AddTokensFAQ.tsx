@@ -5,12 +5,16 @@ import {
   WETH_CONTRACT_ADDRESS,
   supportedtokens,
 } from '@/const';
+import { FAQProps, FAQcategories, isEqual } from '@/const/faq';
 
-export function AddTokensFAQ() {
+export function AddTokensFAQ(props: FAQProps) {
+  const { category } = props;
   return (
     <>
-      {/* 1 */}
-      <FAQCategory categoryTitle={'Add tokens to your Massa wallet'}>
+      <FAQCategory
+        state={isEqual(category, FAQcategories.addToMassa)}
+        categoryTitle={'Add tokens to your Massa wallet'}
+      >
         <FAQContent>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3">
@@ -57,8 +61,10 @@ export function AddTokensFAQ() {
           </div>
         </FAQContent>
       </FAQCategory>
-      {/* 2 */}
-      <FAQCategory categoryTitle={'Add tokens to your Metamask'}>
+      <FAQCategory
+        state={isEqual(category, FAQcategories.addToMetamask)}
+        categoryTitle={'Add tokens to your Metamask'}
+      >
         <FAQContent>
           <div className="flex flex-col gap-6">
             <p>

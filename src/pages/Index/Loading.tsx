@@ -4,6 +4,7 @@ import { FiX, FiPauseCircle } from 'react-icons/fi';
 
 import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
+import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
 
@@ -152,8 +153,8 @@ function Ran(props: ILoadingBoxProps) {
           <a
             href={
               massaToEvm
-                ? 'https://bridge.massa.net/buildnet/index?faq=1'
-                : 'https://bridge.massa.net/buildnet/index?faq=1'
+                ? faqURL.addTokens.addToMetamask
+                : faqURL.addTokens.addToMassa
             }
           >
             {Intl.t('index.loading-box.instructions')}

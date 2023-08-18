@@ -1,5 +1,3 @@
-import { useRef } from 'react';
-
 import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
 
 import {
@@ -7,28 +5,19 @@ import {
   WETH_CONTRACT_ADDRESS,
   supportedtokens,
 } from '@/const';
-import { useQuery } from '@/custom/api/useQuery';
+import { FAQProps, FAQcategories, faqURL, isEqual } from '@/const/faq';
 
-export function GetEthFAQ() {
-  const query = useQuery();
-
-  const faq1 = query.get('faq') === '1';
-
-  const section1Ref = useRef(null);
-
-  function scrollToSection1() {
-    section1Ref.current.scrollIntoView({ behavior: 'smooth' });
-  }
+export function GetTokensFAQ(props: FAQProps) {
+  const { category } = props;
 
   return (
     <>
       <FAQCategory
-        id="get-eth-sepolia"
-        state={faq1}
+        state={isEqual(category, FAQcategories.getEthOnSep)}
         categoryTitle={'Get ETH on Sepolia'}
       >
         <FAQContent>
-          <div ref={section1Ref} className="flex flex-col">
+          <div className="flex flex-col">
             <p className="pr-1.5">
               You need to own some testnet ETH to be able to pay for the
               transaction fees to bridge tokens from Sepolia Testnet to Massa
@@ -53,7 +42,10 @@ export function GetEthFAQ() {
           </div>
         </FAQContent>
       </FAQCategory>
-      <FAQCategory categoryTitle={'Get WETH and tDAI on Sepolia'}>
+      <FAQCategory
+        state={isEqual(category, FAQcategories.getWethAndtDai)}
+        categoryTitle={'Get WETH and tDAI on Sepolia'}
+      >
         <FAQContent>
           <div className="flex flex-col gap-6">
             <p>
@@ -141,14 +133,23 @@ export function GetEthFAQ() {
               <p>
                 To see balances of {supportedtokens.WETH} and{' '}
                 {supportedtokens.tDai} in your Metamask, you need to manually
-                add a token to Metamask. Check how-to below.
+                add a token to Metamask. Check how-to
+                <a
+                  className="underline pl-1.5"
+                  href={faqURL.getTokens.getXmaOnMassa}
+                >
+                  here.
+                </a>
                 {/* Add redirect Link when it is implemented*/}
               </p>
             </div>
           </div>
         </FAQContent>
       </FAQCategory>
-      <FAQCategory categoryTitle={'Get XMA on Massa Buildnet wallet'}>
+      <FAQCategory
+        state={isEqual(category, FAQcategories.getXmaOnMassa)}
+        categoryTitle={'Get XMA on Massa Buildnet wallet'}
+      >
         <FAQContent>
           <div className="flex flex-col gap-6">
             <p>

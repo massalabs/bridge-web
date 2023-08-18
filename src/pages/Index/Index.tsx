@@ -354,7 +354,6 @@ export function Index() {
         box: 'success',
         redeem: 'success',
       });
-      toast.success(Intl.t(`index.bridge.success`));
       burnMassaOperation.current = undefined;
       getTokens();
     }
