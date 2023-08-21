@@ -3,7 +3,9 @@ import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
 import { isEqual } from '@/components';
 import {
   TDAI_CONTRACT_ADDRESS,
+  TDAI_MASSA_ADDRESS,
   WETH_CONTRACT_ADDRESS,
+  WETH_MASSA_ADDRESS,
   supportedtokens,
 } from '@/const';
 import { FAQProps, FAQcategories } from '@/const/faq';
@@ -44,12 +46,10 @@ export function AddTokensFAQ(props: FAQProps) {
               </p>
               <p> Use these Smart contract addresses to see your balance: </p>
               <p>
-                {supportedtokens.tDai} -
-                AS12TRoScMdwLK8Ypt6NBAppyzCFw7QeG5e3xFvxpCAnAnYLfuM
+                {supportedtokens.tDai} - {TDAI_MASSA_ADDRESS}
               </p>
               <p>
-                {supportedtokens.WETH} -
-                AS12f7ENiyqABrC4yTeAsKVyneRyG1MJ1w7dy6xFo5tn3xmytBMNz
+                {supportedtokens.WETH} - {WETH_MASSA_ADDRESS}
               </p>
             </div>
             <div className="flex flex-col gap-3">
