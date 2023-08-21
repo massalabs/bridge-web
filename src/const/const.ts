@@ -10,8 +10,14 @@ export const CONTRACT_ADDRESS =
 export const TDAI_CONTRACT_ADDRESS =
   '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';
 
+export const TDAI_MASSA_ADDRESS =
+  'AS12TRoScMdwLK8Ypt6NBAppyzCFw7QeG5e3xFvxpCAnAnYLfuMUT';
+
 export const WETH_CONTRACT_ADDRESS =
   '0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424';
+
+export const WETH_MASSA_ADDRESS =
+  'AS12f7ENiyqABrC4yTeAsKVyneRyG1MJ1w7dy6xFo5tn3xmytBMNz';
 
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
