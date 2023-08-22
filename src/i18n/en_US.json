@@ -57,7 +57,6 @@
       "add-tokens-message": "You might need to add the token manually to see its balance.",
       "instructions": "Instructions",
       "error": "Something went wrong. Drop us a message at:",
-      "massa-support": "support@bridge.massa.net",
       "success": "Success!"
     },
     "input": {

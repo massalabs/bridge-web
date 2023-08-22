@@ -172,8 +172,8 @@ export function BridgeError() {
       <p> {Intl.t('index.loading-box.error')}</p>
       <br />
       <u>
-        <a href="mailto:support@bridge.massa.net" target="_blank">
-          {Intl.t('index.loading-box.massa-support')}
+        <a href="mailto:support.bridge@massa.net" target="_blank">
+          support.bridge@massa.net
         </a>
       </u>
     </div>
