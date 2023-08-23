@@ -19,6 +19,10 @@ export const WETH_CONTRACT_ADDRESS =
 export const WETH_MASSA_ADDRESS =
   'AS12f7ENiyqABrC4yTeAsKVyneRyG1MJ1w7dy6xFo5tn3xmytBMNz';
 
+export const PROJECT_NAME = 'Bridge';
+
+export const PROJECT_QUEST = 'CONNECT_WALLET';
+
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );

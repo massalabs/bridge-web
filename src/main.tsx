@@ -12,16 +12,18 @@ import {
 import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
 
+import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
+import { mockServer } from './mirage';
 import { Base, Network } from '@/components';
 import { PAGES } from '@/const/pages/pages';
 import { Error, NotFound, Index } from '@/pages/index';
 
-// const baseENV = import.meta.env.VITE_ENV;
+const baseENV = import.meta.env.VITE_ENV;
 
-// if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
-//   mockServer(baseENV);
-// }
+if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
+  mockServer(baseENV);
+}
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt#use_within_json
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

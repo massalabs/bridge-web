@@ -15,19 +15,30 @@ import { useAccountStore, useNetworkStore } from '@/store/store';
 export function LayoutBridge({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
 
-  const { isConnected: isEvmWalletConnected } = useAccount();
-
-  const [accounts, isFetching, isStationInstalled] = useAccountStore(
-    (state) => [state.accounts, state.isFetching, state.isStationInstalled],
-  );
-
   const [isMetamaskInstalled] = useNetworkStore((state) => [
     state.isMetamaskInstalled,
   ]);
-
+  const options = [
+    {
+      item: 'Buildnet',
+    },
+  ];
+  const { isConnected: isEvmWalletConnected } = useAccount();
+  const [accounts, isFetching, isStationInstalled] = useAccountStore(
+    (state) => [state.accounts, state.isFetching, state.isStationInstalled],
+  );
   const hasAccounts = accounts?.length > 0;
-
   const showPingAnimation = isMetamaskInstalled && !hasAccounts;
+
+  const [selectedTheme, setSelectedTheme] = useState(
+    storedTheme || 'theme-dark',
+  );
+  const [open, setOpen] = useState(false);
+
+  function handleSetTheme(theme: string) {
+    setSelectedTheme(theme);
+    onSetTheme?.(theme);
+  }
 
   function PingAnimation() {
     return (
@@ -40,28 +51,6 @@ export function LayoutBridge({ ...props }) {
       </span>
     );
   }
-
-  const options = [
-    {
-      item: 'Buildnet',
-    },
-  ];
-
-  const [selectedTheme, setSelectedTheme] = useState(
-    storedTheme || 'theme-dark',
-  );
-
-  function handleSetTheme(theme: string) {
-    setSelectedTheme(theme);
-
-    onSetTheme?.(theme);
-  }
-
-  const [open, setOpen] = useState(false);
-
-  const popupArgs = {
-    setOpen,
-  };
 
   function ConnectedWallet() {
     return (
@@ -114,7 +103,7 @@ export function LayoutBridge({ ...props }) {
       >
         {children}
       </div>
-      {open && <ConnectWalletPopup {...popupArgs} />}
+      {open && <ConnectWalletPopup setOpen={setOpen} />}
       <Footer selectedTheme={selectedTheme} />
     </div>
   );
