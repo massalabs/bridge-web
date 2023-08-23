@@ -10,7 +10,7 @@ import { useAccount } from 'wagmi';
 
 import { ConnectWalletPopup, Footer } from '@/components';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useNetworkStore } from '@/store/store';
 
 export function LayoutBridge({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
@@ -21,7 +21,25 @@ export function LayoutBridge({ ...props }) {
     (state) => [state.accounts, state.isFetching, state.isStationInstalled],
   );
 
+  const [isMetamaskInstalled] = useNetworkStore((state) => [
+    state.isMetamaskInstalled,
+  ]);
+
   const hasAccounts = accounts?.length > 0;
+
+  const showPingAnimation = isMetamaskInstalled && !hasAccounts;
+
+  function PingAnimation() {
+    return (
+      <span className="absolute flex h-3 w-3 top-0 right-0 -mr-1 -mt-1">
+        <span
+          className="animate-ping absolute inline-flex h-full w-full 
+              rounded-full bg-s-error opacity-75 "
+        ></span>
+        <span className="relative inline-flex rounded-full h-3 w-3 bg-s-error"></span>
+      </span>
+    );
+  }
 
   const options = [
     {
@@ -60,13 +78,16 @@ export function LayoutBridge({ ...props }) {
 
   function NotConnectedWallet() {
     return (
-      <Button
-        disabled={isFetching}
-        customClass="h-[54px]"
-        onClick={() => setOpen(true)}
-      >
-        {Intl.t('connect-wallet.title')}
-      </Button>
+      <>
+        <Button
+          disabled={isFetching}
+          customClass="h-[54px] relative"
+          onClick={() => setOpen(true)}
+        >
+          {Intl.t('connect-wallet.title')}
+          {showPingAnimation && <PingAnimation />}
+        </Button>
+      </>
     );
   }
 
