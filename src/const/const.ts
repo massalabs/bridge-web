@@ -23,6 +23,8 @@ export const PROJECT_NAME = 'Bridge';
 
 export const PROJECT_QUEST = 'CONNECT_WALLET';
 
+export const PROJECT_QUEST_SERVER = 'http://54.36.174.177:3000';
+
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
