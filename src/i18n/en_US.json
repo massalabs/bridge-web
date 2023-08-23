@@ -95,7 +95,7 @@
     }
   },
   "unexpected-error": {
-    "title": "OOps!",
+    "title": "Ops!",
     "description": "An unexpected error has occurred",
     "link": "Instructions",
     "no-wallet": "No wallet is associated with your Massa Account. Please create one and try again!"
