@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { PROJECT_QUEST, PROJECT_NAME } from '@/const';
+import { PROJECT_QUEST, PROJECT_NAME, PROJECT_QUEST_SERVER } from '@/const';
 import { usePost } from '@/custom/api';
 import { useAccountStore } from '@/store/store';
 
@@ -10,6 +10,7 @@ export function ICOQuest() {
   ]);
   const ICOQuest = usePost(
     `register_quest/${PROJECT_NAME}/${PROJECT_QUEST}/${connectedAccount?.address()}`,
+    PROJECT_QUEST_SERVER,
   );
 
   useEffect(() => {
