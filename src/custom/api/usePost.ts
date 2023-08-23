@@ -16,7 +16,7 @@ export function usePost<TBody, TResponse = null>(
   unknown
 > {
   const baseURL = import.meta.env.VITE_BASE_API;
-  let url = `${baseURL}/${resource}`;
+  let url = baseURL ? `${baseURL}/${resource}` : `/${resource}`;
 
   return useMutation<
     TResponse,
