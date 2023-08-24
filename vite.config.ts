@@ -3,7 +3,6 @@ import * as path from 'path';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv, type PluginOption } from 'vite';
-import viteImagemin from 'vite-plugin-imagemin';
 import svgr from 'vite-plugin-svgr';
 
 export default ({ mode }) => {
@@ -16,33 +15,6 @@ export default ({ mode }) => {
       react(),
       svgr(),
       visualizer() as PluginOption,
-      viteImagemin({
-        gifsicle: {
-          optimizationLevel: 7,
-          interlaced: false,
-        },
-        optipng: {
-          optimizationLevel: 7,
-        },
-        mozjpeg: {
-          quality: 20,
-        },
-        pngquant: {
-          quality: [0.8, 0.9],
-          speed: 4,
-        },
-        svgo: {
-          plugins: [
-            {
-              name: 'removeViewBox',
-            },
-            {
-              name: 'removeEmptyAttrs',
-              active: false,
-            },
-          ],
-        },
-      }),
     ],
     base: process.env.VITE_BASE_APP,
     build: {
