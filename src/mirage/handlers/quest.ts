@@ -1,10 +1,10 @@
 import { Server, Response } from 'miragejs';
 
-import { PROJECT_QUEST_SERVER } from '@/const';
+import { QUEST_SERVER } from '@/const';
 
 export function routesForQuest(server: Server) {
   server.post(
-    `${PROJECT_QUEST_SERVER}/register_quest/:project/:quest/:address`,
+    `${QUEST_SERVER}/register_quest/:project/:quest/:address`,
     (_, request) => {
       const { project, quest, address } = request.params;
 
