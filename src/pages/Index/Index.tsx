@@ -81,12 +81,12 @@ export function Index() {
 
   const [loading, _setLoading] = useState<ILoadingState>({
     box: 'none',
-    bridge: 'none',
     approve: 'none',
     burn: 'none',
     redeem: 'none',
     lock: 'none',
     mint: 'none',
+    error: 'none',
   });
 
   function setLoading(state: ILoadingState) {
@@ -405,6 +405,7 @@ export function Index() {
         box: 'error',
         burn: 'error',
         redeem: 'error',
+        error: 'error',
       });
 
       if (error) handleErrorMessage(error.toString());
@@ -439,7 +440,7 @@ export function Index() {
       redeem: 'none',
       lock: 'none',
       mint: 'none',
-      bridge: 'none',
+      error: 'none',
     });
     setAmount('');
   }
@@ -521,6 +522,7 @@ export function Index() {
       setLoading({
         box: 'error',
         mint: 'error',
+        error: 'error',
       });
     }
   }
