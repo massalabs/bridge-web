@@ -21,7 +21,7 @@ async function isOperationIncluded(
   const status = await getOperationStatus(client, opId);
   return (
     status === EOperationStatus.INCLUDED_PENDING ||
-    status === EOperationStatus.FINAL
+    status === EOperationStatus.FINAL_SUCCESS
   );
 }
 
@@ -30,7 +30,7 @@ async function isOperationFinal(
   opId: string,
 ): Promise<boolean> {
   const status = await getOperationStatus(client, opId);
-  return status === EOperationStatus.FINAL;
+  return status === EOperationStatus.FINAL_SUCCESS;
 }
 
 export async function waitIncludedOperation(
