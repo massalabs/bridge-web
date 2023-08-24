@@ -12,7 +12,7 @@ Run dev server:
 
 then navigate to <http://localhost:5173>.
 
-Build MassaStation web app:
+Build bridge app:
 
     npm run build
 
