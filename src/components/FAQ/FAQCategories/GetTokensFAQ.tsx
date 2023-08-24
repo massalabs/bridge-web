@@ -4,6 +4,7 @@ import { isEqual } from '@/components';
 import {
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
+  massaToken,
   supportedtokens,
 } from '@/const';
 import { FAQProps, FAQcategories, faqURL } from '@/const/faq';
@@ -153,14 +154,14 @@ export function GetTokensFAQ(props: FAQProps) {
       <FAQCategory
         state={isEqual(category, FAQcategories.getXmaOnMassa)}
         categoryTitle={Intl.t(
-          'index.faq.get-tokens.categories.get-Xma-On-Massa',
+          'index.faq.get-tokens.categories.get-Mas-On-Massa',
         )}
       >
         <FAQContent>
           <div className="flex flex-col gap-6">
             <p>
               To Redeem tokens from Massa Buildnet to Sepolia testnet, you need
-              some Massa coins (XMA) to pay for the transaction fees.
+              some Massa coins ({massaToken}) to pay for the transaction fees.
             </p>
 
             <div className="flex flex-col gap-3">

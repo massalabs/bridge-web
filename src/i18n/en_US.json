@@ -25,7 +25,7 @@
         "categories": {
           "get-Eth-On-Sep": "Get ETH on Sepolia",
           "get-Weth-And-tDai": "Get WETH and tDAI on Sepolia",
-          "get-Xma-On-Massa": "Get XMA on Massa Buildnet wallet"
+          "get-Mas-On-Massa": "Get MAS on Massa Buildnet wallet"
         }
       },
       "add-tokens": {
@@ -149,7 +149,7 @@
       "tDAI-description": "Send a request to mint tDAI to your wallet",
       "WETH-description": "Send a request to mint WETH to your wallet",
       "ETH-description": "Get ETH on Sepolia to pay the fees",
-      "XMA-description": "Get XMA tokens",
+      "MAS-description": "Get MAS tokens",
       "link": "Faucet",
       "mint": "Mint {token}"
     },
@@ -157,7 +157,7 @@
       "tDAI": "Get tDAI",
       "WETH": "Get wrapped Ethereum",
       "ETH": "Get Ethereum",
-      "XMA": "Get XMA"
+      "MAS": "Get MAS"
     }
   }
 }

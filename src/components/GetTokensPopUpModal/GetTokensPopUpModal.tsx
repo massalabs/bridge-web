@@ -43,11 +43,11 @@ function MassaToEVMContent() {
       <GradientCard customClass="w-72 h-80">
         <Tag
           type="error"
-          content={Intl.t(`get-tokens.tag.XMA`)}
+          content={Intl.t(`get-tokens.tag.MAS`)}
           customClass="m-5"
         />
         <p className="mas-menu-default text-center m-5">
-          {Intl.t(`get-tokens.card.XMA-description`)}
+          {Intl.t(`get-tokens.card.MAS-description`)}
         </p>
         <a
           href="https://discord.gg/FS2NVAum"

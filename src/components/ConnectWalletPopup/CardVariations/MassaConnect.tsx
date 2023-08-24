@@ -5,6 +5,7 @@ import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { fetchBalance } from '@/bridge';
 import { SelectMassaWalletAccount } from '@/components';
+import { massaToken } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { Unit, formatStandard, maskAddress } from '@/utils/massaFormat';
@@ -40,7 +41,7 @@ export function ConnectedCard() {
           Unit.MAS,
           9,
         )}{' '}
-        XMA
+        {massaToken}
       </div>
     </div>
   );
