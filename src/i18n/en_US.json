@@ -38,7 +38,9 @@
     },
     "loading-box": {
       "title-bridge": "Processing bridge...",
+      "title-bridge-error": "Bridge failed",
       "title-redeem": "Processing redeem...",
+      "title-redeem-error": "Redeem failed",
       "subtitle": "(it can take up to 2 minutes)",
       "approve": "Approval",
       "bridge": "Bridge",
@@ -56,7 +58,8 @@
       "check": "Check the balance in your {name} wallet.",
       "add-tokens-message": "You might need to add the token manually to see its balance.",
       "instructions": "Instructions",
-      "error": "Something went wrong. Drop us a message at:",
+      "error-something": "Something went wrong!",
+      "error-drop": "Please, drop us a message at:",
       "success": "Success!"
     },
     "input": {

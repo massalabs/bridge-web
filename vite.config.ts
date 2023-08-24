@@ -11,11 +11,7 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   return defineConfig({
-    plugins: [
-      react(),
-      svgr(),
-      visualizer() as PluginOption,
-    ],
+    plugins: [react(), svgr(), visualizer() as PluginOption],
     base: process.env.VITE_BASE_APP,
     build: {
       target: 'esnext',

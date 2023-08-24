@@ -29,6 +29,7 @@ export function LoadingBox(props: ILoadingBoxProps) {
   const { onClose, loading, massaToEvm } = props;
 
   const IS_BOX_SUCCESS = loading.box === 'success';
+  const HAS_SERVER_ERROR = loading.error !== 'none';
 
   return (
     <>
@@ -56,11 +57,15 @@ export function LoadingBox(props: ILoadingBoxProps) {
           <p className="mas-subtitle pt-6">
             {IS_BOX_SUCCESS
               ? Intl.t('index.loading-box.success')
+              : HAS_SERVER_ERROR
+              ? massaToEvm
+                ? Intl.t('index.loading-box.title-redeem-error')
+                : Intl.t('index.loading-box.title-bridge-error')
               : massaToEvm
               ? Intl.t('index.loading-box.title-redeem')
               : Intl.t('index.loading-box.title-bridge')}
           </p>
-          {IS_BOX_SUCCESS ? null : (
+          {IS_BOX_SUCCESS || HAS_SERVER_ERROR ? null : (
             <p className="text-xs pb-6">
               {Intl.t('index.loading-box.subtitle')}
             </p>
@@ -68,6 +73,8 @@ export function LoadingBox(props: ILoadingBoxProps) {
         </div>
         {IS_BOX_SUCCESS ? (
           <Ran {...props} />
+        ) : HAS_SERVER_ERROR ? (
+          <BridgeError />
         ) : massaToEvm ? (
           <RunningMassaEVM {...props} />
         ) : (
@@ -168,8 +175,9 @@ function Ran(props: ILoadingBoxProps) {
 
 export function BridgeError() {
   return (
-    <div className="text-center">
-      <p> {Intl.t('index.loading-box.error')}</p>
+    <div className="text-center mas-body2">
+      <p> {Intl.t('index.loading-box.error-something')}</p>
+      <p> {Intl.t('index.loading-box.error-drop')}</p>
       <br />
       <u>
         <a href="mailto:support.bridge@massa.net" target="_blank">
