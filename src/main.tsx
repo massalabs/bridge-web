@@ -14,7 +14,6 @@ import './index.css';
 
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
-import { mockServer } from './mirage';
 import { Base, Network } from '@/components';
 import { PAGES } from '@/const/pages/pages';
 import { Error, NotFound, Index } from '@/pages/index';
@@ -22,6 +21,7 @@ import { Error, NotFound, Index } from '@/pages/index';
 const baseENV = import.meta.env.VITE_ENV;
 
 if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
+  const { mockServer } = await import('./mirage');
   mockServer(baseENV);
 }
 
