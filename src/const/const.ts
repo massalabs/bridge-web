@@ -19,11 +19,11 @@ export const WETH_CONTRACT_ADDRESS =
 export const WETH_MASSA_ADDRESS =
   'AS12f7ENiyqABrC4yTeAsKVyneRyG1MJ1w7dy6xFo5tn3xmytBMNz';
 
-export const PROJECT_NAME = 'Bridge';
+export const QUEST_NAME = 'Bridge';
 
-export const PROJECT_QUEST = 'CONNECT_WALLET';
+export const QUEST_CONNECT_WALLET = 'CONNECT_WALLET';
 
-export const PROJECT_QUEST_SERVER = 'http://54.36.174.177:3000';
+export const QUEST_SERVER = 'https://dashboard.massa.net/quest_validation';
 
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
