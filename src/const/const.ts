@@ -46,3 +46,5 @@ export const supportedtokens = {
   tDai: 'tDAI',
   WETH: 'WETH',
 };
+
+export const massaToken = 'MAS';
