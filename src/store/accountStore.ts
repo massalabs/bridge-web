@@ -21,6 +21,7 @@ import {
   getBalance,
 } from '@/custom/token/token';
 import { BRIDGE_ACCOUNT_ADDRESS, BRIDGE_TOKEN } from '@/utils/const';
+import { _getFromStorage, _setInStorage } from '@/utils/storage';
 
 export interface IToken {
   name: string;
@@ -248,15 +249,5 @@ const accountStore = (set: any, get: any) => ({
     _setInStorage(BRIDGE_TOKEN, JSON.stringify(token));
   },
 });
-
-function _setInStorage(key: string, value: string): void {
-  if (typeof Storage !== 'undefined') {
-    localStorage.setItem(key, value);
-  }
-}
-
-function _getFromStorage(key: string): string {
-  return localStorage.getItem(key) || '';
-}
 
 export default accountStore;
