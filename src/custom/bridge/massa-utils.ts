@@ -14,23 +14,18 @@ async function getOperationStatus(
   return client.smartContracts().getOperationStatus(opId);
 }
 
-async function isOperationIncluded(
+async function getOperationEvents(
   client: Client,
   opId: string,
-): Promise<boolean> {
-  const status = await getOperationStatus(client, opId);
-  return (
-    status === EOperationStatus.INCLUDED_PENDING ||
-    status === EOperationStatus.FINAL
-  );
-}
-
-async function isOperationFinal(
-  client: Client,
-  opId: string,
-): Promise<boolean> {
-  const status = await getOperationStatus(client, opId);
-  return status === EOperationStatus.FINAL;
+): Promise<IEvent[]> {
+  return client.smartContracts().getFilteredScOutputEvents({
+    emitter_address: null,
+    start: null,
+    end: null,
+    original_caller_address: null,
+    original_operation_id: opId,
+    is_final: true,
+  });
 }
 
 export async function waitIncludedOperation(
@@ -41,28 +36,30 @@ export async function waitIncludedOperation(
   const start = Date.now();
   let counterMs = 0;
   while (counterMs < WAIT_STATUS_TIMEOUT) {
-    const done = onlyFinal
-      ? await isOperationFinal(client, opId)
-      : await isOperationIncluded(client, opId);
-    if (done) {
-      const events = await client.smartContracts().getFilteredScOutputEvents({
-        emitter_address: null,
-        start: null,
-        end: null,
-        original_caller_address: null,
-        original_operation_id: opId,
-        is_final: true,
-      });
-      if (events.some((e) => e.context.is_error)) {
-        events.map((l) => console.log(`>>>> ${l.data}`));
-        throw new Error(`Waiting for operation ${opId} ended with errors`);
-      }
+    const status = await getOperationStatus(client, opId);
+    const {
+      FINAL_ERROR,
+      SPECULATIVE_SUCCESS,
+      FINAL_SUCCESS,
+      SPECULATIVE_ERROR,
+    } = EOperationStatus;
+
+    if (
+      (status === SPECULATIVE_SUCCESS && !onlyFinal) ||
+      status === FINAL_SUCCESS
+    ) {
       return;
     }
+    if ([FINAL_ERROR, SPECULATIVE_ERROR].includes(status)) {
+      const events = await getOperationEvents(client, opId);
+      events.map((l) => console.log(`opId ${opId}: execution error ${l.data}`));
+      throw new Error(`Waiting for operation ${opId} ended with errors`);
+    }
+
     await delay(STATUS_POLL_INTERVAL_MS);
     counterMs = Date.now() - start;
   }
-  const status = await client.smartContracts().getOperationStatus(opId);
+  const status = await getOperationStatus(client, opId);
   throw new Error(
     `Fail to wait operation finality for ${opId}: Timeout reached. status: ${status}`,
   );
