@@ -23,8 +23,9 @@ export function Footer(props: FooterProps) {
         <ul className="m-0 p-0 list-none flex items-center gap-6">
           <li>
             <a
-              onClick={() => window.open('https://massa.net', '_blank')}
               className="mas-menu-default no-underline cursor-pointer flex items-center gap-2"
+              href="https://massa.net"
+              target="_blank"
             >
               <MassaIconSvg selectedTheme={selectedTheme} />
               Massa
@@ -32,16 +33,30 @@ export function Footer(props: FooterProps) {
           </li>
           <li>
             <a
-              onClick={() => window.open('https://station.massa.net', '_blank')}
               className="mas-menu-default no-underline cursor-pointer flex items-center gap-2"
+              href="https://station.massa.net"
+              target="_blank"
             >
               <MassaStationIconSvg selectedTheme={selectedTheme} />
               Massa Station
             </a>
           </li>
           <li>
-            <a className="mas-menu-default no-underline cursor-pointer">
+            <a
+              className="mas-menu-default no-underline cursor-pointer"
+              href="/legal/ToS.pdf"
+              target="_blank"
+            >
               Terms of Service
+            </a>
+          </li>
+          <li>
+            <a
+              className="mas-menu-default no-underline cursor-pointer"
+              href="/legal/PP.pdf"
+              target="_blank"
+            >
+              Privace Policy
             </a>
           </li>
         </ul>
