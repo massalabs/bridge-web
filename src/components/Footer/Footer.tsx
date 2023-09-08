@@ -2,6 +2,7 @@ import { BridgeLogo } from '@massalabs/react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { MassaIconSvg, MassaStationIconSvg } from '@/assets';
+import Intl from '@/i18n/i18n';
 
 interface FooterProps {
   selectedTheme: 'theme-light' | 'theme-dark' | undefined;
@@ -28,7 +29,7 @@ export function Footer(props: FooterProps) {
               target="_blank"
             >
               <MassaIconSvg selectedTheme={selectedTheme} />
-              Massa
+              {Intl.t(`index.footer.massa`)}
             </a>
           </li>
           <li>
@@ -38,7 +39,7 @@ export function Footer(props: FooterProps) {
               target="_blank"
             >
               <MassaStationIconSvg selectedTheme={selectedTheme} />
-              Massa Station
+              {Intl.t(`index.footer.massa-station`)}
             </a>
           </li>
           <li>
@@ -47,7 +48,7 @@ export function Footer(props: FooterProps) {
               href="/legal/ToS.pdf"
               target="_blank"
             >
-              Terms of Service
+              {Intl.t(`index.footer.tos`)}
             </a>
           </li>
           <li>
@@ -56,7 +57,7 @@ export function Footer(props: FooterProps) {
               href="/legal/PP.pdf"
               target="_blank"
             >
-              Privace Policy
+              {Intl.t(`index.footer.pop`)}
             </a>
           </li>
         </ul>

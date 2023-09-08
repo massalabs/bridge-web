@@ -9,6 +9,12 @@
     "instructions": "Instructions"
   },
   "index": {
+    "footer": {
+      "tos": "Terms of Service",
+      "pop": "Privacy Policy",
+      "massa": "Massa",
+      "massa-station": "Massa Station"
+    },
     "get-tokens": "Get tokens",
     "from": "From",
     "to": "To",
