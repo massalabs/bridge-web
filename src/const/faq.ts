@@ -6,7 +6,7 @@ export enum FAQsections {
 export enum FAQcategories {
   getEthOnSep = 'getEthOnSep',
   getWethAndtDai = 'getWethAndtDai',
-  getXmaOnMassa = 'getXmaOnMassa',
+  getMasOnMassa = 'getMasOnMassa',
   addToMassa = 'addToMassaWellet',
   addToMetamask = 'addToMetamask',
 }
@@ -17,7 +17,7 @@ export const faqURL = {
     base: `?section=getTokens`,
     getEthOnSep: `?section=getTokens&category=${FAQcategories.getEthOnSep}`,
     getWethAndtDai: `?section=getTokens&category=${FAQcategories.getWethAndtDai}`,
-    getXmaOnMassa: `?section=getTokens&category=${FAQcategories.getXmaOnMassa}`,
+    getMasOnMassa: `?section=getTokens&category=${FAQcategories.getMasOnMassa}`,
   },
   addTokens: {
     base: `?section=addTokens`,

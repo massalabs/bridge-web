@@ -28,7 +28,7 @@ export function LayoutBridge({ ...props }) {
     (state) => [state.accounts, state.isFetching, state.isStationInstalled],
   );
   const hasAccounts = accounts?.length > 0;
-  const showPingAnimation = isMetamaskInstalled && !hasAccounts;
+  const showPingAnimation = isMetamaskInstalled && isStationInstalled;
 
   const [selectedTheme, setSelectedTheme] = useState(
     storedTheme || 'theme-dark',
