@@ -1,4 +1,4 @@
-import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
+import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
 
 import { isEqual } from '@/components';
 import {
@@ -15,11 +15,11 @@ export function AddTokensFAQ(props: FAQProps) {
   const { category } = props;
   return (
     <>
-      <FAQCategory
+      <AccordionCategory
         state={isEqual(category, FAQcategories.addToMassa)}
         categoryTitle={Intl.t('index.faq.add-tokens.categories.add-To-Massa')}
       >
-        <FAQContent>
+        <AccordionContent>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3">
               <p className="text-neutral">Step 1:</p>
@@ -61,15 +61,15 @@ export function AddTokensFAQ(props: FAQProps) {
               </p>
             </div>
           </div>
-        </FAQContent>
-      </FAQCategory>
-      <FAQCategory
+        </AccordionContent>
+      </AccordionCategory>
+      <AccordionCategory
         state={isEqual(category, FAQcategories.addToMetamask)}
         categoryTitle={Intl.t(
           'index.faq.add-tokens.categories.add-To-Metamask',
         )}
       >
-        <FAQContent>
+        <AccordionContent>
           <div className="flex flex-col gap-6">
             <p>
               You must add tDAI and WETH to Metamask in order to see the balance
@@ -120,8 +120,8 @@ export function AddTokensFAQ(props: FAQProps) {
               </div>
             </div>
           </div>
-        </FAQContent>
-      </FAQCategory>
+        </AccordionContent>
+      </AccordionCategory>
     </>
   );
 }

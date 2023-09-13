@@ -1,4 +1,4 @@
-import { FAQCategory, FAQContent } from '@massalabs/react-ui-kit';
+import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
 
 import { isEqual } from '@/components';
 import {
@@ -15,11 +15,11 @@ export function GetTokensFAQ(props: FAQProps) {
 
   return (
     <>
-      <FAQCategory
+      <AccordionCategory
         state={isEqual(category, FAQcategories.getEthOnSep)}
         categoryTitle={Intl.t('index.faq.get-tokens.categories.get-Eth-On-Sep')}
       >
-        <FAQContent>
+        <AccordionContent>
           <div className="flex flex-col">
             <p className="pr-1.5">
               You need to own some testnet ETH to be able to pay for the
@@ -43,15 +43,15 @@ export function GetTokensFAQ(props: FAQProps) {
               .
             </p>
           </div>
-        </FAQContent>
-      </FAQCategory>
-      <FAQCategory
+        </AccordionContent>
+      </AccordionCategory>
+      <AccordionCategory
         state={isEqual(category, FAQcategories.getWethAndtDai)}
         categoryTitle={Intl.t(
           'index.faq.get-tokens.categories.get-Weth-And-tDai',
         )}
       >
-        <FAQContent>
+        <AccordionContent>
           <div className="flex flex-col gap-6">
             <p>
               Massa Bridge currently supports bridging two ERC-20 tokens —{' '}
@@ -141,7 +141,7 @@ export function GetTokensFAQ(props: FAQProps) {
                 add a token to Metamask. Check how-to
                 <a
                   className="underline pl-1.5"
-                  href={faqURL.getTokens.getXmaOnMassa}
+                  href={faqURL.getTokens.getMasOnMassa}
                 >
                   here.
                 </a>
@@ -149,15 +149,15 @@ export function GetTokensFAQ(props: FAQProps) {
               </p>
             </div>
           </div>
-        </FAQContent>
-      </FAQCategory>
-      <FAQCategory
-        state={isEqual(category, FAQcategories.getXmaOnMassa)}
+        </AccordionContent>
+      </AccordionCategory>
+      <AccordionCategory
+        state={isEqual(category, FAQcategories.getMasOnMassa)}
         categoryTitle={Intl.t(
           'index.faq.get-tokens.categories.get-Mas-On-Massa',
         )}
       >
-        <FAQContent>
+        <AccordionContent>
           <div className="flex flex-col gap-6">
             <p>
               To Redeem tokens from Massa Buildnet to Sepolia testnet, you need
@@ -191,8 +191,8 @@ export function GetTokensFAQ(props: FAQProps) {
               </p>
             </div>
           </div>
-        </FAQContent>
-      </FAQCategory>
+        </AccordionContent>
+      </AccordionCategory>
     </>
   );
 }

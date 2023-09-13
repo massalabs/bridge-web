@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { FAQ } from '@massalabs/react-ui-kit';
+import { Accordion } from '@massalabs/react-ui-kit';
 
 import { AddTokensFAQ, GetTokensFAQ } from './FAQCategories';
 import { FAQsections } from '@/const/faq';
@@ -36,19 +36,19 @@ export function TokensFAQ() {
       <div ref={getTokensSection}>
         <p className="mas-title text-neutral">FAQ</p>
       </div>
-      <FAQ
+      <Accordion
         state={isEqual(sectionToNavigate, FAQsections.getTokens)}
         title={Intl.t('index.faq.get-tokens.title')}
       >
         <GetTokensFAQ category={categoryToNavigate} />
-      </FAQ>
+      </Accordion>
 
-      <FAQ
+      <Accordion
         state={isEqual(sectionToNavigate, FAQsections.addTokens)}
         title={Intl.t('index.faq.add-tokens.title')}
       >
         <AddTokensFAQ category={categoryToNavigate} />
-      </FAQ>
+      </Accordion>
     </div>
   );
 }
