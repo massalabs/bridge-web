@@ -19,7 +19,11 @@ import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import {
+  useAccountStore,
+  useNetworkStore,
+  useWalletStore,
+} from '@/store/store';
 import { MASSA_STATION_URL, MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
@@ -136,11 +140,19 @@ function MassaHeader() {
   );
   const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
 
+  const [currentWallet, isMassaWallet] = useWalletStore((state) => [
+    state.currentWallet,
+    state.isMassaWallet,
+  ]);
   const hasNoAccounts = accounts?.length <= 0;
   const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
 
   function displayStatus() {
-    if (!isStationInstalled) return <Disconnected />;
+    if (
+      (!isStationInstalled && isMassaWallet) ||
+      (!currentWallet && !isMassaWallet)
+    )
+      return <Disconnected />;
     else if (IS_NOT_BUILDNET) return <WrongChain />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
@@ -150,7 +162,9 @@ function MassaHeader() {
     <div className="flex items-center justify-between">
       <div className="w-1/2">
         <Dropdown
-          readOnly={hasNoAccounts || isFetching || IS_NOT_BUILDNET}
+          readOnly={
+            hasNoAccounts || !currentWallet || IS_NOT_BUILDNET || isFetching
+          }
           options={[
             {
               item: `Massa ${capitalize(currentNetwork)}`,
@@ -160,7 +174,11 @@ function MassaHeader() {
         />
       </div>
       <div className="flex items-center gap-3">
-        <p className="mas-body">Massa</p>
+        <p className="mas-body capitalize">
+          {currentWallet
+            ? currentWallet?.toLowerCase()
+            : Intl.t(`connect-wallet.card-destination.your-wallet`)}
+        </p>
         {isFetching ? <FetchingStatus /> : displayStatus()}
       </div>
     </div>

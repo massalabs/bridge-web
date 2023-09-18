@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { BearbyProvider } from '@hicaru/bearby-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
 import {
@@ -59,7 +60,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <EvmWalletContext>
-        <RouterProvider router={router} fallbackElement={<Error />} />
+        <BearbyProvider>
+          <RouterProvider router={router} fallbackElement={<Error />} />
+        </BearbyProvider>
       </EvmWalletContext>
     </QueryClientProvider>
   </React.StrictMode>,

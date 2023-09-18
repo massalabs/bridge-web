@@ -1,5 +1,3 @@
-export const MASSA_WALLET = 'Massa Wallet';
-export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
 export const MASSA_STATION = 'MASSASTATION';
 export const EVM_BRIDGE_ADDRESS = '0xA1B36b1f6Badc0EFdD8100c1ed6E1c9770F7Df84';
 
@@ -35,16 +33,16 @@ export const NETWORKS = ['mainnet', 'testnet', 'buildnet', 'labnet'];
 export const forwardBurnFees = {
   fee: 0n,
   coins: 100000n,
-  maxGas: 700_000_000n,
+  maxGas: 4294967295n,
 };
 
 export const increaseAllowanceFee = {
   fee: 0n,
   coins: 1000n,
-  maxGas: 700_000_000n,
+  maxGas: 4294967295n,
 };
 
-export const supportedtokens = {
+export const supportedTokens = {
   tDai: 'tDAI',
   WETH: 'WETH',
 };

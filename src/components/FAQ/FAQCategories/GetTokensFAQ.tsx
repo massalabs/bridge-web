@@ -5,7 +5,7 @@ import {
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
   massaToken,
-  supportedtokens,
+  supportedTokens,
 } from '@/const';
 import { FAQProps, FAQcategories, faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
@@ -55,7 +55,7 @@ export function GetTokensFAQ(props: FAQProps) {
           <div className="flex flex-col gap-6">
             <p>
               Massa Bridge currently supports bridging two ERC-20 tokens —{' '}
-              {supportedtokens.WETH} and {supportedtokens.tDai} — from Sepolia
+              {supportedTokens.WETH} and {supportedTokens.tDai} — from Sepolia
               Testnet to Massa Buildnet. You can Mint testnet tokes in the dApp
               above by clicking ‘Get tokens’ once you connect your Metamask
               wallet.
@@ -74,7 +74,7 @@ export function GetTokensFAQ(props: FAQProps) {
                   href={`https://sepolia.etherscan.io/token/${WETH_CONTRACT_ADDRESS}#writeContract`}
                   target="_blank"
                 >
-                  {supportedtokens.WETH}
+                  {supportedTokens.WETH}
                 </a>
                 , or for
                 <a
@@ -82,7 +82,7 @@ export function GetTokensFAQ(props: FAQProps) {
                   href={`https://sepolia.etherscan.io/token/${TDAI_CONTRACT_ADDRESS}#writeContract`}
                   target="_blank"
                 >
-                  {supportedtokens.tDai}
+                  {supportedTokens.tDai}
                 </a>
                 .
               </p>
@@ -136,8 +136,8 @@ export function GetTokensFAQ(props: FAQProps) {
             <div>
               <div className="text-neutral">Step 6:</div>
               <p>
-                To see balances of {supportedtokens.WETH} and{' '}
-                {supportedtokens.tDai} in your Metamask, you need to manually
+                To see balances of {supportedTokens.WETH} and{' '}
+                {supportedTokens.tDai} in your Metamask, you need to manually
                 add a token to Metamask. Check how-to
                 <a
                   className="underline pl-1.5"

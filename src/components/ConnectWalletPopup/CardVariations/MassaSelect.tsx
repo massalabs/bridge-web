@@ -1,35 +1,42 @@
 import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
 import { IAccount } from '@massalabs/wallet-provider';
-import { BsDiamondHalf } from 'react-icons/bs';
 
-import { useAccountStore } from '@/store/store';
+import { BearbySvg } from '@/assets/BearbySvg';
+import { useAccountStore, useWalletStore } from '@/store/store';
+
+interface WalletIcon {
+  [key: string]: JSX.Element;
+}
 
 export function SelectMassaWalletAccount() {
-  const [accounts, connectedAccount, setConnectedAccount] = useAccountStore(
-    (state) => [
+  const [accounts, connectedAccount, setConnectedAccount, isFetching] =
+    useAccountStore((state) => [
       state.accounts,
       state.connectedAccount,
       state.setConnectedAccount,
-    ],
-  );
+      state.isFetching,
+    ]);
+
+  const [isMassaWallet] = useWalletStore((state) => [state.isMassaWallet]);
 
   const selectedAccountKey: number = accounts.findIndex(
     (account) => account.name() === connectedAccount?.name(),
   );
 
-  const iconsAccounts = {
+  const iconsWallets: WalletIcon = {
     MASSASTATION: <MassaLogo />,
-    OTHER: <BsDiamondHalf size={32} />,
+    BEARBY: <BearbySvg />,
   };
 
   return (
     <div className="min-w-[50%]">
       <Dropdown
+        readOnly={!isMassaWallet || isFetching}
         select={selectedAccountKey}
         options={accounts.map((account: IAccount) => {
           return {
             item: account.name(),
-            icon: iconsAccounts['MASSASTATION'],
+            icon: iconsWallets[account.name().toUpperCase()],
             onClick: () => setConnectedAccount(account),
           };
         })}

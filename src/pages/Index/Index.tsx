@@ -1,5 +1,6 @@
 import { useState, SyntheticEvent, useEffect, useRef } from 'react';
 
+import { useBearby } from '@hicaru/bearby-react';
 import { Button, toast, Money } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import { Big } from 'big.js';
@@ -28,13 +29,16 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleClosePopUp } from '@/custom/bridge/handlers/handleErrorMessage';
 import { handleFinalRedeem } from '@/custom/bridge/handlers/handleFinalRedeem';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import {
+  useAccountStore,
+  useNetworkStore,
+  useWalletStore,
+} from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -48,9 +52,6 @@ export function Index() {
     isFetching,
     setStationInstalled,
     isStationInstalled,
-    startRefetch,
-    providersFetched,
-    loadAccounts,
   ] = useAccountStore((state) => [
     state.getAccounts,
     state.getTokens,
@@ -60,10 +61,9 @@ export function Index() {
     state.isFetching,
     state.setStationInstalled,
     state.isStationInstalled,
-    state.startRefetch,
-    state.providersFetched,
-    state.loadAccounts,
   ]);
+
+  const [currentWallet] = useWalletStore((state) => [state.currentWallet]);
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
@@ -133,6 +133,11 @@ export function Index() {
   const IS_NOT_BUILDNET = currentNetwork
     ? currentNetwork !== 'buildnet'
     : false;
+  const { base58: walletAddress } = useBearby();
+
+  useEffect(() => {
+    getAccounts();
+  }, [walletAddress]);
 
   useEffect(() => {
     setError({ amount: '' });
@@ -199,30 +204,24 @@ export function Index() {
     },
   });
 
-  async function getProviderList() {
+  async function fetchMassaStation() {
     const providerList = await providers();
     const massaStationWallet = providerList.some(
       (provider: { name: () => string }) => provider.name() === MASSA_STATION,
     );
+    useWalletStore.getState().setWallets(providerList.map((p) => p.name()));
     setStationInstalled(!!massaStationWallet);
   }
 
   useEffect(() => {
-    if (providersFetched.length > 0) {
-      loadAccounts(providersFetched);
-
-      providersFetched.some((provider: { name: () => string }) => {
-        provider.name() === MASSA_STATION && setStationInstalled(true);
-      });
-    } else {
-      setStationInstalled(false);
-    }
-  }, [providersFetched]);
+    getAccounts();
+  }, []);
 
   useEffect(() => {
-    getAccounts();
-    getProviderList();
-    startRefetch();
+    const interval = setInterval(() => {
+      fetchMassaStation();
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -266,6 +265,19 @@ export function Index() {
     }
 
     return true;
+  }
+
+  function handleClosePopUp() {
+    setLoading({
+      box: 'none',
+      approve: 'none',
+      burn: 'none',
+      redeem: 'none',
+      lock: 'none',
+      mint: 'none',
+      error: 'none',
+    });
+    setAmount('');
   }
 
   async function handleSubmit(e: SyntheticEvent) {
@@ -352,7 +364,7 @@ export function Index() {
   }
 
   useEffect(() => {
-    if (loading.box === 'none') handleClosePopUp(setLoading, setAmount);
+    if (loading.box === 'none') handleClosePopUp();
   }, [loading.box]);
 
   const isLoading = loading.box !== 'none' ? 'blur-md' : null;
@@ -364,7 +376,7 @@ export function Index() {
     <>
       {isLoading && (
         <LoadingBox
-          onClose={() => handleClosePopUp(setLoading, setAmount)}
+          onClose={() => handleClosePopUp()}
           loading={loading}
           massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}
@@ -478,6 +490,7 @@ export function Index() {
           <Button
             disabled={
               isFetching ||
+              !currentWallet ||
               !isStationInstalled ||
               !isEvmWalletConnected ||
               !IS_EVM_SEPOLIA_CHAIN ||

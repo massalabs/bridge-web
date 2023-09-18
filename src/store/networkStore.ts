@@ -1,4 +1,4 @@
-export interface NetworktoreState {
+export interface NetworkStoreState {
   currentNetwork: string | null;
   availableNetworks: string[];
   isMetamaskInstalled: boolean;

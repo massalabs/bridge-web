@@ -38,6 +38,7 @@
       "connected": "Connected",
       "not-installed": "Not installed",
       "no-accounts": "No accounts",
+      "no-wallet": "No wallet sync",
       "wrong-chain": "Unsupported network"
     },
     "faq": {
@@ -141,8 +142,13 @@
     "description": "Connect your wallets to start bridging tokens. One EVM wallet and one Massa wallet are required.",
     "button": "Connect",
     "card-destination": {
+      "non-massa-wallet": "account switch for non Massa Wallet is through your browser extension",
       "from": "Sepolia wallet",
-      "to": "Massa wallet"
+      "to": "Selected wallet",
+      "switch": "switch wallet",
+      "select-wallet": "Select a wallet:",
+      "your-wallet": "Your wallet",
+      "no-wallets": "no wallets found"
     },
     "connected-cards": {
       "wallet-balance": "balance: "
@@ -160,7 +166,7 @@
       "install-metamask": "Install Metamask"
     },
     "station-connect-error": {
-      "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it.",
+      "error-station": "Unable to detect Massa Station and/or a compatible wallet. Run the app or download it.",
       "error-wallet": "Create a wallet at the  ",
       "add-wallet": "following link.",
       "error-account": "No wallet accounts found in Massa Wallet. ",

@@ -25,10 +25,7 @@ export async function increaseAllowance(
   const opId = await client.smartContracts().callSmartContract({
     targetAddress,
     functionName: 'increaseAllowance',
-    parameter: new Args()
-      .addString(CONTRACT_ADDRESS)
-      .addU256(amount)
-      .serialize(),
+    parameter: new Args().addString(CONTRACT_ADDRESS).addU256(amount),
     ...increaseAllowanceFee,
   });
 
@@ -52,7 +49,7 @@ export async function forwardBurn(
   const opId = await client.smartContracts().callSmartContract({
     targetAddress: CONTRACT_ADDRESS,
     functionName: 'forwardBurn',
-    parameter: new Args().addSerializable(request).serialize(),
+    parameter: new Args().addSerializable(request),
     ...forwardBurnFees,
   });
   return opId;

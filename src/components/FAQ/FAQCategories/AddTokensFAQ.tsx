@@ -6,7 +6,7 @@ import {
   TDAI_MASSA_ADDRESS,
   WETH_CONTRACT_ADDRESS,
   WETH_MASSA_ADDRESS,
-  supportedtokens,
+  supportedTokens,
 } from '@/const';
 import { FAQProps, FAQcategories } from '@/const/faq';
 import Intl from '@/i18n/i18n';
@@ -46,10 +46,10 @@ export function AddTokensFAQ(props: FAQProps) {
               </p>
               <p> Use these Smart contract addresses to see your balance: </p>
               <p>
-                {supportedtokens.tDai} - {TDAI_MASSA_ADDRESS}
+                {supportedTokens.tDai} - {TDAI_MASSA_ADDRESS}
               </p>
               <p>
-                {supportedtokens.WETH} - {WETH_MASSA_ADDRESS}
+                {supportedTokens.WETH} - {WETH_MASSA_ADDRESS}
               </p>
             </div>
             <div className="flex flex-col gap-3">
@@ -96,11 +96,11 @@ export function AddTokensFAQ(props: FAQProps) {
                     href="https://sepolia.etherscan.io/token/0x53844f9577c2334e541aec7df7174ece5df1fcf0"
                     target="_blank"
                   >
-                    {supportedtokens.tDai}
+                    {supportedTokens.tDai}
                   </a>
                   , provide this address: {TDAI_CONTRACT_ADDRESS}
                 </p>
-                <p> Symbol: {supportedtokens.tDai}</p>
+                <p> Symbol: {supportedTokens.tDai}</p>
                 <p> Decimals: 18</p>
               </div>
               <div className="flex flex-col">
@@ -111,11 +111,11 @@ export function AddTokensFAQ(props: FAQProps) {
                     href="https://sepolia.etherscan.io/address/0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424"
                     target="_blank"
                   >
-                    {supportedtokens.WETH}
+                    {supportedTokens.WETH}
                   </a>
                   , provide this address: {WETH_CONTRACT_ADDRESS}
                 </p>
-                <p> Symbol: {supportedtokens.WETH}</p>
+                <p> Symbol: {supportedTokens.WETH}</p>
                 <p> Decimals: 18</p>
               </div>
             </div>
