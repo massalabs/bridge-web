@@ -1,5 +1,6 @@
 import { useState, SyntheticEvent, useEffect, useRef } from 'react';
 
+import { useBearby } from '@hicaru/bearby-react';
 import { Client } from '@massalabs/massa-web3';
 import { Button, toast, Money } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
@@ -29,11 +30,7 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { forwardBurn } from '@/custom/bridge/bridge';
 import { handleApproveEVM } from '@/custom/bridge/handlers/handleApproveEvm';
 import { handleApproveMASSA } from '@/custom/bridge/handlers/handleApproveMassa';
-import {
-  ICustomError,
-  handleClosePopUp,
-  handleErrorMessage,
-} from '@/custom/bridge/handlers/handleErrorMessage';
+import { ICustomError } from '@/custom/bridge/handlers/handleErrorMessage';
 import {
   waitForMintEvent,
   waitIncludedOperation,
@@ -41,7 +38,11 @@ import {
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import {
+  useAccountStore,
+  useNetworkStore,
+  useWalletStore,
+} from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -55,9 +56,6 @@ export function Index() {
     isFetching,
     setStationInstalled,
     isStationInstalled,
-    startRefetch,
-    providersFetched,
-    loadAccounts,
   ] = useAccountStore((state) => [
     state.getAccounts,
     state.getTokens,
@@ -67,10 +65,9 @@ export function Index() {
     state.isFetching,
     state.setStationInstalled,
     state.isStationInstalled,
-    state.startRefetch,
-    state.providersFetched,
-    state.loadAccounts,
   ]);
+
+  const [currentWallet] = useWalletStore((state) => [state.currentWallet]);
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
@@ -142,6 +139,11 @@ export function Index() {
   const IS_NOT_BUILDNET = currentNetwork
     ? currentNetwork !== 'buildnet'
     : false;
+  const { base58: walletAddress } = useBearby();
+
+  useEffect(() => {
+    getAccounts();
+  }, [walletAddress]);
 
   useEffect(() => {
     setError({ amount: '' });
@@ -193,7 +195,7 @@ export function Index() {
     address: EVM_BRIDGE_ADDRESS,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
-    listener(events) {
+    listener(events: IEventLog[]) {
       handleRedeemEvent(events);
       unwatch?.();
     },
@@ -218,30 +220,24 @@ export function Index() {
     }
   }
 
-  async function getProviderList() {
+  async function fetchMassaStation() {
     const providerList = await providers();
     const massaStationWallet = providerList.some(
       (provider: { name: () => string }) => provider.name() === MASSA_STATION,
     );
+    useWalletStore.getState().setWallets(providerList.map((p) => p.name()));
     setStationInstalled(!!massaStationWallet);
   }
 
   useEffect(() => {
-    if (providersFetched.length > 0) {
-      loadAccounts(providersFetched);
-
-      providersFetched.some((provider: { name: () => string }) => {
-        provider.name() === MASSA_STATION && setStationInstalled(true);
-      });
-    } else {
-      setStationInstalled(false);
-    }
-  }, [providersFetched]);
+    getAccounts();
+  }, []);
 
   useEffect(() => {
-    getAccounts();
-    getProviderList();
-    startRefetch();
+    const interval = setInterval(() => {
+      fetchMassaStation();
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -362,6 +358,39 @@ export function Index() {
     }
 
     return true;
+  }
+
+  function handleErrorMessage(error: string) {
+    console.log(error);
+
+    const ERRORS_MESSAGES = [
+      'unable to unprotect wallet',
+      'TransactionExecutionError: User rejected the request',
+      'Error: User rejected',
+      'Error: Wallet is not connected',
+    ];
+
+    const regex = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
+
+    if (regex.test(error)) {
+      handleClosePopUp();
+      return;
+    } else {
+      toast.error(Intl.t(`index.bridge.error.general`));
+    }
+  }
+
+  function handleClosePopUp() {
+    setLoading({
+      box: 'none',
+      approve: 'none',
+      burn: 'none',
+      redeem: 'none',
+      lock: 'none',
+      mint: 'none',
+      error: 'none',
+    });
+    setAmount('');
   }
 
   async function handleSubmit(e: SyntheticEvent) {
@@ -599,6 +628,7 @@ export function Index() {
           <Button
             disabled={
               isFetching ||
+              !currentWallet ||
               !isStationInstalled ||
               !isEvmWalletConnected ||
               !IS_EVM_SEPOLIA_CHAIN ||

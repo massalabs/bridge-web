@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import accountStore, { AccountStoreState } from './accountStore';
 import configStore, { ConfigStoreState } from './configStore';
 import networkStore, { NetworktoreState } from './networkStore';
+import walletStore, { WalletStoreState } from './walletStore';
 import { NETWORKS } from '@/const';
 import { getCurrentStationNetwork } from '@/custom/provider/getNetwork';
 
@@ -33,3 +34,7 @@ _initializeStores();
 setInterval(() => {
   _fetchStationNetwork();
 }, 5000);
+
+export const useWalletStore = create<WalletStoreState>((set, get) => ({
+  ...walletStore(set, get),
+}));

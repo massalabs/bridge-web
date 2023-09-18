@@ -12,7 +12,11 @@ import { ConnectWalletPopup, Footer } from '@/components';
 import { TopBanner } from '@/components/TopBanner/TopBanner';
 import { NETWORKS } from '@/const';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import {
+  useAccountStore,
+  useNetworkStore,
+  useWalletStore,
+} from '@/store/store';
 import { capitalize } from '@/utils/utils';
 
 export function LayoutBridge({ ...props }) {
@@ -26,11 +30,19 @@ export function LayoutBridge({ ...props }) {
     return { item: capitalize(n) };
   });
   const { isConnected: isEvmWalletConnected } = useAccount();
-  const [accounts, isFetching, isStationInstalled] = useAccountStore(
-    (state) => [state.accounts, state.isFetching, state.isStationInstalled],
-  );
-  const hasAccounts = accounts?.length > 0;
-  const showPingAnimation = isMetamaskInstalled && isStationInstalled;
+  const [isStationInstalled] = useAccountStore((state) => [
+    state.isStationInstalled,
+  ]);
+  const [currentWallet, isMassaWallet] = useWalletStore((state) => [
+    state.currentWallet,
+    state.isMassaWallet,
+  ]);
+
+  const noWalletConnected =
+    (!isStationInstalled && isMassaWallet) ||
+    (!currentWallet && !isMassaWallet);
+
+  const showPingAnimation = isMetamaskInstalled && noWalletConnected;
 
   const [selectedTheme, setSelectedTheme] = useState(
     storedTheme || 'theme-dark',
@@ -57,7 +69,6 @@ export function LayoutBridge({ ...props }) {
   function ConnectedWallet() {
     return (
       <Button
-        disabled={isFetching}
         variant="secondary"
         customClass="h-[54px]"
         onClick={() => setOpen(true)}
@@ -70,11 +81,7 @@ export function LayoutBridge({ ...props }) {
   function NotConnectedWallet() {
     return (
       <>
-        <Button
-          disabled={isFetching}
-          customClass="h-[54px] relative"
-          onClick={() => setOpen(true)}
-        >
+        <Button customClass="h-[54px] relative" onClick={() => setOpen(true)}>
           {Intl.t('connect-wallet.title')}
           {showPingAnimation && <PingAnimation />}
         </Button>
@@ -96,7 +103,7 @@ export function LayoutBridge({ ...props }) {
             options={options}
             select={NETWORKS.indexOf(currentNetwork ?? '')}
           />
-          {isEvmWalletConnected && hasAccounts && isStationInstalled ? (
+          {isEvmWalletConnected && !noWalletConnected ? (
             <ConnectedWallet />
           ) : (
             <NotConnectedWallet />
