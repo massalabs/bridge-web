@@ -129,7 +129,9 @@ export function Index() {
   const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
 
   const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
-  const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
+  const IS_NOT_BUILDNET = currentNetwork
+    ? currentNetwork !== 'buildnet'
+    : false;
 
   useEffect(() => {
     setError({ amount: '' });
@@ -137,6 +139,7 @@ export function Index() {
   }, [amount, layout, token?.name, tokenData?.decimals]);
 
   useEffect(() => {
+    console.log(currentNetwork);
     if ((!IS_EVM_SEPOLIA_CHAIN && isEvmWalletConnected) || IS_NOT_BUILDNET) {
       toast.error(Intl.t('connect-wallet.wrong-chain'));
       return;
