@@ -139,7 +139,6 @@ export function Index() {
   }, [amount, layout, token?.name, tokenData?.decimals]);
 
   useEffect(() => {
-    console.log(currentNetwork);
     if ((!IS_EVM_SEPOLIA_CHAIN && isEvmWalletConnected) || IS_NOT_BUILDNET) {
       toast.error(Intl.t('connect-wallet.wrong-chain'));
       return;
