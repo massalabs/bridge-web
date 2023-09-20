@@ -40,6 +40,7 @@ export function mockServer(environment = ENV.DEV) {
   server.passthrough('https://eth-sepolia.g.alchemy.com/**');
   server.passthrough('https://station.massa/**');
   server.passthrough('https://buildnet.massa.net/**');
+  server.passthrough('https://station.massa/cmd/executeFunction');
 
   return server;
 }

@@ -6,7 +6,7 @@ export const tagTypes = {
 };
 
 export const linkToInstall = 'https://station.massa.net/';
-export const linkToCreateWallet = 'https://station.massa';
+export const MASSA_STATION_URL = 'https://station.massa';
 export const linkToCreateAccount =
   'https://station.massa/plugin/massa-labs/massa-wallet/web-app/index';
 

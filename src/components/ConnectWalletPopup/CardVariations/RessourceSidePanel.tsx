@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
-import { linkToCreateWallet } from '@/utils/const';
+import { MASSA_STATION_URL } from '@/utils/const';
 
 function SepoliaInstructions() {
   return (
@@ -82,7 +82,7 @@ export function RessourceSidePanel() {
             </p>
             <a
               className="mas-menu-underline"
-              href={linkToCreateWallet}
+              href={MASSA_STATION_URL}
               target="_blank"
             >
               {Intl.t('general.click-here')}

@@ -18,7 +18,7 @@
   "dependencies": {
     "@massalabs/massa-web3": "^1.24.3-dev",
     "@massalabs/react-ui-kit": "^0.0.4-dev",
-    "@massalabs/wallet-provider": "^1.2.1-dev",
+    "@massalabs/wallet-provider": "^1.4.2-dev.20230920152410",
     "@rainbow-me/rainbowkit": "^1.0.7",
     "@tanstack/react-query": "^4.29.5",
     "axios": "^1.4.0",

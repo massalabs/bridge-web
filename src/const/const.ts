@@ -29,6 +29,8 @@ export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
 
+export const NETWORKS = ['mainnet', 'testnet', 'buildnet', 'labnet'];
+
 // Transaction fees
 export const forwardBurnFees = {
   fee: 0n,

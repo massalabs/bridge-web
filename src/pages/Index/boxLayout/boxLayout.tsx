@@ -19,10 +19,11 @@ import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
-import { useAccountStore } from '@/store/store';
-import { MASSA_TO_EVM } from '@/utils/const';
+import { useAccountStore, useNetworkStore } from '@/store/store';
+import { MASSA_STATION_URL, MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
+import { capitalize } from '@/utils/utils';
 
 interface Layout {
   header: ReactNode;
@@ -133,30 +134,33 @@ function MassaHeader() {
   const [isFetching, accounts, isStationInstalled] = useAccountStore(
     (state) => [state.isFetching, state.accounts, state.isStationInstalled],
   );
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
 
   const hasNoAccounts = accounts?.length <= 0;
+  const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
 
   function displayStatus() {
+    if (IS_NOT_BUILDNET) return <WrongChain />;
     if (!isStationInstalled) return <Disconnected />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }
 
   return (
-    <div className="mb-4 flex items-center justify-between">
+    <div className="flex items-center justify-between">
       <div className="w-1/2">
         <Dropdown
-          readOnly={hasNoAccounts || isFetching}
+          readOnly={hasNoAccounts || isFetching || IS_NOT_BUILDNET}
           options={[
             {
-              item: 'Massa Buildnet',
+              item: `Massa ${capitalize(currentNetwork)}`,
               icon: iconsNetworks['MASSASTATION'],
             },
           ]}
         />
       </div>
       <div className="flex items-center gap-3">
-        <p className="mas-body">Massa Wallet</p>
+        <p className="mas-body">Massa</p>
         {isFetching ? <FetchingStatus /> : displayStatus()}
       </div>
     </div>
@@ -194,12 +198,32 @@ function MassaMiddle() {
     state.isFetching,
     state.connectedAccount,
   ]);
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
+  const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
 
   return (
-    <div className="mb-4 flex items-center gap-2">
-      <p className="mas-body2">Wallet address:</p>
-      <div className="mas-caption">
-        {isFetching ? <FetchingLine /> : connectedAccount?.address()}
+    <div>
+      {IS_NOT_BUILDNET ? (
+        <div className="flex items-center justify-end">
+          <a
+            href={MASSA_STATION_URL}
+            target="_blank"
+            className="flex align-middle items-center mas-h3 text-f-disabled-1 underline cursor-pointer"
+          >
+            {Intl.t(`connect-wallet.connect-metamask.switch-network`)}
+          </a>
+          <Tooltip
+            className="p-0 pl-2"
+            customClass="mas-caption whitespace-nowrap"
+            content={Intl.t(`connect-wallet.connect-massa.unsupported-net`)}
+          />
+        </div>
+      ) : null}
+      <div className="mt-4 mb-4 flex items-center gap-2">
+        <p className="mas-body2">Wallet address:</p>
+        <div className="mas-caption">
+          {isFetching ? <FetchingLine /> : connectedAccount?.address()}
+        </div>
       </div>
     </div>
   );

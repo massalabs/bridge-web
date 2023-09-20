@@ -1,47 +1,17 @@
-// import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
-// import { Outlet, useParams, useNavigate } from 'react-router-dom';
-// import { useResource, usePost } from '../../custom/api';
+import { useEffect } from 'react';
 
-// import { URL } from '../../const/url/url';
-// import { NetworkModel } from '../../models';
-// import { useNetworkStore } from '../../store/store';
+import { Outlet, useNavigate } from 'react-router-dom';
 
-// interface NetworkRequest {
-//   network: string;
-// }
+import { useNetworkStore } from '@/store/store';
 
 export function Network() {
-  // const navigate = useNavigate();
-  // const { network } = useParams();
+  const navigate = useNavigate();
 
-  // const { data: networkData, isLoading } = useResource<NetworkModel>(
-  //   URL.PATH_NETWORKS,
-  // );
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
 
-  // const { mutate } = usePost<NetworkRequest>(`${URL.PATH_NETWORKS}/${network}`);
-
-  // const [setCurrentNetwork, setAvailableNetworks] = useNetworkStore((state) => [
-  //   state.setCurrentNetwork,
-  //   state.setAvailableNetworks,
-  // ]);
-
-  // useEffect(() => {
-  //   if (networkData) {
-  //     const { currentNetwork, availableNetworks } = networkData;
-
-  //     if (network && !availableNetworks?.includes(network) && currentNetwork)
-  //       navigate(currentNetwork);
-  //   }
-  // }, [networkData, network]);
-
-  // useEffect(() => {
-  //   if (!isLoading && network && networkData) {
-  //     setCurrentNetwork(network);
-  //     setAvailableNetworks(networkData.availableNetworks);
-  //     mutate({});
-  //   }
-  // }, [isLoading, network]);
+  useEffect(() => {
+    navigate(`/${currentNetwork}/index`);
+  }, [currentNetwork]);
 
   return <Outlet />;
 }
