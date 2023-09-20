@@ -9,20 +9,21 @@ import {
 import { useAccount } from 'wagmi';
 
 import { ConnectWalletPopup, Footer } from '@/components';
+import { NETWORKS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
+import { capitalize } from '@/utils/utils';
 
 export function LayoutBridge({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
 
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
   const [isMetamaskInstalled] = useNetworkStore((state) => [
     state.isMetamaskInstalled,
   ]);
-  const options = [
-    {
-      item: 'Buildnet',
-    },
-  ];
+  const options = NETWORKS.map((n) => {
+    return { item: capitalize(n) };
+  });
   const { isConnected: isEvmWalletConnected } = useAccount();
   const [accounts, isFetching, isStationInstalled] = useAccountStore(
     (state) => [state.accounts, state.isFetching, state.isStationInstalled],
@@ -44,7 +45,7 @@ export function LayoutBridge({ ...props }) {
     return (
       <span className="absolute flex h-3 w-3 top-0 right-0 -mr-1 -mt-1">
         <span
-          className="animate-ping absolute inline-flex h-full w-full 
+          className="animate-ping absolute inline-flex h-full w-full
               rounded-full bg-s-error opacity-75 "
         ></span>
         <span className="relative inline-flex rounded-full h-3 w-3 bg-s-error"></span>
@@ -89,7 +90,11 @@ export function LayoutBridge({ ...props }) {
       <div className="flex flex-row items-center justify-between px-11 py-8 w-full h-fit fixed z-10 backdrop-blur-sm">
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
-          <Dropdown readOnly={true} options={options} />
+          <Dropdown
+            readOnly={true}
+            options={options}
+            select={NETWORKS.indexOf(currentNetwork ?? '')}
+          />
           {isEvmWalletConnected && hasAccounts && isStationInstalled ? (
             <ConnectedWallet />
           ) : (

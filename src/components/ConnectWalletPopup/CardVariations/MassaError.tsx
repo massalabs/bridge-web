@@ -2,7 +2,7 @@ import Intl from '@/i18n/i18n';
 import { FetchingStatus } from '@/pages/Index/Loading';
 import { useAccountStore } from '@/store/store';
 import {
-  linkToCreateWallet,
+  MASSA_STATION_URL,
   linkToInstall,
   linkToCreateAccount,
 } from '@/utils/const';
@@ -26,7 +26,7 @@ const ErrorObject: IErrorObject = {
     link: Intl.t('connect-wallet.station-connect-error.add-account'),
   },
   errorWallet: {
-    url: linkToCreateWallet,
+    url: MASSA_STATION_URL,
     content: Intl.t('connect-wallet.station-connect-error.error-wallet'),
     link: Intl.t('connect-wallet.station-connect-error.add-wallet'),
   },

@@ -6,7 +6,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
 import { ICOQuest } from '@/pages/Index/Quest';
-import { useConfigStore } from '@/store/store';
+import { useConfigStore, useNetworkStore } from '@/store/store';
 
 export interface IOutletContextType {
   themeIcon: JSX.Element;
@@ -24,9 +24,7 @@ export function Base() {
     'theme-dark',
   );
 
-  useEffect(() => {
-    navigate('buildnet/index');
-  }, [navigate]);
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
 
   // Store
   const setThemeStore = useConfigStore((s) => s.setTheme);
@@ -38,6 +36,10 @@ export function Base() {
     setThemeStorage(toggledTheme);
     setThemeStore(toggledTheme);
   }
+
+  useEffect(() => {
+    navigate(`/${currentNetwork}/index`);
+  }, [navigate]);
 
   // Template
   return (

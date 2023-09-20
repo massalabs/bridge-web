@@ -1,12 +1,13 @@
 import { Factory } from 'miragejs';
 
 import { NetworkModel } from '../../models/NetworkModel';
+import { NETWORKS } from '@/const';
 
 export const networkFactory = Factory.extend<NetworkModel>({
   availableNetworks() {
-    return ['Testnet', 'Buildnet', 'Labnet'];
+    return NETWORKS;
   },
   currentNetwork() {
-    return 'Buildnet';
+    return 'buildnet';
   },
 });

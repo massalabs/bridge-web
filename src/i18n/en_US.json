@@ -121,14 +121,17 @@
     "connected-cards": {
       "wallet-balance": "balance: "
     },
+    "connect-massa": {
+      "unsupported-net": "Switch to 'buildnet' in top-right corner of Station's homepage"
+    },
+    "wrong-chain": "There's unsupported chain selected. Please, switch it!",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
       "title": "Metamask",
       "invalid-network": "Current network is not supported. Please, switch to Sepolia testnet.",
       "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
-      "install-metamask": "Install Metamask",
-      "wrong-chain": "Current network is not supported. Please, switch to Sepolia testnet."
+      "install-metamask": "Install Metamask"
     },
     "station-connect-error": {
       "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it on the right.",

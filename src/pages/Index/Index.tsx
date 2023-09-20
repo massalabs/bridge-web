@@ -34,7 +34,7 @@ import {
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useNetworkStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -128,16 +128,20 @@ export function Index() {
 
   const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
 
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
+  const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
+
   useEffect(() => {
     setError({ amount: '' });
     setDecimals(tokenData?.decimals || 18);
   }, [amount, layout, token?.name, tokenData?.decimals]);
 
   useEffect(() => {
-    if (!IS_EVM_SEPOLIA_CHAIN && isEvmWalletConnected) {
-      toast.error(Intl.t('connect-wallet.connect-metamask.wrong-chain'));
+    if ((!IS_EVM_SEPOLIA_CHAIN && isEvmWalletConnected) || IS_NOT_BUILDNET) {
+      toast.error(Intl.t('connect-wallet.wrong-chain'));
+      return;
     }
-  }, [chain]);
+  }, [chain, currentNetwork]);
 
   useEffect(() => {
     setAmount('');
@@ -401,6 +405,7 @@ export function Index() {
       });
       setRedeemSteps(Intl.t('index.loading-box.burned-final'));
     } catch (error) {
+      console.log(error);
       setLoading({
         box: 'error',
         burn: 'error',
@@ -652,7 +657,8 @@ export function Index() {
               isFetching ||
               !isStationInstalled ||
               !isEvmWalletConnected ||
-              !IS_EVM_SEPOLIA_CHAIN
+              !IS_EVM_SEPOLIA_CHAIN ||
+              IS_NOT_BUILDNET
             }
             onClick={(e) => handleSubmit(e)}
           >
