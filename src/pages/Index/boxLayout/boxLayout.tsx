@@ -170,21 +170,22 @@ function MassaHeader() {
 function EVMMiddle() {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const SEPOLIA_CHAIN_ID = getChainId();
-  const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
+  const IS_NOT_EVM_SEPOLIA_CHAIN =
+    chain?.id !== SEPOLIA_CHAIN_ID && isConnected;
 
   return (
     <div>
-      {IS_EVM_SEPOLIA_CHAIN ? null : (
+      {IS_NOT_EVM_SEPOLIA_CHAIN ? (
         <div
           className="flex justify-end mas-h3 text-f-disabled-1 underline cursor-pointer"
           onClick={() => switchNetwork?.(SEPOLIA_CHAIN_ID)}
         >
           {Intl.t(`connect-wallet.connect-metamask.switch-network`)}
         </div>
-      )}
+      ) : null}
       <div className="mt-4 mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
         <p className="mas-caption">{address}</p>
