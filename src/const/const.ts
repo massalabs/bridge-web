@@ -35,13 +35,13 @@ export const NETWORKS = ['mainnet', 'testnet', 'buildnet', 'labnet'];
 export const forwardBurnFees = {
   fee: 0n,
   coins: 100000n,
-  maxGas: 1000000n,
+  maxGas: 700_000_000n,
 };
 
 export const increaseAllowanceFee = {
   fee: 0n,
   coins: 1000n,
-  maxGas: 1000000n,
+  maxGas: 700_000_000n,
 };
 
 export const supportedtokens = {
