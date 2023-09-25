@@ -140,8 +140,8 @@ function MassaHeader() {
   const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
 
   function displayStatus() {
-    if (IS_NOT_BUILDNET) return <WrongChain />;
     if (!isStationInstalled) return <Disconnected />;
+    else if (IS_NOT_BUILDNET) return <WrongChain />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }
@@ -195,16 +195,19 @@ function EVMMiddle() {
 }
 
 function MassaMiddle() {
-  const [isFetching, connectedAccount] = useAccountStore((state) => [
-    state.isFetching,
-    state.connectedAccount,
-  ]);
+  const [isFetching, connectedAccount, isStationInstalled] = useAccountStore(
+    (state) => [
+      state.isFetching,
+      state.connectedAccount,
+      state.isStationInstalled,
+    ],
+  );
   const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
   const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
 
   return (
     <div>
-      {IS_NOT_BUILDNET ? (
+      {IS_NOT_BUILDNET && isStationInstalled ? (
         <div className="flex items-center justify-end">
           <a
             href={MASSA_STATION_URL}
