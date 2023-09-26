@@ -4,7 +4,7 @@ import delay from 'delay';
 import { CONTRACT_ADDRESS } from '@/const';
 import { safeJsonParse } from '@/utils/utils';
 
-const WAIT_STATUS_TIMEOUT = 120_000;
+const WAIT_STATUS_TIMEOUT = 300_000;
 const STATUS_POLL_INTERVAL_MS = 1000;
 
 async function getOperationStatus(
