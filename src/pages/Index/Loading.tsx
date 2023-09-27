@@ -37,7 +37,7 @@ export function LoadingBox(props: ILoadingBoxProps) {
         className={`z-10 absolute flex-none max-w-2xl w-full h-[870px] blur-md`}
       />
       <div
-        className="absolute z-10 p-10 max-w-sm w-full min-h-96 border border-tertiary rounded-2xl
+        className="absolute z-10 p-10 pb-14 max-w-sm w-full min-h-96 border border-tertiary rounded-2xl
               bg-secondary/50 backdrop-blur-lg text-f-primary"
       >
         <div className="flex justify-end pb-8">
@@ -51,10 +51,10 @@ export function LoadingBox(props: ILoadingBoxProps) {
           </button>
         </div>
         <div
-          className={`relative flex flex-col items-center justify-start pb-10`}
+          className={`relative flex flex-col items-center justify-start mb-10`}
         >
-          {loadingState(loading.box, 'lg')}
-          <p className="mas-subtitle pt-6">
+          <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
+          <p className="mas-subtitle pt-6 text-center">
             {IS_BOX_SUCCESS
               ? Intl.t('index.loading-box.success')
               : HAS_SERVER_ERROR
@@ -74,7 +74,7 @@ export function LoadingBox(props: ILoadingBoxProps) {
         {IS_BOX_SUCCESS ? (
           <Ran {...props} />
         ) : HAS_SERVER_ERROR ? (
-          <BridgeError />
+          <BridgeError {...props} />
         ) : massaToEvm ? (
           <RunningMassaEVM {...props} />
         ) : (
@@ -173,11 +173,21 @@ function Ran(props: ILoadingBoxProps) {
   );
 }
 
-export function BridgeError() {
+export function BridgeError(props: ILoadingBoxProps) {
+  const { massaToEvm } = props;
   return (
     <div className="text-center mas-body2">
-      <p> {Intl.t('index.loading-box.error-something')}</p>
-      <p> {Intl.t('index.loading-box.error-drop')}</p>
+      <p> {Intl.t('index.loading-box.error-description')}</p>
+      <p>
+        {Intl.t('index.loading-box.error-expect', {
+          wallet: massaToEvm ? 'Metamask' : 'Massa Wallet',
+        })}
+      </p>
+      <strong className="mas-menu">
+        {Intl.t('index.loading-box.error-time')}
+      </strong>
+      <br />
+      <p> {Intl.t('index.loading-box.error-contact')}</p>
       <br />
       <u>
         <a href="mailto:support.bridge@massa.net" target="_blank">

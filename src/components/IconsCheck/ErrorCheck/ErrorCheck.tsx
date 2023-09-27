@@ -1,4 +1,4 @@
-import { RxCross2 } from 'react-icons/rx';
+import { FiAlertTriangle } from 'react-icons/fi';
 
 export function ErrorCheck({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }) {
   const isSmall = size === 'sm';
@@ -11,9 +11,9 @@ export function ErrorCheck({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }) {
 
   return (
     <div
-      className={`${sizeClass} rounded-full bg-s-error/30 flex justify-center items-center border-none`}
+      className={`${sizeClass} rounded-full bg-s-warning/30 flex justify-center items-center border-none p-1`}
     >
-      <RxCross2 className="text-s-error w-full h-full p-1" />
+      <FiAlertTriangle className="text-s-warning w-full h-full p-1" />
     </div>
   );
 }

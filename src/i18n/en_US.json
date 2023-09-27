@@ -44,9 +44,9 @@
     },
     "loading-box": {
       "title-bridge": "Processing bridge...",
-      "title-bridge-error": "Bridge failed",
+      "title-bridge-error": "Bridge transfer not yet finalized",
       "title-redeem": "Processing redeem...",
-      "title-redeem-error": "Redeem failed",
+      "title-redeem-error": "Redeem transfer not yet finalized",
       "subtitle": "(it can take up to 5 minutes)",
       "approve": "Approval",
       "bridge": "Bridge",
@@ -64,8 +64,10 @@
       "check": "Check the balance in your {name} wallet.",
       "add-tokens-message": "You might need to add the token manually to see its balance.",
       "instructions": "Instructions",
-      "error-something": "Something went wrong!",
-      "error-drop": "Please, drop us a message at:",
+      "error-description": "Transfer delay due to high traffic.",
+      "error-expect": "Expect tokens in your {wallet}",
+      "error-time": "within one hour.",
+      "error-contact": "If not received, contact us at:",
       "success": "Success!"
     },
     "input": {
