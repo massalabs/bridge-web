@@ -71,7 +71,9 @@ export function Index() {
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
 
+  // EVMOperationId -->should rename var.
   const burnMassaOperation = useRef<string | undefined>();
+  /// MassaOperationId
   const [bridgeMassaOperation, setBridgeMassaOperation] = useState<
     string | undefined
   >('');
@@ -550,6 +552,8 @@ export function Index() {
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
           token={token}
+          EVMOperationId={burnMassaOperation.current as string}
+          MassaOperationId={bridgeMassaOperation as string}
         />
       )}
       <div
