@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { FiX, FiPauseCircle } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
-import { Spinner, ErrorCheck, SuccessCheck } from '@/components';
+import { Spinner, WarningCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
@@ -230,7 +230,7 @@ export function FetchingStatus() {
 function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
   const loading: ILoading = {
     loading: <Spinner size={size} />,
-    error: <ErrorCheck size={size} />,
+    error: <WarningCheck size={size} />,
     success: <SuccessCheck size={size} />,
     none: <FiPauseCircle size={24} />,
   };
