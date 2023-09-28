@@ -177,7 +177,6 @@ export function Index() {
         lock: 'error',
         mint: 'error',
       });
-      toast.error(Intl.t(`index.bridge.error.general`));
     }
   }, [approveIsSuccess, approveIsError]);
 
