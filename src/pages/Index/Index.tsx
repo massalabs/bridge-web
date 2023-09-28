@@ -71,10 +71,11 @@ export function Index() {
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
 
-  const burnMassaOperation = useRef<string | undefined>();
-  const [bridgeMassaOperation, setBridgeMassaOperation] = useState<
-    string | undefined
-  >('');
+  const EVMOperationID = useRef<string | undefined>(undefined);
+  const [MassaOperationID, setMassaOperationID] = useState<string | undefined>(
+    undefined,
+  );
+
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
@@ -153,7 +154,7 @@ export function Index() {
     if (lockIsSuccess) {
       setLoading({ lock: 'success' });
       let data = lockData;
-      setBridgeMassaOperation(data?.transactionHash);
+      setMassaOperationID(data?.transactionHash);
     }
     if (lockIsError) {
       setLoading({ box: 'error', lock: 'error', mint: 'error' });
@@ -161,8 +162,8 @@ export function Index() {
   }, [lockIsSuccess, lockIsError]);
 
   useEffect(() => {
-    if (bridgeMassaOperation) monitorMintMassaEvents();
-  }, [bridgeMassaOperation]);
+    if (MassaOperationID) monitorMintMassaEvents();
+  }, [MassaOperationID]);
 
   useEffect(() => {
     if (approveIsSuccess) {
@@ -176,7 +177,6 @@ export function Index() {
         lock: 'error',
         mint: 'error',
       });
-      toast.error(Intl.t(`index.bridge.error.general`));
     }
   }, [approveIsSuccess, approveIsError]);
 
@@ -347,12 +347,12 @@ export function Index() {
   }
 
   async function handleRedeemEvent(events: IEventLog[]) {
-    if (!burnMassaOperation.current) {
+    if (!EVMOperationID.current) {
       return;
     }
     const found = events.some(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (ev) => (ev as any).args.burnOpId === burnMassaOperation.current,
+      (ev) => (ev as any).args.burnOpId === EVMOperationID.current,
     );
 
     if (found) {
@@ -360,7 +360,7 @@ export function Index() {
         box: 'success',
         redeem: 'success',
       });
-      burnMassaOperation.current = undefined;
+      EVMOperationID.current = undefined;
       getTokens();
     }
   }
@@ -395,7 +395,7 @@ export function Index() {
         parseUnits(amount, decimals),
       );
       // Start evm event listener
-      burnMassaOperation.current = operationId;
+      EVMOperationID.current = operationId;
 
       // operation is INCLUDED_PENDING
       setRedeemSteps(Intl.t('index.loading-box.included-pending'));
@@ -501,7 +501,7 @@ export function Index() {
   }
 
   async function monitorMintMassaEvents() {
-    if (!massaClient || !bridgeMassaOperation) {
+    if (!massaClient || !MassaOperationID) {
       return;
     }
 
@@ -510,7 +510,7 @@ export function Index() {
     });
 
     try {
-      const success = await waitForMintEvent(massaClient, bridgeMassaOperation);
+      const success = await waitForMintEvent(massaClient, MassaOperationID);
 
       if (success) {
         setLoading({
@@ -550,6 +550,9 @@ export function Index() {
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
           token={token}
+          operationId={
+            IS_MASSA_TO_EVM ? EVMOperationID.current : MassaOperationID
+          }
         />
       )}
       <div

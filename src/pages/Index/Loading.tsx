@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import { Clipboard } from '@massalabs/react-ui-kit';
 import { FiX, FiPauseCircle } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
@@ -8,6 +9,7 @@ import { ILoadingState, StateType } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
+import { maskAddress } from '@/utils/massaFormat';
 
 interface ILoading {
   loading: ReactNode;
@@ -23,6 +25,7 @@ interface ILoadingBoxProps {
   amount: string;
   redeemSteps: string;
   token: IToken | null;
+  operationId: string | undefined;
 }
 
 export function LoadingBox(props: ILoadingBoxProps) {
@@ -174,7 +177,8 @@ function Ran(props: ILoadingBoxProps) {
 }
 
 export function BridgeError(props: ILoadingBoxProps) {
-  const { massaToEvm } = props;
+  const { massaToEvm, operationId } = props;
+
   return (
     <div className="text-center mas-body2">
       <p> {Intl.t('index.loading-box.error-description')}</p>
@@ -189,11 +193,21 @@ export function BridgeError(props: ILoadingBoxProps) {
       <br />
       <p> {Intl.t('index.loading-box.error-contact')}</p>
       <br />
-      <u>
+      <u className="mb-4">
         <a href="mailto:support.bridge@massa.net" target="_blank">
           support.bridge@massa.net
         </a>
       </u>
+
+      {operationId && (
+        <Clipboard
+          customClass={'bg-transparent'}
+          displayedContent={`${
+            massaToEvm ? 'Operation ID:' : 'Transaction ID:'
+          } ${maskAddress(operationId)}`}
+          rawContent={operationId}
+        />
+      )}
     </div>
   );
 }
