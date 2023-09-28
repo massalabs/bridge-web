@@ -25,12 +25,9 @@ interface ILoadingBoxProps {
   amount: string;
   redeemSteps: string;
   token: IToken | null;
-  EVMOperationId: string;
-  MassaOperationId: string;
+  EVMOperationId: string | undefined;
+  MassaOperationId: string | undefined;
 }
-
-// operationId's may be null if operation fails to quickly
-// TODO: add generic message
 
 export function LoadingBox(props: ILoadingBoxProps) {
   const { onClose, loading, massaToEvm } = props;
@@ -202,20 +199,20 @@ export function BridgeError(props: ILoadingBoxProps) {
           support.bridge@massa.net
         </a>
       </u>
-      {massaToEvm ? (
+
+      {massaToEvm && EVMOperationId ? (
         <Clipboard
           customClass={'bg-transparent'}
           displayedContent={`Transaction ID: ${maskAddress(EVMOperationId)}`}
           rawContent={EVMOperationId}
         />
-      ) : (
+      ) : !massaToEvm && MassaOperationId ? (
         <Clipboard
           customClass={'bg-transparent'}
           displayedContent={`Operation ID: ${maskAddress(MassaOperationId)}`}
           rawContent={MassaOperationId}
         />
-      )}
-      {/* <p>Operation id: {massaToEvm ?  maskAddress(EVMOperationId)  : maskAddress(MassaOperationId)  }</p> */}
+      ) : null}
     </div>
   );
 }
