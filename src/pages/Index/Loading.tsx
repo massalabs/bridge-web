@@ -202,7 +202,9 @@ export function BridgeError(props: ILoadingBoxProps) {
       {operationId && (
         <Clipboard
           customClass={'bg-transparent'}
-          displayedContent={`Transaction ID: ${maskAddress(operationId)}`}
+          displayedContent={`${
+            massaToEvm ? 'Operation ID:' : 'Transaction ID:'
+          } ${maskAddress(operationId)}`}
           rawContent={operationId}
         />
       )}
