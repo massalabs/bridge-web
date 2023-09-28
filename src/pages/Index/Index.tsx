@@ -71,10 +71,11 @@ export function Index() {
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
 
-  const EVMOperationID = useRef<string | undefined>();
+  const EVMOperationID = useRef<string | undefined>(undefined);
   const [MassaOperationID, setMassaOperationID] = useState<string | undefined>(
-    '',
+    undefined,
   );
+
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
@@ -550,8 +551,9 @@ export function Index() {
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
           token={token}
-          EVMOperationId={EVMOperationID.current}
-          MassaOperationId={MassaOperationID}
+          operationId={
+            IS_MASSA_TO_EVM ? EVMOperationID.current : MassaOperationID
+          }
         />
       )}
       <div

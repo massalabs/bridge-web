@@ -25,8 +25,7 @@ interface ILoadingBoxProps {
   amount: string;
   redeemSteps: string;
   token: IToken | null;
-  EVMOperationId: string | undefined;
-  MassaOperationId: string | undefined;
+  operationId: string | undefined;
 }
 
 export function LoadingBox(props: ILoadingBoxProps) {
@@ -178,7 +177,7 @@ function Ran(props: ILoadingBoxProps) {
 }
 
 export function BridgeError(props: ILoadingBoxProps) {
-  const { massaToEvm, MassaOperationId, EVMOperationId } = props;
+  const { massaToEvm, operationId } = props;
 
   return (
     <div className="text-center mas-body2">
@@ -200,19 +199,13 @@ export function BridgeError(props: ILoadingBoxProps) {
         </a>
       </u>
 
-      {massaToEvm && EVMOperationId ? (
+      {operationId && (
         <Clipboard
           customClass={'bg-transparent'}
-          displayedContent={`Transaction ID: ${maskAddress(EVMOperationId)}`}
-          rawContent={EVMOperationId}
+          displayedContent={`Transaction ID: ${maskAddress(operationId)}`}
+          rawContent={operationId}
         />
-      ) : !massaToEvm && MassaOperationId ? (
-        <Clipboard
-          customClass={'bg-transparent'}
-          displayedContent={`Operation ID: ${maskAddress(MassaOperationId)}`}
-          rawContent={MassaOperationId}
-        />
-      ) : null}
+      )}
     </div>
   );
 }
