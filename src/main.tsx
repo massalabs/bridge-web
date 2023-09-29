@@ -16,7 +16,7 @@ import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
 import { Base, Network } from '@/components';
 import { PAGES } from '@/const/pages/pages';
-import { Error, NotFound, Index } from '@/pages/index';
+import { Error, NotFound, Index, Unavailable, SCDeploy } from '@/pages/index';
 
 const baseENV = import.meta.env.VITE_ENV;
 
@@ -37,16 +37,21 @@ const queryClient = new QueryClient();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route element={<Base />}>
-      <Route path=":network" element={<Network />}>
-        {/* routes for pages */}
-        <Route path={PAGES.INDEX} element={<Index />} />
-      </Route>
+    <>
+      <Route path={PAGES.SC_DEPLOY} element={<SCDeploy />} />
+      <Route path={PAGES.UNAVAILABLE} element={<Unavailable />} />
+      <Route element={<Base />}>
+        <Route path=":network" element={<Network />}>
+          {/* routes for pages */}
+          <Route path={PAGES.INDEX} element={<Index />} />
+        </Route>
 
-      {/* routes for errors */}
-      <Route path="error" element={<Error />} />
-      <Route path="*" element={<NotFound />} />
-    </Route>,
+        {/* routes for errors */}
+        <Route path="error" element={<Error />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+      ,
+    </>,
   ),
 );
 

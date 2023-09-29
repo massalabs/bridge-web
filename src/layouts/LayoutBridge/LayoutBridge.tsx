@@ -9,6 +9,7 @@ import {
 import { useAccount } from 'wagmi';
 
 import { ConnectWalletPopup, Footer } from '@/components';
+import { TopBanner } from '@/components/TopBanner/TopBanner';
 import { NETWORKS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
@@ -106,6 +107,7 @@ export function LayoutBridge({ ...props }) {
       <div
         className={`flex flex-col justify-center items-center pt-[150px] pb-10`}
       >
+        <TopBanner />
         {children}
       </div>
       {open && <ConnectWalletPopup setOpen={setOpen} />}
