@@ -56,9 +56,11 @@
     },
     "loading-box": {
       "title-bridge": "Processing bridge...",
-      "title-bridge-error": "Bridge transfer not yet finalized",
+      "title-bridge-warning": "Bridge transfer not yet finalized",
+      "title-bridge-error": "Bridge failed",
       "title-redeem": "Processing redeem...",
-      "title-redeem-error": "Redeem transfer not yet finalized",
+      "title-redeem-warning": "Redeem transfer not yet finalized",
+      "title-redeem-error": "Redeem failed",
       "subtitle": "(it can take up to 5 minutes)",
       "approve": "Approval",
       "bridge": "Bridge",
@@ -80,7 +82,9 @@
       "error-expect": "Expect tokens in your {wallet}",
       "error-time": "within one hour.",
       "error-contact": "If not received, contact us at:",
-      "success": "Success!"
+      "success": "Success!",
+      "error-something": "Something went wrong!",
+      "error-drop": "Please, drop us a message at:"
     },
     "input": {
       "placeholder": {
