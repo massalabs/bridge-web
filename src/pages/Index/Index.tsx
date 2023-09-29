@@ -26,6 +26,7 @@ import {
   U256_MAX,
   EVM_BRIDGE_ADDRESS,
 } from '@/const';
+import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import {
   waitForMintEvent,
@@ -663,7 +664,9 @@ export function Index() {
               !isStationInstalled ||
               !isEvmWalletConnected ||
               !IS_EVM_SEPOLIA_CHAIN ||
-              IS_NOT_BUILDNET
+              IS_NOT_BUILDNET ||
+              (BRIDGE_OFF && !IS_MASSA_TO_EVM) ||
+              (REDEEM_OFF && IS_MASSA_TO_EVM)
             }
             onClick={(e) => handleSubmit(e)}
           >
