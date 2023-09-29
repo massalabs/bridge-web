@@ -8,7 +8,19 @@
     "download": "Download",
     "instructions": "Instructions"
   },
+  "sc-deploy": {
+    "title": "Bridge is under deployment!",
+    "subtitle": "A new smart contract is being deployed! We should be back in some minutes."
+  },
+  "unavailable": {
+    "title": "Bridge is under maintenance!",
+    "subtitle": "We are working hard to improve a bit the Bridge! We should be back soon."
+  },
   "index": {
+    "top-banner": {
+      "bridge-off": "The Bridge process is temporarily down but you can still Redeem tokens. We expect to be back running soon!",
+      "redeem-off": "The Redeem process is temporarily down but you can still Bridge tokens. We expect to be back running soon!"
+    },
     "footer": {
       "tos": "Terms of Service",
       "pop": "Privacy Policy",

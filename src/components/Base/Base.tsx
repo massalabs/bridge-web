@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Toast } from '@massalabs/react-ui-kit';
 import { Outlet, useNavigate } from 'react-router-dom';
 
+import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
 import { ICOQuest } from '@/pages/Index/Quest';
@@ -38,7 +39,13 @@ export function Base() {
   }
 
   useEffect(() => {
-    navigate(`/${currentNetwork}/index`);
+    if (SC_DEPLOY) {
+      navigate(`/sc-deploy`);
+    } else if (NO_BRIDGE) {
+      navigate(`/unavailable`);
+    } else {
+      navigate(`/${currentNetwork}/index`);
+    }
   }, [navigate]);
 
   // Template
