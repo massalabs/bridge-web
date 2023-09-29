@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { BridgeLogo } from '@massalabs/react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 
+import { UpperBridgeImage } from '@/assets/UpperBridgeImage';
 import { NO_BRIDGE } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import Intl from '@/i18n/i18n';
@@ -27,6 +28,9 @@ export function Unavailable() {
         className="bg-fixed bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
                 from-bright-blue to-deep-blue to-60% overflow-auto w-full"
       >
+        <div className="fixed">
+          <UpperBridgeImage />
+        </div>
         <div className="h-screen flex items-center justify-center">
           <div className="ml-[20%] pt-40 w-full">
             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
