@@ -4,7 +4,7 @@ import { Clipboard } from '@massalabs/react-ui-kit';
 import { FiX, FiPauseCircle } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
-import { Spinner, WarningCheck, SuccessCheck } from '@/components';
+import { Spinner, ErrorCheck, WarningCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
@@ -14,6 +14,7 @@ import { maskAddress } from '@/utils/massaFormat';
 interface ILoading {
   loading: ReactNode;
   error: ReactNode;
+  warning: ReactNode;
   success: ReactNode;
   none: ReactNode;
 }
@@ -77,7 +78,7 @@ export function LoadingBox(props: ILoadingBoxProps) {
         {IS_BOX_SUCCESS ? (
           <Ran {...props} />
         ) : HAS_SERVER_ERROR ? (
-          <BridgeError {...props} />
+          <BridgeError />
         ) : massaToEvm ? (
           <RunningMassaEVM {...props} />
         ) : (
@@ -176,7 +177,22 @@ function Ran(props: ILoadingBoxProps) {
   );
 }
 
-export function BridgeError(props: ILoadingBoxProps) {
+export function BridgeError() {
+  return (
+    <div className="text-center mas-body2">
+      <p> {Intl.t('index.loading-box.error-something')}</p>
+      <p> {Intl.t('index.loading-box.error-drop')}</p>
+      <br />
+      <u>
+        <a href="mailto:support.bridge@massa.net" target="_blank">
+          support.bridge@massa.net
+        </a>
+      </u>
+    </div>
+  );
+}
+
+export function BridgeWarning(props: ILoadingBoxProps) {
   const { massaToEvm, operationId } = props;
 
   return (
@@ -244,7 +260,8 @@ export function FetchingStatus() {
 function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
   const loading: ILoading = {
     loading: <Spinner size={size} />,
-    error: <WarningCheck size={size} />,
+    error: <ErrorCheck size={size} />,
+    warning: <WarningCheck size={size} />,
     success: <SuccessCheck size={size} />,
     none: <FiPauseCircle size={24} />,
   };
