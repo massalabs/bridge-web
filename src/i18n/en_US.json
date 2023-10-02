@@ -128,6 +128,8 @@
     "no-wallet": "No wallet is associated with your Massa Account. Please create one and try again!"
   },
   "connect-wallet": {
+    "download-massa": "Download Massa Wallet",
+    "create-wallet": "Create a Massa Wallet",
     "title": "Connect wallets",
     "connected": "Connected wallets",
     "description": "Connect your wallets to start bridging tokens. One EVM wallet and one Massa wallet are required.",
@@ -152,7 +154,7 @@
       "install-metamask": "Install Metamask"
     },
     "station-connect-error": {
-      "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it on the right.",
+      "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it.",
       "error-wallet": "Create a wallet at the  ",
       "add-wallet": "following link.",
       "error-account": "No wallet accounts found in Massa Wallet. ",

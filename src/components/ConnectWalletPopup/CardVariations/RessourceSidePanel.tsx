@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
-import { MASSA_STATION_URL } from '@/utils/const';
+import { MASSA_STATION_INSTALL, MASSA_STATION_URL } from '@/utils/const';
 
 function SepoliaInstructions() {
   return (
@@ -23,19 +23,37 @@ function SepoliaInstructions() {
   );
 }
 
-function MassaStationInstructions() {
+function MassaStationDownload() {
   return (
     <div className="flex flex-col justify-center items-center gap-5">
-      <Tag type="success" content="Create a Massa Wallet" />
+      <Tag type="success" content={Intl.t('connect-wallet.download-massa')} />
       <p className="text-center mas-menu-default w-60">
         {Intl.t('connect-wallet.ressource-sidepanel.download-massa-station')}
       </p>
       <a
         className="mas-menu-underline"
-        href="https://station.massa.net"
+        href={MASSA_STATION_INSTALL}
         target="_blank"
       >
         {Intl.t('general.download')}
+      </a>
+    </div>
+  );
+}
+
+function MassaStationInstructions() {
+  return (
+    <div className="flex flex-col justify-center items-center gap-5">
+      <Tag type="success" content={Intl.t('connect-wallet.create-wallet')} />
+      <p className="text-center mas-menu-default w-60">
+        {Intl.t('connect-wallet.ressource-sidepanel.download-massa-station')}
+      </p>
+      <a
+        className="mas-menu-underline"
+        href={MASSA_STATION_URL}
+        target="_blank"
+      >
+        {Intl.t('general.click-here')}
       </a>
     </div>
   );
@@ -61,33 +79,9 @@ export function RessourceSidePanel() {
     >
       {isBothNotConnected ? (
         <>
-          <div className="flex flex-col justify-center items-center gap-5">
-            <Tag type="info" content="Add Sepolia testnet" />
-            <p className="text-center mas-menu-default w-60">
-              {Intl.t('connect-wallet.ressource-sidepanel.add-sepolia')}
-            </p>
-            <a
-              className="mas-menu-underline"
-              href="https://support.metamask.io/hc/en-us/articles/13946422437147-How-to-view-testnets-in-MetaMask"
-              target="_blank"
-            >
-              {Intl.t('general.click-here')}
-            </a>
-          </div>
+          <SepoliaInstructions />
           <div className="w-full border-t border-info/5" />
-          <div className="flex flex-col justify-center items-center gap-5">
-            <Tag type="success" content="Create a Massa Wallet" />
-            <p className="text-center mas-menu-default w-56">
-              {Intl.t('connect-wallet.ressource-sidepanel.add-massa')}
-            </p>
-            <a
-              className="mas-menu-underline"
-              href={MASSA_STATION_URL}
-              target="_blank"
-            >
-              {Intl.t('general.click-here')}
-            </a>
-          </div>
+          <MassaStationDownload />
         </>
       ) : isOnlyMetamaskConnected && accounts ? (
         <MassaStationInstructions />

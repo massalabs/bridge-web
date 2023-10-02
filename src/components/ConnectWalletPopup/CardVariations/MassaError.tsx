@@ -3,7 +3,7 @@ import { FetchingStatus } from '@/pages/Index/Loading';
 import { useAccountStore } from '@/store/store';
 import {
   MASSA_STATION_URL,
-  linkToInstall,
+  MASSA_STATION_INSTALL,
   linkToCreateAccount,
 } from '@/utils/const';
 
@@ -17,7 +17,7 @@ interface IErrorObject {
 
 const ErrorObject: IErrorObject = {
   errorMassaStation: {
-    url: linkToInstall,
+    url: MASSA_STATION_INSTALL,
     content: Intl.t('connect-wallet.station-connect-error.error-station'),
   },
   errorAccount: {
