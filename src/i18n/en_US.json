@@ -163,7 +163,8 @@
     "ressource-sidepanel": {
       "add-sepolia": "If you want to add Sepolia on your Metamask",
       "add-massa": "If you want to create Massa Wallet",
-      "download-massa-station": "Download Massa Station and create Massa Wallet"
+      "download-massa-station": "Download Massa Station and create Massa Wallet",
+      "create-massa-station": "Launch your Massa Station and create a Massa Wallet"
     }
   },
   "get-tokens": {

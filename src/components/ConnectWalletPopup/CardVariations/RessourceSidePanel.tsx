@@ -41,12 +41,14 @@ function MassaStationDownload() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 function MassaStationInstructions() {
   return (
     <div className="flex flex-col justify-center items-center gap-5">
       <Tag type="success" content={Intl.t('connect-wallet.create-wallet')} />
       <p className="text-center mas-menu-default w-60">
-        {Intl.t('connect-wallet.ressource-sidepanel.download-massa-station')}
+        {Intl.t('connect-wallet.ressource-sidepanel.create-massa-station')}
       </p>
       <a
         className="mas-menu-underline"
@@ -84,7 +86,7 @@ export function RessourceSidePanel() {
           <MassaStationDownload />
         </>
       ) : isOnlyMetamaskConnected && accounts ? (
-        <MassaStationInstructions />
+        <MassaStationDownload />
       ) : (
         <SepoliaInstructions />
       )}
