@@ -56,10 +56,12 @@
     },
     "loading-box": {
       "title-bridge": "Processing bridge...",
-      "title-bridge-warning": "Bridge transfer not yet finalized",
+      "title-bridge-warning-1": "Bridge transfer",
+      "title-bridge-warning-2": "not yet finalized",
       "title-bridge-error": "Bridge failed",
       "title-redeem": "Processing redeem...",
-      "title-redeem-warning": "Redeem transfer not yet finalized",
+      "title-redeem-warning-1": "Redeem transfer",
+      "title-redeem-warning-2": "not yet finalized",
       "title-redeem-error": "Redeem failed",
       "subtitle": "(it can take up to 5 minutes)",
       "approve": "Approval",
@@ -78,10 +80,10 @@
       "check": "Check the balance in your {name} wallet.",
       "add-tokens-message": "You might need to add the token manually to see its balance.",
       "instructions": "Instructions",
-      "error-description": "Transfer delay due to high traffic.",
-      "error-expect": "Expect tokens in your {wallet}",
-      "error-time": "within one hour.",
-      "error-contact": "If not received, contact us at:",
+      "warning-description": "Transfer delay due to high traffic.",
+      "warning-expect": "Expect tokens in your {wallet}",
+      "warning-time": "within one hour.",
+      "warning-contact": "If not received, contact us at:",
       "success": "Success!",
       "error-something": "Something went wrong!",
       "error-drop": "Please, drop us a message at:"
@@ -111,6 +113,7 @@
     "bridge": {
       "error": {
         "general": "Something went wrong! Please, try again!",
+        "sign-timeout": "Burn (signature timeout)",
         "invalid-amount": "Invalid amount",
         "insuficient-funds": "Insuficient balance"
       },

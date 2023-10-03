@@ -62,6 +62,7 @@ export async function waitIncludedOperation(
   const status = await getOperationStatus(client, opId);
   throw new Error(
     `Fail to wait operation finality for ${opId}: Timeout reached. status: ${status}`,
+    { cause: { error: 'timeout', details: opId } },
   );
 }
 
@@ -107,7 +108,7 @@ export async function waitForMintEvent(
     await delay(STATUS_POLL_INTERVAL_MS);
     counterMs = Date.now() - start;
   }
-  throw new Error(
-    `Fail to wait bridge process finality lock tx ${lockTxId}: Timeout reached.`,
-  );
+  throw new Error(`Fail to wait bridge process finality lock tx ${lockTxId}`, {
+    cause: { error: 'timeout', details: lockTxId },
+  });
 }

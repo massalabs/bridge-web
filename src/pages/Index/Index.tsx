@@ -39,6 +39,13 @@ import { useAccountStore, useNetworkStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
+interface ICustomError extends Error {
+  cause?: {
+    error: string;
+    details: string;
+  };
+}
+
 export function Index() {
   const [
     getAccounts,
@@ -284,7 +291,7 @@ export function Index() {
         mint: 'error',
       });
 
-      if (error) handleErrorMessage(error.toString());
+      if (error) handleErrorMessage(error as Error);
 
       return false;
     }
@@ -297,13 +304,14 @@ export function Index() {
 
     try {
       if (!amount) {
-        throw new Error('Amount is not defined');
+        throw new Error('Missing param');
       }
+
       await _handleLockEVM(parseUnits(amount, decimals));
     } catch (error) {
       setLoading({ box: 'error', lock: 'error', mint: 'error' });
 
-      if (error) handleErrorMessage(error.toString());
+      if (error) handleErrorMessage(error as Error);
 
       return false;
     }
@@ -312,15 +320,13 @@ export function Index() {
   }
 
   async function handleApproveMASSA(client: Client) {
-    setLoading({
-      approve: 'loading',
-    });
     try {
-      if (!token) {
-        throw new Error('Token is not defined');
-      }
-      if (!amount) {
-        throw new Error('Amount is not defined');
+      setLoading({
+        approve: 'loading',
+      });
+
+      if (!token || !amount) {
+        throw new Error('Missing param');
       }
 
       let _amount = parseUnits(amount, decimals);
@@ -340,7 +346,7 @@ export function Index() {
         redeem: 'error',
       });
 
-      if (error) handleErrorMessage(error.toString());
+      if (error) handleErrorMessage(error as Error);
       return false;
     }
 
@@ -368,14 +374,8 @@ export function Index() {
 
   async function handleBridgeMASSA(client: Client) {
     try {
-      if (!token) {
-        throw new Error('Token is not defined');
-      }
-      if (!evmAddress) {
-        throw new Error('Evm address is not defined');
-      }
-      if (!amount) {
-        throw new Error('amount is not defined');
+      if (!token || !evmAddress || !amount) {
+        throw new Error('Missing param');
       }
 
       const tokenPairs = new TokenPair(
@@ -395,13 +395,12 @@ export function Index() {
         tokenPairs,
         parseUnits(amount, decimals),
       );
-      // Start evm event listener
       EVMOperationID.current = operationId;
 
-      // operation is INCLUDED_PENDING
       setRedeemSteps(Intl.t('index.loading-box.included-pending'));
+
       await waitIncludedOperation(client, operationId, true);
-      // operation is FINAL
+
       setLoading({
         burn: 'success',
         redeem: 'loading',
@@ -409,14 +408,8 @@ export function Index() {
       setRedeemSteps(Intl.t('index.loading-box.burned-final'));
     } catch (error) {
       console.log(error);
-      setLoading({
-        box: 'error',
-        burn: 'error',
-        redeem: 'error',
-        error: 'error',
-      });
 
-      if (error) handleErrorMessage(error.toString());
+      if (error) handleErrorMessage(error as Error);
 
       return false;
     }
@@ -424,19 +417,51 @@ export function Index() {
     return true;
   }
 
-  function handleErrorMessage(error: string) {
+  function handleErrorMessage(error: Error) {
     const ERRORS_MESSAGES = [
       'unable to unprotect wallet',
       'TransactionExecutionError: User rejected the request',
     ];
 
-    const regex = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
+    const WARNING_MESSAGES = [
+      'signing operation: calling executeHTTPRequest for call: aborting during HTTP request',
+    ];
 
-    if (regex.test(error)) {
+    const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
+    const regexWarn = new RegExp(WARNING_MESSAGES.join('|'), 'i');
+
+    const cause = (error as ICustomError)?.cause;
+    const isTimeout = cause?.error === 'timeout';
+
+    if (isTimeout) {
+      setLoading({
+        box: 'warning',
+        mint: 'warning',
+      });
+      return;
+    }
+
+    if (regexWarn.test(error.toString())) {
+      setRedeemSteps(Intl.t(`index.bridge.error.sign-timeout`));
+      setLoading({
+        box: 'error',
+        burn: 'error',
+        redeem: 'error',
+      });
+      return;
+    } else if (regexErr.test(error.toString())) {
       handleClosePopUp();
       return;
     } else {
+      console.log('AQUI');
+
       toast.error(Intl.t(`index.bridge.error.general`));
+      setLoading({
+        box: 'error',
+        burn: 'error',
+        redeem: 'error',
+        error: 'error',
+      });
     }
   }
 
@@ -502,9 +527,7 @@ export function Index() {
   }
 
   async function monitorMintMassaEvents() {
-    if (!massaClient || !MassaOperationID) {
-      return;
-    }
+    if (!massaClient || !MassaOperationID) return;
 
     setLoading({
       mint: 'loading',
@@ -523,15 +546,26 @@ export function Index() {
         setLoading({
           box: 'error',
           mint: 'error',
+          error: 'error',
         });
       }
     } catch (error) {
-      // timeout error
-      setLoading({
-        box: 'error',
-        mint: 'error',
-        error: 'error',
-      });
+      console.log(error);
+      const cause = (error as ICustomError)?.cause;
+      const isTimeout = cause?.error === 'timeout';
+
+      if (isTimeout) {
+        setLoading({
+          box: 'warning',
+          mint: 'warning',
+        });
+      } else {
+        setLoading({
+          box: 'error',
+          mint: 'error',
+          error: 'error',
+        });
+      }
     }
   }
 
@@ -540,6 +574,9 @@ export function Index() {
   }, [loading.box]);
 
   const isLoading = loading.box !== 'none' ? 'blur-md' : null;
+  const operationId = IS_MASSA_TO_EVM
+    ? EVMOperationID.current
+    : MassaOperationID;
 
   return (
     <>
@@ -551,9 +588,7 @@ export function Index() {
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
           token={token}
-          operationId={
-            IS_MASSA_TO_EVM ? EVMOperationID.current : MassaOperationID
-          }
+          operationId={operationId}
         />
       )}
       <div
