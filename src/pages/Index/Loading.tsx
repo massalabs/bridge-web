@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { Clipboard } from '@massalabs/react-ui-kit';
-import { FiX, FiPauseCircle } from 'react-icons/fi';
+import { Button, Clipboard } from '@massalabs/react-ui-kit';
+import { FiX, FiPauseCircle, FiExternalLink } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
 import { Spinner, ErrorCheck, WarningCheck, SuccessCheck } from '@/components';
@@ -33,7 +33,45 @@ export function LoadingBox(props: ILoadingBoxProps) {
   const { onClose, loading, massaToEvm } = props;
 
   const IS_BOX_SUCCESS = loading.box === 'success';
-  const HAS_SERVER_ERROR = loading.error !== 'none';
+  const IS_BOX_WARNING = loading.box === 'warning';
+  const IS_BOX_ERROR = loading.error !== 'none';
+
+  const displaySubtitle = !IS_BOX_SUCCESS && !IS_BOX_ERROR && !IS_BOX_WARNING;
+
+  function _getLoadingBoxHeader() {
+    if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
+    else if (IS_BOX_ERROR) {
+      return massaToEvm
+        ? Intl.t('index.loading-box.title-redeem-error')
+        : Intl.t('index.loading-box.title-bridge-error');
+    } else if (IS_BOX_WARNING) {
+      return massaToEvm ? (
+        <>
+          {Intl.t('index.loading-box.title-redeem-warning-1')}
+          <br />
+          {Intl.t('index.loading-box.title-redeem-warning-2')}
+        </>
+      ) : (
+        <>
+          {Intl.t('index.loading-box.title-bridge-warning-1')}
+          <br />
+          {Intl.t('index.loading-box.title-bridge-warning-2')}
+        </>
+      );
+    }
+
+    return massaToEvm
+      ? Intl.t('index.loading-box.title-redeem')
+      : Intl.t('index.loading-box.title-bridge');
+  }
+
+  function _getLoadingBoxContent() {
+    if (IS_BOX_ERROR) return <BridgeError />;
+    else if (IS_BOX_SUCCESS) return <Ran {...props} />;
+    else if (IS_BOX_WARNING) return <BridgeWarning {...props} />;
+    else if (massaToEvm) return <RunningMassaEVM {...props} />;
+    else return <RunningEVMMassa {...props} />;
+  }
 
   return (
     <>
@@ -59,31 +97,15 @@ export function LoadingBox(props: ILoadingBoxProps) {
         >
           <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
           <p className="mas-subtitle pt-6 text-center">
-            {IS_BOX_SUCCESS
-              ? Intl.t('index.loading-box.success')
-              : HAS_SERVER_ERROR
-              ? massaToEvm
-                ? Intl.t('index.loading-box.title-redeem-error')
-                : Intl.t('index.loading-box.title-bridge-error')
-              : massaToEvm
-              ? Intl.t('index.loading-box.title-redeem')
-              : Intl.t('index.loading-box.title-bridge')}
+            {_getLoadingBoxHeader()}
           </p>
-          {IS_BOX_SUCCESS || HAS_SERVER_ERROR ? null : (
+          {displaySubtitle && (
             <p className="text-xs pb-6">
               {Intl.t('index.loading-box.subtitle')}
             </p>
           )}
         </div>
-        {IS_BOX_SUCCESS ? (
-          <Ran {...props} />
-        ) : HAS_SERVER_ERROR ? (
-          <BridgeError />
-        ) : massaToEvm ? (
-          <RunningMassaEVM {...props} />
-        ) : (
-          <RunningEVMMassa {...props} />
-        )}
+        {_getLoadingBoxContent()}
       </div>
     </>
   );
@@ -139,7 +161,7 @@ function Ran(props: ILoadingBoxProps) {
 
   return (
     <div className="mas-body2 text-center">
-      <div className="mb-10">
+      <div className="mb-1">
         {massaToEvm
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
@@ -151,7 +173,7 @@ function Ran(props: ILoadingBoxProps) {
           to: massaToEvm ? sepolia : massa,
         })}
       </div>
-      <p className="mb-6">
+      <p className="mb-1">
         {Intl.t('index.loading-box.check', {
           name: massaToEvm ? 'Metamask' : 'Massa',
         })}
@@ -195,34 +217,55 @@ export function BridgeError() {
 export function BridgeWarning(props: ILoadingBoxProps) {
   const { massaToEvm, operationId } = props;
 
+  const _openInNewTab = (url: string) => {
+    window.open(url, '_blank', 'noreferrer');
+  };
+
   return (
-    <div className="text-center mas-body2">
-      <p> {Intl.t('index.loading-box.error-description')}</p>
+    <div className="text-center">
+      <p>{Intl.t('index.loading-box.warning-description')}</p>
       <p>
-        {Intl.t('index.loading-box.error-expect', {
+        {Intl.t('index.loading-box.warning-expect', {
           wallet: massaToEvm ? 'Metamask' : 'Massa Wallet',
         })}
       </p>
-      <strong className="mas-menu">
-        {Intl.t('index.loading-box.error-time')}
-      </strong>
-      <br />
-      <p> {Intl.t('index.loading-box.error-contact')}</p>
-      <br />
-      <u className="mb-4">
+      <p className="mas-menu font-bold">
+        {Intl.t('index.loading-box.warning-time')}
+      </p>
+      <p>{Intl.t('index.loading-box.warning-contact')}</p>
+      <u className="mb-2">
         <a href="mailto:support.bridge@massa.net" target="_blank">
           support.bridge@massa.net
         </a>
       </u>
 
       {operationId && (
-        <Clipboard
-          customClass={'bg-transparent'}
-          displayedContent={`${
-            massaToEvm ? 'Operation ID:' : 'Transaction ID:'
-          } ${maskAddress(operationId)}`}
-          rawContent={operationId}
-        />
+        <div className="flex align-middle items-center w-full justify-center">
+          <div className="mb-1">
+            {massaToEvm ? 'Operation:' : 'Transaction:'}
+          </div>
+          <div className="w-30">
+            <Clipboard
+              customClass={'bg-transparent w-20'}
+              displayedContent={maskAddress(operationId)}
+              rawContent={operationId}
+            />
+          </div>
+          {!massaToEvm && (
+            <div>
+              <Button
+                variant="icon"
+                onClick={() =>
+                  _openInNewTab(
+                    `https://sepolia.etherscan.io/tx/${operationId}`,
+                  )
+                }
+              >
+                <FiExternalLink size={18} />
+              </Button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
