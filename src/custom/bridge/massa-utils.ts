@@ -24,7 +24,7 @@ async function getOperationEvents(
     end: null,
     original_caller_address: null,
     original_operation_id: opId,
-    is_final: true,
+    is_final: null,
   });
 }
 
