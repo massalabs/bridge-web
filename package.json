@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --mode dev",
+    "dev": "vite --mode dev --port 8080",
     "build": "tsc && vite build --mode prod",
     "build-dev": "npm run build && npm run dev",
     "preview": "vite preview",
@@ -13,7 +13,16 @@
     "prettier:fix": "prettier --write .",
     "fmt": "npm run prettier:fix && npm run lint:fix",
     "fmt:check": "npm run prettier && npm run lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "npm run cy:e2e && npm run cy:component",
+    "test-ci": "npm run cy:e2e-ci && npm run cy:component-ci",
+    "cy:open": "cypress open",
+    "cy:e2e": "start-server-and-test dev http://localhost:8080 'cypress run --browser chrome'",
+    "cy:e2e-ci": "start-server-and-test dev http://localhost:8080 'cypress run --browser chrome --env VITE_CI_TEST=true'",
+    "postcy:e2e-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-e2e.html",
+    "cy:component": "cypress run --component --browser chrome",
+    "cy:component-ci": "export VITE_CI_TEST=true && cypress run --component --browser chrome",
+    "postcy:component-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-component.html"
   },
   "dependencies": {
     "@massalabs/massa-web3": "^1.24.3-dev",
@@ -53,6 +62,9 @@
     "@typescript-eslint/parser": "^5.57.1",
     "@vitejs/plugin-react": "^4.0.0-beta.0",
     "autoprefixer": "^10.4.14",
+    "cypress": "^13.3.3",
+    "cypress-browser-permissions": "^1.1.0",
+    "cypress-image-diff-js": "^1.31.0",
     "eslint": "^8.38.0",
     "eslint-plugin-html": "^7.1.0",
     "eslint-plugin-import": "^2.28.0",
