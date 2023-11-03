@@ -22,19 +22,22 @@
     "postcy:e2e-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-e2e.html",
     "cy:component": "cypress run --component --browser chrome",
     "cy:component-ci": "export VITE_CI_TEST=true && cypress run --component --browser chrome",
-    "postcy:component-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-component.html"
+    "postcy:component-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-component.html",
+    "synpress": "env-cmd -f .env npx synpress run -cf synpress.config.ts supportFile='cypress/support/e2e.ts'"
   },
   "dependencies": {
     "@massalabs/massa-web3": "^1.24.3-dev",
     "@massalabs/react-ui-kit": "^0.0.4-dev",
     "@massalabs/wallet-provider": "^1.4.1",
     "@rainbow-me/rainbowkit": "^1.0.7",
+    "@synthetixio/synpress": "^3.7.2-beta.9",
     "@tanstack/react-query": "^4.29.5",
     "axios": "^1.4.0",
     "big.js": "^6.2.1",
     "currency.js": "^2.0.4",
     "delay": "^6.0.0",
     "dot-object": "^2.1.4",
+    "env-cmd": "^10.1.0",
     "esbuild": "0.17.19",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.0",

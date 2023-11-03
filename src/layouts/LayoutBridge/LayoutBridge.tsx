@@ -61,6 +61,7 @@ export function LayoutBridge({ ...props }) {
         variant="secondary"
         customClass="h-[54px]"
         onClick={() => setOpen(true)}
+        data-testid="connect-wallet-button"
       >
         {Intl.t('connect-wallet.connected')}
       </Button>
@@ -74,6 +75,7 @@ export function LayoutBridge({ ...props }) {
           disabled={isFetching}
           customClass="h-[54px] relative"
           onClick={() => setOpen(true)}
+          data-testid="connect-wallet-button"
         >
           {Intl.t('connect-wallet.title')}
           {showPingAnimation && <PingAnimation />}
