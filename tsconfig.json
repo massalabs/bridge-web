@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "cypress"],
+  "include": ["src", "cypress", "synpress"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress';
 import getCompareSnapshotsPlugin from 'cypress-image-diff-js/dist/plugin';
 
 export default defineConfig({
+  video: false,
   env: {
     browserPermissions: {
       clipboard: 'allow',

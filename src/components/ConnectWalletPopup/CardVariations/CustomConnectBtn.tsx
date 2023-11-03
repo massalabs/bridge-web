@@ -39,6 +39,7 @@ export function CustomConnectButton(): JSX.Element {
               if (!connected) {
                 return (
                   <Button
+                    data-testid="connect-metamask-button"
                     variant="secondary"
                     customClass="h-14 pt-4"
                     onClick={openConnectModal}
