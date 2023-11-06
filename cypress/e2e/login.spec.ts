@@ -12,6 +12,7 @@ describe('Bridge | Connect | MestaMask | Connect', () => {
     cy.get('div').contains('MetaMask').click();
 
     cy.acceptMetamaskAccess({ switchNetwork: true }).should('be.true');
+    cy.get('[data-testid="tag"]').contains('Connected');
   });
 
   it('should change to sepolia network and connect', () => {
