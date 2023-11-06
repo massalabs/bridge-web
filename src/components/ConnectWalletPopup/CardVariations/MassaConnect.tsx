@@ -28,7 +28,6 @@ export function ConnectedCard() {
         <div className="min-w-[50%] pr-4">
           <Clipboard
             customClass="h-14 rounded-lg text-center px-9 !mas-body"
-            toggleHover={false}
             rawContent={connectedAccount?.address() ?? ''}
             displayedContent={maskAddress(connectedAccount?.address() ?? '')}
           />
