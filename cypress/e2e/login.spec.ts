@@ -1,6 +1,4 @@
-//TODO: add CI testing
-
-describe('Bridge | Connect | MestaMask | Connect And Switch', () => {
+describe('Bridge | Connect | MestaMask | Connect', () => {
   afterEach(() => {
     cy.disconnectMetamaskWalletFromDapp();
   });
