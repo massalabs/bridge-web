@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import synpressPlugins from '@synthetixio/synpress/plugins';
