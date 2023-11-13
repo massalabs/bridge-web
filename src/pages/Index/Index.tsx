@@ -364,6 +364,67 @@ export function Index() {
     return true;
   }
 
+  function handleErrorMessage(error: Error) {
+    const ERRORS_MESSAGES = [
+      'unable to unprotect wallet',
+      'TransactionExecutionError: User rejected the request',
+    ];
+
+    const WARNING_MESSAGES = [
+      'signing operation: calling executeHTTPRequest for call: aborting during HTTP request',
+    ];
+
+    const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
+    const regexWarn = new RegExp(WARNING_MESSAGES.join('|'), 'i');
+
+    const cause = (error as ICustomError)?.cause;
+    const isTimeout = cause?.error === 'timeout';
+
+    if (isTimeout) {
+      setLoading({
+        box: 'warning',
+        mint: 'warning',
+      });
+      return;
+    }
+
+    if (regexWarn.test(error.toString())) {
+      setRedeemSteps(Intl.t(`index.bridge.error.sign-timeout`));
+      setLoading({
+        box: 'error',
+        burn: 'error',
+        redeem: 'error',
+      });
+      return;
+    } else if (regexErr.test(error.toString())) {
+      handleClosePopUp();
+      return;
+    } else {
+      console.log('AQUI');
+
+      toast.error(Intl.t(`index.bridge.error.general`));
+      setLoading({
+        box: 'error',
+        burn: 'error',
+        redeem: 'error',
+        error: 'error',
+      });
+    }
+  }
+
+  function handleClosePopUp() {
+    setLoading({
+      box: 'none',
+      approve: 'none',
+      burn: 'none',
+      redeem: 'none',
+      lock: 'none',
+      mint: 'none',
+      error: 'none',
+    });
+    setAmount('');
+  }
+
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
