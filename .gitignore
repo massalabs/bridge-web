@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+cypress-visual-report
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
