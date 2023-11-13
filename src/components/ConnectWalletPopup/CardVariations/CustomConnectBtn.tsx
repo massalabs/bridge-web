@@ -40,7 +40,7 @@ export function CustomConnectButton(): JSX.Element {
                 return (
                   <Button
                     variant="secondary"
-                    customClass="h-14 pt-4"
+                    customClass="h-14"
                     onClick={openConnectModal}
                     preIcon={<MetaMaskSvg />}
                   >
@@ -76,7 +76,7 @@ export function CustomConnectButton(): JSX.Element {
                     <div className="min-w-[50%]">
                       <Button
                         variant="secondary"
-                        customClass="h-14 pt-4 border-0 bg-secondary hover:bg-tertiary"
+                        customClass="h-14 border-0 bg-secondary hover:bg-tertiary"
                         onClick={openChainModal}
                         preIcon={<BsDiamondHalf size={40} />}
                       >

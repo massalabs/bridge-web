@@ -52,7 +52,9 @@ export async function waitIncludedOperation(
     }
     if ([FINAL_ERROR, SPECULATIVE_ERROR].includes(status)) {
       const events = await getOperationEvents(client, opId);
-      events.map((l) => console.log(`opId ${opId}: execution error ${l.data}`));
+      events.map((l) =>
+        console.error(`opId ${opId}: execution error ${l.data}`),
+      );
       throw new Error(`Waiting for operation ${opId} ended with errors`);
     }
 
@@ -100,7 +102,7 @@ export async function waitForMintEvent(
           mintEvent.context.origin_operation_id!,
         );
       } catch (err) {
-        console.log(err);
+        console.error(err);
         return false;
       }
       return true;
