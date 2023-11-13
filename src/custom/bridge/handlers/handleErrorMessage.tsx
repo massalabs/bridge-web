@@ -1,7 +1,12 @@
 import { toast } from '@massalabs/react-ui-kit';
 
+<<<<<<< HEAD
 import Intl from '../../../i18n/i18n';
 import { ILoadingState } from '@/const';
+=======
+import { ILoadingState } from '@/const';
+import Intl from '@/i18n/i18n';
+>>>>>>> 44d6a15 (Refactor Approve Functions)
 
 export interface ICustomError extends Error {
   cause?: {
