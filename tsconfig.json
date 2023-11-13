@@ -19,8 +19,10 @@
 
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src", "cypress"],
+  "include": ["src", "jest"],
+  "exclude": ["cypress"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
