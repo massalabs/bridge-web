@@ -78,7 +78,7 @@ const useEvmBridge = () => {
 
       return approve;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -91,7 +91,7 @@ const useEvmBridge = () => {
       setHashLock(hash);
       return lock;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }

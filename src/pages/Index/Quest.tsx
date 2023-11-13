@@ -23,7 +23,7 @@ export function ICOQuest() {
     try {
       await ICOQuest.mutateAsync({});
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

@@ -100,7 +100,7 @@ export async function waitForMintEvent(
           mintEvent.context.origin_operation_id!,
         );
       } catch (err) {
-        console.log(err);
+        console.error(err);
         return false;
       }
       return true;
