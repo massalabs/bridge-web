@@ -105,8 +105,10 @@ export function Index() {
   }
 
   const { chain, chains } = useNetwork();
+
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
+
   const {
     handleApprove: _handleApproveEVM,
     handleLock: _handleLockEVM,
@@ -115,6 +117,7 @@ export function Index() {
     hashLock: _hashLockEVM,
     hashApprove: _hashApproveEVM,
   } = useEvmBridge();
+
   const {
     data: lockData,
     isSuccess: lockIsSuccess,
@@ -407,7 +410,7 @@ export function Index() {
       });
       setRedeemSteps(Intl.t('index.loading-box.burned-final'));
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       if (error) handleErrorMessage(error as Error);
 
@@ -453,8 +456,6 @@ export function Index() {
       handleClosePopUp();
       return;
     } else {
-      console.log('AQUI');
-
       toast.error(Intl.t(`index.bridge.error.general`));
       setLoading({
         box: 'error',
@@ -550,7 +551,7 @@ export function Index() {
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       const cause = (error as ICustomError)?.cause;
       const isTimeout = cause?.error === 'timeout';
 
