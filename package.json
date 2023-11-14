@@ -16,7 +16,7 @@
     "prepare": "husky install",
     "test": "npm run cy:e2e && npm run cy:component",
     "test-ci": "npm run cy:e2e-ci && npm run cy:component-ci",
-    "test-unit": "jest",
+    "test-unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "cy:open": "cypress open",
     "cy:e2e": "start-server-and-test dev http://localhost:8080 'cypress run --browser chrome'",
     "cy:e2e-ci": "start-server-and-test dev http://localhost:8080 'cypress run --browser chrome --env VITE_CI_TEST=true'",

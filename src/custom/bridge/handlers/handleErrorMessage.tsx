@@ -1,7 +1,7 @@
-import { toast } from '@massalabs/react-ui-kit';
+// import { toast } from '@massalabs/react-ui-kit';
 
+import Intl from '../../../i18n/i18n';
 import { ILoadingState } from '@/const';
-import Intl from '@/i18n/i18n';
 
 export interface ICustomError extends Error {
   cause?: {
@@ -50,7 +50,7 @@ export function handleErrorMessage(
     handleClosePopUp(setLoading, setAmount);
     return;
   } else {
-    toast.error(Intl.t(`index.bridge.error.general`));
+    // toast.error(Intl.t(`index.bridge.error.general`));
     setLoading({
       box: 'error',
       burn: 'error',
