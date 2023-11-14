@@ -1,8 +1,8 @@
 import { Client } from '@massalabs/massa-web3';
-import { parseUnits } from 'viem';
 
 import { handleErrorMessage } from './handleErrorMessage';
 import { increaseAllowance } from '../bridge';
+import { parseUnits } from '../massa-utils';
 import { ILoadingState, U256_MAX } from '@/const';
 import { IToken } from '@/store/accountStore';
 

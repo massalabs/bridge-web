@@ -1,9 +1,21 @@
-export default {
-  preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  transformIgnorePatterns: ['node_modules/(?!minidenticons)'],
+import type { JestConfigWithTsJest } from 'ts-jest';
+
+const jestConfig: JestConfigWithTsJest = {
+  testEnvironment: 'node',
+  extensionsToTreatAsEsm: ['.ts'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-    // process `*.tsx` files with `ts-jest`
+    // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
+    // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
   },
 };
+
+export default jestConfig;
