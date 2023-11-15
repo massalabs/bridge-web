@@ -1,3 +1,5 @@
+import { EOperationStatus } from '@massalabs/massa-web3';
+
 import { handleApproveMASSA } from '../custom/bridge/handlers/handleApproveMassa';
 
 const token = {
@@ -13,26 +15,26 @@ const token = {
 
 describe('handleApproveMASSA', () => {
   it('should handle approval and return true', async () => {
-    const mockCallSmartContract = jest
-      .fn()
-      .mockResolvedValue('AkajksU1Q981h1sj');
-
-    // const mockIncreaseAllowance = jest.fn((callback) => {
-    //   return callback();
-    // });
-
     const client = {
-      smartContracts: {
-        callSmartContract: mockCallSmartContract,
-      },
+      smartContracts: () => ({
+        callSmartContract: jest.fn(),
+        getOperationStatus: jest.fn(),
+      }),
     };
+
+    const mockCallSmartContract = client
+      .smartContracts()
+      .callSmartContract.mockResolvedValueOnce('AkajksU1Q981h1sj');
+    const mockgetOperationStatus = client
+      .smartContracts()
+      .getOperationStatus.mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
 
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn();
-    const mockSetRedeemSteps = jest.fn();
-    const mockSetAmount = jest.fn();
+    const mockSetLoading = jest.fn().mockImplementation();
+    // const mockSetRedeemSteps = jest.fn();
+    // const mockSetAmount = jest.fn();
     const handleErrorMessage = jest.fn();
 
     // const parseUnits = jest.fn().mockReturnValue(1313000000000000000000n);
@@ -40,8 +42,8 @@ describe('handleApproveMASSA', () => {
     const result = await handleApproveMASSA(
       client as any,
       mockSetLoading,
-      mockSetRedeemSteps,
-      mockSetAmount,
+      {} as any,
+      {} as any,
       token,
       amount,
       decimals,
@@ -50,6 +52,7 @@ describe('handleApproveMASSA', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
     expect(mockCallSmartContract).toHaveBeenCalled();
+    expect(mockgetOperationStatus).toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
