@@ -367,7 +367,6 @@ export function Index() {
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
-
     setLoading({
       box: 'loading',
     });
@@ -376,6 +375,7 @@ export function Index() {
       if (!massaClient) {
         return;
       }
+
       const approved = await handleApproveMASSA(
         massaClient,
         setLoading,
@@ -477,6 +477,8 @@ export function Index() {
   const operationId = IS_MASSA_TO_EVM
     ? EVMOperationID.current
     : MassaOperationID;
+
+  // testing functions
 
   return (
     <>

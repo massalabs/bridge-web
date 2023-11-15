@@ -1,10 +1,11 @@
 import { Client } from '@massalabs/massa-web3';
+import { parseUnits } from 'viem';
 
 import { handleErrorMessage } from './handleErrorMessage';
+import { U256_MAX } from '../../../const/const';
+import { ILoadingState } from '../../../const/types/types';
+import { IToken } from '../../../store/accountStore';
 import { increaseAllowance } from '../bridge';
-import { parseUnits } from '../massa-utils';
-import { ILoadingState, U256_MAX } from '@/const';
-import { IToken } from '@/store/accountStore';
 
 export async function handleApproveMASSA(
   client: Client,
@@ -33,17 +34,21 @@ export async function handleApproveMASSA(
     setLoading({
       approve: 'success',
     });
-  } catch (error) {
-    setLoading({
-      box: 'error',
-      approve: 'error',
-      burn: 'error',
-      redeem: 'error',
-    });
 
-    if (error)
-      handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
+    return true;
+  } catch (error) {
+    if (error) {
+      console.error(error);
+      setLoading({
+        box: 'error',
+        approve: 'error',
+        burn: 'error',
+        redeem: 'error',
+      });
+    }
+
+    handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
+
     return false;
   }
-  return true;
 }
