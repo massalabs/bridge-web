@@ -36,25 +36,23 @@ describe('handleApproveMASSA', () => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
+    const setApproveState = jest.fn();
     const handleErrorMessage = jest.fn();
 
     const result = await handleApproveMASSA(
       client as any,
-      mockSetLoading,
-      {} as any,
-      {} as any,
+      setApproveState,
       token,
       amount,
       decimals,
     );
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(setApproveState).toHaveBeenCalledWith('loading');
 
     expect(mockCallSmartContract).toHaveBeenCalled();
     expect(mockGetOperationStatus).toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
+    expect(setApproveState).toHaveBeenCalledWith('success');
 
     expect(handleErrorMessage).not.toHaveBeenCalled();
     expect(result).toBeTruthy();
@@ -78,24 +76,22 @@ describe('handleApproveMASSA', () => {
 
     const amount = '13';
     const decimals = 18;
-    const mockSetLoading = jest.fn().mockImplementation();
+    const setApproveState = jest.fn();
     const handleErrorMessage = jest.fn();
     const result = await handleApproveMASSA(
       client as any,
-      mockSetLoading,
-      {} as any,
-      {} as any,
+      setApproveState,
       token,
       amount,
       decimals,
     );
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(setApproveState).toHaveBeenNthCalledWith(1, 'loading');
 
     expect(mockCallSmartContract).not.toHaveBeenCalled();
     expect(mockGetOperationStatus).not.toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
+    expect(setApproveState).toHaveBeenNthCalledWith(2, 'success');
 
     expect(handleErrorMessage).not.toHaveBeenCalled();
     expect(result).toBeTruthy();

@@ -143,6 +143,21 @@ export function Index() {
     ? currentNetwork !== 'buildnet'
     : false;
 
+  function setApproveState(state: string) {
+    if (state === 'success') {
+      setLoading({ approve: 'success' });
+    } else if (state === 'loading') {
+      setLoading({ approve: 'loading' });
+    } else if (state === 'error') {
+      setLoading({
+        box: 'error',
+        approve: 'error',
+        burn: 'error',
+        redeem: 'error',
+      });
+    }
+  }
+
   useEffect(() => {
     setError({ amount: '' });
     setDecimals(tokenData?.decimals || 18);
@@ -377,9 +392,9 @@ export function Index() {
       }
       const approved = await handleApproveMASSA(
         massaClient,
-        setLoading,
-        setRedeemSteps,
-        setAmount,
+        setApproveState,
+        // setRedeemSteps,
+        // setAmount,
         token,
         amount,
         decimals,
