@@ -2,16 +2,10 @@ import { Client } from '@massalabs/massa-web3';
 import { parseUnits } from 'viem';
 
 import { handleErrorMessage } from './handleErrorMessage';
-<<<<<<< HEAD
 import { U256_MAX } from '../../../const/const';
 import { ILoadingState } from '../../../const/types/types';
 import { IToken } from '../../../store/accountStore';
 import { increaseAllowance } from '../bridge';
-=======
-import { increaseAllowance } from '../bridge';
-import { ILoadingState, U256_MAX } from '@/const';
-import { IToken } from '@/store/accountStore';
->>>>>>> 44d6a15 (Refactor Approve Functions)
 
 export async function handleApproveMASSA(
   client: Client,
@@ -36,18 +30,11 @@ export async function handleApproveMASSA(
     if (token.allowance < _amount) {
       await increaseAllowance(client, token.massaToken, U256_MAX);
     }
-<<<<<<< HEAD
     setLoading({
       approve: 'success',
     });
 
     return true;
-=======
-
-    setLoading({
-      approve: 'success',
-    });
->>>>>>> 44d6a15 (Refactor Approve Functions)
   } catch (error) {
     setLoading({
       box: 'error',
@@ -55,16 +42,7 @@ export async function handleApproveMASSA(
       burn: 'error',
       redeem: 'error',
     });
-<<<<<<< HEAD
     handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
     return false;
   }
-=======
-
-    if (error)
-      handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
-    return false;
-  }
-  return true;
->>>>>>> 44d6a15 (Refactor Approve Functions)
 }

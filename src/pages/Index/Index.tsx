@@ -375,7 +375,15 @@ export function Index() {
       if (!massaClient) {
         return;
       }
-      const approved = await handleApproveMASSA(massaClient);
+      const approved = await handleApproveMASSA(
+        massaClient,
+        setLoading,
+        setRedeemSteps,
+        setAmount,
+        token,
+        amount,
+        decimals,
+      );
 
       if (approved) {
         await handleBridgeMASSA(massaClient);
