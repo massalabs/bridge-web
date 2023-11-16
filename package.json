@@ -16,7 +16,7 @@
     "prepare": "husky install",
     "test": "npm run cy:e2e && npm run cy:component",
     "test-ci": "npm run cy:e2e-ci && npm run cy:component-ci",
-    "test-unit": "jest",
+    "test-unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "cy:open": "cypress open",
     "cy:e2e": "start-server-and-test dev http://localhost:8080 'cypress run --browser chrome'",
     "cy:e2e-ci": "start-server-and-test dev http://localhost:8080 'cypress run --browser chrome --env VITE_CI_TEST=true'",
@@ -26,6 +26,7 @@
     "postcy:component-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-component.html"
   },
   "dependencies": {
+    "@inrupt/jest-jsdom-polyfills": "^2.5.0",
     "@massalabs/massa-web3": "^1.24.3-dev",
     "@massalabs/react-ui-kit": "^0.0.4-dev",
     "@massalabs/wallet-provider": "^1.4.1",
@@ -74,6 +75,7 @@
     "eslint-plugin-react-refresh": "^0.3.4",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
+    "jest-css-modules-transform": "^4.4.2",
     "lint-staged": "^13.2.1",
     "miragejs": "^0.1.47",
     "postcss": "^8.4.23",
