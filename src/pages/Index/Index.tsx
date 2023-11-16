@@ -395,6 +395,8 @@ export function Index() {
         setAmount,
         amount,
         decimals,
+        _handleApproveEVM,
+        _allowanceEVM,
       );
 
       if (approved) {

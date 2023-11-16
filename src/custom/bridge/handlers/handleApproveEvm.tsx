@@ -2,7 +2,6 @@ import { parseUnits } from 'viem';
 
 import { handleErrorMessage } from './handleErrorMessage';
 import { ILoadingState } from '@/const';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
 
 export async function handleApproveEVM(
   setLoading: (state: ILoadingState) => void,
@@ -10,9 +9,9 @@ export async function handleApproveEVM(
   setAmount: (state: string) => void,
   amount: string | undefined,
   decimals: number,
+  _handleApproveEVM: any,
+  _allowanceEVM: bigint,
 ) {
-  const { handleApprove: _handleApproveEVM, allowance: _allowanceEVM } =
-    useEvmBridge();
   try {
     setLoading({ approve: 'loading' });
 
