@@ -30,25 +30,19 @@ export async function handleApproveMASSA(
     if (token.allowance < _amount) {
       await increaseAllowance(client, token.massaToken, U256_MAX);
     }
-
     setLoading({
       approve: 'success',
     });
 
     return true;
   } catch (error) {
-    if (error) {
-      console.error(error);
-      setLoading({
-        box: 'error',
-        approve: 'error',
-        burn: 'error',
-        redeem: 'error',
-      });
-    }
-
+    setLoading({
+      box: 'error',
+      approve: 'error',
+      burn: 'error',
+      redeem: 'error',
+    });
     handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
-
     return false;
   }
 }

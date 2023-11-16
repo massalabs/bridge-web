@@ -14,30 +14,30 @@ const token = {
 };
 
 describe('handleApproveMASSA', () => {
-  it('should handle approval and return true', async () => {
+  beforeAll(() => {
+    jest.clearAllMocks();
+  });
+  test('should handle approval and return true', async () => {
+    const mockCallSmartContract = jest
+      .fn()
+      .mockResolvedValueOnce('AkajksU1Q981h1sj');
+
+    const mockGetOperationStatus = jest
+      .fn()
+      .mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
+
     const client = {
       smartContracts: () => ({
-        callSmartContract: jest.fn(),
-        getOperationStatus: jest.fn(),
+        callSmartContract: mockCallSmartContract,
+        getOperationStatus: mockGetOperationStatus,
       }),
     };
-
-    const mockCallSmartContract = client
-      .smartContracts()
-      .callSmartContract.mockResolvedValueOnce('AkajksU1Q981h1sj');
-    const mockgetOperationStatus = client
-      .smartContracts()
-      .getOperationStatus.mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
 
     const amount = '1313';
     const decimals = 18;
 
     const mockSetLoading = jest.fn().mockImplementation();
-    // const mockSetRedeemSteps = jest.fn();
-    // const mockSetAmount = jest.fn();
     const handleErrorMessage = jest.fn();
-
-    // const parseUnits = jest.fn().mockReturnValue(1313000000000000000000n);
 
     const result = await handleApproveMASSA(
       client as any,
@@ -52,7 +52,48 @@ describe('handleApproveMASSA', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
     expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockgetOperationStatus).toHaveBeenCalled();
+    expect(mockGetOperationStatus).toHaveBeenCalled();
+
+    expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
+
+    expect(handleErrorMessage).not.toHaveBeenCalled();
+    expect(result).toBeTruthy();
+  });
+
+  test('should not call in increase allowance function', async () => {
+    const mockCallSmartContract = jest
+      .fn()
+      .mockResolvedValueOnce('AkajksU1Q981h1sj');
+
+    const mockGetOperationStatus = jest
+      .fn()
+      .mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
+
+    const client = {
+      smartContracts: () => ({
+        callSmartContract: mockCallSmartContract,
+        getOperationStatus: mockGetOperationStatus,
+      }),
+    };
+
+    const amount = '13';
+    const decimals = 18;
+    const mockSetLoading = jest.fn().mockImplementation();
+    const handleErrorMessage = jest.fn();
+    const result = await handleApproveMASSA(
+      client as any,
+      mockSetLoading,
+      {} as any,
+      {} as any,
+      token,
+      amount,
+      decimals,
+    );
+
+    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+
+    expect(mockCallSmartContract).not.toHaveBeenCalled();
+    expect(mockGetOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
