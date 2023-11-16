@@ -1,6 +1,6 @@
 import { EOperationStatus } from '@massalabs/massa-web3';
 
-import { handleApproveMASSA } from '../custom/bridge/handlers/handleApproveMassa';
+import { handleApproveMASSA } from '../../src/custom/bridge/handlers/handleApproveMassa';
 
 const token = {
   name: 'Massa',
