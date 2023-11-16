@@ -23,17 +23,11 @@ import {
   LayoutType,
   ILoadingState,
   MASSA_STATION,
+  U256_MAX,
   EVM_BRIDGE_ADDRESS,
 } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
-import { forwardBurn } from '@/custom/bridge/bridge';
-import { handleApproveEVM } from '@/custom/bridge/handlers/handleApproveEvm';
-import { handleApproveMASSA } from '@/custom/bridge/handlers/handleApproveMassa';
-import {
-  ICustomError,
-  handleClosePopUp,
-  handleErrorMessage,
-} from '@/custom/bridge/handlers/handleErrorMessage';
+import { forwardBurn, increaseAllowance } from '@/custom/bridge/bridge';
 import {
   waitForMintEvent,
   waitIncludedOperation,
@@ -44,6 +38,13 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
+
+interface ICustomError extends Error {
+  cause?: {
+    error: string;
+    details: string;
+  };
+}
 
 export function Index() {
   const [
@@ -96,6 +97,7 @@ export function Index() {
     mint: 'none',
     error: 'none',
   });
+
   function setLoading(state: ILoadingState) {
     _setLoading((prevState) => {
       return { ...prevState, ...state };
@@ -177,7 +179,7 @@ export function Index() {
   useEffect(() => {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
-      handleRedeemEVM();
+      handleBridgeEVM();
     }
     if (approveIsError) {
       setLoading({
@@ -198,25 +200,6 @@ export function Index() {
       unwatch?.();
     },
   });
-
-  async function handleRedeemEvent(events: IEventLog[]) {
-    if (!EVMOperationID.current) {
-      return;
-    }
-    const found = events.some(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (ev) => (ev as any).args.burnOpId === EVMOperationID.current,
-    );
-
-    if (found) {
-      setLoading({
-        box: 'success',
-        redeem: 'success',
-      });
-      EVMOperationID.current = undefined;
-      getTokens();
-    }
-  }
 
   async function getProviderList() {
     const providerList = await providers();
@@ -287,7 +270,39 @@ export function Index() {
     return true;
   }
 
-  async function handleRedeemEVM() {
+  async function handleApproveEVM() {
+    try {
+      setLoading({ approve: 'loading' });
+
+      if (!amount) {
+        return false;
+      }
+
+      let _amount = parseUnits(amount, decimals);
+
+      if (_allowanceEVM < _amount) {
+        await _handleApproveEVM();
+        return false;
+      }
+
+      setLoading({ approve: 'success' });
+    } catch (error) {
+      setLoading({
+        box: 'error',
+        approve: 'error',
+        lock: 'error',
+        mint: 'error',
+      });
+
+      if (error) handleErrorMessage(error as Error);
+
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleBridgeEVM() {
     setLoading({ lock: 'loading' });
 
     try {
@@ -299,18 +314,65 @@ export function Index() {
     } catch (error) {
       setLoading({ box: 'error', lock: 'error', mint: 'error' });
 
-      if (error)
-        handleErrorMessage(
-          error as Error,
-          setLoading,
-          setRedeemSteps,
-          setAmount,
-        );
+      if (error) handleErrorMessage(error as Error);
 
       return false;
     }
 
     return true;
+  }
+
+  async function handleApproveMASSA(client: Client) {
+    try {
+      setLoading({
+        approve: 'loading',
+      });
+
+      if (!token || !amount) {
+        throw new Error('Missing param');
+      }
+
+      let _amount = parseUnits(amount, decimals);
+
+      if (token.allowance < _amount) {
+        await increaseAllowance(client, token.massaToken, U256_MAX);
+      }
+
+      setLoading({
+        approve: 'success',
+      });
+    } catch (error) {
+      setLoading({
+        box: 'error',
+        approve: 'error',
+        burn: 'error',
+        redeem: 'error',
+      });
+
+      if (error) handleErrorMessage(error as Error);
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleRedeemEvent(events: IEventLog[]) {
+    if (!EVMOperationID.current) {
+      return;
+    }
+    const found = events.some(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ev) => (ev as any).args.burnOpId === EVMOperationID.current,
+    );
+
+    if (found) {
+      setLoading({
+        box: 'success',
+        redeem: 'success',
+      });
+      EVMOperationID.current = undefined;
+      getTokens();
+    }
   }
 
   async function handleBridgeMASSA(client: Client) {
@@ -350,13 +412,7 @@ export function Index() {
     } catch (error) {
       console.error(error);
 
-      if (error)
-        handleErrorMessage(
-          error as Error,
-          setLoading,
-          setRedeemSteps,
-          setAmount,
-        );
+      if (error) handleErrorMessage(error as Error);
 
       return false;
     }
@@ -364,9 +420,69 @@ export function Index() {
     return true;
   }
 
+  function handleErrorMessage(error: Error) {
+    const ERRORS_MESSAGES = [
+      'unable to unprotect wallet',
+      'TransactionExecutionError: User rejected the request',
+    ];
+
+    const WARNING_MESSAGES = [
+      'signing operation: calling executeHTTPRequest for call: aborting during HTTP request',
+    ];
+
+    const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
+    const regexWarn = new RegExp(WARNING_MESSAGES.join('|'), 'i');
+
+    const cause = (error as ICustomError)?.cause;
+    const isTimeout = cause?.error === 'timeout';
+
+    if (isTimeout) {
+      setLoading({
+        box: 'warning',
+        mint: 'warning',
+      });
+      return;
+    }
+
+    if (regexWarn.test(error.toString())) {
+      setRedeemSteps(Intl.t(`index.bridge.error.sign-timeout`));
+      setLoading({
+        box: 'error',
+        burn: 'error',
+        redeem: 'error',
+      });
+      return;
+    } else if (regexErr.test(error.toString())) {
+      handleClosePopUp();
+      return;
+    } else {
+      toast.error(Intl.t(`index.bridge.error.general`));
+      setLoading({
+        box: 'error',
+        burn: 'error',
+        redeem: 'error',
+        error: 'error',
+      });
+    }
+  }
+
+  function handleClosePopUp() {
+    setLoading({
+      box: 'none',
+      approve: 'none',
+      burn: 'none',
+      redeem: 'none',
+      lock: 'none',
+      mint: 'none',
+      error: 'none',
+    });
+    setAmount('');
+  }
+
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
+
     setLoading({
       box: 'loading',
     });
@@ -375,30 +491,16 @@ export function Index() {
       if (!massaClient) {
         return;
       }
-      const approved = await handleApproveMASSA(
-        massaClient,
-        setLoading,
-        setRedeemSteps,
-        setAmount,
-        token,
-        amount,
-        decimals,
-      );
+      const approved = await handleApproveMASSA(massaClient);
 
       if (approved) {
         await handleBridgeMASSA(massaClient);
       }
     } else {
-      const approved = await handleApproveEVM(
-        setLoading,
-        setRedeemSteps,
-        setAmount,
-        amount,
-        decimals,
-      );
+      const approved = await handleApproveEVM();
 
       if (approved) {
-        await handleRedeemEVM();
+        await handleBridgeEVM();
       }
     }
   }
@@ -469,7 +571,7 @@ export function Index() {
   }
 
   useEffect(() => {
-    if (loading.box === 'none') handleClosePopUp(setLoading, setAmount);
+    if (loading.box === 'none') handleClosePopUp();
   }, [loading.box]);
 
   const isLoading = loading.box !== 'none' ? 'blur-md' : null;
@@ -477,13 +579,11 @@ export function Index() {
     ? EVMOperationID.current
     : MassaOperationID;
 
-  // testing functions
-
   return (
     <>
       {isLoading && (
         <LoadingBox
-          onClose={() => handleClosePopUp(setLoading, setAmount)}
+          onClose={handleClosePopUp}
           loading={loading}
           massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}

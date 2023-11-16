@@ -52,9 +52,7 @@ export async function waitIncludedOperation(
     }
     if ([FINAL_ERROR, SPECULATIVE_ERROR].includes(status)) {
       const events = await getOperationEvents(client, opId);
-      events.map((l) =>
-        console.error(`opId ${opId}: execution error ${l.data}`),
-      );
+      events.map((l) => console.log(`opId ${opId}: execution error ${l.data}`));
       throw new Error(`Waiting for operation ${opId} ended with errors`);
     }
 

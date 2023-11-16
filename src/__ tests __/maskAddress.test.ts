@@ -1,4 +1,4 @@
-import { maskAddress } from '../../src/utils/massaFormat';
+import { maskAddress } from '../utils/massaFormat';
 
 describe('Unit Mask Address test', () => {
   it('should mask the middle of an address with a specified character', () => {

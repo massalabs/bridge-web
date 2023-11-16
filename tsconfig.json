@@ -11,8 +11,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "allowJs": true,
-    "esModuleInterop": true,
 
     "strict": true,
     "noUnusedLocals": true,
