@@ -26,11 +26,12 @@
     "postcy:component-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-component.html"
   },
   "dependencies": {
-    "@inrupt/jest-jsdom-polyfills": "^2.5.0",
-    "@massalabs/wallet-provider": "^1.4.1",
     "@hicaru/bearby-react": "^0.2.9",
+    "@inrupt/jest-jsdom-polyfills": "^2.5.0",
     "@massalabs/massa-web3": "^1.24.3-dev",
     "@massalabs/react-ui-kit": "^0.0.4-dev",
+    "@massalabs/wallet-provider": "^1.4.1",
+    "@massalabs/web3-utils": "^1.4.3",
     "@rainbow-me/rainbowkit": "^1.0.7",
     "@tanstack/react-query": "^4.29.5",
     "axios": "^1.4.0",
