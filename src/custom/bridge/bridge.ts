@@ -4,6 +4,7 @@ import {
   IClient,
   IReadData,
   ISmartContractsClient,
+  MAX_GAS_CALL,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
 
@@ -65,7 +66,7 @@ export async function getSupportedTokensList(
   const smartContractsClient: ISmartContractsClient = client.smartContracts();
 
   const returnObject = await smartContractsClient.readSmartContract({
-    maxGas: BigInt(1000000),
+    maxGas: MAX_GAS_CALL,
     targetAddress: CONTRACT_ADDRESS,
     targetFunction: 'supportedTokensList',
     parameter: [],
