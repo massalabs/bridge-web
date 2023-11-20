@@ -7,7 +7,7 @@ import { ILoadingState } from '../../../const/types/types';
 import { IToken } from '../../../store/accountStore';
 import { increaseAllowance } from '../bridge';
 
-export async function handleApproveMASSA(
+export async function handleApproveRedeem(
   client: Client,
   setLoading: (state: ILoadingState) => void,
   setRedeemSteps: (state: string) => void,
@@ -36,13 +36,14 @@ export async function handleApproveMASSA(
 
     return true;
   } catch (error) {
+    handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
+
     setLoading({
       box: 'error',
       approve: 'error',
       burn: 'error',
       redeem: 'error',
     });
-    handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
     return false;
   }
 }

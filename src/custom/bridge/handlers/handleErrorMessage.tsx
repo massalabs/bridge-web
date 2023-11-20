@@ -25,12 +25,13 @@ export function handleErrorMessage(
     'signing operation: calling executeHTTPRequest for call: aborting during HTTP request',
   ];
 
-  const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
   const regexWarn = new RegExp(WARNING_MESSAGES.join('|'), 'i');
+  const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
 
   const cause = (error as ICustomError)?.cause;
   const isTimeout = cause?.error === 'timeout';
 
+  // bridge side this fn only show timeout error
   if (isTimeout) {
     setLoading({
       box: 'warning',
@@ -45,10 +46,8 @@ export function handleErrorMessage(
       burn: 'error',
       redeem: 'error',
     });
-    return;
   } else if (regexErr.test(error.toString())) {
     handleClosePopUp(setLoading, setAmount);
-    return;
   } else {
     toast.error(Intl.t(`index.bridge.error.general`));
     setLoading({

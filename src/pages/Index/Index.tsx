@@ -28,7 +28,7 @@ import {
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { forwardBurn } from '@/custom/bridge/bridge';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
-import { handleApproveMASSA } from '@/custom/bridge/handlers/handleApproveMassa';
+import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import {
   ICustomError,
   handleClosePopUp,
@@ -375,7 +375,7 @@ export function Index() {
       if (!massaClient) {
         return;
       }
-      const approved = await handleApproveMASSA(
+      const approved = await handleApproveRedeem(
         massaClient,
         setLoading,
         setRedeemSteps,
