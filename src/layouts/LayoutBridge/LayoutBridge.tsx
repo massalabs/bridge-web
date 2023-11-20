@@ -88,7 +88,10 @@ export function LayoutBridge({ ...props }) {
       from-bright-blue to-deep-blue to-60% overflow-auto w-full min-h-screen
       "
     >
-      <div className="flex flex-row items-center justify-between px-11 py-8 w-full h-fit fixed z-10 backdrop-blur-sm">
+      <div
+        className="hidden sm:flex flex-row items-center justify-between px-11 
+      py-8 w-full h-fit fixed z-10 backdrop-blur-sm"
+      >
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
           <Dropdown
@@ -104,14 +107,24 @@ export function LayoutBridge({ ...props }) {
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
-      <div
-        className={`flex flex-col justify-center items-center pt-[150px] pb-10`}
-      >
+      <div className="hidden sm:flex flex-col justify-center items-center pt-[150px] pb-10">
         <TopBanner />
         {children}
       </div>
       {open && <ConnectWalletPopup setOpen={setOpen} />}
-      <Footer selectedTheme={selectedTheme} />
+      <div className="hidden sm:block">
+        <Footer selectedTheme={selectedTheme} />
+      </div>
+
+      {/* display only on mobile*/}
+      <div className="sm:hidden h-screen flex items-center justify-center">
+        <div className="flex flex-col w-full gap-10 p-4">
+          <BridgeLogo theme={selectedTheme} />
+          <p className="mas-banner text-6xl text-f-primary mb-6">
+            {Intl.t('desktop.title')}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
