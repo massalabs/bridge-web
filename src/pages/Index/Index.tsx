@@ -177,7 +177,7 @@ export function Index() {
   useEffect(() => {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
-      handleRedeemEVM();
+      handleBridge();
     }
     if (approveIsError) {
       setLoading({
@@ -287,7 +287,7 @@ export function Index() {
     return true;
   }
 
-  async function handleRedeemEVM() {
+  async function handleBridge() {
     setLoading({ lock: 'loading' });
 
     try {
@@ -313,7 +313,7 @@ export function Index() {
     return true;
   }
 
-  async function handleBridgeMASSA(client: Client) {
+  async function handleRedeem(client: Client) {
     try {
       if (!token || !evmAddress || !amount) {
         throw new Error('Missing param');
@@ -386,7 +386,7 @@ export function Index() {
       );
 
       if (approved) {
-        await handleBridgeMASSA(massaClient);
+        await handleRedeem(massaClient);
       }
     } else {
       const approved = await handleApproveEVM(
@@ -400,7 +400,7 @@ export function Index() {
       );
 
       if (approved) {
-        await handleRedeemEVM();
+        await handleBridge();
       }
     }
   }
