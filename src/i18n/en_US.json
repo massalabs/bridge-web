@@ -16,6 +16,9 @@
     "title": "Bridge is under maintenance!",
     "subtitle": "We are working hard to improve the Bridge! We should be back soon."
   },
+  "desktop": {
+    "title": "The bridge is only available on dekstop"
+  },
   "index": {
     "top-banner": {
       "bridge-off": "The Bridge process is temporarily down but you can still Redeem tokens. We expect to be back running soon!",
