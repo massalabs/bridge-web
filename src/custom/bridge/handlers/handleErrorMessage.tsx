@@ -9,6 +9,7 @@ export interface ICustomError extends Error {
     details: string;
   };
 }
+
 export function handleErrorMessage(
   error: Error,
   setLoading: (state: ILoadingState) => void,
@@ -35,7 +36,6 @@ export function handleErrorMessage(
       box: 'warning',
       mint: 'warning',
     });
-    return;
   }
 
   if (regexWarn.test(error.toString())) {

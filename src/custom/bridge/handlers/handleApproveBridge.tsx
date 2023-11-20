@@ -1,9 +1,9 @@
 import { parseUnits } from 'viem';
 
-import { handleErrorMessage } from './handleErrorMessage';
+import { ICustomError, handleErrorMessage } from './handleErrorMessage';
 import { ILoadingState } from '@/const';
 
-export async function handleApproveEVM(
+export async function handleApproveBridge(
   setLoading: (state: ILoadingState) => void,
   setRedeemSteps: (state: string) => void,
   setAmount: (state: string) => void,
@@ -11,7 +11,7 @@ export async function handleApproveEVM(
   decimals: number,
   _handleApproveEVM: any,
   _allowanceEVM: bigint,
-) {
+): Promise<boolean> {
   try {
     setLoading({ approve: 'loading' });
 
@@ -25,7 +25,6 @@ export async function handleApproveEVM(
       await _handleApproveEVM();
       return false;
     }
-
     setLoading({ approve: 'success' });
   } catch (error) {
     setLoading({
@@ -34,12 +33,13 @@ export async function handleApproveEVM(
       lock: 'error',
       mint: 'error',
     });
-
-    if (error)
-      handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
-
+    handleErrorMessage(
+      error as ICustomError,
+      setLoading,
+      setRedeemSteps,
+      setAmount,
+    );
     return false;
   }
-
   return true;
 }
