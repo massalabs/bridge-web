@@ -4,6 +4,7 @@ import {
   byteToU8,
   IEvent,
   IClient,
+  MAX_GAS_CALL,
 } from '@massalabs/massa-web3';
 import { IAccount } from '@massalabs/wallet-provider';
 import { bytesToU256 } from '@massalabs/web3-utils';
@@ -17,7 +18,7 @@ export async function readSC(
   parameter: Array<number>,
 ): Promise<Uint8Array> {
   const res = await client.smartContracts().readSmartContract({
-    maxGas: BigInt(1000000),
+    maxGas: MAX_GAS_CALL,
     targetAddress: targetAddress,
     targetFunction: targetFunction,
     parameter: parameter,
