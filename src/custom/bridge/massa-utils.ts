@@ -86,10 +86,10 @@ export async function waitForMintEvent(
   let counterMs = 0;
   while (counterMs < WAIT_STATUS_TIMEOUT) {
     const events = await client.smartContracts().getFilteredScOutputEvents({
-      emitter_address: null,
+      emitter_address: CONTRACT_ADDRESS,
       start: null,
       end: null,
-      original_caller_address: CONTRACT_ADDRESS,
+      original_caller_address: null,
       original_operation_id: null,
       is_final: true,
     });
