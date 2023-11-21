@@ -29,6 +29,7 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { forwardBurn } from '@/custom/bridge/bridge';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
+import { handleBridge } from '@/custom/bridge/handlers/handleBridge';
 import {
   ICustomError,
   handleClosePopUp,
@@ -177,7 +178,14 @@ export function Index() {
   useEffect(() => {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
-      handleBridge();
+      handleBridge(
+        setLoading,
+        setRedeemSteps,
+        setAmount,
+        amount,
+        _handleLockEVM,
+        decimals,
+      );
     }
     if (approveIsError) {
       setLoading({
@@ -287,32 +295,6 @@ export function Index() {
     return true;
   }
 
-  async function handleBridge() {
-    setLoading({ lock: 'loading' });
-
-    try {
-      if (!amount) {
-        throw new Error('Missing param');
-      }
-
-      await _handleLockEVM(parseUnits(amount, decimals));
-    } catch (error) {
-      setLoading({ box: 'error', lock: 'error', mint: 'error' });
-
-      if (error)
-        handleErrorMessage(
-          error as Error,
-          setLoading,
-          setRedeemSteps,
-          setAmount,
-        );
-
-      return false;
-    }
-
-    return true;
-  }
-
   async function handleRedeem(client: Client) {
     try {
       if (!token || !evmAddress || !amount) {
@@ -400,7 +382,14 @@ export function Index() {
       );
 
       if (approved) {
-        await handleBridge();
+        await handleBridge(
+          setLoading,
+          setRedeemSteps,
+          setAmount,
+          amount,
+          _handleLockEVM,
+          decimals,
+        );
       }
     }
   }
