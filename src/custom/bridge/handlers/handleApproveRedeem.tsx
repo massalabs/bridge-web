@@ -37,13 +37,13 @@ export async function handleApproveRedeem(
     return true;
   } catch (error) {
     handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
-
     setLoading({
       box: 'error',
       approve: 'error',
       burn: 'error',
       redeem: 'error',
     });
+
     return false;
   }
 }
