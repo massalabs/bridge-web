@@ -29,12 +29,12 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { forwardBurn } from '@/custom/bridge/bridge';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
-import { handleBridge } from '@/custom/bridge/handlers/handleBridge';
 import {
   ICustomError,
   handleClosePopUp,
   handleErrorMessage,
 } from '@/custom/bridge/handlers/handleErrorMessage';
+import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import {
   waitForMintEvent,
   waitIncludedOperation,
@@ -178,7 +178,7 @@ export function Index() {
   useEffect(() => {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
-      handleBridge(
+      handleLockBridge(
         setLoading,
         setRedeemSteps,
         setAmount,
@@ -382,7 +382,7 @@ export function Index() {
       );
 
       if (approved) {
-        await handleBridge(
+        await handleLockBridge(
           setLoading,
           setRedeemSteps,
           setAmount,

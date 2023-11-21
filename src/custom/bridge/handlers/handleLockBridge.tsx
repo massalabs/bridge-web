@@ -3,7 +3,7 @@ import { parseUnits } from 'viem';
 import { handleErrorMessage } from './handleErrorMessage';
 import { ILoadingState } from '@/const';
 
-export async function handleBridge(
+export async function handleLockBridge(
   setLoading: (state: ILoadingState) => void,
   setRedeemSteps: (state: string) => void,
   setAmount: (state: string) => void,
@@ -20,7 +20,6 @@ export async function handleBridge(
     await _handleLockEVM(parseUnits(amount, decimals));
   } catch (error) {
     setLoading({ box: 'error', lock: 'error', mint: 'error' });
-
     handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
     return false;
   }
