@@ -30,15 +30,12 @@ import { forwardBurn } from '@/custom/bridge/bridge';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import {
-  ICustomError,
   handleClosePopUp,
   handleErrorMessage,
 } from '@/custom/bridge/handlers/handleErrorMessage';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
-import {
-  waitForMintEvent,
-  waitIncludedOperation,
-} from '@/custom/bridge/massa-utils';
+import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
+import { waitIncludedOperation } from '@/custom/bridge/massa-utils';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import Intl from '@/i18n/i18n';
@@ -80,9 +77,7 @@ export function Index() {
   const [error, setError] = useState<{ amount: string } | null>(null);
 
   const EVMOperationID = useRef<string | undefined>(undefined);
-  const [MassaOperationID, setMassaOperationID] = useState<string | undefined>(
-    undefined,
-  );
+  const [lockTxID, setLockTxID] = useState<string | undefined>(undefined);
 
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
@@ -164,7 +159,7 @@ export function Index() {
     if (lockIsSuccess) {
       setLoading({ lock: 'success' });
       let data = lockData;
-      setMassaOperationID(data?.transactionHash);
+      setLockTxID(data?.transactionHash);
     }
     if (lockIsError) {
       setLoading({ box: 'error', lock: 'error', mint: 'error' });
@@ -172,8 +167,10 @@ export function Index() {
   }, [lockIsSuccess, lockIsError]);
 
   useEffect(() => {
-    if (MassaOperationID) monitorMintMassaEvents();
-  }, [MassaOperationID]);
+    if (!massaClient) return;
+    if (lockTxID)
+      handleMintBridge(massaClient, lockTxID, setLoading, getTokens);
+  }, [lockTxID]);
 
   useEffect(() => {
     if (approveIsSuccess) {
@@ -416,57 +413,12 @@ export function Index() {
     setAmount(res);
   }
 
-  async function monitorMintMassaEvents() {
-    if (!massaClient || !MassaOperationID) return;
-
-    setLoading({
-      mint: 'loading',
-    });
-
-    try {
-      const success = await waitForMintEvent(massaClient, MassaOperationID);
-
-      if (success) {
-        setLoading({
-          box: 'success',
-          mint: 'success',
-        });
-        getTokens();
-      } else {
-        setLoading({
-          box: 'error',
-          mint: 'error',
-          error: 'error',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      const cause = (error as ICustomError)?.cause;
-      const isTimeout = cause?.error === 'timeout';
-
-      if (isTimeout) {
-        setLoading({
-          box: 'warning',
-          mint: 'warning',
-        });
-      } else {
-        setLoading({
-          box: 'error',
-          mint: 'error',
-          error: 'error',
-        });
-      }
-    }
-  }
-
   useEffect(() => {
     if (loading.box === 'none') handleClosePopUp(setLoading, setAmount);
   }, [loading.box]);
 
   const isLoading = loading.box !== 'none' ? 'blur-md' : null;
-  const operationId = IS_MASSA_TO_EVM
-    ? EVMOperationID.current
-    : MassaOperationID;
+  const operationId = IS_MASSA_TO_EVM ? EVMOperationID.current : lockTxID;
 
   // testing functions
 
