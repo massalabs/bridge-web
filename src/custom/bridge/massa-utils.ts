@@ -36,26 +36,10 @@ export async function waitIncludedOperation(
   const start = Date.now();
   let counterMs = 0;
   while (counterMs < WAIT_STATUS_TIMEOUT) {
-    const status = await getOperationStatus(client, opId);
-    const {
-      FINAL_ERROR,
-      SPECULATIVE_SUCCESS,
-      FINAL_SUCCESS,
-      SPECULATIVE_ERROR,
-    } = EOperationStatus;
+    const opStatus = await checkForOperationStatus(client, opId, onlyFinal);
 
-    if (
-      (status === SPECULATIVE_SUCCESS && !onlyFinal) ||
-      status === FINAL_SUCCESS
-    ) {
+    if (opStatus) {
       return;
-    }
-    if ([FINAL_ERROR, SPECULATIVE_ERROR].includes(status)) {
-      const events = await getOperationEvents(client, opId);
-      events.map((l) =>
-        console.error(`opId ${opId}: execution error ${l.data}`),
-      );
-      throw new Error(`Waiting for operation ${opId} ended with errors`);
     }
 
     await delay(STATUS_POLL_INTERVAL_MS);
@@ -66,6 +50,28 @@ export async function waitIncludedOperation(
     `Fail to wait operation finality for ${opId}: Timeout reached. status: ${status}`,
     { cause: { error: 'timeout', details: opId } },
   );
+}
+
+export async function checkForOperationStatus(
+  client: Client,
+  opId: string,
+  onlyFinal = false,
+): Promise<boolean> {
+  const status = await getOperationStatus(client, opId);
+  const { FINAL_ERROR, SPECULATIVE_SUCCESS, FINAL_SUCCESS, SPECULATIVE_ERROR } =
+    EOperationStatus;
+  if (
+    (status === SPECULATIVE_SUCCESS && !onlyFinal) ||
+    status === FINAL_SUCCESS
+  ) {
+    return true;
+  }
+  if ([FINAL_ERROR, SPECULATIVE_ERROR].includes(status)) {
+    const events = await getOperationEvents(client, opId);
+    events.map((l) => console.error(`opId ${opId}: execution error ${l.data}`));
+    throw new Error(`Waiting for operation ${opId} ended with errors`);
+  }
+  return false;
 }
 
 function isTokenMintedEvent(event: IEvent, lockTxId: string) {
@@ -84,6 +90,7 @@ export async function waitForMintEvent(
 ): Promise<boolean> {
   const start = Date.now();
   let counterMs = 0;
+
   while (counterMs < WAIT_STATUS_TIMEOUT) {
     const events = await client.smartContracts().getFilteredScOutputEvents({
       emitter_address: CONTRACT_ADDRESS,
@@ -93,10 +100,11 @@ export async function waitForMintEvent(
       original_operation_id: null,
       is_final: true,
     });
+
     const mintEvent = events.find((e) => isTokenMintedEvent(e, lockTxId));
     if (mintEvent) {
       try {
-        await waitIncludedOperation(
+        await checkForOperationStatus(
           client,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           mintEvent.context.origin_operation_id!,
@@ -107,9 +115,10 @@ export async function waitForMintEvent(
       }
       return true;
     }
-    await delay(STATUS_POLL_INTERVAL_MS);
-    counterMs = Date.now() - start;
   }
+  await delay(STATUS_POLL_INTERVAL_MS);
+  counterMs = Date.now() - start;
+
   throw new Error(`Fail to wait bridge process finality lock tx ${lockTxId}`, {
     cause: { error: 'timeout', details: lockTxId },
   });

@@ -1,6 +1,6 @@
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 
-describe('handleBridge', () => {
+describe('handleLockBridge', () => {
   beforeAll(() => {
     jest.clearAllMocks();
   });
