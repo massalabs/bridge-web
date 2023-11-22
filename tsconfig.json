@@ -24,7 +24,7 @@
     },
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src", "jest"],
+  "include": ["src"],
   "exclude": ["cypress"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
