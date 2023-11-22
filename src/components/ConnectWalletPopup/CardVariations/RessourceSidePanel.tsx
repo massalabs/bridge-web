@@ -61,7 +61,7 @@ function MassaStationInstructions() {
   );
 }
 
-export function RessourceSidePanel() {
+export function ResourceSidePanel() {
   const { isConnected: isEvmWalletConnected } = useAccount();
 
   const [accounts, isStationInstalled] = useAccountStore((state) => [

@@ -288,7 +288,7 @@ export function Index() {
     }
 
     if (_balance < _amount) {
-      setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
+      setError({ amount: Intl.t('index.approve.error.insufficient-funds') });
       return false;
     }
 
@@ -401,7 +401,7 @@ export function Index() {
       (IS_MASSA_TO_EVM && token.balance <= 0) ||
       (!IS_MASSA_TO_EVM && _tokenBalanceEVM <= 0)
     ) {
-      setError({ amount: Intl.t('index.approve.error.insuficient-funds') });
+      setError({ amount: Intl.t('index.approve.error.insufficient-funds') });
       return;
     }
 
