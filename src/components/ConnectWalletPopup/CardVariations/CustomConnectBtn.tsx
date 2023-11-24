@@ -87,8 +87,7 @@ export function CustomConnectButton(): JSX.Element {
                       <Button
                         onClick={openAccountModal}
                         type="button"
-                        className="bg-secondary rounded-lg hover:bg-tertiary h-14
-                       gap-5 w-full"
+                        className="bg-secondary rounded-lg hover:bg-tertiary h-14 gap-5 w-full"
                         posIcon={<FiEdit size={14} />}
                       >
                         {account.displayName}&nbsp;&nbsp;&nbsp;

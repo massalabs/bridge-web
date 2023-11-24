@@ -108,7 +108,7 @@
       "error": {
         "general": "Something went wrong! Please, try again!",
         "invalid-amount": "Invalid amount",
-        "insuficient-funds": "Insuficient balance"
+        "insufficient-funds": "Insufficient balance"
       },
       "success": "Approval successfully granted",
       "loading": "Processing approval..."
@@ -118,7 +118,7 @@
         "general": "Something went wrong! Please, try again!",
         "sign-timeout": "Burn (signature timeout)",
         "invalid-amount": "Invalid amount",
-        "insuficient-funds": "Insuficient balance"
+        "insufficient-funds": "Insufficient balance"
       },
       "success": "Bridge transfer successfully executed!",
       "loading": "Processing bridge transfer..."

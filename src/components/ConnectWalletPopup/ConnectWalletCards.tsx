@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 
 import { MassaConnectError } from './CardVariations/MassaError';
 import {
-  RessourceSidePanel,
+  ResourceSidePanel,
   ConnectedCard,
   MetamaskNotInstalled,
   CustomConnectButton,
@@ -85,7 +85,7 @@ export function ConnectWalletCards() {
         isOnlyMetamaskConnected ||
         isOnlyMassaConnectedWithAccounts) && (
         <div className="row-span-2 col-start-3 row-start-1">
-          <RessourceSidePanel />
+          <ResourceSidePanel />
         </div>
       )}
     </div>
