@@ -22,10 +22,6 @@ export async function increaseAllowance(
   targetAddress: string,
   amount: bigint,
 ): Promise<string> {
-  console.log(
-    'front increaseAllowance',
-    new Args().addString(CONTRACT_ADDRESS).addU256(amount),
-  );
   const opId = await client.smartContracts().callSmartContract({
     targetAddress,
     functionName: 'increaseAllowance',
@@ -35,8 +31,6 @@ export async function increaseAllowance(
       .serialize(),
     ...increaseAllowanceFee,
   });
-
-  console.log('opid increaseAllowance', opId);
 
   await waitIncludedOperation(client, opId);
 
