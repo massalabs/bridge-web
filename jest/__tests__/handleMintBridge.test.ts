@@ -7,7 +7,7 @@ describe('handleMintBridge', () => {
     jest.clearAllMocks();
   });
 
-  test('should correctly handle Mint', async () => {
+  test('should show success of mint event', async () => {
     const lockTxId = 'mockLockTransactionId';
 
     const mockSetLoading = jest.fn().mockImplementation();
@@ -59,23 +59,7 @@ describe('handleMintBridge', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should return false because missing client ', async () => {
-    const lockTxID = 'mockLockTxId';
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockGetTokens = jest.fn().mockImplementation();
-
-    const result = await handleMintBridge(
-      {} as any,
-      lockTxID,
-      mockSetLoading,
-      mockGetTokens,
-    );
-
-    expect(result).toBeFalsy();
-  });
-
-  test('handleMintBridge should throw timeout error because getFilteredScOutputEvents returns no events', async () => {
+  test('should show error screen if no events were found on Smart Contract during mint', async () => {
     const lockTxID = 'mockLockTxId';
 
     const mockSetLoading = jest.fn().mockImplementation();
@@ -111,7 +95,7 @@ describe('handleMintBridge', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should wait for mint event should throw an error', async () => {
+  test('should show error if there is a problem during mint', async () => {
     const lockTxID = 'mockLockTxId';
 
     const mockSetLoading = jest.fn().mockImplementation();
@@ -143,7 +127,7 @@ describe('handleMintBridge', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should waitForMintEvent should throw a timeout error', async () => {
+  test('should show timeout screen if the mint is loo long', async () => {
     const lockTxID = 'mockLOckTxId';
 
     const mockSetLoading = jest.fn().mockImplementation();

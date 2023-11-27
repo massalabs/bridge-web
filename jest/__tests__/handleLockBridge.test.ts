@@ -4,7 +4,8 @@ describe('handleLockBridge', () => {
   beforeAll(() => {
     jest.clearAllMocks();
   });
-  test('should handle bridge', async () => {
+
+  test('should show success of bridge lock', async () => {
     const lock = {
       writeAsync: jest
         .fn()
@@ -36,7 +37,7 @@ describe('handleLockBridge', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should throw error', async () => {
+  test('should show error during  if their is a problem during lock', async () => {
     const lock = {
       writeAsync: jest
         .fn()
