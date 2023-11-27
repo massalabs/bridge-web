@@ -1,6 +1,5 @@
 import { useState, SyntheticEvent, useEffect, useRef } from 'react';
 
-import { Client } from '@massalabs/massa-web3';
 import { Button, toast, Money } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import { Big } from 'big.js';
@@ -26,18 +25,13 @@ import {
   EVM_BRIDGE_ADDRESS,
 } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
-import { forwardBurn } from '@/custom/bridge/bridge';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
-import {
-  handleClosePopUp,
-  handleErrorMessage,
-} from '@/custom/bridge/handlers/handleErrorMessage';
+import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
+import { handleClosePopUp } from '@/custom/bridge/handlers/handleErrorMessage';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
-import { waitIncludedOperation } from '@/custom/bridge/massa-utils';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
-import { TokenPair } from '@/custom/serializable/tokenPair';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
@@ -292,57 +286,6 @@ export function Index() {
     return true;
   }
 
-  async function handleRedeem(client: Client) {
-    try {
-      if (!token || !evmAddress || !amount) {
-        throw new Error('Missing param');
-      }
-
-      const tokenPairs = new TokenPair(
-        token.massaToken,
-        token.evmToken,
-        token.chainId,
-      );
-
-      setLoading({
-        burn: 'loading',
-      });
-      setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
-
-      const operationId = await forwardBurn(
-        client,
-        evmAddress,
-        tokenPairs,
-        parseUnits(amount, decimals),
-      );
-      EVMOperationID.current = operationId;
-
-      setRedeemSteps(Intl.t('index.loading-box.included-pending'));
-
-      await waitIncludedOperation(client, operationId, true);
-
-      setLoading({
-        burn: 'success',
-        redeem: 'loading',
-      });
-      setRedeemSteps(Intl.t('index.loading-box.burned-final'));
-    } catch (error) {
-      console.error(error);
-
-      if (error)
-        handleErrorMessage(
-          error as Error,
-          setLoading,
-          setRedeemSteps,
-          setAmount,
-        );
-
-      return false;
-    }
-
-    return true;
-  }
-
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
@@ -365,7 +308,20 @@ export function Index() {
       );
 
       if (approved) {
-        await handleRedeem(massaClient);
+        if (!token || !evmAddress || !amount) {
+          return;
+        }
+        await handleBurnRedeem(
+          massaClient,
+          token,
+          evmAddress,
+          amount,
+          decimals,
+          EVMOperationID,
+          setLoading,
+          setRedeemSteps,
+          setAmount,
+        );
       }
     } else {
       const approved = await handleApproveBridge(
