@@ -60,7 +60,6 @@ export async function checkForOperationStatus(
   const status = await getOperationStatus(client, opId);
   const { FINAL_ERROR, SPECULATIVE_SUCCESS, FINAL_SUCCESS, SPECULATIVE_ERROR } =
     EOperationStatus;
-
   if (
     (status === SPECULATIVE_SUCCESS && !onlyFinal) ||
     status === FINAL_SUCCESS

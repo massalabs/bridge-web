@@ -55,8 +55,6 @@ export async function forwardBurn(
     parameter: new Args().addSerializable(request).serialize(),
     ...forwardBurnFees,
   });
-
-  await waitIncludedOperation(client, opId);
   return opId;
 }
 
