@@ -4,7 +4,7 @@ describe('handleApproveBridge', () => {
   beforeAll(() => {
     jest.clearAllMocks();
   });
-  test('should handle EVM approval and return true', async () => {
+  test('should show success of approval', async () => {
     const amount = '1313';
     const decimals = 18;
 
@@ -32,7 +32,7 @@ describe('handleApproveBridge', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should handle & call EVM approval and return true', async () => {
+  test('should show success of approval after increasing allowance ', async () => {
     const approve = {
       writeAsync: jest
         .fn()
@@ -66,7 +66,7 @@ describe('handleApproveBridge', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should throw error and return false', async () => {
+  test('approval fails because of error during allowance increase transaction', async () => {
     const approve = {
       writeAsync: jest
         .fn()
@@ -104,7 +104,7 @@ describe('handleApproveBridge', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should throw timeout error and return false', async () => {
+  test('should show timeout screen in case of approval timeout', async () => {
     const approve = {
       writeAsync: jest
         .fn()

@@ -17,7 +17,7 @@ describe('handleApproveRedeem', () => {
   beforeAll(() => {
     jest.clearAllMocks();
   });
-  test('should handle approval and return true', async () => {
+  test('should increaseAllowance and approve redeem', async () => {
     const mockCallSmartContract = jest
       .fn()
       .mockResolvedValueOnce('AkajksU1Q981h1sj');
@@ -60,7 +60,7 @@ describe('handleApproveRedeem', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should not call in increase allowance function', async () => {
+  test('should show success of redeem approval', async () => {
     const mockCallSmartContract = jest
       .fn()
       .mockResolvedValueOnce('AkajksU1Q981h1sj');
@@ -101,7 +101,7 @@ describe('handleApproveRedeem', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should throw error and trigger generic handleError', async () => {
+  test('should show error if there is a problem during approval', async () => {
     const mockCallSmartContract = jest
       .fn()
       .mockImplementationOnce(() => Promise.reject(new Error('error')));
@@ -149,7 +149,7 @@ describe('handleApproveRedeem', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should throw error and trigger handleError warning message', async () => {
+  test('should close loading box and show error if http req was aborted ', async () => {
     const mockCallSmartContract = jest
       .fn()
       .mockImplementationOnce(() =>
@@ -200,7 +200,7 @@ describe('handleApproveRedeem', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should throw error and trigger handleError function and close popup', async () => {
+  test('should show warning screen if user rejects the request', async () => {
     const mockCallSmartContract = jest
       .fn()
       .mockImplementationOnce(() =>

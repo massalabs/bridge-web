@@ -17,7 +17,7 @@ describe('handleBurnRedeem', () => {
   beforeAll(() => {
     jest.clearAllMocks();
   });
-  test('should handle redeem burn event', async () => {
+  test('should show success of burn event', async () => {
     const mockCallSmartContract = jest.fn().mockResolvedValueOnce('testhash');
 
     const mockGetOperationStatus = jest
@@ -78,7 +78,7 @@ describe('handleBurnRedeem', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should fail because of operation final error', async () => {
+  test('should show error because of operation has status of final_error', async () => {
     const mockCallSmartContract = jest.fn().mockResolvedValueOnce('testhash');
 
     const mockGetOperationStatus = jest
@@ -134,7 +134,7 @@ describe('handleBurnRedeem', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should fail because of operation speculative error', async () => {
+  test('should show error because of operation has status of speculative_error', async () => {
     const mockCallSmartContract = jest.fn().mockResolvedValueOnce('testhash');
 
     const mockGetOperationStatus = jest
