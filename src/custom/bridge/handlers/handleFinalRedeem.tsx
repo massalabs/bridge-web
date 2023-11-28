@@ -8,22 +8,26 @@ export async function handleFinalRedeem(
   setLoading: (state: ILoadingState) => void,
   getTokens: () => void,
 ): Promise<boolean> {
-  if (!EVMOperationID.current) {
+  try {
+    if (!EVMOperationID.current) {
+      return false;
+    }
+
+    const found = events.some(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ev) => (ev as any).args.burnOpId === EVMOperationID.current,
+    );
+
+    if (found) {
+      setLoading({
+        box: 'success',
+        redeem: 'success',
+      });
+      EVMOperationID.current = undefined;
+      getTokens();
+    }
+  } catch {
     return false;
   }
-  const found = events.some(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ev) => (ev as any).args.burnOpId === EVMOperationID.current,
-  );
-
-  if (found) {
-    setLoading({
-      box: 'success',
-      redeem: 'success',
-    });
-    EVMOperationID.current = undefined;
-    getTokens();
-    return true;
-  }
-  return false;
+  return true;
 }

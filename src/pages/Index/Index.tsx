@@ -4,7 +4,7 @@ import { Button, toast, Money } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import { Big } from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
-import { parseUnits, Log as IEventLog } from 'viem';
+import { parseUnits } from 'viem';
 import {
   useAccount,
   useNetwork,

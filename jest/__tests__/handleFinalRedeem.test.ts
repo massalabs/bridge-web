@@ -48,4 +48,22 @@ describe('handleBurnRedeem', () => {
     expect(mockGetTokens).toHaveBeenCalled();
     expect(result).toBeTruthy();
   });
+
+  test('fail redeem event if no events', async () => {
+    const mockEvmOpIdRef = {
+      current: '0x1234567890123456789012345678901234567890',
+    };
+    const mockEvents = [{}];
+
+    const mockSetLoading = jest.fn().mockImplementation();
+    const mockGetTokens = jest.fn().mockImplementation();
+    const result = await handleFinalRedeem(
+      mockEvents as any,
+      mockEvmOpIdRef as any,
+      mockSetLoading,
+      mockGetTokens,
+    );
+
+    expect(result).toBeFalsy();
+  });
 });

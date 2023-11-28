@@ -24,7 +24,7 @@
     },
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src", "jest"], // jest to avoid red underline on import statement
+  "include": ["src"],
   "exclude": ["cypress"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
