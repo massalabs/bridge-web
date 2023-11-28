@@ -1,17 +1,16 @@
 import { handleLockBridge } from '../../src/custom/bridge/handlers/handleLockBridge';
+import { Utils } from '../__ mocks __/mocks';
 
 describe('handleLockBridge', () => {
-  beforeAll(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
   test('should show success of bridge lock', async () => {
+    const utils = new Utils();
+
     const lock = {
-      writeAsync: jest
-        .fn()
-        .mockResolvedValueOnce(
-          'a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e',
-        ),
+      writeAsync: utils.writeAsync,
     };
 
     const amount = '1313';
@@ -37,9 +36,16 @@ describe('handleLockBridge', () => {
     expect(result).toBeTruthy();
   });
 
-  test('should show error during  if their is a problem during lock', async () => {
+  test('should show error if there is a problem during lock', async () => {
+    const utils = new Utils();
+    const mockWriteAsync = jest
+      .fn()
+      .mockRejectedValueOnce(() => new Error('error'));
+
+    utils.setWriteAsync(mockWriteAsync);
+
     const lock = {
-      writeAsync: jest.fn().mockRejectedValueOnce(() => new Error('error')),
+      writeAsync: utils.writeAsync,
     };
 
     const amount = '1313';
