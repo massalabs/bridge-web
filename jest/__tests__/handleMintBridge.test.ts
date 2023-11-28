@@ -29,7 +29,7 @@ describe('handleMintBridge', () => {
           is_error: false,
         },
         data: `{"eventName": "TOKEN_MINTED","evmRecipient": "m9",
-                 "massaToken": "AS12mytBMNz","chainId": "11155111","txId": 
+                "massaToken": "AS12mytBMNz","chainId": "11155111","txId": 
                 "${lockTxId}","evmToken": "985291424"}`,
       },
     ]);

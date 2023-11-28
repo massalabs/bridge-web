@@ -31,7 +31,6 @@ export async function handleMintBridge(
     }
     return success;
   } catch (error) {
-    // console.error(error);
     const cause = (error as ICustomError)?.cause;
     const isTimeout = cause?.error === 'timeout';
 
