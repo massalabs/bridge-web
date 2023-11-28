@@ -1,4 +1,4 @@
-import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
+import { handleLockBridge } from '../../src/custom/bridge/handlers/handleLockBridge';
 
 describe('handleLockBridge', () => {
   beforeAll(() => {
@@ -39,9 +39,7 @@ describe('handleLockBridge', () => {
 
   test('should show error during  if their is a problem during lock', async () => {
     const lock = {
-      writeAsync: jest
-        .fn()
-        .mockImplementationOnce(() => Promise.reject(new Error('error'))),
+      writeAsync: jest.fn().mockRejectedValueOnce(() => new Error('error')),
     };
 
     const amount = '1313';

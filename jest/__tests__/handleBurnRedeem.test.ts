@@ -83,7 +83,7 @@ describe('handleBurnRedeem', () => {
 
     const mockGetOperationStatus = jest
       .fn()
-      .mockResolvedValueOnce(EOperationStatus.FINAL_ERROR);
+      .mockRejectedValueOnce(EOperationStatus.FINAL_ERROR);
 
     const client = {
       smartContracts: () => ({

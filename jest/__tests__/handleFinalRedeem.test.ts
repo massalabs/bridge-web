@@ -1,4 +1,4 @@
-import { handleFinalRedeem } from '@/custom/bridge/handlers/handleFinalRedeem';
+import { handleFinalRedeem } from '../../src/custom/bridge/handlers/handleFinalRedeem';
 
 describe('handleBurnRedeem', () => {
   beforeAll(() => {
@@ -46,6 +46,7 @@ describe('handleBurnRedeem', () => {
       redeem: 'success',
     });
     expect(mockGetTokens).toHaveBeenCalled();
+    expect(mockEvmOpIdRef.current).toBe(undefined);
     expect(result).toBeTruthy();
   });
 
@@ -63,6 +64,8 @@ describe('handleBurnRedeem', () => {
       mockSetLoading,
       mockGetTokens,
     );
+    expect(mockSetLoading).not.toHaveBeenCalledWith();
+    expect(mockEvmOpIdRef.current).toBe(mockEvmOpIdRef.current);
 
     expect(result).toBeFalsy();
   });

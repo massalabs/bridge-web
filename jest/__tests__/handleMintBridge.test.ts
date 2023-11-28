@@ -1,6 +1,6 @@
 import { EOperationStatus } from '@massalabs/massa-web3';
 
-import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
+import { handleMintBridge } from '../../src/custom/bridge/handlers/handleMintBridge';
 
 describe('handleMintBridge', () => {
   beforeAll(() => {
@@ -65,7 +65,7 @@ describe('handleMintBridge', () => {
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
 
-    const mockGetFilteredScOutputEvent = jest.fn().mockResolvedValueOnce([]);
+    const mockGetFilteredScOutputEvent = jest.fn().mockRejectedValueOnce([]);
 
     const mockGetOperationStatus = jest
       .fn()
@@ -133,11 +133,11 @@ describe('handleMintBridge', () => {
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
 
-    const mockGetFilteredScOutputEvent = jest
-      .fn()
-      .mockRejectedValueOnce(
-        new Error('timeout', { cause: { error: 'timeout' } }),
-      );
+    const mockGetFilteredScOutputEvent = jest.fn().mockRejectedValueOnce(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      new Error('timeout', { cause: { error: 'timeout' } }),
+    );
     // We cannot mock correctly waitForMIntEvent, so we mock a timeout here
 
     const client = {

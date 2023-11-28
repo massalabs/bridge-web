@@ -1,4 +1,4 @@
-import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
+import { handleApproveBridge } from '../../src/custom/bridge/handlers/handleApproveBridge';
 
 describe('handleApproveBridge', () => {
   beforeAll(() => {
@@ -68,9 +68,7 @@ describe('handleApproveBridge', () => {
 
   test('approval fails because of error during allowance increase transaction', async () => {
     const approve = {
-      writeAsync: jest
-        .fn()
-        .mockImplementationOnce(() => Promise.reject(new Error('error'))),
+      writeAsync: jest.fn().mockRejectedValueOnce(() => new Error('error')),
     };
 
     const amount = '1313';
@@ -106,11 +104,11 @@ describe('handleApproveBridge', () => {
 
   test('should show timeout screen in case of approval timeout', async () => {
     const approve = {
-      writeAsync: jest
-        .fn()
-        .mockImplementationOnce(() =>
-          Promise.reject(new Error('timeout', { cause: { error: 'timeout' } })),
-        ),
+      writeAsync: jest.fn().mockRejectedValueOnce(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        new Error('timeout', { cause: { error: 'timeout' } }),
+      ),
     };
     const amount = '1313';
     const decimals = 18;
