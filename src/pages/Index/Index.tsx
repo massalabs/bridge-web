@@ -4,7 +4,7 @@ import { Button, toast, Money } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import { Big } from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
-import { parseUnits, Log as IEventLog } from 'viem';
+import { parseUnits } from 'viem';
 import {
   useAccount,
   useNetwork,
@@ -29,6 +29,7 @@ import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridg
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { handleClosePopUp } from '@/custom/bridge/handlers/handleErrorMessage';
+import { handleFinalRedeem } from '@/custom/bridge/handlers/handleFinalRedeem';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -193,29 +194,10 @@ export function Index() {
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
     listener(events) {
-      handleRedeemEvent(events);
+      handleFinalRedeem(events, EVMOperationID, setLoading, getTokens);
       unwatch?.();
     },
   });
-
-  async function handleRedeemEvent(events: IEventLog[]) {
-    if (!EVMOperationID.current) {
-      return;
-    }
-    const found = events.some(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (ev) => (ev as any).args.burnOpId === EVMOperationID.current,
-    );
-
-    if (found) {
-      setLoading({
-        box: 'success',
-        redeem: 'success',
-      });
-      EVMOperationID.current = undefined;
-      getTokens();
-    }
-  }
 
   async function getProviderList() {
     const providerList = await providers();

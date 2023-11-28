@@ -104,7 +104,7 @@ describe('handleApproveRedeem', () => {
   test('should show error if there is a problem during approval', async () => {
     const mockCallSmartContract = jest
       .fn()
-      .mockImplementationOnce(() => Promise.reject(new Error('error')));
+      .mockRejectedValueOnce(() => new Error('error'));
 
     const mockGetOperationStatus = jest
       .fn()
@@ -152,12 +152,11 @@ describe('handleApproveRedeem', () => {
   test('should close loading box and show error if http req was aborted ', async () => {
     const mockCallSmartContract = jest
       .fn()
-      .mockImplementationOnce(() =>
-        Promise.reject(
+      .mockRejectedValueOnce(
+        () =>
           new Error(
             'signing operation: calling executeHTTPRequest for call: aborting during HTTP request',
           ),
-        ),
       );
     const mockGetOperationStatus = jest
       .fn()
@@ -203,10 +202,8 @@ describe('handleApproveRedeem', () => {
   test('should show warning screen if user rejects the request', async () => {
     const mockCallSmartContract = jest
       .fn()
-      .mockImplementationOnce(() =>
-        Promise.reject(
-          new Error('TransactionExecutionError: User rejected the request'),
-        ),
+      .mockRejectedValueOnce(
+        () => new Error('TransactionExecutionError: User rejected the request'),
       );
     const mockGetOperationStatus = jest
       .fn()
