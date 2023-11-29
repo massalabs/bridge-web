@@ -123,3 +123,38 @@ export async function waitForMintEvent(
     cause: { error: 'timeout', details: lockTxId },
   });
 }
+
+function isRedeemedEvent(event: any, burnOpId: string) {
+  const eventData = safeJsonParse(event);
+  if (!eventData) {
+    return false;
+  }
+  return (
+    eventData?.eventName === 'Redeemed' && eventData.args.burnOpId === burnOpId
+  );
+}
+
+export async function waitForRedeemedEvent(
+  events: any,
+  burnOpId: string,
+): Promise<boolean> {
+  const start = Date.now();
+  let counterMs = 0;
+
+  while (counterMs < WAIT_STATUS_TIMEOUT) {
+    const redeemEvent = events.find((e: any) => isRedeemedEvent(e, burnOpId));
+    if (redeemEvent) {
+      return true;
+    }
+    await delay(STATUS_POLL_INTERVAL_MS);
+    counterMs = Date.now() - start;
+
+    throw new Error(
+      `Fail to wait bridge process finality lock tx ${burnOpId}`,
+      {
+        cause: { error: 'timeout', details: burnOpId },
+      },
+    );
+  }
+  return false;
+}

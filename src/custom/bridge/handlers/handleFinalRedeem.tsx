@@ -1,6 +1,7 @@
 import { Log as IEventLog } from 'viem';
 
 import { ICustomError } from './handleErrorMessage';
+import { waitForRedeemedEvent } from '../massa-utils';
 import { ILoadingState } from '@/const/types/types';
 
 export async function handleFinalRedeem(
@@ -14,10 +15,7 @@ export async function handleFinalRedeem(
       return false;
     }
 
-    const found = events.some(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (ev) => (ev as any).args.burnOpId === EVMOperationID.current,
-    );
+    const found = await waitForRedeemedEvent(events, EVMOperationID.current);
 
     if (found) {
       setLoading({
@@ -28,6 +26,7 @@ export async function handleFinalRedeem(
       getTokens();
     }
   } catch (error) {
+    console.error(error);
     const cause = (error as ICustomError)?.cause;
     const isTimeout = cause?.error === 'timeout';
     if (isTimeout) {

@@ -194,6 +194,7 @@ export function Index() {
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
     listener(events) {
+      console.log('Redeemed', events);
       handleFinalRedeem(events, EVMOperationID, setLoading, getTokens);
       unwatch?.();
     },
