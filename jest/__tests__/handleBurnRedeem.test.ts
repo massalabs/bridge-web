@@ -1,6 +1,7 @@
 import { EOperationStatus } from '@massalabs/massa-web3';
 
 import { handleBurnRedeem } from '../../src/custom/bridge/handlers/handleBurnRedeem';
+import { Client } from '../__ mocks __/mocks';
 
 const token = {
   name: 'Massa',
@@ -14,22 +15,19 @@ const token = {
 };
 
 describe('handleBurnRedeem', () => {
-  beforeAll(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show success of burn event', async () => {
-    const mockCallSmartContract = jest.fn().mockResolvedValueOnce('testhash');
+
+  test('should show success of burn (speculative success) event', async () => {
+    const client = new Client();
 
     const mockGetOperationStatus = jest
       .fn()
       .mockResolvedValueOnce(EOperationStatus.SPECULATIVE_SUCCESS);
 
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
+    client.setMockGetOperationStatus(mockGetOperationStatus);
+    const smartContracts = client.smartContracts();
 
     const amount = '1313';
     const decimals = 18;
@@ -62,8 +60,9 @@ describe('handleBurnRedeem', () => {
       1,
       'Burn (awaiting inclusion...)',
     );
-    expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockGetOperationStatus).toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).toHaveBeenCalled();
+
     expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
       2,
       'Burn (included pending)',
@@ -79,18 +78,15 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show error because of operation has status of final_error', async () => {
-    const mockCallSmartContract = jest.fn().mockResolvedValueOnce('testhash');
+    const client = new Client();
 
     const mockGetOperationStatus = jest
       .fn()
       .mockRejectedValueOnce(EOperationStatus.FINAL_ERROR);
 
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
+    client.setMockGetOperationStatus(mockGetOperationStatus);
+
+    const smartContracts = client.smartContracts();
 
     const amount = '1313';
     const decimals = 18;
@@ -123,8 +119,9 @@ describe('handleBurnRedeem', () => {
       1,
       'Burn (awaiting inclusion...)',
     );
-    expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockGetOperationStatus).toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).toHaveBeenCalled();
+
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       burn: 'error',
@@ -135,18 +132,15 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show error because of operation has status of speculative_error', async () => {
-    const mockCallSmartContract = jest.fn().mockResolvedValueOnce('testhash');
+    const client = new Client();
 
     const mockGetOperationStatus = jest
       .fn()
       .mockResolvedValueOnce(EOperationStatus.SPECULATIVE_ERROR);
 
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
+    client.setMockGetOperationStatus(mockGetOperationStatus);
+
+    const smartContracts = client.smartContracts();
 
     const amount = '1313';
     const decimals = 18;
@@ -179,8 +173,9 @@ describe('handleBurnRedeem', () => {
       1,
       'Burn (awaiting inclusion...)',
     );
-    expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockGetOperationStatus).toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).toHaveBeenCalled();
+
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       burn: 'error',

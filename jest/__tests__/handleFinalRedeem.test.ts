@@ -1,7 +1,7 @@
 import { handleFinalRedeem } from '../../src/custom/bridge/handlers/handleFinalRedeem';
 
 describe('handleBurnRedeem', () => {
-  beforeAll(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
@@ -9,6 +9,7 @@ describe('handleBurnRedeem', () => {
     const mockEvmOpIdRef = {
       current: '0x1234567890123456789012345678901234567890',
     };
+
     const mockEvents = [
       {
         address: 'alice',
@@ -34,6 +35,7 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
+
     const result = await handleFinalRedeem(
       mockEvents as any,
       mockEvmOpIdRef as any,

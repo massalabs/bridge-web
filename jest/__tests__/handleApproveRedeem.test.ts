@@ -1,6 +1,5 @@
-import { EOperationStatus } from '@massalabs/massa-web3';
-
 import { handleApproveRedeem } from '../../src/custom/bridge/handlers/handleApproveRedeem';
+import { Client } from '../__ mocks __/mocks';
 
 const token = {
   name: 'Massa',
@@ -14,25 +13,13 @@ const token = {
 };
 
 describe('handleApproveRedeem', () => {
-  beforeAll(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
+
   test('should increaseAllowance and approve redeem', async () => {
-    const mockCallSmartContract = jest
-      .fn()
-      .mockResolvedValueOnce('AkajksU1Q981h1sj');
-
-    const mockGetOperationStatus = jest
-      .fn()
-      .mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
-
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
-
+    const client = new Client();
+    const smartContracts = client.smartContracts();
     const amount = '1313';
     const decimals = 18;
 
@@ -51,8 +38,8 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockGetOperationStatus).toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
@@ -61,20 +48,8 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should show success of redeem approval', async () => {
-    const mockCallSmartContract = jest
-      .fn()
-      .mockResolvedValueOnce('AkajksU1Q981h1sj');
-
-    const mockGetOperationStatus = jest
-      .fn()
-      .mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
-
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
+    const client = new Client();
+    const smartContracts = client.smartContracts();
 
     const amount = '13';
     const decimals = 18;
@@ -92,8 +67,8 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(mockCallSmartContract).not.toHaveBeenCalled();
-    expect(mockGetOperationStatus).not.toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).not.toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
@@ -102,20 +77,15 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should show error if there is a problem during approval', async () => {
+    const client = new Client();
+
     const mockCallSmartContract = jest
       .fn()
       .mockRejectedValueOnce(() => new Error('error'));
 
-    const mockGetOperationStatus = jest
-      .fn()
-      .mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
+    client.setMockCallSmartContract(mockCallSmartContract);
 
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
+    const smartContracts = client.smartContracts();
 
     const amount = '1313';
     const decimals = 18;
@@ -136,8 +106,8 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockGetOperationStatus).not.toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
@@ -150,6 +120,8 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should close loading box and show error if http req was aborted ', async () => {
+    const client = new Client();
+
     const mockCallSmartContract = jest
       .fn()
       .mockRejectedValueOnce(
@@ -158,16 +130,9 @@ describe('handleApproveRedeem', () => {
             'signing operation: calling executeHTTPRequest for call: aborting during HTTP request',
           ),
       );
-    const mockGetOperationStatus = jest
-      .fn()
-      .mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
 
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
+    client.setMockCallSmartContract(mockCallSmartContract);
+    const smartContracts = client.smartContracts();
 
     const amount = '1313';
     const decimals = 18;
@@ -188,8 +153,8 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockGetOperationStatus).not.toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
@@ -200,21 +165,17 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should show warning screen if user rejects the request', async () => {
+    const client = new Client();
+
     const mockCallSmartContract = jest
       .fn()
       .mockRejectedValueOnce(
         () => new Error('TransactionExecutionError: User rejected the request'),
       );
-    const mockGetOperationStatus = jest
-      .fn()
-      .mockResolvedValueOnce(EOperationStatus.FINAL_SUCCESS);
 
-    const client = {
-      smartContracts: () => ({
-        callSmartContract: mockCallSmartContract,
-        getOperationStatus: mockGetOperationStatus,
-      }),
-    };
+    client.setMockCallSmartContract(mockCallSmartContract);
+
+    const smartContracts = client.smartContracts();
 
     const amount = '1313';
     const decimals = 18;
@@ -235,8 +196,8 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(mockCallSmartContract).toHaveBeenCalled();
-    expect(mockGetOperationStatus).not.toHaveBeenCalled();
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       approve: 'none',

@@ -1,9 +1,11 @@
 import { handleApproveBridge } from '../../src/custom/bridge/handlers/handleApproveBridge';
+import { Utils } from '../__ mocks __/mocks';
 
 describe('handleApproveBridge', () => {
-  beforeAll(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
+
   test('should show success of approval', async () => {
     const amount = '1313';
     const decimals = 18;
@@ -33,12 +35,9 @@ describe('handleApproveBridge', () => {
   });
 
   test('should show success of approval after increasing allowance ', async () => {
+    const utils = new Utils();
     const approve = {
-      writeAsync: jest
-        .fn()
-        .mockResolvedValueOnce(
-          'a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e',
-        ),
+      writeAsync: utils.writeAsync,
     };
 
     const amount = '1313';
@@ -67,8 +66,15 @@ describe('handleApproveBridge', () => {
   });
 
   test('approval fails because of error during allowance increase transaction', async () => {
+    const utils = new Utils();
+
+    const mockWriteAsync = jest
+      .fn()
+      .mockRejectedValueOnce(() => new Error('error'));
+
+    utils.setWriteAsync(mockWriteAsync);
     const approve = {
-      writeAsync: jest.fn().mockRejectedValueOnce(() => new Error('error')),
+      writeAsync: utils.writeAsync,
     };
 
     const amount = '1313';
@@ -103,12 +109,18 @@ describe('handleApproveBridge', () => {
   });
 
   test('should show timeout screen in case of approval timeout', async () => {
+    const utils = new Utils();
+
+    const mockWriteAsync = jest.fn().mockRejectedValueOnce(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      new Error('timeout', { cause: { error: 'timeout' } }),
+    );
+
+    utils.setWriteAsync(mockWriteAsync);
+
     const approve = {
-      writeAsync: jest.fn().mockRejectedValueOnce(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        new Error('timeout', { cause: { error: 'timeout' } }),
-      ),
+      writeAsync: utils.writeAsync,
     };
     const amount = '1313';
     const decimals = 18;
