@@ -2,7 +2,6 @@ import {
   Args,
   bytesToStr,
   byteToU8,
-  IEvent,
   IClient,
   MAX_GAS_CALL,
 } from '@massalabs/massa-web3';
@@ -61,19 +60,6 @@ export async function getDecimals(
   client: IClient,
 ): Promise<number> {
   return byteToU8(await readSC(client, 'decimals', targetAddress, []));
-}
-
-export async function getFilteredScOutputEvents(
-  client: IClient,
-): Promise<IEvent[]> {
-  return client.smartContracts().getFilteredScOutputEvents({
-    start: null,
-    end: null,
-    original_caller_address: CONTRACT_ADDRESS,
-    original_operation_id: null,
-    emitter_address: null,
-    is_final: true,
-  });
 }
 
 export async function getBalance(
