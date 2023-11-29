@@ -1,5 +1,6 @@
 import { Log as IEventLog } from 'viem';
 
+import { ICustomError } from './handleErrorMessage';
 import { ILoadingState } from '@/const/types/types';
 
 export async function handleFinalRedeem(
@@ -26,7 +27,15 @@ export async function handleFinalRedeem(
       EVMOperationID.current = undefined;
       getTokens();
     }
-  } catch {
+  } catch (error) {
+    const cause = (error as ICustomError)?.cause;
+    const isTimeout = cause?.error === 'timeout';
+    if (isTimeout) {
+      setLoading({
+        box: 'warning',
+        mint: 'warning',
+      });
+    }
     return false;
   }
   return true;

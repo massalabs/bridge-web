@@ -31,7 +31,6 @@ export function handleErrorMessage(
   const cause = (error as ICustomError)?.cause;
   const isTimeout = cause?.error === 'timeout';
 
-  // bridge side this fn only show timeout error
   if (isTimeout) {
     setLoading({
       box: 'warning',

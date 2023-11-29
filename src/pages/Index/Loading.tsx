@@ -221,6 +221,10 @@ export function BridgeWarning(props: ILoadingBoxProps) {
     window.open(url, '_blank', 'noreferrer');
   };
 
+  const smartExplorerUrl = massaToEvm
+    ? `https://explorer.massa.net/operations/${operationId}`
+    : `https://sepolia.etherscan.io/tx/${operationId}`;
+
   return (
     <div className="text-center">
       <p>{Intl.t('index.loading-box.warning-description')}</p>
@@ -251,20 +255,14 @@ export function BridgeWarning(props: ILoadingBoxProps) {
               rawContent={operationId}
             />
           </div>
-          {!massaToEvm && (
-            <div>
-              <Button
-                variant="icon"
-                onClick={() =>
-                  _openInNewTab(
-                    `https://sepolia.etherscan.io/tx/${operationId}`,
-                  )
-                }
-              >
-                <FiExternalLink size={18} />
-              </Button>
-            </div>
-          )}
+          <div>
+            <Button
+              variant="icon"
+              onClick={() => _openInNewTab(smartExplorerUrl)}
+            >
+              <FiExternalLink size={18} />
+            </Button>
+          </div>
         </div>
       )}
     </div>

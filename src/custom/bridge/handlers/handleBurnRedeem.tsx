@@ -52,7 +52,9 @@ export async function handleBurnRedeem(
     });
     setRedeemSteps(Intl.t('index.loading-box.burned-final'));
   } catch (error) {
+    // if timeout during burn show error
     handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
+
     return false;
   }
   return true;
