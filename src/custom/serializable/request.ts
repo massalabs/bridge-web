@@ -9,11 +9,13 @@ import { TokenPair } from './tokenPair';
 export class ForwardingRequest implements ISerializable<ForwardingRequest> {
   opId = '';
   caller = '';
+  logIdx = 0;
 
   constructor(
     public amount: string = '',
     public receiver: string = '',
     public tokenPair: TokenPair = new TokenPair('', '', 0),
+    public signatures: Uint8Array = new Uint8Array(),
   ) {}
 
   serialize(): Uint8Array {
@@ -22,7 +24,9 @@ export class ForwardingRequest implements ISerializable<ForwardingRequest> {
     args.addString(this.caller);
     args.addString(this.receiver);
     args.addString(this.opId);
+    args.addU32(this.logIdx);
     args.addSerializable(this.tokenPair);
+    args.addUint8Array(this.signatures);
     return new Uint8Array(args.serialize());
   }
 
@@ -35,7 +39,9 @@ export class ForwardingRequest implements ISerializable<ForwardingRequest> {
     this.caller = args.nextString();
     this.receiver = args.nextString();
     this.opId = args.nextString();
+    this.logIdx = args.nextU32();
     this.tokenPair = args.nextSerializable(TokenPair);
+    this.signatures = args.nextUint8Array();
     return { instance: this, offset: args.getOffset() };
   }
 }
