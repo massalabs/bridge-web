@@ -21,7 +21,7 @@ export async function handleBurnRedeem(
   setAmount: (state: string) => void,
 ) {
   try {
-    const tokenPairs = new TokenPair(
+    const tokenPair = new TokenPair(
       token.massaToken,
       token.evmToken,
       token.chainId,
@@ -36,7 +36,7 @@ export async function handleBurnRedeem(
     const operationId = await forwardBurn(
       client,
       evmAddress,
-      tokenPairs,
+      tokenPair,
       parseUnits(amount, decimals),
     );
 
