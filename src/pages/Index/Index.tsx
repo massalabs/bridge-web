@@ -283,6 +283,7 @@ export function Index() {
 
       if (approved) {
         if (!token || !evmAddress || !amount) {
+          // this case should not happen, but if it does should we handle it?
           return;
         }
         await handleBurnRedeem(
