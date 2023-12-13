@@ -180,12 +180,7 @@ export function Index() {
       );
     }
     if (approveIsError) {
-      setLoading({
-        box: 'error',
-        approve: 'error',
-        lock: 'error',
-        mint: 'error',
-      });
+      toast.error(Intl.t('index.approve.error.failed'));
     }
   }, [approveIsSuccess, approveIsError]);
 
@@ -306,10 +301,12 @@ export function Index() {
         );
       }
     } else {
+      if (!amount) {
+        // this case should not happen, but if it does should we handle it?
+        return;
+      }
       const approved = await handleApproveBridge(
         setLoading,
-        setRedeemSteps,
-        setAmount,
         amount,
         decimals,
         _handleApproveEVM,
@@ -355,10 +352,24 @@ export function Index() {
     if (loading.box === 'none') handleClosePopUp(setLoading, setAmount);
   }, [loading.box]);
 
-  const isLoading = loading.box !== 'none' ? 'blur-md' : null;
+  const isLoading = loading.box !== 'none' ? true : false;
+  const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
   const operationId = IS_MASSA_TO_EVM ? EVMOperationID.current : lockTxID;
 
   // testing functions
+
+  // function closeLoadingBox() {
+  //   setLoading({
+  //     box: 'none',
+  //     approve: 'none',
+  //     burn: 'none',
+  //     redeem: 'none',
+  //     lock: 'none',
+  //     mint: 'none',
+  //     error: 'none',
+  //   });
+  //   setAmount('');
+  // }
 
   return (
     <>
@@ -375,7 +386,7 @@ export function Index() {
       )}
       <div
         className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
-            bg-secondary/50 backdrop-blur-lg text-f-primary mb-5 ${isLoading}`}
+            bg-secondary/50 backdrop-blur-lg text-f-primary mb-5 ${isBlurred}`}
       >
         <div className="p-6 bg-primary rounded-2xl mb-5">
           <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
