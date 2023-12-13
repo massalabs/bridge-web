@@ -28,7 +28,6 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleClosePopUp } from '@/custom/bridge/handlers/handleErrorMessage';
 import { handleFinalRedeem } from '@/custom/bridge/handlers/handleFinalRedeem';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
@@ -271,14 +270,12 @@ export function Index() {
     });
 
     if (IS_MASSA_TO_EVM) {
-      if (!massaClient) {
+      if (!massaClient || !token || !amount) {
         return;
       }
       const approved = await handleApproveRedeem(
         massaClient,
         setLoading,
-        setRedeemSteps,
-        setAmount,
         token,
         amount,
         decimals,
@@ -286,6 +283,7 @@ export function Index() {
 
       if (approved) {
         if (!token || !evmAddress || !amount) {
+          // this case should not happen, but if it does should we handle it?
           return;
         }
         await handleBurnRedeem(
@@ -349,7 +347,7 @@ export function Index() {
   }
 
   useEffect(() => {
-    if (loading.box === 'none') handleClosePopUp(setLoading, setAmount);
+    if (loading.box === 'none') closeLoadingBox();
   }, [loading.box]);
 
   const isLoading = loading.box !== 'none' ? true : false;
@@ -358,24 +356,24 @@ export function Index() {
 
   // testing functions
 
-  // function closeLoadingBox() {
-  //   setLoading({
-  //     box: 'none',
-  //     approve: 'none',
-  //     burn: 'none',
-  //     redeem: 'none',
-  //     lock: 'none',
-  //     mint: 'none',
-  //     error: 'none',
-  //   });
-  //   setAmount('');
-  // }
+  function closeLoadingBox() {
+    setLoading({
+      box: 'none',
+      approve: 'none',
+      burn: 'none',
+      redeem: 'none',
+      lock: 'none',
+      mint: 'none',
+      error: 'none',
+    });
+    setAmount('');
+  }
 
   return (
     <>
       {isLoading && (
         <LoadingBox
-          onClose={() => handleClosePopUp(setLoading, setAmount)}
+          onClose={() => closeLoadingBox()}
           loading={loading}
           massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}

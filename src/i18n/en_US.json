@@ -110,6 +110,7 @@
         "failed": "Approval failed",
         "allowance-error": "Unkown error happened while increasing allowance. Try again.",
         "rejected": "Approval rejected by user",
+        "timeout": "Approval Timeout. Try again.",
         "invalid-amount": "Invalid amount",
         "insufficient-funds": "Insufficient balance"
       },
