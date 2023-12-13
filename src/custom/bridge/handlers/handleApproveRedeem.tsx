@@ -30,8 +30,6 @@ export async function handleApproveRedeem(
     setLoading({
       approve: 'success',
     });
-
-    return true;
   } catch (error) {
     const typedError = error as ICustomError;
     const isErrorTimeout = typedError.cause?.error === 'timeout';
@@ -42,7 +40,7 @@ export async function handleApproveRedeem(
       // user rejects operation
       toast.error(Intl.t(`index.approve.error.rejected`));
     } else if (isErrorTimeout) {
-      // if there is timeout during waitINcludedOperation
+      // if there is timeout during waitIncludedOperation
       toast.error(Intl.t(`index.approve.error.timeout`));
     } else {
       // error during allowance increase
@@ -52,7 +50,7 @@ export async function handleApproveRedeem(
       box: 'error',
       approve: 'error',
     });
-
     return false;
   }
+  return true;
 }

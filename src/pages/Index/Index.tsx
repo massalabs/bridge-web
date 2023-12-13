@@ -354,8 +354,6 @@ export function Index() {
   const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
   const operationId = IS_MASSA_TO_EVM ? EVMOperationID.current : lockTxID;
 
-  // testing functions
-
   function closeLoadingBox() {
     setLoading({
       box: 'none',

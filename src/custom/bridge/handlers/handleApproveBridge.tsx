@@ -29,7 +29,7 @@ export async function handleApproveBridge(
       // user rejects operation
       toast.error(Intl.t(`index.approve.error.rejected`));
     } else {
-      // error comes from increaseAllaoanceFunction
+      // error comes from increaseAllowanceFunction
       toast.error(Intl.t(`index.approve.error.allowance-error`));
     }
     setLoading({ approve: 'error', box: 'error' });
