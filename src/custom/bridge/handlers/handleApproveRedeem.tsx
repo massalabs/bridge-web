@@ -1,19 +1,19 @@
 import { Client } from '@massalabs/massa-web3';
+import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 
-import { handleErrorMessage } from './handleErrorMessage';
 import { U256_MAX } from '../../../const/const';
 import { ILoadingState } from '../../../const/types/types';
+import Intl from '../../../i18n/i18n';
 import { IToken } from '../../../store/accountStore';
 import { increaseAllowance } from '../bridge';
+import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export async function handleApproveRedeem(
   client: Client,
   setLoading: (state: ILoadingState) => void,
-  setRedeemSteps: (state: string) => void,
-  setAmount: (state: string) => void,
-  token: IToken | null,
-  amount: string | undefined,
+  token: IToken,
+  amount: string,
   decimals: number,
 ) {
   try {
@@ -21,29 +21,33 @@ export async function handleApproveRedeem(
       approve: 'loading',
     });
 
-    if (!token || !amount) {
-      throw new Error('Missing param');
-    }
-
     let _amount = parseUnits(amount, decimals);
 
     if (token.allowance < _amount) {
       await increaseAllowance(client, token.massaToken, U256_MAX);
     }
+
     setLoading({
       approve: 'success',
     });
-
-    return true;
   } catch (error) {
-    handleErrorMessage(error as Error, setLoading, setRedeemSteps, setAmount);
+    const typedError = error as CustomError;
+    const isErrorTimeout =
+      typedError.cause && typedError.cause.error === 'timeout';
+    if (isRejectedByUser(typedError)) {
+      toast.error(Intl.t(`index.approve.error.rejected`));
+    } else if (isErrorTimeout) {
+      // if there is timeout during waitIncludedOperation
+      toast.error(Intl.t(`index.approve.error.timeout`));
+    } else {
+      // error during allowance increase
+      toast.error(Intl.t(`index.approve.error.allowance-error`));
+    }
     setLoading({
       box: 'error',
       approve: 'error',
-      burn: 'error',
-      redeem: 'error',
     });
-
     return false;
   }
+  return true;
 }

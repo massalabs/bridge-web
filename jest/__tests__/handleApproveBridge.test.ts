@@ -17,8 +17,6 @@ describe('handleApproveBridge', () => {
 
     const result = await handleApproveBridge(
       mockSetLoading,
-      {} as any,
-      {} as any,
       amount,
       decimals,
       _handleApproveEVM,
@@ -50,8 +48,6 @@ describe('handleApproveBridge', () => {
 
     const result = await handleApproveBridge(
       mockSetLoading,
-      {} as any,
-      {} as any,
       amount,
       decimals,
       _handleApproveEVM,
@@ -68,9 +64,7 @@ describe('handleApproveBridge', () => {
   test('approval fails because of error during allowance increase transaction', async () => {
     const utils = new Utils();
 
-    const mockWriteAsync = jest
-      .fn()
-      .mockRejectedValueOnce(() => new Error('error'));
+    const mockWriteAsync = jest.fn().mockRejectedValueOnce(new Error('error'));
 
     utils.setWriteAsync(mockWriteAsync);
     const approve = {
@@ -86,8 +80,6 @@ describe('handleApproveBridge', () => {
 
     const result = await handleApproveBridge(
       mockSetLoading,
-      {} as any,
-      {} as any,
       amount,
       decimals,
       _handleApproveEVM,
@@ -101,59 +93,6 @@ describe('handleApproveBridge', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       approve: 'error',
-      lock: 'error',
-      mint: 'error',
-    });
-
-    expect(result).toBeFalsy();
-  });
-
-  test('should show timeout screen in case of approval timeout', async () => {
-    const utils = new Utils();
-
-    const mockWriteAsync = jest.fn().mockRejectedValueOnce(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      new Error('timeout', { cause: { error: 'timeout' } }),
-    );
-
-    utils.setWriteAsync(mockWriteAsync);
-
-    const approve = {
-      writeAsync: utils.writeAsync,
-    };
-    const amount = '1313';
-    const decimals = 18;
-
-    const mockSetLoading = jest.fn().mockImplementation();
-
-    const _handleApproveEVM = approve.writeAsync;
-    const _allowanceEVM = 1311000000000000000000n;
-
-    const result = await handleApproveBridge(
-      mockSetLoading,
-      {} as any,
-      {} as any,
-      amount,
-      decimals,
-      _handleApproveEVM,
-      _allowanceEVM,
-    );
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
-
-    expect(_handleApproveEVM).toHaveBeenCalled();
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      approve: 'error',
-      lock: 'error',
-      mint: 'error',
-    });
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(3, {
-      box: 'warning',
-      mint: 'warning',
     });
 
     expect(result).toBeFalsy();

@@ -24,13 +24,10 @@ describe('handleApproveRedeem', () => {
     const decimals = 18;
 
     const mockSetLoading = jest.fn().mockImplementation();
-    const handleErrorMessage = jest.fn();
 
     const result = await handleApproveRedeem(
       client as any,
       mockSetLoading,
-      {} as any,
-      {} as any,
       token,
       amount,
       decimals,
@@ -43,7 +40,6 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
-    expect(handleErrorMessage).not.toHaveBeenCalled();
     expect(result).toBeTruthy();
   });
 
@@ -54,12 +50,9 @@ describe('handleApproveRedeem', () => {
     const amount = '13';
     const decimals = 18;
     const mockSetLoading = jest.fn().mockImplementation();
-    const handleErrorMessage = jest.fn().mockImplementation();
     const result = await handleApproveRedeem(
       client as any,
       mockSetLoading,
-      {} as any,
-      {} as any,
       token,
       amount,
       decimals,
@@ -72,7 +65,6 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
-    expect(handleErrorMessage).not.toHaveBeenCalled();
     expect(result).toBeTruthy();
   });
 
@@ -81,7 +73,7 @@ describe('handleApproveRedeem', () => {
 
     const mockCallSmartContract = jest
       .fn()
-      .mockRejectedValueOnce(() => new Error('error'));
+      .mockRejectedValueOnce(new Error('error'));
 
     client.setMockCallSmartContract(mockCallSmartContract);
 
@@ -91,14 +83,10 @@ describe('handleApproveRedeem', () => {
     const decimals = 18;
 
     const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
     const result = await handleApproveRedeem(
       client as any,
       mockSetLoading,
-      mockSetRedeemSteps,
-      mockSetAmount,
       token,
       amount,
       decimals,
@@ -111,15 +99,13 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
-      burn: 'error',
-      redeem: 'error',
-      error: 'error',
+      approve: 'error',
     });
 
     expect(result).toBeFalsy();
   });
 
-  test('should close loading box and show error if http req was aborted ', async () => {
+  test('should error if user rejected approval', async () => {
     const client = new Client();
 
     const mockCallSmartContract = jest
@@ -138,14 +124,10 @@ describe('handleApproveRedeem', () => {
     const decimals = 18;
 
     const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
     const result = await handleApproveRedeem(
       client as any,
       mockSetLoading,
-      mockSetRedeemSteps,
-      mockSetAmount,
       token,
       amount,
       decimals,
@@ -158,20 +140,17 @@ describe('handleApproveRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
-      burn: 'error',
-      redeem: 'error',
+      approve: 'error',
     });
     expect(result).toBeFalsy();
   });
 
-  test('should show warning screen if user rejects the request', async () => {
+  test('should show error is approval timeout', async () => {
     const client = new Client();
 
     const mockCallSmartContract = jest
       .fn()
-      .mockRejectedValueOnce(
-        () => new Error('TransactionExecutionError: User rejected the request'),
-      );
+      .mockRejectedValueOnce(new Error('timeout'));
 
     client.setMockCallSmartContract(mockCallSmartContract);
 
@@ -181,14 +160,10 @@ describe('handleApproveRedeem', () => {
     const decimals = 18;
 
     const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
     const result = await handleApproveRedeem(
       client as any,
       mockSetLoading,
-      mockSetRedeemSteps,
-      mockSetAmount,
       token,
       amount,
       decimals,
@@ -200,15 +175,10 @@ describe('handleApproveRedeem', () => {
     expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      approve: 'none',
-      box: 'none',
-      burn: 'none',
-      error: 'none',
-      lock: 'none',
-      mint: 'none',
-      redeem: 'none',
+      approve: 'error',
+      box: 'error',
     });
-    expect(mockSetAmount).toHaveBeenCalledWith('');
+
     expect(result).toBeFalsy();
   });
 });

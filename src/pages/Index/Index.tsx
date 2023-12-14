@@ -28,7 +28,6 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleClosePopUp } from '@/custom/bridge/handlers/handleErrorMessage';
 import { handleFinalRedeem } from '@/custom/bridge/handlers/handleFinalRedeem';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
@@ -180,12 +179,7 @@ export function Index() {
       );
     }
     if (approveIsError) {
-      setLoading({
-        box: 'error',
-        approve: 'error',
-        lock: 'error',
-        mint: 'error',
-      });
+      toast.error(Intl.t('index.approve.error.failed'));
     }
   }, [approveIsSuccess, approveIsError]);
 
@@ -276,14 +270,12 @@ export function Index() {
     });
 
     if (IS_MASSA_TO_EVM) {
-      if (!massaClient) {
+      if (!massaClient || !token || !amount) {
         return;
       }
       const approved = await handleApproveRedeem(
         massaClient,
         setLoading,
-        setRedeemSteps,
-        setAmount,
         token,
         amount,
         decimals,
@@ -306,10 +298,11 @@ export function Index() {
         );
       }
     } else {
+      if (!amount) {
+        return;
+      }
       const approved = await handleApproveBridge(
         setLoading,
-        setRedeemSteps,
-        setAmount,
         amount,
         decimals,
         _handleApproveEVM,
@@ -352,19 +345,31 @@ export function Index() {
   }
 
   useEffect(() => {
-    if (loading.box === 'none') handleClosePopUp(setLoading, setAmount);
+    if (loading.box === 'none') closeLoadingBox();
   }, [loading.box]);
 
-  const isLoading = loading.box !== 'none' ? 'blur-md' : null;
+  const isLoading = loading.box !== 'none' ? true : false;
+  const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
   const operationId = IS_MASSA_TO_EVM ? EVMOperationID.current : lockTxID;
 
-  // testing functions
+  function closeLoadingBox() {
+    setLoading({
+      box: 'none',
+      approve: 'none',
+      burn: 'none',
+      redeem: 'none',
+      lock: 'none',
+      mint: 'none',
+      error: 'none',
+    });
+    setAmount('');
+  }
 
   return (
     <>
       {isLoading && (
         <LoadingBox
-          onClose={() => handleClosePopUp(setLoading, setAmount)}
+          onClose={() => closeLoadingBox()}
           loading={loading}
           massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}
@@ -375,7 +380,7 @@ export function Index() {
       )}
       <div
         className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
-            bg-secondary/50 backdrop-blur-lg text-f-primary mb-5 ${isLoading}`}
+            bg-secondary/50 backdrop-blur-lg text-f-primary mb-5 ${isBlurred}`}
       >
         <div className="p-6 bg-primary rounded-2xl mb-5">
           <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
