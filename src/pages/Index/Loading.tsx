@@ -145,6 +145,7 @@ function Redeem(props: ILoadingBoxProps) {
         <p className="mas-body-2">{Intl.t('index.loading-box.redeem')}</p>
         {loadingState(loading.redeem)}
       </div>
+      <ShowOperationId {...props} />
     </>
   );
 }
@@ -261,6 +262,10 @@ export function Warning(props: ILoadingBoxProps) {
 export function ShowOperationId(props: ILoadingBoxProps) {
   const { operationId, massaToEvm } = props;
 
+  const smartExplorerUrl = massaToEvm
+    ? `https://explorer.massa.net/operations/${operationId}`
+    : `https://sepolia.etherscan.io/tx/${operationId}`;
+
   const _openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
   };
@@ -280,18 +285,14 @@ export function ShowOperationId(props: ILoadingBoxProps) {
             rawContent={operationId}
           />
         </div>
-        {!massaToEvm && (
-          <div>
-            <Button
-              variant="icon"
-              onClick={() =>
-                _openInNewTab(`https://sepolia.etherscan.io/tx/${operationId}`)
-              }
-            >
-              <FiExternalLink size={18} />
-            </Button>
-          </div>
-        )}
+        <div>
+          <Button
+            variant="icon"
+            onClick={() => _openInNewTab(smartExplorerUrl)}
+          >
+            <FiExternalLink size={18} />
+          </Button>
+        </div>
       </div>
     )
   );
