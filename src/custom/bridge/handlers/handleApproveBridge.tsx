@@ -3,7 +3,7 @@ import { parseUnits } from 'viem';
 
 import Intl from '../../../i18n/i18n';
 import { ILoadingState } from '@/const';
-import { ICustomError, regexErr, regexWarn } from '@/utils/const';
+import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export async function handleApproveBridge(
   setLoading: (state: ILoadingState) => void,
@@ -21,12 +21,8 @@ export async function handleApproveBridge(
     }
     setLoading({ approve: 'success' });
   } catch (error) {
-    const typedError = error as ICustomError;
-    if (
-      regexErr.test(typedError.toString()) ||
-      regexWarn.test(typedError.toString())
-    ) {
-      // user rejects operation
+    const typedError = error as CustomError;
+    if (isRejectedByUser(typedError)) {
       toast.error(Intl.t(`index.approve.error.rejected`));
     } else {
       // error comes from increaseAllowanceFunction

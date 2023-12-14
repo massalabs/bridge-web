@@ -64,9 +64,7 @@ describe('handleApproveBridge', () => {
   test('approval fails because of error during allowance increase transaction', async () => {
     const utils = new Utils();
 
-    const mockWriteAsync = jest
-      .fn()
-      .mockRejectedValueOnce(() => new Error('error'));
+    const mockWriteAsync = jest.fn().mockRejectedValueOnce(new Error('error'));
 
     utils.setWriteAsync(mockWriteAsync);
     const approve = {

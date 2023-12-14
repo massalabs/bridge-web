@@ -73,7 +73,7 @@ describe('handleApproveRedeem', () => {
 
     const mockCallSmartContract = jest
       .fn()
-      .mockRejectedValueOnce(() => new Error('error'));
+      .mockRejectedValueOnce(new Error('error'));
 
     client.setMockCallSmartContract(mockCallSmartContract);
 
@@ -105,7 +105,7 @@ describe('handleApproveRedeem', () => {
     expect(result).toBeFalsy();
   });
 
-  test('should should error if user rejected approval', async () => {
+  test('should error if user rejected approval', async () => {
     const client = new Client();
 
     const mockCallSmartContract = jest
@@ -150,7 +150,7 @@ describe('handleApproveRedeem', () => {
 
     const mockCallSmartContract = jest
       .fn()
-      .mockRejectedValueOnce(() => new Error('timeout'));
+      .mockRejectedValueOnce(new Error('timeout'));
 
     client.setMockCallSmartContract(mockCallSmartContract);
 

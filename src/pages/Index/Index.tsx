@@ -283,7 +283,6 @@ export function Index() {
 
       if (approved) {
         if (!token || !evmAddress || !amount) {
-          // this case should not happen, but if it does should we handle it?
           return;
         }
         await handleBurnRedeem(
@@ -300,7 +299,6 @@ export function Index() {
       }
     } else {
       if (!amount) {
-        // this case should not happen, but if it does should we handle it?
         return;
       }
       const approved = await handleApproveBridge(

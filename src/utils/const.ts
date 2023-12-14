@@ -23,24 +23,3 @@ export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';
 export const BRIDGE_ACCOUNT_ADDRESS = 'massa-bridge-account-address';
 
 export const BRIDGE_TOKEN = 'massa-bridge-token';
-
-// Error const
-
-export interface ICustomError extends Error {
-  cause?: {
-    error: string;
-    details: string;
-  };
-}
-
-export const ERRORS_MESSAGES = [
-  'unable to unprotect wallet',
-  'TransactionExecutionError: User rejected the request',
-];
-
-export const WARNING_MESSAGES = [
-  'signing operation: calling executeHTTPRequest for call: aborting during HTTP request',
-];
-
-export const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
-export const regexWarn = new RegExp(WARNING_MESSAGES.join('|'), 'i');

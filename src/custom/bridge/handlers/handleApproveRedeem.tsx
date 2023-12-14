@@ -7,7 +7,7 @@ import { ILoadingState } from '../../../const/types/types';
 import Intl from '../../../i18n/i18n';
 import { IToken } from '../../../store/accountStore';
 import { increaseAllowance } from '../bridge';
-import { ICustomError, regexErr, regexWarn } from '@/utils/const';
+import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export async function handleApproveRedeem(
   client: Client,
@@ -31,13 +31,10 @@ export async function handleApproveRedeem(
       approve: 'success',
     });
   } catch (error) {
-    const typedError = error as ICustomError;
-    const isErrorTimeout = typedError.cause?.error === 'timeout';
-    if (
-      regexErr.test(typedError.toString()) ||
-      regexWarn.test(typedError.toString())
-    ) {
-      // user rejects operation
+    const typedError = error as CustomError;
+    const isErrorTimeout =
+      typedError.cause && typedError.cause.error === 'timeout';
+    if (isRejectedByUser(typedError)) {
       toast.error(Intl.t(`index.approve.error.rejected`));
     } else if (isErrorTimeout) {
       // if there is timeout during waitIncludedOperation
