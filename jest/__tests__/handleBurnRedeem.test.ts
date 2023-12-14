@@ -34,7 +34,6 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
     const mockEvmAddress = '0x1234567890123456789012345678901234567890';
     const mockEvmOpIdRef = {
@@ -50,7 +49,6 @@ describe('handleBurnRedeem', () => {
       mockEvmOpIdRef as any,
       mockSetLoading,
       mockSetRedeemSteps,
-      mockSetAmount,
     );
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
@@ -93,7 +91,6 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
     const mockEvmAddress = '0x1234567890123456789012345678901234567890';
     const mockEvmOpIdRef = {
@@ -109,7 +106,6 @@ describe('handleBurnRedeem', () => {
       mockEvmOpIdRef as any,
       mockSetLoading,
       mockSetRedeemSteps,
-      mockSetAmount,
     );
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
@@ -125,8 +121,6 @@ describe('handleBurnRedeem', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       burn: 'error',
-      redeem: 'error',
-      error: 'error',
     });
     expect(result).toBeFalsy();
   });
@@ -147,7 +141,6 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
     const mockEvmAddress = '0x1234567890123456789012345678901234567890';
     const mockEvmOpIdRef = {
@@ -163,7 +156,6 @@ describe('handleBurnRedeem', () => {
       mockEvmOpIdRef as any,
       mockSetLoading,
       mockSetRedeemSteps,
-      mockSetAmount,
     );
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
@@ -179,8 +171,6 @@ describe('handleBurnRedeem', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       burn: 'error',
-      redeem: 'error',
-      error: 'error',
     });
     expect(result).toBeFalsy();
   });

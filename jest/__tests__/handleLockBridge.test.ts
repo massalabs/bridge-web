@@ -22,8 +22,6 @@ describe('handleLockBridge', () => {
 
     const result = await handleLockBridge(
       mockSetLoading,
-      {} as any,
-      {} as any,
       amount,
       _handleLockEVM,
       decimals,
@@ -57,8 +55,6 @@ describe('handleLockBridge', () => {
 
     const result = await handleLockBridge(
       mockSetLoading,
-      {} as any,
-      {} as any,
       amount,
       _handleLockEVM,
       decimals,
@@ -71,14 +67,6 @@ describe('handleLockBridge', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       lock: 'error',
-      mint: 'error',
-    });
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(3, {
-      box: 'error',
-      burn: 'error',
-      redeem: 'error',
-      error: 'error',
     });
 
     expect(result).toBeFalsy();
