@@ -151,12 +151,14 @@ export function Index() {
 
   useEffect(() => {
     if (lockIsSuccess) {
+      console.log('lock success from index');
       setLoading({ lock: 'success' });
       let data = lockData;
       setLockTxID(data?.transactionHash);
     }
     if (lockIsError) {
-      setLoading({ box: 'error', lock: 'error', mint: 'error' });
+      console.log('lock error from index');
+      setLoading({ box: 'error', lock: 'error' });
     }
   }, [lockIsSuccess, lockIsError]);
 
@@ -169,14 +171,8 @@ export function Index() {
   useEffect(() => {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
-      handleLockBridge(
-        setLoading,
-        setRedeemSteps,
-        setAmount,
-        amount,
-        _handleLockEVM,
-        decimals,
-      );
+      if (!amount) return;
+      handleLockBridge(setLoading, amount, _handleLockEVM, decimals);
     }
     if (approveIsError) {
       toast.error(Intl.t('index.approve.error.failed'));
@@ -311,14 +307,7 @@ export function Index() {
       );
 
       if (approved) {
-        await handleLockBridge(
-          setLoading,
-          setRedeemSteps,
-          setAmount,
-          amount,
-          _handleLockEVM,
-          decimals,
-        );
+        await handleLockBridge(setLoading, amount, _handleLockEVM, decimals);
       }
     }
   }
@@ -364,6 +353,8 @@ export function Index() {
       error: 'none',
     });
     setAmount('');
+    // the lock txID is not reset and the the finalization of a mint
+    setLockTxID(undefined);
   }
 
   return (

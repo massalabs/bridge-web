@@ -58,6 +58,8 @@
       }
     },
     "loading-box": {
+      "operation": "Operation",
+      "transaction": "Transaction",
       "title-bridge": "Processing bridge...",
       "title-bridge-warning-1": "Bridge transfer",
       "title-bridge-warning-2": "not yet finalized",
@@ -116,6 +118,12 @@
       },
       "success": "Approval successfully granted",
       "loading": "Processing approval..."
+    },
+    "lock": {
+      "error": {
+        "rejected": "Lock rejected by user",
+        "wrong-allowance": "Allowance is too low. Try again."
+      }
     },
     "bridge": {
       "error": {

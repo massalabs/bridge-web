@@ -85,6 +85,7 @@ const useEvmBridge = () => {
 
   async function handleLock(amount: bigint) {
     try {
+      console.log('handling lock');
       let { hash } = await lock.writeAsync({
         args: [amount.toString(), massaAccount?.address(), token?.evmToken],
       });
