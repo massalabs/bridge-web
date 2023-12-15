@@ -151,13 +151,11 @@ export function Index() {
 
   useEffect(() => {
     if (lockIsSuccess) {
-      console.log('lock success from index');
       setLoading({ lock: 'success' });
       let data = lockData;
       setLockTxID(data?.transactionHash);
     }
     if (lockIsError) {
-      console.log('lock error from index');
       setLoading({ box: 'error', lock: 'error' });
     }
   }, [lockIsSuccess, lockIsError]);
@@ -172,7 +170,13 @@ export function Index() {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
       if (!amount) return;
-      handleLockBridge(setLoading, amount, _handleLockEVM, decimals);
+      const lockArgs = {
+        setLoading,
+        amount,
+        _handleLockEVM,
+        decimals,
+      };
+      handleLockBridge(lockArgs);
     }
     if (approveIsError) {
       toast.error(Intl.t('index.approve.error.failed'));
@@ -281,8 +285,9 @@ export function Index() {
         if (!token || !evmAddress || !amount) {
           return;
         }
-        await handleBurnRedeem(
-          massaClient,
+
+        const burnArgs = {
+          client: massaClient,
           token,
           evmAddress,
           amount,
@@ -290,7 +295,9 @@ export function Index() {
           EVMOperationID,
           setLoading,
           setRedeemSteps,
-        );
+        };
+
+        await handleBurnRedeem(burnArgs);
       }
     } else {
       if (!amount) {
@@ -305,7 +312,13 @@ export function Index() {
       );
 
       if (approved) {
-        await handleLockBridge(setLoading, amount, _handleLockEVM, decimals);
+        const lockArgs = {
+          setLoading,
+          amount,
+          _handleLockEVM,
+          decimals,
+        };
+        await handleLockBridge(lockArgs);
       }
     }
   }

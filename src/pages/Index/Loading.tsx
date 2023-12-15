@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 
 import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiX, FiPauseCircle, FiExternalLink } from 'react-icons/fi';
@@ -30,7 +30,7 @@ interface ILoadingBoxProps {
 }
 
 export function LoadingBox(props: ILoadingBoxProps) {
-  const { onClose, loading, massaToEvm, operationId } = props;
+  const { onClose, loading, massaToEvm } = props;
 
   const IS_BOX_SUCCESS = loading.box === 'success';
   const IS_BOX_WARNING = loading.box === 'warning';
@@ -39,14 +39,6 @@ export function LoadingBox(props: ILoadingBoxProps) {
 
   const displaySubtitle =
     !IS_BOX_SUCCESS && !IS_GLOBAL_ERROR && !IS_BOX_WARNING && !IS_BOX_ERROR;
-
-  useEffect(() => {
-    console.log('loading.box state:', loading.box);
-  }, [loading]);
-
-  useEffect(() => {
-    console.log('operationId:', operationId);
-  }, [operationId]);
 
   function _getLoadingBoxHeader() {
     if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');

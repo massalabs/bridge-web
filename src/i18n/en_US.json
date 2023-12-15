@@ -123,14 +123,16 @@
     "lock": {
       "error": {
         "rejected": "Lock rejected by user",
-        "wrong-allowance": "Allowance is too low. Try again."
+        "wrong-allowance": "Allowance is too low. Try again.",
+        "unknown": "Unkown error, Try again."
       }
     },
     "burn": {
       "error": {
         "rejected": "Burn rejected by user",
         "wrong-allowance": "Allowance is too low. Try again.",
-        "timeout": "Burn timeout out."
+        "timeout": "Burn timeout out.",
+        "unknown": "Unkown error, Try again."
       }
     },
     "bridge": {
