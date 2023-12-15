@@ -110,8 +110,8 @@
     "approve": {
       "error": {
         "general": "Something went wrong! Please, try again!",
-        "failed": "Approval failed",
-        "allowance-error": "Unkown error happened while increasing allowance. Try again.",
+        "failed": "Approval failed. Try again.",
+        "allowance-error": "Unknown error happened while increasing allowance. Try again.",
         "rejected": "Approval rejected by user",
         "timeout": "Approval Timeout. Try again.",
         "invalid-amount": "Invalid amount",
@@ -124,7 +124,7 @@
       "error": {
         "rejected": "Lock rejected by user",
         "wrong-allowance": "Allowance is too low. Try again.",
-        "unknown": "Unkown error, Try again."
+        "unknown": "Unknown error, Try again."
       }
     },
     "burn": {
@@ -132,7 +132,7 @@
         "rejected": "Burn rejected by user",
         "wrong-allowance": "Allowance is too low. Try again.",
         "timeout": "Burn timeout out.",
-        "unknown": "Unkown error, Try again."
+        "unknown": "Unknown error, Try again."
       }
     },
     "bridge": {

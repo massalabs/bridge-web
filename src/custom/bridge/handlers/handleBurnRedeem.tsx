@@ -35,18 +35,16 @@ export async function handleBurnRedeem({
   return true;
 }
 
-async function initiateBurn({ ...args }: BurnRedeemParams) {
-  const {
-    client,
-    token,
-    evmAddress,
-    amount,
-    decimals,
-    EVMOperationID,
-    setLoading,
-    setRedeemSteps,
-  } = args;
-
+async function initiateBurn({
+  client,
+  token,
+  evmAddress,
+  amount,
+  decimals,
+  EVMOperationID,
+  setLoading,
+  setRedeemSteps,
+}: BurnRedeemParams) {
   const tokenPair = new TokenPair(
     token.massaToken,
     token.evmToken,
@@ -79,7 +77,7 @@ async function initiateBurn({ ...args }: BurnRedeemParams) {
   setRedeemSteps(Intl.t('index.loading-box.burned-final'));
 }
 
-function handleBurnError({ ...args }: BurnRedeemParams, error: any) {
+function handleBurnError({ ...args }, error: any) {
   const { setRedeemSteps } = args;
 
   const typedError = error as CustomError;
@@ -87,10 +85,8 @@ function handleBurnError({ ...args }: BurnRedeemParams, error: any) {
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t(`index.burn.error.rejected`));
     setRedeemSteps(Intl.t('index.loading-box.burn-rejected'));
-    return;
   } else if (isErrorTimeout) {
     toast.error(Intl.t(`index.burn.error.timeout`));
-    return;
   } else {
     toast.error(Intl.t(`index.burn.error.unknown`));
     console.error(error);

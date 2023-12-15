@@ -210,7 +210,7 @@ function Success(props: ILoadingBoxProps) {
   );
 }
 
-// TODO: remove if unsued
+// Remove if not used
 export function GLobalError() {
   return (
     <div className="text-center mas-body2">
@@ -255,7 +255,7 @@ export function ShowOperationId(props: ILoadingBoxProps) {
   const { operationId, massaToEvm } = props;
 
   const smartExplorerUrl = massaToEvm
-    ? `https://explorer.massa.net/operations/${operationId}`
+    ? `https://explorer.massa.net/operation/${operationId}`
     : `https://sepolia.etherscan.io/tx/${operationId}`;
 
   const _openInNewTab = (url: string) => {

@@ -179,6 +179,7 @@ export function Index() {
       handleLockBridge(lockArgs);
     }
     if (approveIsError) {
+      setLoading({ box: 'error', approve: 'error' });
       toast.error(Intl.t('index.approve.error.failed'));
     }
   }, [approveIsSuccess, approveIsError]);
@@ -364,7 +365,7 @@ export function Index() {
       error: 'none',
     });
     setAmount('');
-    // the lock txID is not reset and the the finalization of a mint
+    // the lock txID is not reset after mint
     setLockTxID(undefined);
   }
 
