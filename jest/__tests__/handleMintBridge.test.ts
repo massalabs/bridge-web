@@ -7,18 +7,20 @@ describe('handleMintBridge', () => {
   });
 
   test('should show success of mint event', async () => {
-    const lockTxId = 'mockLockTxId';
-    const client = new Client();
+    const lockTxID = 'mockLockTxId';
+    const client: any = new Client();
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
 
-    const result = await handleMintBridge(
-      client as any,
-      lockTxId,
-      mockSetLoading,
-      mockGetTokens,
-    );
+    const mintArgs = {
+      massaClient: client,
+      massaOperationID: lockTxID,
+      setLoading: mockSetLoading,
+      getTokens: mockGetTokens,
+    };
+
+    const result = await handleMintBridge(mintArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
@@ -29,7 +31,7 @@ describe('handleMintBridge', () => {
   });
 
   test('should show error screen if no events were found on Smart Contract during mint', async () => {
-    const client = new Client();
+    const client: any = new Client();
     const mockGetFilteredScOutputEvent = jest.fn().mockRejectedValueOnce([]);
     client.setMockGetFilteredScOutputEvent(mockGetFilteredScOutputEvent);
 
@@ -38,25 +40,26 @@ describe('handleMintBridge', () => {
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
 
-    const result = await handleMintBridge(
-      client as any,
-      lockTxID,
-      mockSetLoading,
-      mockGetTokens,
-    );
+    const mintArgs = {
+      massaClient: client,
+      massaOperationID: lockTxID,
+      setLoading: mockSetLoading,
+      getTokens: mockGetTokens,
+    };
+
+    const result = await handleMintBridge(mintArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      mint: 'error',
       error: 'error',
+      mint: 'error',
     });
 
     expect(result).toBeFalsy();
   });
 
   test('should show error if there is a problem during mint', async () => {
-    const client = new Client();
+    const client: any = new Client();
     const mockGetFilteredScOutputEvent = jest
       .fn()
       .mockRejectedValueOnce(new Error('error'));
@@ -67,25 +70,26 @@ describe('handleMintBridge', () => {
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
 
-    const result = await handleMintBridge(
-      client as any,
-      lockTxID,
-      mockSetLoading,
-      mockGetTokens,
-    );
+    const mintArgs = {
+      massaClient: client,
+      massaOperationID: lockTxID,
+      setLoading: mockSetLoading,
+      getTokens: mockGetTokens,
+    };
+
+    const result = await handleMintBridge(mintArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      mint: 'error',
       error: 'error',
+      mint: 'error',
     });
 
     expect(result).toBeFalsy();
   });
 
   test('should show timeout screen if the mint is loo long', async () => {
-    const client = new Client();
+    const client: any = new Client();
     const mockGetFilteredScOutputEvent = jest.fn().mockRejectedValueOnce(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -100,12 +104,14 @@ describe('handleMintBridge', () => {
     const mockGetTokens = jest.fn().mockImplementation();
     // We cannot mock correctly waitForMIntEvent, so we mock a timeout here
 
-    const result = await handleMintBridge(
-      client as any,
-      lockTxID,
-      mockSetLoading,
-      mockGetTokens,
-    );
+    const mintArgs = {
+      massaClient: client,
+      massaOperationID: lockTxID,
+      setLoading: mockSetLoading,
+      getTokens: mockGetTokens,
+    };
+
+    const result = await handleMintBridge(mintArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {

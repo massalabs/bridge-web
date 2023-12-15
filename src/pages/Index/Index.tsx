@@ -162,8 +162,15 @@ export function Index() {
 
   useEffect(() => {
     if (!massaClient) return;
-    if (lockTxID)
-      handleMintBridge(massaClient, lockTxID, setLoading, getTokens);
+    if (lockTxID) {
+      const mintArgs = {
+        massaClient,
+        massaOperationID: lockTxID,
+        setLoading,
+        getTokens,
+      };
+      handleMintBridge({ ...mintArgs });
+    }
   }, [lockTxID]);
 
   useEffect(() => {
