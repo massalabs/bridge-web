@@ -1,16 +1,16 @@
-import { handleFinalRedeem } from '../../src/custom/bridge/handlers/handleFinalRedeem';
+import { checkRedeemStatus } from '../../src/custom/bridge/handlers/checkRedeemStatus';
 
-describe('handleBurnRedeem', () => {
+describe('handleFinalRedeem', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test('should show success of redeem event', async () => {
-    const mockEvmOpIdRef = {
+    const mockEvmOpIdRef: any = {
       current: '0x1234567890123456789012345678901234567890',
     };
 
-    const mockEvents = [
+    const mockEvents: any = [
       {
         address: 'alice',
         args: {
@@ -35,13 +35,17 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
+    const mockClearRedeem = jest.fn().mockImplementation();
 
-    const result = await handleFinalRedeem(
-      mockEvents as any,
-      mockEvmOpIdRef as any,
-      mockSetLoading,
-      mockGetTokens,
-    );
+    const redeemArgs = {
+      events: mockEvents,
+      EVMOperationID: mockEvmOpIdRef,
+      setLoading: mockSetLoading,
+      getTokens: mockGetTokens,
+      clearRedeem: mockClearRedeem,
+    };
+
+    const result = checkRedeemStatus(redeemArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
       box: 'success',
@@ -49,25 +53,32 @@ describe('handleBurnRedeem', () => {
     });
     expect(mockGetTokens).toHaveBeenCalled();
     expect(mockEvmOpIdRef.current).toBe(undefined);
+    expect(mockClearRedeem).toHaveBeenCalled();
     expect(result).toBeTruthy();
   });
 
   test('fail redeem event if no events', async () => {
-    const mockEvmOpIdRef = {
+    const mockEvmOpIdRef: any = {
       current: '0x1234567890123456789012345678901234567890',
     };
-    const mockEvents = [{}];
+    const mockEvents: any = [{}];
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockGetTokens = jest.fn().mockImplementation();
-    const result = await handleFinalRedeem(
-      mockEvents as any,
-      mockEvmOpIdRef as any,
-      mockSetLoading,
-      mockGetTokens,
-    );
+    const mockClearRedeem = jest.fn().mockImplementation();
+
+    const redeemArgs = {
+      events: mockEvents,
+      EVMOperationID: mockEvmOpIdRef,
+      setLoading: mockSetLoading,
+      getTokens: mockGetTokens,
+      clearRedeem: mockClearRedeem,
+    };
+
+    const result = checkRedeemStatus(redeemArgs);
     expect(mockSetLoading).not.toHaveBeenCalledWith();
     expect(mockEvmOpIdRef.current).toBe(mockEvmOpIdRef.current);
+    expect(mockClearRedeem).not.toHaveBeenCalled();
 
     expect(result).toBeFalsy();
   });

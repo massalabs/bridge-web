@@ -25,10 +25,10 @@ import {
   EVM_BRIDGE_ADDRESS,
 } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
+import { checkRedeemStatus } from '@/custom/bridge/handlers/checkRedeemStatus';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleFinalRedeem } from '@/custom/bridge/handlers/handleFinalRedeem';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -72,6 +72,9 @@ export function Index() {
 
   const EVMOperationID = useRef<string | undefined>(undefined);
   const [lockTxID, setLockTxID] = useState<string | undefined>(undefined);
+  const [isRedeem, setIsRedeem] = useState<boolean>(false);
+  const [redeemEvents, setRedeemEvents] = useState<any>([]);
+  const [isBurn, setIsBurn] = useState<boolean>(false);
 
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
@@ -191,15 +194,50 @@ export function Index() {
     }
   }, [approveIsSuccess, approveIsError]);
 
-  const unwatch = useContractEvent({
+  const redeemEventHandler = useContractEvent({
     address: EVM_BRIDGE_ADDRESS,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
     listener(events) {
-      handleFinalRedeem(events, EVMOperationID, setLoading, getTokens);
-      unwatch?.();
+      setIsRedeem(true);
+      setRedeemEvents(events);
+      redeemEventHandler?.();
     },
   });
+
+  // two minute timer to listening for the redeem event once burn is successful
+  // if no redeem event is found timeout screen is shown
+  // if redeem is true, the useEffect is fired a second time and the redeem status is checked and the timer stops
+  useEffect(() => {
+    const redeemArgs = {
+      events: redeemEvents,
+      EVMOperationID,
+      setLoading,
+      getTokens,
+      clearRedeem,
+    };
+    if (isBurn && !isRedeem) {
+      let timePast = 0;
+      const timer = setInterval(() => {
+        if (timePast < 120000) {
+          timePast += 1000;
+        } else if (timePast >= 120000) {
+          setLoading({ box: 'warning', redeem: 'warning' });
+          clearInterval(timer);
+          clearRedeem();
+        }
+      }, 1000);
+      return () => clearInterval(timer);
+    } else if (isBurn && isRedeem) {
+      checkRedeemStatus(redeemArgs);
+    }
+  }, [isRedeem, isBurn]);
+
+  function clearRedeem() {
+    setIsRedeem(false);
+    setIsBurn(false);
+    setRedeemEvents([]);
+  }
 
   async function getProviderList() {
     const providerList = await providers();
