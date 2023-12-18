@@ -6,7 +6,6 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
-import { ICOQuest } from '@/pages/Index/Quest';
 import { useConfigStore, useNetworkStore } from '@/store/store';
 
 export interface IOutletContextType {
@@ -54,7 +53,6 @@ export function Base() {
       <LayoutBridge onSetTheme={handleSetTheme} storedTheme={theme}>
         <Outlet />
         <Toast />
-        <ICOQuest />
       </LayoutBridge>
     </div>
   );

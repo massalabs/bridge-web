@@ -19,12 +19,6 @@ export const WETH_CONTRACT_ADDRESS =
 export const WETH_MASSA_ADDRESS =
   'AS1koirPmNwhAhJmfMb91Lb7xhB5sv5jLb7YKtsuRnWpVhzg5Kts';
 
-export const QUEST_NAME = 'Bridge';
-
-export const QUEST_CONNECT_WALLET = 'CONNECT_WALLET';
-
-export const QUEST_SERVER = 'https://dashboard.massa.net/quest_validation';
-
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
