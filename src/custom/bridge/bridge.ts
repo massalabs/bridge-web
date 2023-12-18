@@ -48,7 +48,6 @@ export async function forwardBurn(
     evmAddress,
     tokenPair,
   );
-
   const opId = await client.smartContracts().callSmartContract({
     targetAddress: CONTRACT_ADDRESS,
     functionName: 'forwardBurn',

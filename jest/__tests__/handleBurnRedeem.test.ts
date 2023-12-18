@@ -20,7 +20,7 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show success of burn (speculative success) event', async () => {
-    const client = new Client();
+    const client: any = new Client();
 
     const mockGetOperationStatus = jest
       .fn()
@@ -34,24 +34,24 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
-    const mockEvmAddress = '0x1234567890123456789012345678901234567890';
+    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
     const mockEvmOpIdRef = {
       current: '0x1234567890123456789012345678901234567890',
     };
 
-    const result = await handleBurnRedeem(
-      client as any,
+    const burnArgs = {
+      client,
       token,
-      mockEvmAddress,
+      evmAddress: mockEvmAddress,
       amount,
       decimals,
-      mockEvmOpIdRef as any,
-      mockSetLoading,
-      mockSetRedeemSteps,
-      mockSetAmount,
-    );
+      EVMOperationID: mockEvmOpIdRef,
+      setLoading: mockSetLoading,
+      setRedeemSteps: mockSetRedeemSteps,
+    };
+
+    const result = await handleBurnRedeem(burnArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
       burn: 'loading',
@@ -78,7 +78,7 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show error because of operation has status of final_error', async () => {
-    const client = new Client();
+    const client: any = new Client();
 
     const mockGetOperationStatus = jest
       .fn()
@@ -93,24 +93,24 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
-    const mockEvmAddress = '0x1234567890123456789012345678901234567890';
+    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
     const mockEvmOpIdRef = {
       current: '0x1234567890123456789012345678901234567890',
     };
 
-    const result = await handleBurnRedeem(
-      client as any,
+    const burnArgs = {
+      client,
       token,
-      mockEvmAddress,
+      evmAddress: mockEvmAddress,
       amount,
       decimals,
-      mockEvmOpIdRef as any,
-      mockSetLoading,
-      mockSetRedeemSteps,
-      mockSetAmount,
-    );
+      EVMOperationID: mockEvmOpIdRef,
+      setLoading: mockSetLoading,
+      setRedeemSteps: mockSetRedeemSteps,
+    };
+
+    const result = await handleBurnRedeem(burnArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
       burn: 'loading',
@@ -125,18 +125,16 @@ describe('handleBurnRedeem', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       burn: 'error',
-      redeem: 'error',
-      error: 'error',
     });
     expect(result).toBeFalsy();
   });
 
   test('should show error because of operation has status of speculative_error', async () => {
-    const client = new Client();
+    const client: any = new Client();
 
     const mockGetOperationStatus = jest
       .fn()
-      .mockResolvedValueOnce(EOperationStatus.SPECULATIVE_ERROR);
+      .mockRejectedValueOnce(EOperationStatus.SPECULATIVE_ERROR);
 
     client.setMockGetOperationStatus(mockGetOperationStatus);
 
@@ -147,24 +145,24 @@ describe('handleBurnRedeem', () => {
 
     const mockSetLoading = jest.fn().mockImplementation();
     const mockSetRedeemSteps = jest.fn().mockImplementation();
-    const mockSetAmount = jest.fn().mockImplementation();
 
-    const mockEvmAddress = '0x1234567890123456789012345678901234567890';
+    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
     const mockEvmOpIdRef = {
       current: '0x1234567890123456789012345678901234567890',
     };
 
-    const result = await handleBurnRedeem(
-      client as any,
+    const burnArgs = {
+      client,
       token,
-      mockEvmAddress,
+      evmAddress: mockEvmAddress,
       amount,
       decimals,
-      mockEvmOpIdRef as any,
-      mockSetLoading,
-      mockSetRedeemSteps,
-      mockSetAmount,
-    );
+      EVMOperationID: mockEvmOpIdRef,
+      setLoading: mockSetLoading,
+      setRedeemSteps: mockSetRedeemSteps,
+    };
+
+    const result = await handleBurnRedeem(burnArgs);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
       burn: 'loading',
@@ -179,8 +177,114 @@ describe('handleBurnRedeem', () => {
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
       burn: 'error',
-      redeem: 'error',
-      error: 'error',
+    });
+    expect(result).toBeFalsy();
+  });
+
+  test('should show error because of timeout', async () => {
+    const client: any = new Client();
+
+    const mockGetOperationStatus = jest.fn().mockRejectedValueOnce(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      Error('timeout', { cause: { error: 'timeout' } }),
+    );
+
+    client.setMockGetOperationStatus(mockGetOperationStatus);
+
+    const smartContracts = client.smartContracts();
+
+    const amount = '1313';
+    const decimals = 18;
+
+    const mockSetLoading = jest.fn().mockImplementation();
+    const mockSetRedeemSteps = jest.fn().mockImplementation();
+
+    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
+    const mockEvmOpIdRef = {
+      current: '0x1234567890123456789012345678901234567890',
+    };
+
+    const burnArgs = {
+      client,
+      token,
+      evmAddress: mockEvmAddress,
+      amount,
+      decimals,
+      EVMOperationID: mockEvmOpIdRef,
+      setLoading: mockSetLoading,
+      setRedeemSteps: mockSetRedeemSteps,
+    };
+
+    const result = await handleBurnRedeem(burnArgs);
+
+    expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
+      burn: 'loading',
+    });
+    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
+      1,
+      'Burn (awaiting inclusion...)',
+    );
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).toHaveBeenCalled();
+
+    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
+      box: 'error',
+      burn: 'error',
+    });
+    expect(result).toBeFalsy();
+  });
+
+  test('should show error because user rejected burn', async () => {
+    const client: any = new Client();
+
+    const mockCallSmartContract = jest
+      .fn()
+      .mockRejectedValueOnce(
+        new Error('TransactionExecutionError: User rejected the request'),
+      );
+
+    client.setMockCallSmartContract(mockCallSmartContract);
+
+    const smartContracts = client.smartContracts();
+
+    const amount = '1313';
+    const decimals = 18;
+
+    const mockSetLoading = jest.fn().mockImplementation();
+    const mockSetRedeemSteps = jest.fn().mockImplementation();
+
+    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
+    const mockEvmOpIdRef = {
+      current: '0x1234567890123456789012345678901234567890',
+    };
+
+    const burnArgs = {
+      client,
+      token,
+      evmAddress: mockEvmAddress,
+      amount,
+      decimals,
+      EVMOperationID: mockEvmOpIdRef,
+      setLoading: mockSetLoading,
+      setRedeemSteps: mockSetRedeemSteps,
+    };
+
+    const result = await handleBurnRedeem(burnArgs);
+
+    expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
+      burn: 'loading',
+    });
+    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
+      1,
+      'Burn (awaiting inclusion...)',
+    );
+    expect(smartContracts.callSmartContract).toHaveBeenCalled();
+    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
+
+    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
+      box: 'error',
+      burn: 'error',
     });
     expect(result).toBeFalsy();
   });

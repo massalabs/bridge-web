@@ -58,6 +58,8 @@
       }
     },
     "loading-box": {
+      "operation": "Operation",
+      "transaction": "Transaction",
       "title-bridge": "Processing bridge...",
       "title-bridge-warning-1": "Bridge transfer",
       "title-bridge-warning-2": "not yet finalized",
@@ -76,6 +78,7 @@
       "awaiting-inclusion": "Burn (awaiting inclusion...)",
       "included-pending": "Burn (included pending)",
       "burned-final": "Burn (final)",
+      "burn-rejected": "Burn (rejected)",
       "inconsistent-not-found": "Burn (inconsistent or not found)",
       "bridged": "You have successfully bridged:",
       "redeemed": "You have successfully redeemed:",
@@ -107,8 +110,8 @@
     "approve": {
       "error": {
         "general": "Something went wrong! Please, try again!",
-        "failed": "Approval failed",
-        "allowance-error": "Unkown error happened while increasing allowance. Try again.",
+        "failed": "Approval failed. Try again.",
+        "allowance-error": "Unknown error happened while increasing allowance. Try again.",
         "rejected": "Approval rejected by user",
         "timeout": "Approval Timeout. Try again.",
         "invalid-amount": "Invalid amount",
@@ -116,6 +119,21 @@
       },
       "success": "Approval successfully granted",
       "loading": "Processing approval..."
+    },
+    "lock": {
+      "error": {
+        "rejected": "Lock rejected by user",
+        "wrong-allowance": "Allowance is too low. Try again.",
+        "unknown": "Unknown error, Try again."
+      }
+    },
+    "burn": {
+      "error": {
+        "rejected": "Burn rejected by user",
+        "wrong-allowance": "Allowance is too low. Try again.",
+        "timeout": "Burn timeout out.",
+        "unknown": "Unknown error, Try again."
+      }
     },
     "bridge": {
       "error": {

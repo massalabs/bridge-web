@@ -156,7 +156,7 @@ export function Index() {
       setLockTxID(data?.transactionHash);
     }
     if (lockIsError) {
-      setLoading({ box: 'error', lock: 'error', mint: 'error' });
+      setLoading({ box: 'error', lock: 'error' });
     }
   }, [lockIsSuccess, lockIsError]);
 
@@ -169,16 +169,17 @@ export function Index() {
   useEffect(() => {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
-      handleLockBridge(
+      if (!amount) return;
+      const lockArgs = {
         setLoading,
-        setRedeemSteps,
-        setAmount,
         amount,
         _handleLockEVM,
         decimals,
-      );
+      };
+      handleLockBridge(lockArgs);
     }
     if (approveIsError) {
+      setLoading({ box: 'error', approve: 'error' });
       toast.error(Intl.t('index.approve.error.failed'));
     }
   }, [approveIsSuccess, approveIsError]);
@@ -285,8 +286,9 @@ export function Index() {
         if (!token || !evmAddress || !amount) {
           return;
         }
-        await handleBurnRedeem(
-          massaClient,
+
+        const burnArgs = {
+          client: massaClient,
           token,
           evmAddress,
           amount,
@@ -294,8 +296,9 @@ export function Index() {
           EVMOperationID,
           setLoading,
           setRedeemSteps,
-          setAmount,
-        );
+        };
+
+        await handleBurnRedeem(burnArgs);
       }
     } else {
       if (!amount) {
@@ -310,14 +313,13 @@ export function Index() {
       );
 
       if (approved) {
-        await handleLockBridge(
+        const lockArgs = {
           setLoading,
-          setRedeemSteps,
-          setAmount,
           amount,
           _handleLockEVM,
           decimals,
-        );
+        };
+        await handleLockBridge(lockArgs);
       }
     }
   }
@@ -363,6 +365,8 @@ export function Index() {
       error: 'none',
     });
     setAmount('');
+    // the lock txID is not reset after mint
+    setLockTxID(undefined);
   }
 
   return (

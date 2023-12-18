@@ -34,13 +34,15 @@ export function LoadingBox(props: ILoadingBoxProps) {
 
   const IS_BOX_SUCCESS = loading.box === 'success';
   const IS_BOX_WARNING = loading.box === 'warning';
-  const IS_BOX_ERROR = loading.error !== 'none';
+  const IS_BOX_ERROR = loading.box === 'error';
+  const IS_GLOBAL_ERROR = loading.error !== 'none';
 
-  const displaySubtitle = !IS_BOX_SUCCESS && !IS_BOX_ERROR && !IS_BOX_WARNING;
+  const displaySubtitle =
+    !IS_BOX_SUCCESS && !IS_GLOBAL_ERROR && !IS_BOX_WARNING && !IS_BOX_ERROR;
 
   function _getLoadingBoxHeader() {
     if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
-    else if (IS_BOX_ERROR) {
+    else if (IS_GLOBAL_ERROR || IS_BOX_ERROR) {
       return massaToEvm
         ? Intl.t('index.loading-box.title-redeem-error')
         : Intl.t('index.loading-box.title-bridge-error');
@@ -66,11 +68,18 @@ export function LoadingBox(props: ILoadingBoxProps) {
   }
 
   function _getLoadingBoxContent() {
-    if (IS_BOX_ERROR) return <BridgeError />;
-    else if (IS_BOX_SUCCESS) return <Ran {...props} />;
-    else if (IS_BOX_WARNING) return <BridgeWarning {...props} />;
-    else if (massaToEvm) return <RunningMassaEVM {...props} />;
-    else return <RunningEVMMassa {...props} />;
+    switch (true) {
+      case IS_GLOBAL_ERROR:
+        return <GLobalError />;
+      case IS_BOX_SUCCESS:
+        return <Success {...props} />;
+      case IS_BOX_WARNING:
+        return <Warning {...props} />;
+      case massaToEvm:
+        return <Redeem {...props} />;
+      default:
+        return <Bridge {...props} />;
+    }
   }
 
   return (
@@ -111,7 +120,7 @@ export function LoadingBox(props: ILoadingBoxProps) {
   );
 }
 
-function RunningMassaEVM(props: ILoadingBoxProps) {
+function Redeem(props: ILoadingBoxProps) {
   const { loading, redeemSteps } = props;
 
   return (
@@ -128,11 +137,12 @@ function RunningMassaEVM(props: ILoadingBoxProps) {
         <p className="mas-body-2">{Intl.t('index.loading-box.redeem')}</p>
         {loadingState(loading.redeem)}
       </div>
+      <ShowOperationId {...props} />
     </>
   );
 }
 
-function RunningEVMMassa(props: ILoadingBoxProps) {
+function Bridge(props: ILoadingBoxProps) {
   const { loading } = props;
 
   return (
@@ -149,11 +159,12 @@ function RunningEVMMassa(props: ILoadingBoxProps) {
         <p className="mas-body-2">{Intl.t('index.loading-box.mint')}</p>
         {loadingState(loading.mint)}
       </div>
+      <ShowOperationId {...props} />
     </>
   );
 }
 
-function Ran(props: ILoadingBoxProps) {
+function Success(props: ILoadingBoxProps) {
   const { massaToEvm, amount, token, onClose } = props;
 
   const massa = Intl.t('general.massa');
@@ -199,7 +210,8 @@ function Ran(props: ILoadingBoxProps) {
   );
 }
 
-export function BridgeError() {
+// Remove if not used
+export function GLobalError() {
   return (
     <div className="text-center mas-body2">
       <p> {Intl.t('index.loading-box.error-something')}</p>
@@ -214,12 +226,8 @@ export function BridgeError() {
   );
 }
 
-export function BridgeWarning(props: ILoadingBoxProps) {
-  const { massaToEvm, operationId } = props;
-
-  const _openInNewTab = (url: string) => {
-    window.open(url, '_blank', 'noreferrer');
-  };
+export function Warning(props: ILoadingBoxProps) {
+  const { massaToEvm } = props;
 
   return (
     <div className="text-center">
@@ -238,36 +246,47 @@ export function BridgeWarning(props: ILoadingBoxProps) {
           support.bridge@massa.net
         </a>
       </u>
-
-      {operationId && (
-        <div className="flex align-middle items-center w-full justify-center">
-          <div className="mb-1">
-            {massaToEvm ? 'Operation:' : 'Transaction:'}
-          </div>
-          <div className="w-30">
-            <Clipboard
-              customClass={'bg-transparent w-20'}
-              displayedContent={maskAddress(operationId)}
-              rawContent={operationId}
-            />
-          </div>
-          {!massaToEvm && (
-            <div>
-              <Button
-                variant="icon"
-                onClick={() =>
-                  _openInNewTab(
-                    `https://sepolia.etherscan.io/tx/${operationId}`,
-                  )
-                }
-              >
-                <FiExternalLink size={18} />
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
+      <ShowOperationId {...props} />
     </div>
+  );
+}
+
+export function ShowOperationId(props: ILoadingBoxProps) {
+  const { operationId, massaToEvm } = props;
+
+  const smartExplorerUrl = massaToEvm
+    ? `https://explorer.massa.net/operation/${operationId}`
+    : `https://sepolia.etherscan.io/tx/${operationId}`;
+
+  const _openInNewTab = (url: string) => {
+    window.open(url, '_blank', 'noreferrer');
+  };
+
+  return (
+    operationId && (
+      <div className="flex align-middle items-center w-full justify-center">
+        <div className="mb-1">
+          {massaToEvm
+            ? `${Intl.t('index.loading-box.operation')}:`
+            : `${Intl.t('index.loading-box.transaction')}:`}
+        </div>
+        <div className="w-30">
+          <Clipboard
+            customClass={'bg-transparent w-20'}
+            displayedContent={maskAddress(operationId)}
+            rawContent={operationId}
+          />
+        </div>
+        <div>
+          <Button
+            variant="icon"
+            onClick={() => _openInNewTab(smartExplorerUrl)}
+          >
+            <FiExternalLink size={18} />
+          </Button>
+        </div>
+      </div>
+    )
   );
 }
 
