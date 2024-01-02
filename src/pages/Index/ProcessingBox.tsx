@@ -3,12 +3,15 @@ import { ReactNode } from 'react';
 import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiX, FiPauseCircle, FiExternalLink } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 
 import { Spinner, ErrorCheck, WarningCheck, SuccessCheck } from '@/components';
 import { ILoadingState, StateType } from '@/const';
 import { faqURL } from '@/const/faq';
+import { handleClaimRedeem } from '@/custom/bridge/handlers/handleClaimRedeem';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
+import { useAccountStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface ILoading {
@@ -20,8 +23,9 @@ interface ILoading {
 }
 
 interface ILoadingBoxProps {
-  onClose?: () => void;
+  onClose: () => void;
   loading: ILoadingState;
+  setLoading: (loading: ILoadingState) => void;
   massaToEvm: boolean;
   amount: string;
   redeemSteps: string;
@@ -29,18 +33,22 @@ interface ILoadingBoxProps {
   operationId: string | undefined;
 }
 
-export function LoadingBox(props: ILoadingBoxProps) {
+export function ProcessingBox(props: ILoadingBoxProps) {
   const { onClose, loading, massaToEvm } = props;
+
+  // TODO: change redeem title flow to show : burn successful + one last step to claim
 
   const IS_BOX_SUCCESS = loading.box === 'success';
   const IS_BOX_WARNING = loading.box === 'warning';
   const IS_BOX_ERROR = loading.box === 'error';
   const IS_GLOBAL_ERROR = loading.error !== 'none';
+  // const IS_BURN_SUCCESS = loading.burn === 'success';
 
   const displaySubtitle =
     !IS_BOX_SUCCESS && !IS_GLOBAL_ERROR && !IS_BOX_WARNING && !IS_BOX_ERROR;
 
   function _getLoadingBoxHeader() {
+    // change title here
     if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
     else if (IS_GLOBAL_ERROR || IS_BOX_ERROR) {
       return massaToEvm
@@ -70,7 +78,7 @@ export function LoadingBox(props: ILoadingBoxProps) {
   function _getLoadingBoxContent() {
     switch (true) {
       case IS_GLOBAL_ERROR:
-        return <GLobalError />;
+        return <GlobalError />;
       case IS_BOX_SUCCESS:
         return <Success {...props} />;
       case IS_BOX_WARNING:
@@ -82,61 +90,112 @@ export function LoadingBox(props: ILoadingBoxProps) {
     }
   }
 
+  const isNotProcessing =
+    IS_BOX_SUCCESS || IS_GLOBAL_ERROR || IS_BOX_WARNING || IS_BOX_ERROR;
+
+  // rendering layout
   return (
-    <>
-      <div
-        className={`z-10 absolute flex-none max-w-2xl w-full h-[870px] blur-md`}
-      />
-      <div
-        className="absolute z-10 p-10 pb-14 max-w-sm w-full min-h-96 border border-tertiary rounded-2xl
-              bg-secondary/50 backdrop-blur-lg text-f-primary"
-      >
+    <div
+      className="p-10 w-4/12 min-w-fit min-h-96 border border-tertiary rounded-2xl
+              bg-secondary/50 text-f-primary bg-purple-500"
+    >
+      {/* TODO: refactor to make exit component */}
+      {isNotProcessing ? (
         <div className="flex justify-end pb-8">
           <button
             className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
-                      hover:bg-tertiary hover:text-c-primary"
+                hover:bg-tertiary hover:text-c-primary"
             type="button"
             onClick={onClose}
           >
             <FiX className="w-5 h-5" />
           </button>
         </div>
-        <div
-          className={`relative flex flex-col items-center justify-start mb-10`}
-        >
-          <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
-          <p className="mas-subtitle pt-6 text-center">
-            {_getLoadingBoxHeader()}
-          </p>
-          {displaySubtitle && (
-            <p className="text-xs pb-6">
-              {Intl.t('index.loading-box.subtitle')}
-            </p>
-          )}
-        </div>
-        {_getLoadingBoxContent()}
+      ) : null}
+      <div
+        className={`relative flex flex-col items-center justify-start mb-10`}
+      >
+        <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
+        <p className="mas-subtitle pt-6 text-center">
+          {_getLoadingBoxHeader()}
+        </p>
+        {displaySubtitle && (
+          <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>
+        )}
       </div>
-    </>
+      {_getLoadingBoxContent()}
+    </div>
   );
 }
 
 function Redeem(props: ILoadingBoxProps) {
-  const { loading, redeemSteps } = props;
+  const { loading, redeemSteps, setLoading, operationId } = props;
 
+  const { address: evmAddress } = useAccount();
+
+  const [connectedAccount] = useAccountStore((state) => [
+    state.connectedAccount,
+  ]);
+
+  // wait for burn success
+  // once burn is a success show claim button + change title & block redeem flow
+  const isBurnSuccessfull = loading.burn === 'success';
+
+  async function _handleClaimRedeem() {
+    setLoading({ claim: 'loading' });
+
+    const claimArgs = {
+      evmAddress,
+      massaAddress: connectedAccount?.address(),
+      operationId,
+    };
+
+    // TODO: implement interval to check if claim is successful
+    const claim = await handleClaimRedeem({ ...claimArgs });
+    if (claim) {
+      setLoading({ box: 'success', claim: 'success' });
+    } else {
+      setLoading({ box: 'error', claim: 'error' });
+    }
+  }
   return (
     <>
-      <div className="flex justify-between mb-6 ">
-        <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
-        {loadingState(loading.approve)}
-      </div>
-      <div className="flex justify-between mb-6 ">
-        <p className="mas-body-2">{redeemSteps}</p>
-        {loadingState(loading.burn)}
-      </div>
-      <div className="flex justify-between mb-6 ">
-        <p className="mas-body-2">{Intl.t('index.loading-box.redeem')}</p>
-        {loadingState(loading.redeem)}
-      </div>
+      {isBurnSuccessfull ? (
+        <div className="flex w-full justify-center">
+          <div className="flex flex-col gap-6 w-4/5 items-center ">
+            <div className="flex flex-col gap-4 justify-center">
+              <p className="flex mas-body-2 text-center">
+                One last step remains to finalize the redeem. <br />
+                To receive [WETH] on [network name] you must sign a transaction.
+              </p>
+              <div className="flex w-full justify-between">
+                <p className="mas-body-2">
+                  {Intl.t('index.loading-box.claim')}
+                </p>
+                {loadingState(loading.claim)}
+              </div>
+            </div>
+            <Button
+              onClick={() => {
+                _handleClaimRedeem();
+              }}
+            >
+              {Intl.t('index.loading-box.claim')}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-between mb-6 ">
+            <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
+            {loadingState(loading.approve)}
+          </div>
+          <div className="flex justify-between mb-6 ">
+            <p className="mas-body-2">{redeemSteps}</p>
+            {loadingState(loading.burn)}
+          </div>
+        </>
+      )}
       <ShowOperationId {...props} />
     </>
   );
@@ -211,7 +270,7 @@ function Success(props: ILoadingBoxProps) {
 }
 
 // Remove if not used
-export function GLobalError() {
+export function GlobalError() {
   return (
     <div className="text-center mas-body2">
       <p> {Intl.t('index.loading-box.error-something')}</p>

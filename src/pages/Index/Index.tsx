@@ -1,31 +1,19 @@
-import { useState, SyntheticEvent, useEffect, useRef } from 'react';
+import { useState, SyntheticEvent, useEffect } from 'react';
 
-import { Button, toast, Money } from '@massalabs/react-ui-kit';
+import { toast } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import { Big } from 'big.js';
-import { FiRepeat } from 'react-icons/fi';
 import { parseUnits } from 'viem';
-import {
-  useAccount,
-  useNetwork,
-  useWaitForTransaction,
-  useToken,
-  useContractEvent,
-} from 'wagmi';
+import { useAccount, useNetwork, useWaitForTransaction, useToken } from 'wagmi';
 
-import { boxLayout } from './boxLayout/boxLayout';
-import { LoadingBox } from './Loading';
-import bridgeVaultAbi from '@/abi/bridgeAbi.json';
+import { BridgeRedeemLayout } from './BridgeRedeemLayout';
+import { ProcessingBox } from './ProcessingBox';
+// import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { GetTokensPopUpModal } from '@/components';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import {
-  LayoutType,
-  ILoadingState,
-  MASSA_STATION,
-  EVM_BRIDGE_ADDRESS,
-} from '@/const';
+import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
-import { checkRedeemStatus } from '@/custom/bridge/handlers/checkRedeemStatus';
+// import { checkRedeemStatus } from '@/custom/bridge/handlers/checkRedeemStatus';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
@@ -70,11 +58,12 @@ export function Index() {
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
 
-  const EVMOperationID = useRef<string | undefined>(undefined);
+  // const EVMOperationID = useRef<string | undefined>(undefined);
+  const [burnTxID, setBurnTxID] = useState<string | undefined>(undefined);
   const [lockTxID, setLockTxID] = useState<string | undefined>(undefined);
-  const [isRedeem, setIsRedeem] = useState<boolean>(false);
-  const [redeemEvents, setRedeemEvents] = useState<any>([]);
-  const [isBurn, setIsBurn] = useState<boolean>(false);
+  // const [isRedeem, setIsRedeem] = useState<boolean>(false);
+  // const [redeemEvents, setRedeemEvents] = useState<any>([]);
+  // const [isBurn, setIsBurn] = useState<boolean>(false);
 
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
@@ -84,7 +73,7 @@ export function Index() {
     box: 'none',
     approve: 'none',
     burn: 'none',
-    redeem: 'none',
+    claim: 'none',
     lock: 'none',
     mint: 'none',
     error: 'none',
@@ -194,52 +183,51 @@ export function Index() {
     }
   }, [approveIsSuccess, approveIsError]);
 
-  const redeemEventHandler = useContractEvent({
-    address: EVM_BRIDGE_ADDRESS,
-    abi: bridgeVaultAbi,
-    eventName: 'Redeemed',
-    listener(events) {
-      setIsRedeem(true);
-      setRedeemEvents(events);
-      redeemEventHandler?.();
-    },
-  });
+  // const redeemEventHandler = useContractEvent({
+  //   address: EVM_BRIDGE_ADDRESS,
+  //   abi: bridgeVaultAbi,
+  //   eventName: 'Redeemed',
+  //   listener(events) {
+  //     setIsRedeem(true);
+  //     setRedeemEvents(events);
+  //     redeemEventHandler?.();
+  //   },
+  // });
 
   // two minute timer to listening for the redeem event once burn is successful
   // if no redeem event is found timeout screen is shown
   // if redeem is true, the useEffect is fired a second time and the redeem status is checked and the timer stops
-  useEffect(() => {
-    const redeemArgs = {
-      events: redeemEvents,
-      EVMOperationID,
-      setLoading,
-      getTokens,
-      clearRedeem,
-    };
+  // useEffect(() => {
+  //   const redeemArgs = {
+  //     events: redeemEvents,
+  //     EVMOperationID,
+  //     setLoading,
+  //     getTokens,
+  //     clearRedeem,
+  //   };
 
-    if (isBurn && !isRedeem) {
-      let timePast = 0;
-      const timer = setInterval(() => {
-        if (timePast < 120000) {
-          timePast += 1000;
-        } else if (timePast >= 120000) {
-          setLoading({ box: 'warning', redeem: 'warning' });
-          clearInterval(timer);
-          clearRedeem();
-        }
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (isBurn && isRedeem) {
-      checkRedeemStatus(redeemArgs);
-    }
-  }, [isRedeem, isBurn]);
+  //   if (isBurn && !isRedeem) {
+  //     let timePast = 0;
+  //     const timer = setInterval(() => {
+  //       if (timePast < 120000) {
+  //         timePast += 1000;
+  //       } else if (timePast >= 120000) {
+  //         setLoading({ box: 'warning', redeem: 'warning' });
+  //         clearInterval(timer);
+  //         clearRedeem();
+  //       }
+  //     }, 1000);
+  //     return () => clearInterval(timer);
+  //   } else if (isBurn && isRedeem) {
+  //     checkRedeemStatus(redeemArgs);
+  //   }
+  // }, [isRedeem, isBurn]);
 
-  function clearRedeem() {
-    setIsRedeem(false);
-    setIsBurn(false);
-    setRedeemEvents([]);
-  }
-
+  // function clearRedeem() {
+  //   setIsRedeem(false);
+  //   setIsBurn(false);
+  //   setRedeemEvents([]);
+  // }
   async function getProviderList() {
     const providerList = await providers();
     const massaStationWallet = providerList.some(
@@ -339,15 +327,15 @@ export function Index() {
           evmAddress,
           amount,
           decimals,
-          EVMOperationID,
+          setBurnTxID,
           setLoading,
           setRedeemSteps,
         };
 
-        const burn = await handleBurnRedeem(burnArgs);
-        if (burn) {
-          setIsBurn(true);
-        }
+        await handleBurnRedeem(burnArgs);
+        // if (burn) {
+        //   setIsBurn(true);
+        // }
       }
     } else {
       if (!amount) {
@@ -401,7 +389,7 @@ export function Index() {
 
   const isLoading = loading.box !== 'none' ? true : false;
   const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
-  const operationId = IS_MASSA_TO_EVM ? EVMOperationID.current : lockTxID;
+  let operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
 
   function closeLoadingBox() {
     setLoading({
@@ -414,143 +402,48 @@ export function Index() {
       error: 'none',
     });
     setAmount('');
-    // the lock txID is not reset after mint
+    // the lockTxID & burnTdID is not reset after mint/claim
     setLockTxID(undefined);
+    setBurnTxID(undefined);
   }
 
   return (
     <>
-      {isLoading && (
-        <LoadingBox
-          onClose={() => closeLoadingBox()}
+      {/* If loading -> show loading layout else show home page confirmation*/}
+      {isLoading ? (
+        <ProcessingBox
+          onClose={closeLoadingBox}
           loading={loading}
+          setLoading={setLoading}
           massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
           token={token}
           operationId={operationId}
         />
+      ) : (
+        <BridgeRedeemLayout
+          isBlurred={isBlurred}
+          IS_MASSA_TO_EVM={IS_MASSA_TO_EVM}
+          isStationInstalled={isStationInstalled}
+          IS_EVM_SEPOLIA_CHAIN={IS_EVM_SEPOLIA_CHAIN}
+          IS_NOT_BUILDNET={IS_NOT_BUILDNET}
+          isEvmWalletConnected={isEvmWalletConnected}
+          BRIDGE_OFF={BRIDGE_OFF}
+          REDEEM_OFF={REDEEM_OFF}
+          isFetching={isFetching}
+          layout={layout}
+          amount={amount}
+          setAmount={setAmount}
+          decimals={decimals}
+          handlePercent={handlePercent}
+          handleSubmit={handleSubmit}
+          handleToggleLayout={handleToggleLayout}
+          setOpenTokensModal={setOpenTokensModal}
+          error={error}
+        />
       )}
-      <div
-        className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
-            bg-secondary/50 backdrop-blur-lg text-f-primary mb-5 ${isBlurred}`}
-      >
-        <div className="p-6 bg-primary rounded-2xl mb-5">
-          <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
-          {boxLayout(layout).up.header}
-          {boxLayout(layout).up.wallet}
-          <div className="mb-4 flex items-center gap-2">
-            <div className="w-full">
-              <Money
-                disable={isFetching}
-                name="amount"
-                value={amount}
-                onValueChange={(o) => setAmount(o.value)}
-                placeholder={Intl.t(`index.input.placeholder.amount`)}
-                suffix=""
-                decimalScale={decimals}
-                error={error?.amount}
-              />
-              <div className="flex flex-row-reverse">
-                <ul className="flex flex-row mas-body2">
-                  <li
-                    onClick={() => handlePercent(0.25)}
-                    className="mr-3.5 hover:cursor-pointer"
-                  >
-                    25%
-                  </li>
-                  <li
-                    onClick={() => handlePercent(0.5)}
-                    className="mr-3.5 hover:cursor-pointer"
-                  >
-                    50%
-                  </li>
-                  <li
-                    onClick={() => handlePercent(0.75)}
-                    className="mr-3.5 hover:cursor-pointer"
-                  >
-                    75%
-                  </li>
-                  <li
-                    onClick={() => handlePercent(1)}
-                    className="mr-3.5 hover:cursor-pointer"
-                  >
-                    Max
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="w-1/3 mb-4">{boxLayout(layout).up.token}</div>
-          </div>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              {isEvmWalletConnected && (
-                <h3
-                  className="mas-h3 text-f-disabled-1 underline cursor-pointer"
-                  onClick={() => setOpenTokensModal(true)}
-                >
-                  {Intl.t(`index.get-tokens`)}
-                </h3>
-              )}
-            </div>
-            {boxLayout(layout).up.balance}
-          </div>
-        </div>
-        <div className="mb-5 flex justify-center items-center">
-          <Button
-            disabled={isFetching}
-            variant="toggle"
-            onClick={handleToggleLayout}
-            customClass={`w-12 h-12 inline-block transition ease-in-out delay-10 ${
-              IS_MASSA_TO_EVM ? 'rotate-180' : ''
-            }`}
-          >
-            <FiRepeat size={24} />
-          </Button>
-        </div>
-        <div className="mb-5 p-6 bg-primary rounded-2xl">
-          <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
-          {boxLayout(layout).down.header}
-          {boxLayout(layout).down.wallet}
-          <div className="mb-4 flex items-center gap-2">
-            <div className="w-full">
-              <Money
-                placeholder={Intl.t(`index.input.placeholder.receive`)}
-                name="receive"
-                value={amount}
-                onValueChange={(o) => setAmount(o.value)}
-                suffix=""
-                decimalScale={decimals}
-                error=""
-                disable={true}
-              />
-            </div>
-            <div className="w-1/3">{boxLayout(layout).down.token}</div>
-          </div>
-          <div className="flex justify-between items-center">
-            <br />
-            {boxLayout(layout).down.balance}
-          </div>
-        </div>
-        <div>
-          <Button
-            disabled={
-              isFetching ||
-              !isStationInstalled ||
-              !isEvmWalletConnected ||
-              !IS_EVM_SEPOLIA_CHAIN ||
-              IS_NOT_BUILDNET ||
-              (BRIDGE_OFF && !IS_MASSA_TO_EVM) ||
-              (REDEEM_OFF && IS_MASSA_TO_EVM)
-            }
-            onClick={(e) => handleSubmit(e)}
-          >
-            {IS_MASSA_TO_EVM
-              ? Intl.t(`index.button.redeem`)
-              : Intl.t(`index.button.bridge`)}
-          </Button>
-        </div>
-      </div>
+
       {openTokensModal && (
         <GetTokensPopUpModal
           setOpenModal={setOpenTokensModal}
