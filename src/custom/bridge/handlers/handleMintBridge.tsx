@@ -34,7 +34,7 @@ export async function handleMintBridge({
   return true;
 }
 
-function handleMintError({ ...args }, error: any) {
+function handleMintError({ ...args }, error: undefined | unknown) {
   const { setLoading } = args;
   const typedError = error as ICustomError;
 

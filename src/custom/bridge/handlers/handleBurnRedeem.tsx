@@ -77,7 +77,7 @@ async function initiateBurn({
   setRedeemSteps(Intl.t('index.loading-box.burned-final'));
 }
 
-function handleBurnError({ ...args }, error: any) {
+function handleBurnError({ ...args }, error: undefined | unknown) {
   const { setRedeemSteps } = args;
 
   const typedError = error as CustomError;

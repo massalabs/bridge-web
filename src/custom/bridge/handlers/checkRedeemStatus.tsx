@@ -1,9 +1,26 @@
-import { Log as IEventLog } from 'viem';
-
 import { ILoadingState } from '@/const/types/types';
 
+export interface EvmRedeemEvent {
+  address: string;
+  blockHash: string;
+  blockNumber: bigint;
+  data: string;
+  eventName: string;
+  logIndex: number;
+  removed: boolean;
+  topics: string[];
+  transactionHash: string;
+  transactionIndex: number;
+  args: {
+    spender: string;
+    token: string;
+    burnOpId: string;
+    amount: bigint;
+  };
+}
+
 interface CheckRedeemStatus {
-  events: IEventLog[];
+  events: EvmRedeemEvent[];
   EVMOperationID: React.MutableRefObject<string | undefined>;
   setLoading: (state: ILoadingState) => void;
   getTokens: () => void;

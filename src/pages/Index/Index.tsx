@@ -216,6 +216,7 @@ export function Index() {
       getTokens,
       clearRedeem,
     };
+
     if (isBurn && !isRedeem) {
       let timePast = 0;
       const timer = setInterval(() => {
@@ -343,7 +344,10 @@ export function Index() {
           setRedeemSteps,
         };
 
-        await handleBurnRedeem(burnArgs);
+        const burn = await handleBurnRedeem(burnArgs);
+        if (burn) {
+          setIsBurn(true);
+        }
       }
     } else {
       if (!amount) {
