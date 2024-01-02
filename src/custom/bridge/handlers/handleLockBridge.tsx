@@ -29,7 +29,7 @@ export async function handleLockBridge({
   return true;
 }
 
-function handleLockError(error: any) {
+function handleLockError(error: undefined | unknown) {
   const typedError = error as CustomError;
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t(`index.lock.error.rejected`));

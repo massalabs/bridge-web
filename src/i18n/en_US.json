@@ -67,6 +67,7 @@
       "title-redeem": "Processing redeem...",
       "title-redeem-warning-1": "Redeem transfer",
       "title-redeem-warning-2": "not yet finalized",
+      "redeem-timeout": "Redeem timeout",
       "title-redeem-error": "Redeem failed",
       "subtitle": "(it can take up to 5 minutes)",
       "approve": "Approval",
