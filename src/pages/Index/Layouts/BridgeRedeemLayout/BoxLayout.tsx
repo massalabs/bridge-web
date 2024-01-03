@@ -10,7 +10,10 @@ import {
   useToken,
 } from 'wagmi';
 
-import { FetchingLine, FetchingStatus } from '../ProcessingBox';
+import {
+  FetchingLine,
+  FetchingStatus,
+} from '../LoadingLayout/FetchingComponent';
 import { EthSvg } from '@/assets/EthSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthSvg } from '@/assets/WEthSvg';

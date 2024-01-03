@@ -1,5 +1,5 @@
 import Intl from '@/i18n/i18n';
-import { FetchingStatus } from '@/pages/Index/ProcessingBox';
+import { FetchingStatus } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore } from '@/store/store';
 import {
   MASSA_STATION_URL,

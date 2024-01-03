@@ -82,6 +82,7 @@
       "burn-rejected": "Burn (rejected)",
       "inconsistent-not-found": "Burn (inconsistent or not found)",
       "bridged": "You have successfully bridged:",
+      "claim-message": " One last step remains to finalize the redeem.To receive {token} on {network} you must sign a transaction.",
       "redeemed": "You have successfully redeemed:",
       "from-to": "from {from} to {to}.",
       "check": "Check the balance in your {name} wallet.",

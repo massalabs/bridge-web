@@ -2,18 +2,14 @@ import { useState, SyntheticEvent, useEffect } from 'react';
 
 import { toast } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
-import { Big } from 'big.js';
 import { parseUnits } from 'viem';
 import { useAccount, useNetwork, useWaitForTransaction, useToken } from 'wagmi';
 
-import { BridgeRedeemLayout } from './BridgeRedeemLayout';
-import { ProcessingBox } from './ProcessingBox';
-// import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { GetTokensPopUpModal } from '@/components';
+import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
+import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
-// import { checkRedeemStatus } from '@/custom/bridge/handlers/checkRedeemStatus';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
@@ -23,7 +19,6 @@ import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
-import { formatAmount } from '@/utils/parseAmount';
 
 export function Index() {
   const [
@@ -52,37 +47,7 @@ export function Index() {
     state.loadAccounts,
   ]);
 
-  const [_interval, _setInterval] = useState<NodeJS.Timeout>();
-  const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
-  const [amount, setAmount] = useState<string | undefined>('');
-  const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
-  const [error, setError] = useState<{ amount: string } | null>(null);
-
-  // const EVMOperationID = useRef<string | undefined>(undefined);
-  const [burnTxID, setBurnTxID] = useState<string | undefined>(undefined);
-  const [lockTxID, setLockTxID] = useState<string | undefined>(undefined);
-  // const [isRedeem, setIsRedeem] = useState<boolean>(false);
-  // const [redeemEvents, setRedeemEvents] = useState<any>([]);
-  // const [isBurn, setIsBurn] = useState<boolean>(false);
-
-  const [redeemSteps, setRedeemSteps] = useState<string>(
-    Intl.t('index.loading-box.burn'),
-  );
-
-  const [loading, _setLoading] = useState<ILoadingState>({
-    box: 'none',
-    approve: 'none',
-    burn: 'none',
-    claim: 'none',
-    lock: 'none',
-    mint: 'none',
-    error: 'none',
-  });
-  function setLoading(state: ILoadingState) {
-    _setLoading((prevState) => {
-      return { ...prevState, ...state };
-    });
-  }
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
 
   const { chain, chains } = useNetwork();
 
@@ -92,10 +57,12 @@ export function Index() {
   const {
     handleApprove: _handleApproveEVM,
     handleLock: _handleLockEVM,
+    handleRedeem: _handleRedeemEVM,
     allowance: _allowanceEVM,
     tokenBalance: _tokenBalanceEVM,
     hashLock: _hashLockEVM,
     hashApprove: _hashApproveEVM,
+    hashRedeem: _hashRedeemEVM,
   } = useEvmBridge();
 
   const {
@@ -107,23 +74,68 @@ export function Index() {
   const { isSuccess: approveIsSuccess, isError: approveIsError } =
     useWaitForTransaction({ hash: _hashApproveEVM });
 
+  const {
+    data: redeemData,
+    isSuccess: redeemIsSuccess,
+    isError: redeemIsError,
+  } = useWaitForTransaction({ hash: _hashRedeemEVM });
+
   const evmToken = token?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
 
+  const [_interval, _setInterval] = useState<NodeJS.Timeout>();
+  const [amount, setAmount] = useState<string | undefined>('');
+  const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
+  const [error, setError] = useState<{ amount: string } | null>(null);
+  const [burnTxID, setBurnTxID] = useState<string | undefined>(undefined);
+  const [lockTxID, setLockTxID] = useState<string | undefined>(undefined);
+  const [redeemSteps, setRedeemSteps] = useState<string>(
+    Intl.t('index.loading-box.burn'),
+  );
+  const [loading, _setLoading] = useState<ILoadingState>({
+    box: 'none',
+    approve: 'none',
+    burn: 'none',
+    claim: 'none',
+    lock: 'none',
+    mint: 'none',
+    error: 'none',
+  });
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
-
-  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
+  // const [redeemTxID, setRedeemTxID] = useState<string | undefined>(undefined);
+  // const [isRedeem, setIsRedeem] = useState<boolean>(false);
+  // const [redeemEvents, setRedeemEvents] = useState<any>([]);
+  // const [isBurn, setIsBurn] = useState<boolean>(false);
+  // const EVMOperationID = useRef<string | undefined>(undefined);
 
   const SEPOLIA_CHAIN_ID = chains
     .filter((c: { network: string }) => c.network === 'sepolia')
     .at(0)?.id;
 
+  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
+
   const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
 
-  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
   const IS_NOT_BUILDNET = currentNetwork
     ? currentNetwork !== 'buildnet'
     : false;
+
+  const isLoading = loading.box !== 'none' ? true : false;
+  const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
+  let operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
+  let isButtonDisabled =
+    isFetching ||
+    !isStationInstalled ||
+    !isEvmWalletConnected ||
+    !IS_EVM_SEPOLIA_CHAIN ||
+    IS_NOT_BUILDNET ||
+    (BRIDGE_OFF && !IS_MASSA_TO_EVM) ||
+    (REDEEM_OFF && IS_MASSA_TO_EVM);
+
+  // TODO: Remove this
+  useEffect(() => {
+    console.log('redeemEvents', redeemData, redeemIsSuccess, redeemIsError);
+  }, [redeemData, redeemIsSuccess, redeemIsError]);
 
   useEffect(() => {
     setError({ amount: '' });
@@ -183,59 +195,6 @@ export function Index() {
     }
   }, [approveIsSuccess, approveIsError]);
 
-  // const redeemEventHandler = useContractEvent({
-  //   address: EVM_BRIDGE_ADDRESS,
-  //   abi: bridgeVaultAbi,
-  //   eventName: 'Redeemed',
-  //   listener(events) {
-  //     setIsRedeem(true);
-  //     setRedeemEvents(events);
-  //     redeemEventHandler?.();
-  //   },
-  // });
-
-  // two minute timer to listening for the redeem event once burn is successful
-  // if no redeem event is found timeout screen is shown
-  // if redeem is true, the useEffect is fired a second time and the redeem status is checked and the timer stops
-  // useEffect(() => {
-  //   const redeemArgs = {
-  //     events: redeemEvents,
-  //     EVMOperationID,
-  //     setLoading,
-  //     getTokens,
-  //     clearRedeem,
-  //   };
-
-  //   if (isBurn && !isRedeem) {
-  //     let timePast = 0;
-  //     const timer = setInterval(() => {
-  //       if (timePast < 120000) {
-  //         timePast += 1000;
-  //       } else if (timePast >= 120000) {
-  //         setLoading({ box: 'warning', redeem: 'warning' });
-  //         clearInterval(timer);
-  //         clearRedeem();
-  //       }
-  //     }, 1000);
-  //     return () => clearInterval(timer);
-  //   } else if (isBurn && isRedeem) {
-  //     checkRedeemStatus(redeemArgs);
-  //   }
-  // }, [isRedeem, isBurn]);
-
-  // function clearRedeem() {
-  //   setIsRedeem(false);
-  //   setIsBurn(false);
-  //   setRedeemEvents([]);
-  // }
-  async function getProviderList() {
-    const providerList = await providers();
-    const massaStationWallet = providerList.some(
-      (provider: { name: () => string }) => provider.name() === MASSA_STATION,
-    );
-    setStationInstalled(!!massaStationWallet);
-  }
-
   useEffect(() => {
     if (providersFetched.length > 0) {
       loadAccounts(providersFetched);
@@ -257,6 +216,18 @@ export function Index() {
   useEffect(() => {
     getTokens();
   }, [connectedAccount]);
+
+  useEffect(() => {
+    if (loading.box === 'none') closeLoadingBox();
+  }, [loading.box]);
+
+  async function getProviderList() {
+    const providerList = await providers();
+    const massaStationWallet = providerList.some(
+      (provider: { name: () => string }) => provider.name() === MASSA_STATION,
+    );
+    setStationInstalled(!!massaStationWallet);
+  }
 
   function handleToggleLayout() {
     setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
@@ -297,6 +268,7 @@ export function Index() {
     return true;
   }
 
+  // TODO: refactor this
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
@@ -333,9 +305,6 @@ export function Index() {
         };
 
         await handleBurnRedeem(burnArgs);
-        // if (burn) {
-        //   setIsBurn(true);
-        // }
       }
     } else {
       if (!amount) {
@@ -361,35 +330,11 @@ export function Index() {
     }
   }
 
-  function handlePercent(percent: number) {
-    if (!token) return;
-
-    if (
-      (IS_MASSA_TO_EVM && token.balance <= 0) ||
-      (!IS_MASSA_TO_EVM && _tokenBalanceEVM <= 0)
-    ) {
-      setError({ amount: Intl.t('index.approve.error.insufficient-funds') });
-      return;
-    }
-
-    const amount = IS_MASSA_TO_EVM
-      ? formatAmount(token?.balance.toString(), decimals, '').full
-      : formatAmount(_tokenBalanceEVM.toString(), decimals, '').full;
-
-    const x = new Big(amount);
-    const y = new Big(percent);
-    const res = x.times(y).round(decimals).toFixed();
-
-    setAmount(res);
+  function setLoading(state: ILoadingState) {
+    _setLoading((prevState) => {
+      return { ...prevState, ...state };
+    });
   }
-
-  useEffect(() => {
-    if (loading.box === 'none') closeLoadingBox();
-  }, [loading.box]);
-
-  const isLoading = loading.box !== 'none' ? true : false;
-  const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
-  let operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
 
   function closeLoadingBox() {
     setLoading({
@@ -409,45 +354,31 @@ export function Index() {
 
   return (
     <>
-      {/* If loading -> show loading layout else show home page confirmation*/}
+      {/* If loading -> show loading layout else show home page*/}
       {isLoading ? (
-        <ProcessingBox
+        <LoadingLayout
           onClose={closeLoadingBox}
           loading={loading}
           setLoading={setLoading}
           massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
-          token={token}
           operationId={operationId}
+          decimals={decimals}
         />
       ) : (
         <BridgeRedeemLayout
           isBlurred={isBlurred}
           IS_MASSA_TO_EVM={IS_MASSA_TO_EVM}
-          isStationInstalled={isStationInstalled}
-          IS_EVM_SEPOLIA_CHAIN={IS_EVM_SEPOLIA_CHAIN}
-          IS_NOT_BUILDNET={IS_NOT_BUILDNET}
-          isEvmWalletConnected={isEvmWalletConnected}
-          BRIDGE_OFF={BRIDGE_OFF}
-          REDEEM_OFF={REDEEM_OFF}
-          isFetching={isFetching}
+          isButtonDisabled={isButtonDisabled}
           layout={layout}
           amount={amount}
-          setAmount={setAmount}
+          error={error}
           decimals={decimals}
-          handlePercent={handlePercent}
+          setAmount={setAmount}
+          setError={setError}
           handleSubmit={handleSubmit}
           handleToggleLayout={handleToggleLayout}
-          setOpenTokensModal={setOpenTokensModal}
-          error={error}
-        />
-      )}
-
-      {openTokensModal && (
-        <GetTokensPopUpModal
-          setOpenModal={setOpenTokensModal}
-          layout={layout}
         />
       )}
       {!isLoading && <TokensFAQ />}
