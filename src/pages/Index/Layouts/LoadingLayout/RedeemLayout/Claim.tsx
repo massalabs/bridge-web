@@ -11,10 +11,6 @@ import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
-
-
-
-
 interface ClaimInterface {
   loading: any;
   redeemSteps: string;

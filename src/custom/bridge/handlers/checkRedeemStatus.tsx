@@ -1,54 +1,45 @@
-import { ILoadingState } from '@/const/types/types';
+import axios from 'axios';
 
-export interface EvmRedeemEvent {
-  address: string;
-  blockHash: string;
-  blockNumber: bigint;
-  data: string;
-  eventName: string;
-  logIndex: number;
-  removed: boolean;
-  topics: string[];
-  transactionHash: string;
-  transactionIndex: number;
-  args: {
-    spender: string;
-    token: string;
-    burnOpId: string;
-    amount: bigint;
-  };
+interface ClaimRedeemResponse {
+  evmAddress: `0x${string}` | undefined;
+  massaAddress: string | undefined;
+  operationId: string | undefined;
 }
+const lambdaURL = import.meta.env.VITE_LAMBDA_URL;
 
-interface CheckRedeemStatus {
-  events: EvmRedeemEvent[];
-  EVMOperationID: React.MutableRefObject<string | undefined>;
-  setLoading: (state: ILoadingState) => void;
-  getTokens: () => void;
-  clearRedeem: () => void;
-}
+export async function checkRedeemStatus({
+  ...args
+}: ClaimRedeemResponse): Promise<any[]> {
+  // once burn is successfull -> wait for certian conditions (lambda)
+  // TODO: polling fn to check for signatures
 
-export function checkRedeemStatus({ ...args }: CheckRedeemStatus): boolean {
-  const { events, EVMOperationID, setLoading, getTokens, clearRedeem } = args;
+  const { evmAddress, massaAddress } = args;
 
-  if (!EVMOperationID.current) {
-    return false;
-  }
+  let signatures: any[] = [];
 
-  const found = events.some(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ev) => (ev as any).args?.burnOpId === EVMOperationID.current,
-  );
-
-  if (found) {
-    setLoading({
-      box: 'success',
-      redeem: 'success',
+  try {
+    const response = await axios.get(lambdaURL!, {
+      params: {
+        evmAddress,
+        massaAddress,
+      },
     });
-    EVMOperationID.current = undefined;
-    getTokens();
-    clearRedeem();
-    return true;
-  } else {
-    return false;
+
+    const isResponseArray = Array.isArray(response.data);
+    const filteredResults = response.data.burned.filter(
+      (item: any) => item.outputTxId === 'null',
+      // && state === processing
+    );
+
+    // conditions: state processing, outputTxId = null, burnId = txHash
+    // show claim button
+
+    if (isResponseArray && filteredResults.length > 0) {
+      signatures = filteredResults.map((item: any) => item.signature);
+    }
+  } catch (error) {
+    console.error('Error fetching resource:', error);
+    return [];
   }
+  return signatures;
 }
