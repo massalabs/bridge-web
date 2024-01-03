@@ -4,7 +4,7 @@ import { loadingState } from '../LoadingState';
 import { ShowOperationId } from '../ShowOperationId';
 import Intl from '@/i18n/i18n';
 
-export function RedeemLayout(props: ILoadingBoxProps) {
+export function RedeemLayout({ ...props }: ILoadingBoxProps) {
   const { loading, redeemSteps, setLoading, operationId, amount, decimals } =
     props;
 

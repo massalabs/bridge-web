@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@massalabs/react-ui-kit';
+import axios from 'axios';
 import { parseUnits } from 'viem';
 import { useAccount, useNetwork } from 'wagmi';
 
+import { Burned, LambdaResponse, Signatures } from './InterfaceApi';
 import { loadingState } from '../LoadingState';
 import { ILoadingState } from '@/const';
-import { checkRedeemStatus } from '@/custom/bridge/handlers/checkRedeemStatus';
+import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
@@ -19,10 +21,8 @@ interface ClaimInterface {
   amount: string;
   decimals: number;
 }
-
-// When this renders, burn will be successful, but we do not know if all the conditions are met to claim
-// We need to wait for these conditions to be met before we can claim
-// After these conditions are met, we can show claim button
+// Renders when burn is successful, polls api to see if there is an operation to claim
+// If operation found, renders claim button that calls redeem function
 
 export function Claim({
   loading,
@@ -43,26 +43,59 @@ export function Claim({
   const selectedChain = chain?.name as string;
 
   const [isReadyToClaim, setIsReadyToClaim] = useState(false);
-  const [signatures, setSignatures] = useState<any[]>([]);
+  const [signatures, setSignatures] = useState<string[]>([]);
 
-  // TODO: implement interval to check if claim is successful
+  const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
+
+  const massaAddress = connectedAccount?.address();
+
+  // Polls every 3 seconds to see if conditions are met to show claim
+  useEffect(() => {
+    if (isReadyToClaim) return;
+    if (loading.burn === 'success' && !isReadyToClaim) {
+      const timer = setInterval(() => {
+        _handleClaimRedeem();
+      }, 3000);
+      return () => clearInterval(timer);
+    }
+  }, [loading.burn, isReadyToClaim]);
+
+  async function getBurnedOperationInfo(): Promise<Burned[]> {
+    try {
+      if (!lambdaURL) return [];
+      const response: LambdaResponse = await axios.get(lambdaURL!, {
+        params: {
+          evmAddress,
+          massaAddress,
+        },
+      });
+      return response.data.burned;
+    } catch (error) {
+      console.error('Error fetching resource:', error);
+      return [];
+    }
+  }
+
   async function _handleClaimRedeem() {
-    setLoading({ claim: 'loading' });
-
+    const response = await getBurnedOperationInfo();
     const claimArgs = {
-      evmAddress,
-      massaAddress: connectedAccount?.address(),
+      response,
       operationId,
     };
-    const signatures = await checkRedeemStatus({ ...claimArgs });
 
-    // Returns signatures that are passed as arguments to _handleRedeemEVM
-    if (signatures) {
-      setSignatures(signatures);
+    // Returns signatures sorted by relayerId
+    const signatures = await checkBurnedOpForRedeem({ ...claimArgs });
+
+    if (signatures.length > 0) {
+      const convertedSignatures: string[] = [];
+
+      signatures.forEach((signature: Signatures) => {
+        convertedSignatures.push(signature.signature);
+      });
+
+      setSignatures(convertedSignatures);
       setIsReadyToClaim(true);
-      //   setLoading({ box: 'success', claim: 'success' });
-    } else {
-      setLoading({ box: 'error', claim: 'error' });
+      setLoading({ claim: 'loading' });
     }
   }
 

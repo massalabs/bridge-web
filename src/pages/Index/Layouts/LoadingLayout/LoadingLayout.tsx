@@ -83,7 +83,7 @@ export function LoadingLayout(props: ILoadingBoxProps) {
   return (
     <div
       className="p-10 w-4/12 min-w-fit min-h-96 border border-tertiary rounded-2xl
-              bg-secondary/50 text-f-primary bg-purple-500"
+              bg-secondary/50 text-f-primary"
     >
       {/* TODO: refactor to make exit component */}
       {isNotProcessing ? (

@@ -41,7 +41,6 @@ const useEvmBridge = () => {
   const [allowance, setAllowance] = useState<bigint>(0n);
   const [hashLock, setHashLock] = useState<`0x${string}`>();
   const [hashApprove, setHashApprove] = useState<`0x${string}`>();
-  const [hashRedeem, setHashRedeem] = useState<`0x${string}`>();
 
   useEffect(() => {
     if (!token) return;
@@ -77,13 +76,18 @@ const useEvmBridge = () => {
     amount: bigint,
     spender: `0x${string}` | undefined,
     burnopId: string | undefined,
-    bytes: any[],
+    signatures: string[],
   ) {
     try {
-      let { hash } = await redeem.writeAsync({
-        args: [amount.toString(), spender, burnopId, token?.evmToken, bytes],
+      await redeem.writeAsync({
+        args: [
+          amount.toString(),
+          spender,
+          burnopId,
+          token?.evmToken,
+          signatures,
+        ],
       });
-      setHashRedeem(hash);
       return redeem;
     } catch (error) {
       console.error(error);
@@ -124,7 +128,6 @@ const useEvmBridge = () => {
     handleRedeem,
     hashApprove,
     hashLock,
-    hashRedeem,
   };
 };
 

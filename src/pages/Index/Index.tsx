@@ -3,12 +3,24 @@ import { useState, SyntheticEvent, useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { providers } from '@massalabs/wallet-provider';
 import { parseUnits } from 'viem';
-import { useAccount, useNetwork, useWaitForTransaction, useToken } from 'wagmi';
+import {
+  useAccount,
+  useNetwork,
+  useWaitForTransaction,
+  useToken,
+  useContractEvent,
+} from 'wagmi';
 
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
+import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import { LayoutType, ILoadingState, MASSA_STATION } from '@/const';
+import {
+  LayoutType,
+  ILoadingState,
+  MASSA_STATION,
+  EVM_BRIDGE_ADDRESS,
+} from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
@@ -62,7 +74,6 @@ export function Index() {
     tokenBalance: _tokenBalanceEVM,
     hashLock: _hashLockEVM,
     hashApprove: _hashApproveEVM,
-    hashRedeem: _hashRedeemEVM,
   } = useEvmBridge();
 
   const {
@@ -73,12 +84,6 @@ export function Index() {
 
   const { isSuccess: approveIsSuccess, isError: approveIsError } =
     useWaitForTransaction({ hash: _hashApproveEVM });
-
-  const {
-    data: redeemData,
-    isSuccess: redeemIsSuccess,
-    isError: redeemIsError,
-  } = useWaitForTransaction({ hash: _hashRedeemEVM });
 
   const evmToken = token?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
@@ -92,6 +97,7 @@ export function Index() {
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
+  const [isRedeem, setIsRedeem] = useState<boolean>(false);
   const [loading, _setLoading] = useState<ILoadingState>({
     box: 'none',
     approve: 'none',
@@ -102,11 +108,6 @@ export function Index() {
     error: 'none',
   });
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
-  // const [redeemTxID, setRedeemTxID] = useState<string | undefined>(undefined);
-  // const [isRedeem, setIsRedeem] = useState<boolean>(false);
-  // const [redeemEvents, setRedeemEvents] = useState<any>([]);
-  // const [isBurn, setIsBurn] = useState<boolean>(false);
-  // const EVMOperationID = useRef<string | undefined>(undefined);
 
   const SEPOLIA_CHAIN_ID = chains
     .filter((c: { network: string }) => c.network === 'sepolia')
@@ -132,10 +133,22 @@ export function Index() {
     (BRIDGE_OFF && !IS_MASSA_TO_EVM) ||
     (REDEEM_OFF && IS_MASSA_TO_EVM);
 
-  // TODO: Remove this
   useEffect(() => {
-    console.log('redeemEvents', redeemData, redeemIsSuccess, redeemIsError);
-  }, [redeemData, redeemIsSuccess, redeemIsError]);
+    console.log('redeem event listener 2', isRedeem);
+    if (isRedeem) {
+      setLoading({ box: 'success', claim: 'success' });
+    }
+  }, [isRedeem]);
+
+  const redeemEventHandler = useContractEvent({
+    address: EVM_BRIDGE_ADDRESS,
+    abi: bridgeVaultAbi,
+    eventName: 'Redeemed',
+    listener() {
+      setIsRedeem(true);
+      redeemEventHandler?.();
+    },
+  });
 
   useEffect(() => {
     setError({ amount: '' });
