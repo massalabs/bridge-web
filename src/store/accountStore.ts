@@ -3,6 +3,8 @@ import {
   Client,
   ClientFactory,
   DefaultProviderUrls,
+  ProviderType,
+  PublicApiClient,
 } from '@massalabs/massa-web3';
 import {
   providers,
@@ -58,6 +60,26 @@ export interface AccountStoreState {
   getTokens: () => void;
 }
 
+let massaClient: Client | null = null;
+
+async function initMassaClient(): Promise<Client> {
+  const clientConfig = {
+    retryStrategyOn: true,
+    providers: [
+      { url: DefaultProviderUrls.BUILDNET, type: ProviderType.PUBLIC },
+    ],
+    periodOffset: 9,
+  };
+
+  const publicApi = new PublicApiClient(clientConfig);
+  const status = await publicApi.getNodeStatus();
+
+  return ClientFactory.createDefaultClient(
+    DefaultProviderUrls.BUILDNET,
+    BigInt(status.chain_id),
+  );
+}
+
 const accountStore = (set: any, get: any) => ({
   accounts: [],
   tokens: [],
@@ -71,11 +93,6 @@ const accountStore = (set: any, get: any) => ({
   },
   isStationInstalled: false,
   providersFetched: [],
-
-  clientFactory: ClientFactory.createDefaultClient(
-    DefaultProviderUrls.BUILDNET,
-    false,
-  ),
 
   setAvailableAccounts: (accounts: IAccount) => {
     set({ accounts: accounts });
@@ -100,7 +117,9 @@ const accountStore = (set: any, get: any) => ({
   getTokens: async () => {
     set({ isFetching: true });
 
-    const clientFactory = await get().clientFactory;
+    if (massaClient === null) {
+      massaClient = await initMassaClient();
+    }
 
     const connectedAccount = get().connectedAccount;
 
@@ -108,22 +127,22 @@ const accountStore = (set: any, get: any) => ({
       ? JSON.parse(_getFromStorage(BRIDGE_TOKEN))
       : undefined;
 
-    if (clientFactory && connectedAccount) {
-      const supportedTokens = await getSupportedTokensList(clientFactory);
+    if (massaClient && connectedAccount) {
+      const supportedTokens = await getSupportedTokensList(massaClient);
 
       const tokens: IToken[] = await Promise.all(
         supportedTokens.map(async (tokenPair) => {
           const [name, symbol, decimals, allowance, balance] =
             await Promise.all([
-              getMassaTokenName(tokenPair.massaToken, clientFactory),
-              getMassaTokenSymbol(tokenPair.massaToken, clientFactory),
-              getDecimals(tokenPair.massaToken, clientFactory),
+              getMassaTokenName(tokenPair.massaToken, massaClient!),
+              getMassaTokenSymbol(tokenPair.massaToken, massaClient!),
+              getDecimals(tokenPair.massaToken, massaClient!),
               getAllowance(
                 tokenPair.massaToken,
-                clientFactory,
+                massaClient!,
                 connectedAccount,
               ),
-              getBalance(tokenPair.massaToken, clientFactory, connectedAccount),
+              getBalance(tokenPair.massaToken, massaClient!, connectedAccount),
             ]);
           return {
             ...tokenPair,
