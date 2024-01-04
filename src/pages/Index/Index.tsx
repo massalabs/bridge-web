@@ -134,7 +134,6 @@ export function Index() {
     (REDEEM_OFF && IS_MASSA_TO_EVM);
 
   useEffect(() => {
-    console.log('redeem event listener 2', isRedeem);
     if (isRedeem) {
       setLoading({ box: 'success', claim: 'success' });
     }

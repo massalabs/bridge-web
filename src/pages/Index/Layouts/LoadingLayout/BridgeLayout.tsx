@@ -7,7 +7,7 @@ export function BridgeLayout(props: ILoadingBoxProps) {
   const { loading } = props;
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <div className="flex justify-between mb-6 ">
         <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
         {loadingState(loading.approve)}
@@ -21,6 +21,6 @@ export function BridgeLayout(props: ILoadingBoxProps) {
         {loadingState(loading.mint)}
       </div>
       <ShowOperationId {...props} />
-    </>
+    </div>
   );
 }

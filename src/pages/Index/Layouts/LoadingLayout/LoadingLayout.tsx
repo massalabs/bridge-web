@@ -23,13 +23,10 @@ export interface ILoadingBoxProps {
 export function LoadingLayout(props: ILoadingBoxProps) {
   const { onClose, loading, massaToEvm } = props;
 
-  // TODO: change redeem title flow to show : burn successful + one last step to claim
-
   const IS_BOX_SUCCESS = loading.box === 'success';
   const IS_BOX_WARNING = loading.box === 'warning';
   const IS_BOX_ERROR = loading.box === 'error';
   const IS_GLOBAL_ERROR = loading.error !== 'none';
-  // const IS_BURN_SUCCESS = loading.burn === 'success';
 
   const displaySubtitle =
     !IS_BOX_SUCCESS && !IS_GLOBAL_ERROR && !IS_BOX_WARNING && !IS_BOX_ERROR;
@@ -38,7 +35,6 @@ export function LoadingLayout(props: ILoadingBoxProps) {
     IS_BOX_SUCCESS || IS_GLOBAL_ERROR || IS_BOX_WARNING || IS_BOX_ERROR;
 
   function _getLoadingBoxHeader() {
-    // change title here
     if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
     else if (IS_GLOBAL_ERROR || IS_BOX_ERROR) {
       return massaToEvm
@@ -82,12 +78,12 @@ export function LoadingLayout(props: ILoadingBoxProps) {
 
   return (
     <div
-      className="p-10 w-4/12 min-w-fit min-h-96 border border-tertiary rounded-2xl
+      className="p-10 max-w-3/12 w-3/12 min-h-96 border border-tertiary rounded-2xl
               bg-secondary/50 text-f-primary"
     >
       {/* TODO: refactor to make exit component */}
       {isNotProcessing ? (
-        <div className="flex justify-end pb-8">
+        <div className="flex justify-end">
           <button
             className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
                 hover:bg-tertiary hover:text-c-primary"
@@ -98,13 +94,9 @@ export function LoadingLayout(props: ILoadingBoxProps) {
           </button>
         </div>
       ) : null}
-      <div
-        className={`relative flex flex-col items-center justify-start mb-10`}
-      >
+      <div className="flex flex-col items-center justify-start mb-10">
         <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
-        <p className="mas-subtitle pt-6 text-center">
-          {_getLoadingBoxHeader()}
-        </p>
+        <p className="mas-subtitle pt-6">{_getLoadingBoxHeader()}</p>
         {displaySubtitle && (
           <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>
         )}

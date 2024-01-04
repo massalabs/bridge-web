@@ -23,21 +23,18 @@ export function RedeemLayout({ ...props }: ILoadingBoxProps) {
 
   return (
     <>
-      {isBurnSuccessfull ? (
-        <Claim {...claimArgs} />
-      ) : (
-        <>
-          <div className="flex justify-between mb-6 ">
-            <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
-            {loadingState(loading.approve)}
-          </div>
-          <div className="flex justify-between mb-6 ">
-            <p className="mas-body-2">{redeemSteps}</p>
-            {loadingState(loading.burn)}
-          </div>
-        </>
-      )}
-      <ShowOperationId {...props} />
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between">
+          <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
+          {loadingState(loading.approve)}
+        </div>
+        <div className="flex justify-between">
+          <p className="mas-body-2">{redeemSteps}</p>
+          {loadingState(loading.burn)}
+        </div>
+        {isBurnSuccessfull && <Claim {...claimArgs} />}
+        <ShowOperationId {...props} />
+      </div>
     </>
   );
 }

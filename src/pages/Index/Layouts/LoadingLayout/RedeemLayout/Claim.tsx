@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Button } from '@massalabs/react-ui-kit';
+import { Button, toast } from '@massalabs/react-ui-kit';
 import axios from 'axios';
 import { parseUnits } from 'viem';
 import { useAccount, useNetwork } from 'wagmi';
@@ -44,6 +44,8 @@ export function Claim({
 
   const [isReadyToClaim, setIsReadyToClaim] = useState(false);
   const [signatures, setSignatures] = useState<string[]>([]);
+  const [claimStep, setClaimStep] = useState('retrieving information');
+  const [hasClaimed, setHasClaimed] = useState(false);
 
   const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
 
@@ -51,7 +53,7 @@ export function Claim({
 
   // Polls every 3 seconds to see if conditions are met to show claim
   useEffect(() => {
-    if (isReadyToClaim) return;
+    setLoading({ claim: 'loading' });
     if (loading.burn === 'success' && !isReadyToClaim) {
       const timer = setInterval(() => {
         _handleClaimRedeem();
@@ -93,42 +95,61 @@ export function Claim({
         convertedSignatures.push(signature.signature);
       });
 
+      setClaimStep('awaiting signature');
       setSignatures(convertedSignatures);
       setIsReadyToClaim(true);
-      setLoading({ claim: 'loading' });
     }
   }
 
+  function _handleRedeem() {
+    if (hasClaimed) {
+      toast.error('You have already initiated a claim for this operation');
+      return;
+    }
+
+    _handleRedeemEVM(
+      parseUnits(amount, decimals),
+      evmAddress as `0x${string}` | undefined,
+      operationId,
+      signatures,
+    );
+    setClaimStep('claiming');
+    setHasClaimed(true);
+  }
+
   return (
-    <div className="flex w-full justify-center">
-      <div className="flex flex-col gap-6 w-4/5 items-center ">
-        <div className="flex flex-col gap-4 justify-center">
-          <p className="flex mas-body-2 text-center">
-            {Intl.t('index.loading-box.claim-message', {
-              token: selectedToken,
-              network: selectedChain,
-            })}
-          </p>
-          <div className="flex w-full justify-between">
-            <p className="mas-body-2">{Intl.t('index.loading-box.claim')}</p>
-            {loadingState(loading.claim)}
-          </div>
-        </div>
-        {isReadyToClaim && (
-          <Button
-            onClick={() => {
-              _handleRedeemEVM(
-                parseUnits(amount, decimals),
-                evmAddress as `0x${string}` | undefined,
-                operationId,
-                signatures,
-              );
-            }}
-          >
-            {Intl.t('index.loading-box.claim')}
-          </Button>
-        )}
+    <div className="flex flex-col gap-6 justify-center">
+      <div className="flex justify-between">
+        <p className="mas-body-2">
+          {Intl.t('index.loading-box.claim-step', {
+            state: claimStep,
+          })}
+        </p>
+        {loadingState(loading.claim)}
       </div>
+      <p className="mas-body-2 text-center max-w-full">
+        {loading.burn === 'success' && !isReadyToClaim ? (
+          <p>
+            {Intl.t('index.loading-box.claim-pending-1')}
+            <br />
+            {Intl.t('index.loading-box.claim-pending-2')}
+          </p>
+        ) : (
+          Intl.t('index.loading-box.claim-message', {
+            token: selectedToken,
+            network: selectedChain,
+          })
+        )}
+      </p>
+      {isReadyToClaim && (
+        <Button
+          onClick={() => {
+            _handleRedeem();
+          }}
+        >
+          {Intl.t('index.loading-box.claim')} {selectedToken}
+        </Button>
+      )}
     </div>
   );
 }
