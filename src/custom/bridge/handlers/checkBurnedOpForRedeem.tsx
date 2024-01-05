@@ -1,57 +1,51 @@
 import {
   Burned,
   Signatures,
-} from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/InterfaceApi';
+} from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/lambdaApi';
 
 interface ClaimArgs {
-  response: Burned[] | undefined;
+  burnedOpList: Burned[] | undefined;
   operationId: string | undefined;
 }
 
 // This function checks if there is an operation that has not been redeemed yet
 // Conditions for return: state = processing, outputTxId = null, burnId = txHash
-export async function checkBurnedOpForRedeem({
-  response,
+export function checkBurnedOpForRedeem({
+  burnedOpList,
   operationId,
-}: ClaimArgs): Promise<Signatures[]> {
+}: ClaimArgs): Signatures[] | [] {
   let signatures: Signatures[] = [];
   try {
-    if (!response || response.length <= 0)
+    if (!burnedOpList || burnedOpList.length <= 0)
       throw new Error('No response from lambda');
 
-    const operationToRedeem = filterResponse(response, operationId);
+    const operationToRedeem = filterResponse(burnedOpList, operationId);
 
     if (operationToRedeem) {
       signatures = sortSignatures(operationToRedeem.signatures);
+      return signatures;
+    } else {
+      return [];
     }
   } catch (error) {
     console.error('Error fetching resource:', error);
     return [];
   }
-  return signatures;
 }
 
 // sort signatures by relayerId
 function sortSignatures(signatures: Signatures[]): Signatures[] {
-  const sortedSignatures = signatures.sort((a, b) => a.relayerId - b.relayerId);
-  const newSortedArray = [...sortedSignatures];
-
-  return newSortedArray;
+  return signatures.sort((a, b) => a.relayerId - b.relayerId);
 }
 
 function filterResponse(
-  response: Burned[],
+  BurnedOpList: Burned[],
   operationId: string | undefined,
 ): Burned | undefined {
-  const filteredResults = response.filter(
-    (item: Burned) =>
+  return BurnedOpList.filter(
+    (item) =>
       item.outputTxId === null &&
       item.state === 'processing' &&
       item.inputOpId === operationId,
-  );
-
-  const operationToRedeem = filteredResults.find(
-    (item: Burned) => item.inputOpId === operationId,
-  );
-  return operationToRedeem;
+  ).find((item) => item.inputOpId === operationId);
 }

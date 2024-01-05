@@ -13,7 +13,7 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
-interface BridgeRedeemInterface {
+interface BridgeRedeemArgs {
   isBlurred: string;
   IS_MASSA_TO_EVM: boolean;
   isButtonDisabled: boolean;
@@ -27,7 +27,7 @@ interface BridgeRedeemInterface {
   handleToggleLayout: () => void;
 }
 
-export function BridgeRedeemLayout({ ...args }: BridgeRedeemInterface) {
+export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
   const {
     isBlurred,
     IS_MASSA_TO_EVM,

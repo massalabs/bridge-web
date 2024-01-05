@@ -16,7 +16,7 @@ export interface ILoadingBoxProps {
   massaToEvm: boolean;
   amount: string;
   redeemSteps: string;
-  operationId: string | undefined;
+  operationId: string;
   decimals: number;
 }
 
@@ -34,7 +34,7 @@ export function LoadingLayout(props: ILoadingBoxProps) {
   const isNotProcessing =
     IS_BOX_SUCCESS || IS_GLOBAL_ERROR || IS_BOX_WARNING || IS_BOX_ERROR;
 
-  function _getLoadingBoxHeader() {
+  function getLoadingBoxHeader() {
     if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
     else if (IS_GLOBAL_ERROR || IS_BOX_ERROR) {
       return massaToEvm
@@ -61,7 +61,7 @@ export function LoadingLayout(props: ILoadingBoxProps) {
       : Intl.t('index.loading-box.title-bridge');
   }
 
-  function _getLoadingBoxContent() {
+  function getLoadingBoxContent() {
     switch (true) {
       case IS_GLOBAL_ERROR:
         return <GlobalErrorLayout />;
@@ -96,12 +96,12 @@ export function LoadingLayout(props: ILoadingBoxProps) {
       ) : null}
       <div className="flex flex-col items-center justify-start mb-10">
         <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
-        <p className="mas-subtitle pt-6">{_getLoadingBoxHeader()}</p>
+        <p className="mas-subtitle pt-6">{getLoadingBoxHeader()}</p>
         {displaySubtitle && (
           <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>
         )}
       </div>
-      {_getLoadingBoxContent()}
+      {getLoadingBoxContent()}
     </div>
   );
 }

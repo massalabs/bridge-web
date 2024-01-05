@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export interface Locked {
   amount: string;
   evmChainId: number;
@@ -35,4 +37,25 @@ export interface LambdaResponse {
     locked: Locked[];
     burned: Burned[];
   };
+}
+
+export async function getBurnedOperationInfo(
+  evmAddress: `0x${string}` | undefined,
+  massaAddress: string | undefined,
+  endPoint: string,
+): Promise<Burned[]> {
+  const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
+  try {
+    if (!lambdaURL) throw new Error('Api resource not found');
+    const response: LambdaResponse = await axios.get(lambdaURL + endPoint!, {
+      params: {
+        evmAddress,
+        massaAddress,
+      },
+    });
+    return response.data.burned;
+  } catch (error) {
+    console.error('Error fetching resource:', error);
+    return [];
+  }
 }

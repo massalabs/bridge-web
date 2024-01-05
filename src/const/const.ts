@@ -2,7 +2,8 @@ export const MASSA_WALLET = 'Massa Wallet';
 export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
 export const MASSA_STATION = 'MASSASTATION';
 export const EVM_BRIDGE_ADDRESS = '0x141631E69E65c697c142f56c6fdCaF4ec648390e';
-
+export const MASSA = 'Massa';
+export const METAMASK = 'Metamask';
 // SMART CONTRACTS ADDRESSES
 export const CONTRACT_ADDRESS =
   'AS12UwPZ3EdM2sLX37zMdVH46McZohZRDbS4AhrfbfxtajRawD4jr';

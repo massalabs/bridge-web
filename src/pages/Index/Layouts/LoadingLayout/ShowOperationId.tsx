@@ -12,7 +12,7 @@ export function ShowOperationId(props: ILoadingBoxProps) {
     ? `https://explorer.massa.net/operation/${operationId}`
     : `https://sepolia.etherscan.io/tx/${operationId}`;
 
-  const _openInNewTab = (url: string) => {
+  const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
   };
 
@@ -32,10 +32,7 @@ export function ShowOperationId(props: ILoadingBoxProps) {
           />
         </div>
         <div>
-          <Button
-            variant="icon"
-            onClick={() => _openInNewTab(smartExplorerUrl)}
-          >
+          <Button variant="icon" onClick={() => openInNewTab(smartExplorerUrl)}>
             <FiExternalLink size={18} />
           </Button>
         </div>
