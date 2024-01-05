@@ -5,7 +5,7 @@ import { FiPauseCircle } from 'react-icons/fi';
 import { Spinner, ErrorCheck, WarningCheck, SuccessCheck } from '@/components';
 import { StateType } from '@/const';
 
-interface ILoading {
+interface Loading {
   loading: ReactNode;
   error: ReactNode;
   warning: ReactNode;
@@ -14,7 +14,7 @@ interface ILoading {
 }
 
 export function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
-  const loading: ILoading = {
+  const loading: Loading = {
     loading: <Spinner size={size} />,
     error: <ErrorCheck size={size} />,
     warning: <WarningCheck size={size} />,

@@ -17,7 +17,7 @@ import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import {
   LayoutType,
-  ILoadingState,
+  LoadingState,
   MASSA_STATION,
   EVM_BRIDGE_ADDRESS,
 } from '@/const';
@@ -92,13 +92,13 @@ export function Index() {
   const [amount, setAmount] = useState<string | undefined>('');
   const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
-  const [burnTxID, setBurnTxID] = useState<string | undefined>(undefined);
-  const [lockTxID, setLockTxID] = useState<string | undefined>(undefined);
+  const [burnTxID, setBurnTxID] = useState<string>('');
+  const [lockTxID, setLockTxID] = useState<string>('');
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
   const [isRedeem, setIsRedeem] = useState<boolean>(false);
-  const [loading, _setLoading] = useState<ILoadingState>({
+  const [loading, _setLoading] = useState<LoadingState>({
     box: 'none',
     approve: 'none',
     burn: 'none',
@@ -123,7 +123,7 @@ export function Index() {
 
   const isLoading = loading.box !== 'none' ? true : false;
   const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
-  let operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
+  const operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
   let isButtonDisabled =
     isFetching ||
     !isStationInstalled ||
@@ -169,7 +169,8 @@ export function Index() {
     if (lockIsSuccess) {
       setLoading({ lock: 'success' });
       let data = lockData;
-      setLockTxID(data?.transactionHash);
+      if (!data) return;
+      setLockTxID(data.transactionHash);
     }
     if (lockIsError) {
       setLoading({ box: 'error', lock: 'error' });
@@ -185,7 +186,7 @@ export function Index() {
         setLoading,
         getTokens,
       };
-      handleMintBridge({ ...mintArgs });
+      handleMintBridge(mintArgs);
     }
   }, [lockTxID]);
 
@@ -342,7 +343,7 @@ export function Index() {
     }
   }
 
-  function setLoading(state: ILoadingState) {
+  function setLoading(state: LoadingState) {
     _setLoading((prevState) => {
       return { ...prevState, ...state };
     });
@@ -353,19 +354,19 @@ export function Index() {
       box: 'none',
       approve: 'none',
       burn: 'none',
-      redeem: 'none',
+      claim: 'none',
       lock: 'none',
       mint: 'none',
       error: 'none',
     });
     setAmount('');
     // the lockTxID & burnTdID is not reset after mint/claim
-    setLockTxID(undefined);
-    setBurnTxID(undefined);
+    setLockTxID('');
+    setBurnTxID('');
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
       {/* If loading -> show loading layout else show home page*/}
       {isLoading ? (
         <LoadingLayout
@@ -393,7 +394,8 @@ export function Index() {
           handleToggleLayout={handleToggleLayout}
         />
       )}
-      {!isLoading && <TokensFAQ />}
-    </>
+      <TokensFAQ />
+      {/* {!isLoading && <TokensFAQ />} */}
+    </div>
   );
 }

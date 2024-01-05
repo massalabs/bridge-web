@@ -1,7 +1,7 @@
 import { toast } from '@massalabs/react-ui-kit';
 
 import Intl from '../../../i18n/i18n';
-import { ILoadingState } from '@/const';
+import { LoadingState } from '@/const';
 
 export interface ICustomError extends Error {
   cause?: {
@@ -12,7 +12,7 @@ export interface ICustomError extends Error {
 
 export function handleErrorMessage(
   error: Error,
-  setLoading: (state: ILoadingState) => void,
+  setLoading: (state: LoadingState) => void,
   setRedeemSteps: (state: string) => void,
   setAmount: (state: string) => void,
 ) {
@@ -60,7 +60,7 @@ export function handleErrorMessage(
 }
 
 export function handleClosePopUp(
-  setLoading: (state: ILoadingState) => void,
+  setLoading: (state: LoadingState) => void,
   setAmount: (state: string) => void,
 ) {
   setLoading({

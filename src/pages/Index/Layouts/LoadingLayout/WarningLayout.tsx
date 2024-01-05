@@ -1,8 +1,8 @@
-import { ILoadingBoxProps } from './LoadingLayout';
+import { LoadingBoxProps } from './LoadingLayout';
 import { ShowOperationId } from './ShowOperationId';
 import Intl from '@/i18n/i18n';
 
-export function WarningLayout(props: ILoadingBoxProps) {
+export function WarningLayout(props: LoadingBoxProps) {
   const { massaToEvm } = props;
 
   return (

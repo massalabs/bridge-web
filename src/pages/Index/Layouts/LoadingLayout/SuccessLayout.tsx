@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 
-import { ILoadingBoxProps } from './LoadingLayout';
+import { LoadingBoxProps } from './LoadingLayout';
+import { MASSA, METAMASK } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
-export function SuccessLayout(props: ILoadingBoxProps) {
+export function SuccessLayout(props: LoadingBoxProps) {
   const { massaToEvm, amount, onClose } = props;
 
   const [token] = useAccountStore((state) => [state.token]);
@@ -29,7 +30,7 @@ export function SuccessLayout(props: ILoadingBoxProps) {
       </div>
       <p className="mb-1">
         {Intl.t('index.loading-box.check', {
-          name: massaToEvm ? 'Metamask' : 'Massa',
+          name: massaToEvm ? METAMASK : MASSA,
         })}
       </p>
 

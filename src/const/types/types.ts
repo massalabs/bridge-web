@@ -3,10 +3,10 @@ export type LayoutType = 'massaToEvm' | 'evmToMassa';
 
 export type StateType = 'loading' | 'warning' | 'error' | 'success' | 'none';
 
-export interface ILoadingState {
+export interface LoadingState {
   [key: string]: StateType;
 }
 
-export interface IOperation {
+export interface Operation {
   [key: string]: string;
 }

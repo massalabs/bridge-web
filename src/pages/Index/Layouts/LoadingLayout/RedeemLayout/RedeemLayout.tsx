@@ -1,20 +1,23 @@
+import { useState } from 'react';
+
 import { Claim } from './Claim';
-import { ILoadingBoxProps } from '../LoadingLayout';
+import { LoadingBoxProps } from '../LoadingLayout';
 import { loadingState } from '../LoadingState';
 import { ShowOperationId } from '../ShowOperationId';
 import Intl from '@/i18n/i18n';
 
-export function RedeemLayout({ ...props }: ILoadingBoxProps) {
+export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { loading, redeemSteps, setLoading, operationId, amount, decimals } =
     props;
 
-  // wait for burn success --> than check additional conditions
+  const [claimStep, setClaimStep] = useState(ClaimSteps.None);
+  // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessfull = loading.burn === 'success';
 
   const claimArgs = {
     loading,
-    redeemSteps,
+    setClaimStep,
     setLoading,
     operationId,
     amount,
@@ -32,9 +35,36 @@ export function RedeemLayout({ ...props }: ILoadingBoxProps) {
           <p className="mas-body-2">{redeemSteps}</p>
           {loadingState(loading.burn)}
         </div>
+        <div className="flex justify-between">
+          <p className="mas-body-2">
+            {Intl.t('index.loading-box.claim-step', {
+              state: getClaimStepTranslation(claimStep),
+            })}
+          </p>
+          {loadingState(loading.claim)}
+        </div>
         {isBurnSuccessfull && <Claim {...claimArgs} />}
         <ShowOperationId {...props} />
       </div>
     </>
   );
+}
+function getClaimStepTranslation(claimStep: ClaimSteps) {
+  switch (claimStep) {
+    case ClaimSteps.None:
+      return Intl.t('index.loading-box.claim-step-none');
+    case ClaimSteps.RetrievingInfo:
+      return Intl.t('index.loading-box.claim-step-retrieving-info');
+    case ClaimSteps.AwaitingSignature:
+      return Intl.t('index.loading-box.claim-step-awaiting-signature');
+    case ClaimSteps.Claiming:
+      return Intl.t('index.loading-box.claim-step-claiming');
+  }
+}
+
+export const enum ClaimSteps {
+  None,
+  RetrievingInfo,
+  AwaitingSignature,
+  Claiming,
 }

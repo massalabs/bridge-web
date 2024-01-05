@@ -1,9 +1,9 @@
-import { ILoadingBoxProps } from './LoadingLayout';
+import { LoadingBoxProps } from './LoadingLayout';
 import { loadingState } from './LoadingState';
 import { ShowOperationId } from './ShowOperationId';
 import Intl from '@/i18n/i18n';
 
-export function BridgeLayout(props: ILoadingBoxProps) {
+export function BridgeLayout(props: LoadingBoxProps) {
   const { loading } = props;
 
   return (

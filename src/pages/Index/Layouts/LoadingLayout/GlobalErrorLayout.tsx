@@ -1,4 +1,5 @@
 import Intl from '@/i18n/i18n';
+
 export function GlobalErrorLayout() {
   return (
     <div className="text-center mas-body2">

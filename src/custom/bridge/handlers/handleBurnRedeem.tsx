@@ -5,7 +5,7 @@ import { parseUnits } from 'viem';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
-import { ILoadingState } from '@/const';
+import { LoadingState } from '@/const';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { IToken } from '@/store/accountStore';
 import { CustomError, isRejectedByUser } from '@/utils/error';
@@ -17,7 +17,7 @@ interface BurnRedeemParams {
   amount: string;
   decimals: number;
   setBurnTxID: (state: string) => void;
-  setLoading: (state: ILoadingState) => void;
+  setLoading: (state: LoadingState) => void;
   setRedeemSteps: (state: string) => void;
 }
 

@@ -13,7 +13,7 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
-interface BridgeRedeemInterface {
+interface BridgeRedeemArgs {
   isBlurred: string;
   IS_MASSA_TO_EVM: boolean;
   isButtonDisabled: boolean;
@@ -27,7 +27,7 @@ interface BridgeRedeemInterface {
   handleToggleLayout: () => void;
 }
 
-export function BridgeRedeemLayout({ ...args }: BridgeRedeemInterface) {
+export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
   const {
     isBlurred,
     IS_MASSA_TO_EVM,
@@ -81,7 +81,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemInterface) {
             bg-secondary/50 backdrop-blur-lg text-f-primary mb-5 ${isBlurred}`}
       >
         <div className="p-6 bg-primary rounded-2xl mb-5">
-          <p className="mb-4 mas-body">{Intl.t(`index.from`)}</p>
+          <p className="mb-4 mas-body">{Intl.t('index.from')}</p>
           {boxLayout(layout).up.header}
           {boxLayout(layout).up.wallet}
           <div className="mb-4 flex items-center gap-2">
@@ -160,7 +160,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemInterface) {
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
               <Money
-                placeholder={Intl.t(`index.input.placeholder.receive`)}
+                placeholder={Intl.t('index.input.placeholder.receive')}
                 name="receive"
                 value={amount}
                 onValueChange={(o) => setAmount(o.value)}

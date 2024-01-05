@@ -1,57 +1,46 @@
 import {
   Burned,
   Signatures,
-} from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/InterfaceApi';
+} from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/lambdaApi';
 
-interface ClaimArgs {
-  response: Burned[] | undefined;
-  operationId: string | undefined;
+export interface ClaimArgs {
+  burnedOpList: Burned[];
+  operationId: string;
 }
 
 // This function checks if there is an operation that has not been redeemed yet
 // Conditions for return: state = processing, outputTxId = null, burnId = txHash
-export async function checkBurnedOpForRedeem({
-  response,
+export function checkBurnedOpForRedeem({
+  burnedOpList,
   operationId,
-}: ClaimArgs): Promise<Signatures[]> {
+}: ClaimArgs): Signatures[] | [] {
   let signatures: Signatures[] = [];
-  try {
-    if (!response || response.length <= 0)
-      throw new Error('No response from lambda');
 
-    const operationToRedeem = filterResponse(response, operationId);
+  if (!burnedOpList?.length) throw new Error('No burned operations found');
 
-    if (operationToRedeem) {
-      signatures = sortSignatures(operationToRedeem.signatures);
-    }
-  } catch (error) {
-    console.error('Error fetching resource:', error);
+  const operationToRedeem = filterResponse(burnedOpList, operationId);
+
+  if (operationToRedeem) {
+    signatures = sortSignatures(operationToRedeem.signatures);
+    return signatures;
+  } else {
     return [];
   }
-  return signatures;
 }
 
 // sort signatures by relayerId
 function sortSignatures(signatures: Signatures[]): Signatures[] {
-  const sortedSignatures = signatures.sort((a, b) => a.relayerId - b.relayerId);
-  const newSortedArray = [...sortedSignatures];
-
-  return newSortedArray;
+  return signatures.sort((a, b) => a.relayerId - b.relayerId);
 }
 
 function filterResponse(
-  response: Burned[],
-  operationId: string | undefined,
+  BurnedOpList: Burned[],
+  operationId: string,
 ): Burned | undefined {
-  const filteredResults = response.filter(
-    (item: Burned) =>
+  return BurnedOpList.find(
+    (item) =>
       item.outputTxId === null &&
       item.state === 'processing' &&
       item.inputOpId === operationId,
   );
-
-  const operationToRedeem = filteredResults.find(
-    (item: Burned) => item.inputOpId === operationId,
-  );
-  return operationToRedeem;
 }
