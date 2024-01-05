@@ -116,8 +116,6 @@ describe('handleFinalRedeem', () => {
 
     const result = checkBurnedOpForRedeem({ ...claimArgs });
 
-    console.log('result', result);
-
     expect(result).toHaveLength(0);
   });
 });
