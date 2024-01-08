@@ -4,7 +4,7 @@ import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount, useNetwork } from 'wagmi';
 
-import { getBurnedOperationInfo, Signatures } from './lambdaApi';
+import { endPoint, getBurnedOperationInfo, Signatures } from './lambdaApi';
 import { ClaimSteps } from './RedeemLayout';
 import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
@@ -47,7 +47,6 @@ export function Claim({
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
 
   const massaAddress = connectedAccount?.address();
-  const endPoint = 'bridge-getHistory-prod';
 
   // Polls every 3 seconds to see if conditions are met to show claim
   // TODO: determine if we need a timeout here
