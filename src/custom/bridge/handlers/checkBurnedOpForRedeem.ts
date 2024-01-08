@@ -1,6 +1,7 @@
 import {
   Burned,
   Signatures,
+  opertationStates,
 } from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/lambdaApi';
 
 export interface ClaimArgs {
@@ -13,16 +14,18 @@ export interface ClaimArgs {
 export function checkBurnedOpForRedeem({
   burnedOpList,
   operationId,
-}: ClaimArgs): Signatures[] | [] {
+}: ClaimArgs): string[] | [] {
   let signatures: Signatures[] = [];
-
-  // if (!burnedOpList?.length) throw new Error('No burned operations found');
 
   const operationToRedeem = filterResponse(burnedOpList, operationId);
 
   if (operationToRedeem) {
     signatures = sortSignatures(operationToRedeem.signatures);
-    return signatures;
+
+    // isolates signatures from relayer ID
+    return signatures.map((signature: Signatures) => {
+      return signature.signature;
+    });
   } else {
     return [];
   }
@@ -40,7 +43,7 @@ function filterResponse(
   return BurnedOpList.find(
     (item) =>
       item.outputTxId === null &&
-      item.state === 'processing' &&
+      item.state === opertationStates.processing &&
       item.inputOpId === operationId,
   );
 }

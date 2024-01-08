@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { EMPTY_API_RESPONSE, ERROR_API } from '@/utils/error';
+
 export interface Locked {
   amount: string;
   evmChainId: number;
@@ -45,20 +47,23 @@ export async function getBurnedOperationInfo(
   endPoint: string,
 ): Promise<Burned[]> {
   const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
-  try {
-    if (!lambdaURL) throw new Error('Api url not found');
-    const response: LambdaResponse = await axios.get(lambdaURL + endPoint, {
-      params: {
-        evmAddress,
-        massaAddress,
-      },
-    });
-    if (!response.data) throw new Error('Api resource not found');
-    return response.data.burned;
-  } catch (error) {
-    console.error('Error fetching resource:', error);
-    return [];
-  }
+  if (!lambdaURL) throw new Error(ERROR_API);
+  const response: LambdaResponse = await axios.get(lambdaURL + endPoint, {
+    params: {
+      evmAddress,
+      massaAddress,
+    },
+  });
+  if (!response.data) throw new Error(EMPTY_API_RESPONSE);
+  return response.data.burned;
 }
 
 export const endPoint = 'bridge-getHistory-prod';
+
+export enum opertationStates {
+  new = 'new',
+  processing = 'processing',
+  done = 'done',
+  error = 'error',
+  finalizing = 'finalizing',
+}

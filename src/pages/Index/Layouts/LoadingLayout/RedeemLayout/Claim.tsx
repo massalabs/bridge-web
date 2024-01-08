@@ -4,13 +4,20 @@ import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount, useNetwork } from 'wagmi';
 
-import { endPoint, getBurnedOperationInfo, Signatures } from './lambdaApi';
+import { endPoint, getBurnedOperationInfo } from './lambdaApi';
 import { ClaimSteps } from './RedeemLayout';
 import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
+import { loadingStates } from '@/utils/const';
+import {
+  CustomError,
+  isApiUrlError,
+  isEmptyApiResponse,
+  isRejectedByUser,
+} from '@/utils/error';
 
 interface ClaimProps {
   loading: LoadingState;
@@ -49,13 +56,17 @@ export function Claim({
   const massaAddress = connectedAccount?.address();
 
   // Polls every 3 seconds to see if conditions are met to show claim
+
   // TODO: determine if we need a timeout here
   useEffect(() => {
-    setLoading({ claim: 'loading' });
-    if (loading.burn === 'success' && !isReadyToClaim) {
+    setLoading({ claim: loadingStates.loading });
+    if (loading.burn === loadingStates.success && !isReadyToClaim) {
       setClaimStep(ClaimSteps.RetrievingInfo);
       const timer = setInterval(() => {
-        _handleClaimRedeem();
+        const claim = _handleClaimRedeem();
+        if (!claim) {
+          setLoading({ claim: loadingStates.none });
+        }
       }, 3000);
       return () => clearInterval(timer);
     }
@@ -64,64 +75,107 @@ export function Claim({
     }
   }, [loading.burn, isReadyToClaim]);
 
-  async function _handleClaimRedeem() {
-    if (!evmAddress || !massaAddress) return;
+  async function _handleClaimRedeem(): Promise<boolean> {
+    if (!evmAddress || !massaAddress) return false;
+    try {
+      const burnedOpList = await getBurnedOperationInfo(
+        evmAddress,
+        massaAddress,
+        endPoint,
+      );
 
-    const burnedOpList = await getBurnedOperationInfo(
-      evmAddress,
-      massaAddress,
-      endPoint,
-    );
+      const claimArgs = {
+        burnedOpList,
+        operationId,
+      };
 
-    const claimArgs = {
-      burnedOpList,
-      operationId,
-    };
+      // Returns signatures sorted by relayerId
+      const signatures = checkBurnedOpForRedeem(claimArgs);
 
-    // Returns signatures sorted by relayerId
-    const signatures = checkBurnedOpForRedeem(claimArgs);
-
-    if (signatures.length > 0) {
-      const convertedSignatures: string[] = [];
-
-      signatures.forEach((signature: Signatures) => {
-        convertedSignatures.push(signature.signature);
-      });
-
-      setClaimStep(ClaimSteps.AwaitingSignature);
-      setSignatures(convertedSignatures);
-      setIsReadyToClaim(true);
+      if (signatures.length > 0) {
+        setClaimStep(ClaimSteps.AwaitingSignature);
+        setSignatures(signatures);
+        setIsReadyToClaim(true);
+      }
+      return true;
+    } catch (error: unknown | undefined) {
+      handleGetAPiErrors(error);
+      return false;
     }
   }
 
-  async function _handleRedeem() {
-    if (hasClickedClaimed) {
-      toast.error(Intl.t('index.loading-box.claim-error-1'));
-      return;
+  function handleGetAPiErrors(error: undefined | unknown) {
+    const typedError = error as CustomError;
+    if (isApiUrlError(typedError)) {
+      toast.error(Intl.t('index.claim.error.api-url'));
+      setLoadingToError();
+    } else if (isEmptyApiResponse(typedError)) {
+      toast.error(Intl.t('index.claim.error.api-empty'));
+      setLoadingToError();
+    } else {
+      toast.error(Intl.t('index.claim.error.unkown'));
+      setLoadingToError();
     }
+  }
 
-    setHasClickedClaimed(true);
+  function setLoadingToError() {
+    setLoading({
+      claim: loadingStates.error,
+      box: loadingStates.error,
+      error: loadingStates.error,
+    });
+  }
 
-    const evmRedeem = await _handleRedeemEVM(
-      parseUnits(amount, decimals),
-      evmAddress as `0x${string}`,
-      operationId,
-      signatures,
-    );
+  async function _handleRedeem() {
+    try {
+      if (hasClickedClaimed) {
+        toast.error(Intl.t('index.loading-box.claim-error-1'));
+        return;
+      }
 
-    if (evmRedeem) {
-      setClaimStep(ClaimSteps.Claiming);
-    } else if (!evmRedeem) {
-      setHasClickedClaimed(false);
-      // TODO: add correct error flow
-      toast.error('something was wrong or user rejected');
+      setHasClickedClaimed(true);
+
+      const evmRedeem = await _handleRedeemEVM(
+        parseUnits(amount, decimals),
+        evmAddress as `0x${string}`,
+        operationId,
+        signatures,
+      );
+
+      if (evmRedeem) {
+        setClaimStep(ClaimSteps.Claiming);
+      }
+    } catch (error) {
+      handleClaimError(error);
+    }
+  }
+
+  // handlesEvmRedeemErrors
+  function handleClaimError(error: undefined | unknown) {
+    const typedError = error as CustomError;
+
+    if (isRejectedByUser(typedError)) {
+      toast.error(Intl.t(`index.claim.error.rejected`));
+      setLoading({
+        claim: loadingStates.error,
+        box: loadingStates.error,
+        error: loadingStates.error,
+      });
+    } else {
+      toast.error(Intl.t(`index.claim.error.unknown`));
+      setLoading({
+        claim: loadingStates.error,
+        box: loadingStates.error,
+        error: loadingStates.error,
+      });
+      console.error(error);
     }
   }
 
   return (
     <div className="flex flex-col gap-6 justify-center">
       <div className="mas-body-2 text-center max-w-full">
-        {loading.burn === 'success' && !isReadyToClaim ? (
+        {loading.burn === loadingStates.success && !isReadyToClaim ? (
           <div>
             {Intl.t('index.loading-box.claim-pending-1')}
             <br />

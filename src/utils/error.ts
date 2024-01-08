@@ -20,6 +20,10 @@ export const PARAMETER_ERROR = [
   'ContractFunctionExecutionError: Execution reverted for an unknown reason',
 ];
 
+export const ERROR_API = '400';
+
+export const EMPTY_API_RESPONSE = '401';
+
 export const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
 export const regexWarn = new RegExp(WARNING_MESSAGES.join('|'), 'i');
 export const regexParam = new RegExp(PARAMETER_ERROR.join('|'), 'i');
@@ -30,4 +34,12 @@ export function isRejectedByUser(error: CustomError): boolean {
 
 export function isParameterError(error: CustomError): boolean {
   return regexParam.test(error.toString());
+}
+
+export function isApiUrlError(error: CustomError): boolean {
+  return error.message === ERROR_API;
+}
+
+export function isEmptyApiResponse(error: CustomError): boolean {
+  return error.message === EMPTY_API_RESPONSE;
 }

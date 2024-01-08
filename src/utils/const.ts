@@ -5,6 +5,14 @@ export const tagTypes = {
   info: 'info',
 };
 
+export enum loadingStates {
+  loading = 'loading',
+  warning = 'warning',
+  error = 'error',
+  success = 'success',
+  none = 'none',
+}
+
 export const MASSA_STATION_INSTALL = 'https://station.massa.net/';
 export const MASSA_STATION_URL = 'https://station.massa';
 export const linkToCreateAccount =
