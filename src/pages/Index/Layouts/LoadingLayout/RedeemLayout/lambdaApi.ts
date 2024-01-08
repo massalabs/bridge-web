@@ -47,7 +47,7 @@ export async function getBurnedOperationInfo(
   const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
   try {
     if (!lambdaURL) throw new Error('Api url not found');
-    const response: LambdaResponse = await axios.get(lambdaURL + endPoint!, {
+    const response: LambdaResponse = await axios.get(lambdaURL + endPoint, {
       params: {
         evmAddress,
         massaAddress,
@@ -60,3 +60,5 @@ export async function getBurnedOperationInfo(
     return [];
   }
 }
+
+export const endPoint = 'bridge-getHistory-prod';

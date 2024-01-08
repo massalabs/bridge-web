@@ -1,8 +1,5 @@
-// EXTERNALS
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios, { AxiosResponse } from 'axios';
-
-// LOCALS
 
 export function useResource<T>(resource: string): UseQueryResult<T, undefined> {
   return useQuery<T, undefined>({

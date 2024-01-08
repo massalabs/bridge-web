@@ -16,7 +16,7 @@ export function checkBurnedOpForRedeem({
 }: ClaimArgs): Signatures[] | [] {
   let signatures: Signatures[] = [];
 
-  if (!burnedOpList?.length) throw new Error('No burned operations found');
+  // if (!burnedOpList?.length) throw new Error('No burned operations found');
 
   const operationToRedeem = filterResponse(burnedOpList, operationId);
 
