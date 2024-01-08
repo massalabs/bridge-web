@@ -1,92 +1,126 @@
 import {
-  EvmRedeemEvent,
-  checkRedeemStatus,
-} from '../../src/custom/bridge/handlers/checkRedeemStatus';
+  ClaimArgs,
+  checkBurnedOpForRedeem,
+} from '../../src/custom/bridge/handlers/checkBurnedOpForRedeem';
+import { Burned } from '../../src/pages/Index/Layouts/LoadingLayout/RedeemLayout/lambdaApi';
 
-describe('handleFinalRedeem', () => {
+describe('checkBurnedOpForRedeem', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  test('should show success of redeem event', async () => {
-    const mockEvmOpIdRef: { current: `0x${string}` } = {
-      current: '0x1234567890123456789012345678901234567890',
-    };
+  test('should show success of claim event', () => {
+    const mockoperationId: `0x${string}` =
+      '0x1234567890123456789012345678901234567890';
 
-    const mockEvents: EvmRedeemEvent[] = [
+    const mockApiResponse: Burned[] = [
       {
-        address: '0x86506deb22c0285a0d9a5a770177176343a3e3bd',
-        blockHash:
-          '0x97730ee5f855c50aaa4a80f5e05098dd040d9f2fd7739f5970dee9bbe27ec468',
-        blockNumber: 5007104n,
-        data: '0x0000000000000000000000000',
-        eventName: 'Redeemed',
-        logIndex: 144,
-        removed: false,
-        topics: [
-          '0xe442438f977cf13ed122d2e3462b1afe5a74fc3ad80af33b4962d673a5bbd371',
-          '0x0000000000000000000000004a778563d5657172a12a760524b19d87a032ab68',
-          '0x000000000000000000000000f6e9fbff1cf908f6ebc1a274f15f5c0985291424',
+        amount: '10',
+        outputTxId: '0xabc123',
+        ecmChainId: 1,
+        recipient: '0xdef456',
+        state: 'successful',
+        error: null,
+        emitter: '0xghi789',
+        inputOpId: 'op123',
+        signatures: [
+          {
+            signature: '0x12312345678901234567890',
+            relayerId: 1,
+          },
+          {
+            signature: '0x12345601234567890',
+            relayerId: 0,
+          },
         ],
-        transactionHash:
-          '0x091ad0082d8e4ddcecb3705be5598419e47947cbad36ec615d7409e346899e24',
-        transactionIndex: 85,
-        args: {
-          spender: '0x4a778563d5657172a12a760524b19d87a032aB68',
-          token: '0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424',
-          burnOpId: '0x1234567890123456789012345678901234567890',
-          amount: 1000000000000000000n,
-        },
+      },
+      {
+        amount: '5',
+        outputTxId: null,
+        ecmChainId: 2,
+        recipient: '0xjkl012',
+        state: 'pending',
+        error: 'Insufficient funds',
+        emitter: '0xmnopqr',
+        inputOpId: mockoperationId,
+        signatures: [
+          {
+            signature: '0x1234567890123456789012345678901234567890',
+            relayerId: 1,
+          },
+          {
+            signature: '0x1234567890123456789012345678901234567890',
+            relayerId: 0,
+          },
+        ],
       },
     ];
 
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockGetTokens = jest.fn().mockImplementation();
-    const mockClearRedeem = jest.fn().mockImplementation();
-
-    const redeemArgs = {
-      events: mockEvents,
-      EVMOperationID: mockEvmOpIdRef,
-      setLoading: mockSetLoading,
-      getTokens: mockGetTokens,
-      clearRedeem: mockClearRedeem,
+    const claimArgs: ClaimArgs = {
+      burnedOpList: mockApiResponse,
+      operationId: mockoperationId,
     };
 
-    const result = checkRedeemStatus(redeemArgs);
+    const result = checkBurnedOpForRedeem(claimArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, {
-      box: 'success',
-      redeem: 'success',
-    });
-    expect(mockGetTokens).toHaveBeenCalled();
-    expect(mockEvmOpIdRef.current).toBe(undefined);
-    expect(mockClearRedeem).toHaveBeenCalled();
     expect(result).toBeTruthy();
   });
+  test('should fail because no collorlating op was found', () => {
+    const mockoperationId: `0x${string}` =
+      '0x1234567890123456789012345678901234567890';
 
-  test('fail redeem event if no events', async () => {
-    const mockEvmOpIdRef: { current: `0x${string}` } = {
-      current: '0x1234567890123456789012345678901234567890',
+    const mockApiResponse: Burned[] = [
+      {
+        amount: '10',
+        outputTxId: '0xabc123',
+        ecmChainId: 1,
+        recipient: '0xdef456',
+        state: 'successful',
+        error: null,
+        emitter: '0xghi789',
+        inputOpId: 'op123',
+        signatures: [
+          {
+            signature: '0x12312345678901234567890',
+            relayerId: 1,
+          },
+          {
+            signature: '0x12345601234567890',
+            relayerId: 0,
+          },
+        ],
+      },
+      {
+        amount: '5',
+        outputTxId: null,
+        ecmChainId: 2,
+        recipient: '0xjkl012',
+        state: 'pending',
+        error: 'Insufficient funds',
+        emitter: '0xmnopqr',
+        inputOpId: '0x1',
+        signatures: [
+          {
+            signature: '0x1234567890123456789012345678901234567890',
+            relayerId: 1,
+          },
+          {
+            signature: '0x1234567890123456789012345678901234567890',
+            relayerId: 0,
+          },
+        ],
+      },
+    ];
+
+    const claimArgs = {
+      burnedOpList: mockApiResponse,
+      operationId: mockoperationId,
     };
-    const mockEvents: any = [{}];
 
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockGetTokens = jest.fn().mockImplementation();
-    const mockClearRedeem = jest.fn().mockImplementation();
+    const result = checkBurnedOpForRedeem({ ...claimArgs });
 
-    const redeemArgs = {
-      events: mockEvents,
-      EVMOperationID: mockEvmOpIdRef,
-      setLoading: mockSetLoading,
-      getTokens: mockGetTokens,
-      clearRedeem: mockClearRedeem,
-    };
+    console.log('result', result);
 
-    const result = checkRedeemStatus(redeemArgs);
-    expect(mockSetLoading).not.toHaveBeenCalledWith();
-    expect(mockEvmOpIdRef.current).toBe(mockEvmOpIdRef.current);
-    expect(mockClearRedeem).not.toHaveBeenCalled();
-
-    expect(result).toBeFalsy();
+    expect(result).toHaveLength(0);
   });
 });

@@ -2,11 +2,11 @@ import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 
 import Intl from '../../../i18n/i18n';
-import { ILoadingState } from '@/const';
+import { LoadingState } from '@/const';
 import { CustomError, isParameterError, isRejectedByUser } from '@/utils/error';
 
 interface LockBridgeParams {
-  setLoading: (state: ILoadingState) => void;
+  setLoading: (state: LoadingState) => void;
   amount: string;
   _handleLockEVM: any;
   decimals: number;

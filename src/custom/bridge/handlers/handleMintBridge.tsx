@@ -2,12 +2,12 @@ import { Client } from '@massalabs/massa-web3';
 
 import { ICustomError } from './handleErrorMessage';
 import { waitForMintEvent } from '../massa-utils';
-import { ILoadingState } from '@/const';
+import { LoadingState } from '@/const';
 
 interface MintBridge {
   massaClient: Client;
   massaOperationID: string;
-  setLoading: (state: ILoadingState) => void;
+  setLoading: (state: LoadingState) => void;
   getTokens: () => void;
 }
 

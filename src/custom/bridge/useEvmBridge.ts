@@ -12,9 +12,6 @@ import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EVM_BRIDGE_ADDRESS, U256_MAX } from '@/const/const';
 import { useAccountStore } from '@/store/store';
 
-// TODO: fix gas limit
-const MAX_GAS = 1_000_000n;
-
 const useEvmBridge = () => {
   const { address: accountAddress } = useAccount();
   const [token, massaAccount] = useAccountStore((state) => [
@@ -60,7 +57,6 @@ const useEvmBridge = () => {
     functionName: 'approve',
     address: evmToken,
     abi: erc20ABI,
-    gas: MAX_GAS,
     args: [EVM_BRIDGE_ADDRESS, U256_MAX],
   });
 
@@ -68,8 +64,36 @@ const useEvmBridge = () => {
     abi: bridgeVaultAbi,
     address: EVM_BRIDGE_ADDRESS,
     functionName: 'lock',
-    gas: MAX_GAS,
   });
+
+  const redeem = useContractWrite({
+    abi: bridgeVaultAbi,
+    address: EVM_BRIDGE_ADDRESS,
+    functionName: 'redeem',
+  });
+
+  async function handleRedeem(
+    amount: bigint,
+    recipient: `0x${string}`,
+    burnopId: string,
+    signatures: string[],
+  ): Promise<boolean> {
+    try {
+      await redeem.writeAsync({
+        args: [
+          amount.toString(),
+          recipient,
+          burnopId,
+          token?.evmToken,
+          signatures,
+        ],
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
 
   async function handleApprove() {
     try {
@@ -101,6 +125,7 @@ const useEvmBridge = () => {
     allowance,
     handleApprove,
     handleLock,
+    handleRedeem,
     hashApprove,
     hashLock,
   };

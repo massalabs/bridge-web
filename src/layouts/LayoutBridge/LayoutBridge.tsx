@@ -89,8 +89,8 @@ export function LayoutBridge({ ...props }) {
       "
     >
       <div
-        className="hidden sm:flex flex-row items-center justify-between px-11 
-      py-8 w-full h-fit fixed z-10 backdrop-blur-sm"
+        className="hidden sm:flex flex-row items-center justify-between px-6 
+      py-8 w-full fixed z-10 backdrop-blur-sm"
       >
         <BridgeLogo theme={selectedTheme} />
         <div className="flex flex-row items-center gap-4">
@@ -107,7 +107,7 @@ export function LayoutBridge({ ...props }) {
           <ThemeMode onSetTheme={handleSetTheme} />
         </div>
       </div>
-      <div className="hidden sm:flex flex-col justify-center items-center pt-[150px] pb-10">
+      <div className="hidden sm:flex flex-col justify-center items-center pt-32 pb-10 ">
         <TopBanner />
         {children}
       </div>

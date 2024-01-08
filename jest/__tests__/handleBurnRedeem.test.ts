@@ -36,9 +36,7 @@ describe('handleBurnRedeem', () => {
     const mockSetRedeemSteps = jest.fn().mockImplementation();
 
     const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mockEvmOpIdRef = {
-      current: '0x1234567890123456789012345678901234567890',
-    };
+    const mocksetBurnTxID = jest.fn().mockImplementation();
 
     const burnArgs = {
       client,
@@ -46,7 +44,7 @@ describe('handleBurnRedeem', () => {
       evmAddress: mockEvmAddress,
       amount,
       decimals,
-      EVMOperationID: mockEvmOpIdRef,
+      setBurnTxID: mocksetBurnTxID,
       setLoading: mockSetLoading,
       setRedeemSteps: mockSetRedeemSteps,
     };
@@ -70,7 +68,6 @@ describe('handleBurnRedeem', () => {
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       burn: 'success',
-      redeem: 'loading',
     });
     expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(3, 'Burn (final)');
 
@@ -95,9 +92,7 @@ describe('handleBurnRedeem', () => {
     const mockSetRedeemSteps = jest.fn().mockImplementation();
 
     const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mockEvmOpIdRef = {
-      current: '0x1234567890123456789012345678901234567890',
-    };
+    const mocksetBurnTxID = jest.fn().mockImplementation();
 
     const burnArgs = {
       client,
@@ -105,7 +100,7 @@ describe('handleBurnRedeem', () => {
       evmAddress: mockEvmAddress,
       amount,
       decimals,
-      EVMOperationID: mockEvmOpIdRef,
+      setBurnTxID: mocksetBurnTxID,
       setLoading: mockSetLoading,
       setRedeemSteps: mockSetRedeemSteps,
     };
@@ -147,9 +142,7 @@ describe('handleBurnRedeem', () => {
     const mockSetRedeemSteps = jest.fn().mockImplementation();
 
     const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mockEvmOpIdRef = {
-      current: '0x1234567890123456789012345678901234567890',
-    };
+    const mocksetBurnTxID = jest.fn().mockImplementation();
 
     const burnArgs = {
       client,
@@ -157,7 +150,7 @@ describe('handleBurnRedeem', () => {
       evmAddress: mockEvmAddress,
       amount,
       decimals,
-      EVMOperationID: mockEvmOpIdRef,
+      setBurnTxID: mocksetBurnTxID,
       setLoading: mockSetLoading,
       setRedeemSteps: mockSetRedeemSteps,
     };
@@ -201,9 +194,7 @@ describe('handleBurnRedeem', () => {
     const mockSetRedeemSteps = jest.fn().mockImplementation();
 
     const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mockEvmOpIdRef = {
-      current: '0x1234567890123456789012345678901234567890',
-    };
+    const mocksetBurnTxID = jest.fn().mockImplementation();
 
     const burnArgs = {
       client,
@@ -211,7 +202,7 @@ describe('handleBurnRedeem', () => {
       evmAddress: mockEvmAddress,
       amount,
       decimals,
-      EVMOperationID: mockEvmOpIdRef,
+      setBurnTxID: mocksetBurnTxID,
       setLoading: mockSetLoading,
       setRedeemSteps: mockSetRedeemSteps,
     };
@@ -255,9 +246,7 @@ describe('handleBurnRedeem', () => {
     const mockSetRedeemSteps = jest.fn().mockImplementation();
 
     const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mockEvmOpIdRef = {
-      current: '0x1234567890123456789012345678901234567890',
-    };
+    const mocksetBurnTxID = jest.fn().mockImplementation();
 
     const burnArgs = {
       client,
@@ -265,7 +254,7 @@ describe('handleBurnRedeem', () => {
       evmAddress: mockEvmAddress,
       amount,
       decimals,
-      EVMOperationID: mockEvmOpIdRef,
+      setBurnTxID: mocksetBurnTxID,
       setLoading: mockSetLoading,
       setRedeemSteps: mockSetRedeemSteps,
     };
