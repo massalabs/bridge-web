@@ -14,7 +14,7 @@ import './index.css';
 
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
-import { Base, Network } from '@/components';
+import { Base } from '@/components';
 import { PAGES } from '@/const/pages/pages';
 import { Error, NotFound, Index, Unavailable, SCDeploy } from '@/pages/index';
 
@@ -41,11 +41,8 @@ const router = createBrowserRouter(
       <Route path={PAGES.SC_DEPLOY} element={<SCDeploy />} />
       <Route path={PAGES.UNAVAILABLE} element={<Unavailable />} />
       <Route element={<Base />}>
-        <Route path=":network" element={<Network />}>
-          {/* routes for pages */}
-          <Route path={PAGES.INDEX} element={<Index />} />
-        </Route>
-
+        {/* routes for pages */}
+        <Route path={PAGES.INDEX} element={<Index />} />
         {/* routes for errors */}
         <Route path="error" element={<Error />} />
         <Route path="*" element={<NotFound />} />
