@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
-import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
+import { LayoutBridge } from '@/layouts/LayoutBridge/DisabledBridgeBanner';
 import { useConfigStore } from '@/store/store';
 
 export interface IOutletContextType {
