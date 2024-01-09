@@ -6,18 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { SC_DEPLOY } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import Intl from '@/i18n/i18n';
-import { useNetworkStore } from '@/store/store';
 
 export function SCDeploy() {
   const navigate = useNavigate();
-
-  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
-
   const [theme] = useLocalStorage<string>('bridge-theme', 'theme-dark');
 
   useEffect(() => {
     if (!SC_DEPLOY) {
-      navigate(`/${currentNetwork}/index`);
+      navigate(`/index`);
     }
   }, [navigate]);
 

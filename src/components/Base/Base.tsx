@@ -6,7 +6,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
-import { useConfigStore, useNetworkStore } from '@/store/store';
+import { useConfigStore } from '@/store/store';
 
 export interface IOutletContextType {
   themeIcon: JSX.Element;
@@ -23,8 +23,6 @@ export function Base() {
     'bridge-theme',
     'theme-dark',
   );
-
-  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
 
   // Store
   const setThemeStore = useConfigStore((s) => s.setTheme);
@@ -43,7 +41,7 @@ export function Base() {
     } else if (NO_BRIDGE) {
       navigate(`/unavailable`);
     } else {
-      navigate(`/${currentNetwork}/index`);
+      navigate(`/index`);
     }
   }, [navigate]);
 
