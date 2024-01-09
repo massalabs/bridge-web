@@ -5,6 +5,7 @@ import { LoadingBoxProps } from '../LoadingLayout';
 import { loadingState } from '../LoadingState';
 import { ShowOperationId } from '../ShowOperationId';
 import Intl from '@/i18n/i18n';
+import { loadingStates } from '@/utils/const';
 
 export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { loading, redeemSteps, setLoading, operationId, amount, decimals } =
@@ -13,7 +14,7 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const [claimStep, setClaimStep] = useState(ClaimSteps.None);
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
-  const isBurnSuccessfull = loading.burn === 'success';
+  const isBurnSuccessfull = loading.burn === loadingStates.success;
 
   const claimArgs = {
     loading,

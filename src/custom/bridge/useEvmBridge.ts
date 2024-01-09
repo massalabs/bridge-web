@@ -90,8 +90,7 @@ const useEvmBridge = () => {
       });
       return true;
     } catch (error) {
-      console.error(error);
-      return false;
+      throw new Error(`Error during redeem. Error:${error}`);
     }
   }
 

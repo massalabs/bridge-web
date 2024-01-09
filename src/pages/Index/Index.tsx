@@ -136,6 +136,7 @@ export function Index() {
   useEffect(() => {
     if (isRedeem) {
       setLoading({ box: 'success', claim: 'success' });
+      getTokens();
     }
   }, [isRedeem]);
 
