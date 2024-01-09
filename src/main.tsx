@@ -44,7 +44,7 @@ const router = createBrowserRouter(
       <Route element={<Base />}>
         {/* routes for pages */}
         <Route path={PAGES.INDEX} element={<Index />} />
-        <Route path={PAGES.CLAIM} element={<Claim />} />
+          <Route path={PAGES.CLAIM} element={<Claim />} />
         {/* routes for errors */}
         <Route path="error" element={<Error />} />
         <Route path="*" element={<NotFound />} />
