@@ -7,7 +7,11 @@ import { LoadingState } from '../../../const/types/types';
 import Intl from '../../../i18n/i18n';
 import { IToken } from '../../../store/accountStore';
 import { increaseAllowance } from '../bridge';
-import { CustomError, isRejectedByUser } from '@/utils/error';
+import {
+  CustomError,
+  isInsufficientBalanceError,
+  isRejectedByUser,
+} from '@/utils/error';
 
 export async function handleApproveRedeem(
   client: Client,
@@ -30,11 +34,13 @@ export async function handleApproveRedeem(
     setLoading({
       approve: 'success',
     });
-  } catch (error) {
+  } catch (error: any) {
     const typedError = error as CustomError;
     const isErrorTimeout =
       typedError.cause && typedError.cause.error === 'timeout';
-    if (isRejectedByUser(typedError)) {
+    if (isInsufficientBalanceError(error)) {
+      toast.error(Intl.t(`index.approve.error.insufficient-funds`));
+    } else if (isRejectedByUser(typedError)) {
       toast.error(Intl.t(`index.approve.error.rejected`));
     } else if (isErrorTimeout) {
       // if there is timeout during waitIncludedOperation
