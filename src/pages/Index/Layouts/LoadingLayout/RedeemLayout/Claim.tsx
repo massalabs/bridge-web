@@ -63,10 +63,7 @@ export function Claim({
     if (loading.burn === loadingStates.success && !isReadyToClaim) {
       setClaimStep(ClaimSteps.RetrievingInfo);
       const timer = setInterval(() => {
-        const claim = _handleClaimRedeem();
-        if (!claim) {
-          setLoading({ claim: loadingStates.none });
-        }
+        _handleClaimRedeem();
       }, 3000);
       return () => clearInterval(timer);
     }
