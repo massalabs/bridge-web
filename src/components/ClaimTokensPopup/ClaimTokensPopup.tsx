@@ -39,13 +39,8 @@ export function ClaimTokensPopup() {
 
   function ClaimButton() {
     return (
-      <div className="absolute top-36 right-12 bg-red-500 p-36">
-        <Link to={'/claim'}>
-          <Button>Claim</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  return <>{renderButton ? <ClaimButton /> : null}</>;
+        <div>
+            <h1>Stuff</h1>
+        </div>
+    )
 }
