@@ -4,8 +4,11 @@ import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount, useNetwork } from 'wagmi';
 
-import { endPoint, getBurnedOperationInfo } from './lambdaApi';
 import { ClaimSteps } from './RedeemLayout';
+import {
+  endPoint,
+  getBurnedOperationInfo,
+} from '../../../../../utils/lambdaApi';
 import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -124,6 +127,7 @@ export function Claim({
   }
 
   async function _handleRedeem() {
+    if (!evmAddress || !massaAddress) return;
     try {
       if (hasClickedClaimed) {
         toast.error(Intl.t('index.loading-box.claim-error-1'));
@@ -131,10 +135,9 @@ export function Claim({
       }
 
       setHasClickedClaimed(true);
-
       const evmRedeem = await _handleRedeemEVM(
         parseUnits(amount, decimals),
-        evmAddress as `0x${string}`,
+        evmAddress,
         operationId,
         signatures,
       );

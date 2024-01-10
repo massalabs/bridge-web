@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Claim } from './Claim';
+import { Claim } from './ClaimRedeem';
 import { LoadingBoxProps } from '../LoadingLayout';
 import { loadingState } from '../LoadingState';
 import { ShowOperationId } from '../ShowOperationId';

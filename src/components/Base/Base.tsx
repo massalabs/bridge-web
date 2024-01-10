@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
-import { LayoutBridge } from '@/layouts/LayoutBridge/DisabledBridgeBanner';
+import { MainLayout } from '@/layouts/LayoutBridge/MainLayout';
 import { useConfigStore } from '@/store/store';
 
 export interface IOutletContextType {
@@ -48,10 +48,10 @@ export function Base() {
   // Template
   return (
     <div className={theme}>
-      <LayoutBridge onSetTheme={handleSetTheme} storedTheme={theme}>
+      <MainLayout onSetTheme={handleSetTheme} storedTheme={theme}>
         <Outlet />
         <Toast />
-      </LayoutBridge>
+      </MainLayout>
     </div>
   );
 }

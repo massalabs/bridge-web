@@ -4,10 +4,10 @@ import { BridgeLogo } from '@massalabs/react-ui-kit';
 
 import { Navbar } from './Navbar';
 import { ConnectWalletPopup, Footer } from '@/components';
-import { DisabledBridgeBanner } from '@/components/TopBanner/TopBanner';
+import { DisabledBridgeBanner } from '@/components/DisabledBridgeBanner/DisabledBridgeBanner';
 import Intl from '@/i18n/i18n';
 
-export function LayoutBridge({ ...props }) {
+export function MainLayout({ ...props }) {
   const { onSetTheme, storedTheme, children } = props;
 
   const [selectedTheme, setSelectedTheme] = useState(

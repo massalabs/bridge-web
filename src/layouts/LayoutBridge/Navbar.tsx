@@ -12,8 +12,6 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore, useNetworkStore } from '@/store/store';
 import { capitalize } from '@/utils/utils';
 
-
-
 export function Navbar({ ...props }) {
   const { onSetTheme, setSelectedTheme, selectedTheme, setOpen } = props;
 
@@ -75,9 +73,11 @@ export function Navbar({ ...props }) {
       py-8 w-full fixed z-10 backdrop-blur-sm"
     >
       <div className="flex items-center gap-8 h-fit">
-        <BridgeLogo theme={selectedTheme} />
+        <Link to={`/index`}>
+          <BridgeLogo theme={selectedTheme} />
+        </Link>
         <p className="mas-menu-default text-neutral h-fit">
-          <Link to={`/${currentNetwork}/claim`}>CLAIM</Link>
+          <Link to={`/claim`}>CLAIM</Link>
         </p>
       </div>
       <div className="flex flex-row items-center gap-4">
