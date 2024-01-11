@@ -6,7 +6,10 @@ export interface OperationStoreState {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const operationStore = (set: any, _get: any) => ({
+const operationStore = (
+  set: (params: Partial<OperationStoreState>) => void,
+  _get: () => OperationStoreState,
+) => ({
   burnedOpList: [],
   setBurnedOpList: (operationsToRedeem: RedeemOperationToClaim[]) =>
     set({ burnedOpList: operationsToRedeem }),

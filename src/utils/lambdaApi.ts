@@ -5,6 +5,8 @@ import { EMPTY_API_RESPONSE, ERROR_API } from '@/utils/error';
 export interface Locked {
   amount: string;
   evmChainId: number;
+  evmToken: `0x${string}`;
+  massaToken: `AS${string}`;
   inputTxId: `0x${string}`;
   recipient: string;
   state: string;
@@ -20,6 +22,8 @@ export interface Locked {
 export interface Burned {
   amount: string;
   outputTxId: `0x${string}` | null;
+  evmToken: `0x${string}`;
+  massaToken: `AS${string}`;
   evmChainId: number;
   recipient: `0x${string}`;
   state: string;
@@ -46,6 +50,7 @@ export interface RedeemOperationToClaim {
   recipient: `0x${string}`;
   inputOpId: string;
   signatures: string[];
+  evmToken: `0x${string}`;
 }
 
 export async function getBurnedOperationInfo(
@@ -109,6 +114,7 @@ export function getOperationsToClaim(
     amount: opToClaim.amount,
     inputOpId: opToClaim.inputOpId,
     signatures: sortSignatures(opToClaim.signatures),
+    evmToken: opToClaim.evmToken,
   }));
 }
 

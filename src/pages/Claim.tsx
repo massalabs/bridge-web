@@ -82,7 +82,7 @@ export function Claim() {
     },
   });
 
-  const burnListIsNotEmpty = burnedOpList && burnedOpList.length > 0;
+  const burnListIsNotEmpty = burnedOpList?.length;
 
   return (
     <div className="w-full h-[60vh]">
