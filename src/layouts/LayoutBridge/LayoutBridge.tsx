@@ -9,7 +9,7 @@ import {
 import { useAccount } from 'wagmi';
 
 import { ConnectWalletPopup, Footer } from '@/components';
-import { TopBanner } from '@/components/TopBanner/TopBanner';
+import { DisabledBridgeBanner } from '@/components/DisabledBridgeBanner/DisabledBridgeBanner';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { capitalize } from '@/utils/utils';
@@ -107,7 +107,7 @@ export function LayoutBridge({ ...props }) {
         </div>
       </div>
       <div className="hidden sm:flex flex-col justify-center items-center pt-32 pb-10 ">
-        <TopBanner />
+        <DisabledBridgeBanner />
         {children}
       </div>
       {open && <ConnectWalletPopup setOpen={setOpen} />}

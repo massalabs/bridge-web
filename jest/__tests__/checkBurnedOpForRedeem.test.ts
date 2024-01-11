@@ -2,10 +2,7 @@ import {
   ClaimArgs,
   checkBurnedOpForRedeem,
 } from '../../src/custom/bridge/handlers/checkBurnedOpForRedeem';
-import {
-  Burned,
-  opertationStates,
-} from '../../src/pages/Index/Layouts/LoadingLayout/RedeemLayout/lambdaApi';
+import { Burned, opertationStates } from '../../src/utils/lambdaApi';
 
 describe('checkBurnedOpForRedeem', () => {
   afterEach(() => {
@@ -20,7 +17,7 @@ describe('checkBurnedOpForRedeem', () => {
       {
         amount: '10',
         outputTxId: '0xabc123',
-        ecmChainId: 1,
+        evmChainId: 1,
         recipient: '0xdef456',
         state: opertationStates.finalizing,
         error: null,
@@ -40,7 +37,7 @@ describe('checkBurnedOpForRedeem', () => {
       {
         amount: '5',
         outputTxId: null,
-        ecmChainId: 2,
+        evmChainId: 2,
         recipient: '0xjkl012',
         state: opertationStates.processing,
         error: 'Insufficient funds',
@@ -82,7 +79,7 @@ describe('checkBurnedOpForRedeem', () => {
       {
         amount: '10',
         outputTxId: '0xabc123',
-        ecmChainId: 1,
+        evmChainId: 1,
         recipient: '0xdef456',
         state: opertationStates.finalizing,
         error: null,
@@ -102,7 +99,7 @@ describe('checkBurnedOpForRedeem', () => {
       {
         amount: '5',
         outputTxId: null,
-        ecmChainId: 2,
+        evmChainId: 2,
         recipient: '0xjkl012',
         state: opertationStates.error,
         error: 'Insufficient funds',

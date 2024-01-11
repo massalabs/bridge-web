@@ -7,7 +7,7 @@ import { useAccount, useContractEvent } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EVM_BRIDGE_ADDRESS } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import { useAccountStore, useOperationStore } from '@/store/store';
 import {
   RedeemOperationToClaim,
   checkIfUserHasTokensToClaim,
@@ -19,7 +19,7 @@ export function Claim() {
   const [connectedAccount] = useAccountStore((state) => [
     state.connectedAccount,
   ]);
-  const [burnedOpList, setBurnedOpList] = useNetworkStore((state) => [
+  const [burnedOpList, setBurnedOpList] = useOperationStore((state) => [
     state.burnedOpList,
     state.setBurnedOpList,
   ]);

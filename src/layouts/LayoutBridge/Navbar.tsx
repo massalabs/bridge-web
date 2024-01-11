@@ -7,32 +7,26 @@ import {
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
-import { NETWORKS } from '@/const';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { capitalize } from '@/utils/utils';
 
 export function Navbar({ ...props }) {
   const { onSetTheme, setSelectedTheme, selectedTheme, setOpen } = props;
 
-  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
-
-  const options = NETWORKS.map((n) => {
-    return { item: capitalize(n) };
-  });
+  const [currentMode, availableModes, setCurrentMode] = useBridgeModeStore(
+    (state) => [state.currentMode, state.availableModes, state.setCurrentMode],
+  );
 
   const [accounts, isFetching, isStationInstalled] = useAccountStore(
     (state) => [state.accounts, state.isFetching, state.isStationInstalled],
   );
 
-  const [isMetamaskInstalled] = useNetworkStore((state) => [
-    state.isMetamaskInstalled,
-  ]);
-
   const { isConnected: isEvmWalletConnected } = useAccount();
 
   const hasAccounts = accounts?.length > 0;
-  const showPingAnimation = isMetamaskInstalled && isStationInstalled;
+  const showPingAnimation =
+    window.ethereum?.isConnected() && isStationInstalled;
 
   function ConnectedWallet() {
     return (
@@ -82,9 +76,11 @@ export function Navbar({ ...props }) {
       </div>
       <div className="flex flex-row items-center gap-4">
         <Dropdown
-          readOnly={true}
-          options={options}
-          select={NETWORKS.indexOf(currentNetwork ?? '')}
+          options={availableModes.map((m) => ({
+            item: capitalize(m),
+            onClick: () => setCurrentMode(m),
+          }))}
+          select={availableModes.indexOf(currentMode)}
         />
         {isEvmWalletConnected && hasAccounts && isStationInstalled ? (
           <ConnectedWallet />

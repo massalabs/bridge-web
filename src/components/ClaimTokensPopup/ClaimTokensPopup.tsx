@@ -4,11 +4,11 @@ import { Button } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import { useAccountStore, useOperationStore } from '@/store/store';
 import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
-  const [burnedOpList, setBurnedOpList] = useNetworkStore((state) => [
+  const [burnedOpList, setBurnedOpList] = useOperationStore((state) => [
     state.burnedOpList,
     state.setBurnedOpList,
   ]);

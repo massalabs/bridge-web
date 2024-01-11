@@ -15,7 +15,7 @@ import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLay
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import { validateNetwork } from '../../utils/network';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopUP';
+import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import {
   LayoutType,
