@@ -8,20 +8,19 @@ import { useAccountStore, useOperationStore } from '@/store/store';
 import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
-  const [burnedOpList, setBurnedOpList] = useOperationStore((state) => [
-    state.burnedOpList,
-    state.setBurnedOpList,
+  const [opToRedeem, setOpToRedeem] = useOperationStore((state) => [
+    state.opToRedeem,
+    state.setOpToRedeem,
   ]);
-  const [connectedAccount, getConnectedAddress] = useAccountStore((state) => [
+  const [connectedAccount] = useAccountStore((state) => [
     state.connectedAccount,
-    state.getConnectedAddress,
   ]);
 
   const { address: evmAddress } = useAccount();
 
-  const massaAddress = getConnectedAddress();
+  const massaAddress = connectedAccount?.address();
 
-  const renderButton = burnedOpList && burnedOpList.length > 0;
+  const renderButton = opToRedeem && opToRedeem.length > 0;
 
   // TODO: Refactor so connectedAccount is initialized in store
   useEffect(() => {
@@ -34,13 +33,18 @@ export function ClaimTokensPopup() {
       massaAddress,
       evmAddress,
     );
-    setBurnedOpList(pendingOperations);
+    setOpToRedeem(pendingOperations);
   }
 
   function ClaimButton() {
     return (
-        <div>
-            <h1>Stuff</h1>
-        </div>
-    )
+      <div className="absolute top-36 right-12 bg-red-500 p-36">
+        <Link to={'/claim'}>
+          <Button>Claim</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  return <>{renderButton ? <ClaimButton /> : null}</>;
 }
