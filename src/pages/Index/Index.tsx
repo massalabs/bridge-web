@@ -13,6 +13,7 @@ import {
 
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
+import { validateNetwork } from '../../utils/network';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import {
@@ -29,7 +30,7 @@ import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useNetworkStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 
 export function Index() {
@@ -59,9 +60,12 @@ export function Index() {
     state.loadAccounts,
   ]);
 
-  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
+  const [isMainnet, currentMode] = useBridgeModeStore((state) => [
+    state.isMainnet,
+    state.currentMode,
+  ]);
 
-  const { chain, chains } = useNetwork();
+  const { chain: evmConnectedChain } = useNetwork();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -108,18 +112,9 @@ export function Index() {
     error: 'none',
   });
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
-
-  const SEPOLIA_CHAIN_ID = chains
-    .filter((c: { network: string }) => c.network === 'sepolia')
-    .at(0)?.id;
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
-
-  const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
-
-  const IS_NOT_BUILDNET = currentNetwork
-    ? currentNetwork !== 'buildnet'
-    : false;
 
   const isLoading = loading.box !== 'none' ? true : false;
   const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
@@ -128,8 +123,8 @@ export function Index() {
     isFetching ||
     !isStationInstalled ||
     !isEvmWalletConnected ||
-    !IS_EVM_SEPOLIA_CHAIN ||
-    IS_NOT_BUILDNET ||
+    wrongNetwork ||
+    isMainnet ||
     (BRIDGE_OFF && !IS_MASSA_TO_EVM) ||
     (REDEEM_OFF && IS_MASSA_TO_EVM);
 
@@ -156,11 +151,14 @@ export function Index() {
   }, [amount, layout, token?.name, tokenData?.decimals]);
 
   useEffect(() => {
-    if ((!IS_EVM_SEPOLIA_CHAIN && isEvmWalletConnected) || IS_NOT_BUILDNET) {
-      toast.error(Intl.t('connect-wallet.wrong-chain'));
-      return;
+    if (!validateNetwork(isMainnet, evmConnectedChain?.id)) {
+      toast.error(Intl.t('connect-wallet.wrong-evm-chain'));
+      setWrongNetwork(true);
+    } else {
+      toast.dismiss();
+      setWrongNetwork(false);
     }
-  }, [chain, currentNetwork]);
+  }, [evmConnectedChain, currentMode]);
 
   useEffect(() => {
     setAmount('');

@@ -10,7 +10,7 @@ import { GetTokensPopUpModal } from '@/components';
 import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface BridgeRedeemArgs {
@@ -44,7 +44,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
 
   const { tokenBalance: _tokenBalanceEVM } = useEvmBridge();
   const { isConnected: isEvmWalletConnected } = useAccount();
-
+  const [isMainnet] = useBridgeModeStore((state) => [state.isMainnet]);
   const [isFetching, token] = useAccountStore((state) => [
     state.isFetching,
     state.token,
@@ -129,7 +129,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              {isEvmWalletConnected && (
+              {!isMainnet && isEvmWalletConnected && (
                 <h3
                   className="mas-h3 text-f-disabled-1 underline cursor-pointer"
                   onClick={() => setOpenTokensModal(true)}

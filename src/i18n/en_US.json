@@ -183,7 +183,7 @@
     "description": "Connect your wallets to start bridging tokens. One EVM wallet and one Massa wallet are required.",
     "button": "Connect",
     "card-destination": {
-      "from": "Sepolia wallet",
+      "from": "Evm wallet",
       "to": "Massa wallet"
     },
     "connected-cards": {
@@ -192,7 +192,7 @@
     "connect-massa": {
       "unsupported-net": "Switch to 'buildnet' in top-right corner of Station's homepage"
     },
-    "wrong-chain": "There's unsupported chain selected. Please, switch it!",
+    "wrong-evm-chain": "Invalid evm network. Please, switch it!",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
       "title": "Metamask",

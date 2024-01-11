@@ -12,7 +12,7 @@ export function mockServer(environment = ENV.DEV) {
     factories,
     seeds(server) {
       server.createList('account', 5);
-      server.create('network');
+      server.create('mode');
     },
     // Axios has some issue with mock in mirage, see below:
     // https://github.com/miragejs/miragejs/issues/1006#issuecomment-1439946798
