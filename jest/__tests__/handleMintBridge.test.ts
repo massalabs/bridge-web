@@ -1,3 +1,5 @@
+import { IAccount } from '@massalabs/wallet-provider';
+
 import { handleMintBridge } from '../../src/custom/bridge/handlers/handleMintBridge';
 import { Client } from '../__ mocks __/mocks';
 
@@ -16,6 +18,7 @@ describe('handleMintBridge', () => {
     const mintArgs = {
       massaClient: client,
       massaOperationID: lockTxID,
+      connectedAccount: {} as IAccount,
       setLoading: mockSetLoading,
       getTokens: mockGetTokens,
     };
@@ -43,6 +46,7 @@ describe('handleMintBridge', () => {
     const mintArgs = {
       massaClient: client,
       massaOperationID: lockTxID,
+      connectedAccount: {} as IAccount,
       setLoading: mockSetLoading,
       getTokens: mockGetTokens,
     };
@@ -73,6 +77,7 @@ describe('handleMintBridge', () => {
     const mintArgs = {
       massaClient: client,
       massaOperationID: lockTxID,
+      connectedAccount: {} as IAccount,
       setLoading: mockSetLoading,
       getTokens: mockGetTokens,
     };
@@ -107,6 +112,7 @@ describe('handleMintBridge', () => {
     const mintArgs = {
       massaClient: client,
       massaOperationID: lockTxID,
+      connectedAccount: {} as IAccount,
       setLoading: mockSetLoading,
       getTokens: mockGetTokens,
     };
