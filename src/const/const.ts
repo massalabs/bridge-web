@@ -24,12 +24,7 @@ export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
 
-export enum BridgeMode {
-  mainnet = 'mainnet',
-  testnet = 'testnet',
-}
-
-export const AVAILABLE_MODES = [BridgeMode.mainnet, BridgeMode.testnet];
+export const NETWORKS = ['mainnet', 'testnet', 'buildnet', 'labnet'];
 
 // Transaction fees
 export const forwardBurnFees = {
