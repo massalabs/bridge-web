@@ -312,7 +312,7 @@ export function Index() {
           return;
         }
 
-        const burnArgs = {
+        await handleBurnRedeem({
           client: massaClient,
           token,
           evmAddress,
@@ -321,9 +321,7 @@ export function Index() {
           setBurnTxID,
           setLoading,
           setRedeemSteps,
-        };
-
-        await handleBurnRedeem(burnArgs);
+        });
       }
     } else {
       if (!amount) {
