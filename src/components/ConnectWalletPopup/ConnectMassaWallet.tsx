@@ -6,7 +6,7 @@ import {
   MassaConnect,
   Disconnected,
   NoAccounts,
-} from '@/components'; // replace 'path-to-components' with the actual path
+} from '@/components';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
