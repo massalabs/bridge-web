@@ -21,6 +21,7 @@ export interface AccountStoreState {
   providersFetched: IProvider[];
 
   setConnectedAccount: (account?: IAccount) => void;
+  getConnectedAddress: () => string | undefined;
 
   setAvailableAccounts: (accounts: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
@@ -44,6 +45,10 @@ const accountStore = (
   },
   isStationInstalled: false,
   providersFetched: [],
+
+  getConnectedAddress(): string | undefined {
+    return get().connectedAccount?.address();
+  },
 
   setAvailableAccounts: (accounts: IAccount[]) => {
     set({ accounts });

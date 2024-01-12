@@ -12,13 +12,14 @@ export function ClaimTokensPopup() {
     state.burnedOpList,
     state.setBurnedOpList,
   ]);
-  const [connectedAccount] = useAccountStore((state) => [
+  const [connectedAccount, getConnectedAddress] = useAccountStore((state) => [
     state.connectedAccount,
+    state.getConnectedAddress,
   ]);
 
   const { address: evmAddress } = useAccount();
 
-  const massaAddress = connectedAccount?.address();
+  const massaAddress = getConnectedAddress();
 
   const renderButton = burnedOpList && burnedOpList.length > 0;
 

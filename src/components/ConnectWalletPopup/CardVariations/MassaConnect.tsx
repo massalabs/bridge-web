@@ -11,11 +11,14 @@ import { useAccountStore } from '@/store/store';
 import { Unit, formatStandard, maskAddress } from '@/utils/massaFormat';
 
 export function MassaConnect() {
-  const [connectedAccount] = useAccountStore((state) => [
+  const [connectedAccount, getConnectedAddress] = useAccountStore((state) => [
     state.connectedAccount,
+    state.getConnectedAddress,
   ]);
 
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
+
+  const massaAddress = getConnectedAddress();
 
   useEffect(() => {
     fetchBalance(connectedAccount).then((balance) => setBalance(balance));
@@ -28,8 +31,8 @@ export function MassaConnect() {
         <div className="min-w-[50%] pr-4">
           <Clipboard
             customClass="h-14 rounded-lg text-center px-9 !mas-body"
-            rawContent={connectedAccount?.address() ?? ''}
-            displayedContent={maskAddress(connectedAccount?.address() ?? '')}
+            rawContent={massaAddress || ''}
+            displayedContent={maskAddress(massaAddress || '')}
           />
         </div>
       </div>
