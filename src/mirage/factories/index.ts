@@ -1,7 +1,7 @@
 import { accountFactory } from './account';
-import { networkFactory } from './mode';
+import { networkFactory } from './network';
 
 export const factories = {
   account: accountFactory,
-  mode: networkFactory,
+  network: networkFactory,
 };

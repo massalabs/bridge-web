@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useAccount } from 'wagmi';
 
 import { MassaConnectError } from './CardVariations/MassaError';
@@ -11,7 +13,7 @@ import {
   NoAccounts,
 } from '@/components';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useNetworkStore } from '@/store/store';
 
 export function ConnectWalletCards() {
   const { isConnected } = useAccount();
@@ -21,7 +23,13 @@ export function ConnectWalletCards() {
     state.isStationInstalled,
   ]);
 
-  const isMetamaskInstalled = window.ethereum?.isConnected();
+  const [isMetamaskInstalled, setIsMetamaskInstalled] = useNetworkStore(
+    (state) => [state.isMetamaskInstalled, state.setIsMetamaskInstalled],
+  );
+
+  useEffect(() => {
+    setIsMetamaskInstalled(window.ethereum?.isConnected());
+  }, [isMetamaskInstalled]);
 
   const bothNotConnected = !isConnected && !isStationInstalled;
   const isOnlyMetamaskConnected = isConnected && !isStationInstalled;

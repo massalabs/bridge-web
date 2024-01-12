@@ -2,10 +2,9 @@ import { create } from 'zustand';
 
 import accountStore, { AccountStoreState } from './accountStore';
 import configStore, { ConfigStoreState } from './configStore';
-import modeStore, { ModeStore } from './modeStore';
-import { BRIDGE_MODE } from '../utils/const';
-import { _getFromStorage } from '../utils/storage';
-import { BridgeMode } from '@/const';
+import networkStore, { NetworktoreState } from './networkStore';
+import { NETWORKS } from '@/const';
+import { getCurrentStationNetwork } from '@/custom/provider/getNetwork';
 
 export const useConfigStore = create<ConfigStoreState>((...obj) => ({
   ...configStore(...obj),
@@ -15,22 +14,22 @@ export const useAccountStore = create<AccountStoreState>((set, get) => ({
   ...accountStore(set, get),
 }));
 
-export const useBridgeModeStore = create<ModeStore>((set, get) => ({
-  ...modeStore(set, get),
+export const useNetworkStore = create<NetworktoreState>((set, get) => ({
+  ...networkStore(set, get),
 }));
 
-async function initModeStore() {
-  let mode = _getFromStorage(BRIDGE_MODE) as BridgeMode;
+async function _fetchStationNetwork() {
+  const currentNetwork = await getCurrentStationNetwork();
 
-  if (!mode) {
-    mode = BridgeMode.mainnet;
-  }
-
-  useBridgeModeStore.getState().setCurrentMode(mode);
+  useNetworkStore.getState().setCurrentNetwork(currentNetwork);
+  useNetworkStore.getState().setAvailableNetworks(NETWORKS);
 }
 
-async function initializeStores() {
-  initModeStore();
+async function _initializeStores() {
+  _fetchStationNetwork();
 }
 
-initializeStores();
+_initializeStores();
+setInterval(() => {
+  _fetchStationNetwork();
+}, 5000);

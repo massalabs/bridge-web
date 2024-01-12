@@ -22,10 +22,11 @@ import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { IToken } from '@/store/accountStore';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
-import { MASSA_TO_EVM, SEPOLIA_CHAIN_ID } from '@/utils/const';
+import { useAccountStore, useNetworkStore } from '@/store/store';
+import { MASSA_STATION_URL, MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
+import { capitalize } from '@/utils/utils';
 
 interface Layout {
   header: ReactNode;
@@ -54,6 +55,13 @@ const iconsTokens: IIcons = {
     WETH: <WEthSvg />,
   },
 };
+
+function getChainId(network = 'sepolia') {
+  const { chains } = useNetwork();
+
+  return chains.filter((c: { network: string }) => c.network === network).at(0)
+    ?.id;
+}
 
 function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
   let { amount } = props;
@@ -86,6 +94,7 @@ function EVMHeader() {
 
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
 
+  const SEPOLIA_CHAIN_ID = getChainId();
   const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
 
   return (
@@ -128,12 +137,14 @@ function MassaHeader() {
   const [isFetching, accounts, isStationInstalled] = useAccountStore(
     (state) => [state.isFetching, state.accounts, state.isStationInstalled],
   );
-  const [isMainnet] = useBridgeModeStore((state) => [state.isMainnet]);
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
 
   const hasNoAccounts = accounts?.length <= 0;
+  const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
 
   function displayStatus() {
     if (!isStationInstalled) return <Disconnected />;
+    else if (IS_NOT_BUILDNET) return <WrongChain />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }
@@ -142,10 +153,10 @@ function MassaHeader() {
     <div className="flex items-center justify-between">
       <div className="w-1/2">
         <Dropdown
-          readOnly={true}
+          readOnly={hasNoAccounts || isFetching || IS_NOT_BUILDNET}
           options={[
             {
-              item: `Massa ${isMainnet ? 'Mainnet' : 'Buildnet'}`,
+              item: `Massa ${capitalize(currentNetwork)}`,
               icon: iconsNetworks['MASSASTATION'],
             },
           ]}
@@ -164,6 +175,7 @@ function EVMMiddle() {
   const { switchNetwork } = useSwitchNetwork();
   const { address, isConnected } = useAccount();
 
+  const SEPOLIA_CHAIN_ID = getChainId();
   const IS_NOT_EVM_SEPOLIA_CHAIN =
     chain?.id !== SEPOLIA_CHAIN_ID && isConnected;
 
@@ -186,13 +198,34 @@ function EVMMiddle() {
 }
 
 function MassaMiddle() {
-  const [isFetching, connectedAccount] = useAccountStore((state) => [
-    state.isFetching,
-    state.connectedAccount,
-  ]);
+  const [isFetching, connectedAccount, isStationInstalled] = useAccountStore(
+    (state) => [
+      state.isFetching,
+      state.connectedAccount,
+      state.isStationInstalled,
+    ],
+  );
+  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
+  const IS_NOT_BUILDNET = currentNetwork !== 'buildnet';
 
   return (
     <div>
+      {IS_NOT_BUILDNET && isStationInstalled ? (
+        <div className="flex items-center justify-end">
+          <a
+            href={MASSA_STATION_URL}
+            target="_blank"
+            className="flex align-middle items-center mas-h3 text-f-disabled-1 underline cursor-pointer"
+          >
+            {Intl.t(`connect-wallet.connect-metamask.switch-network`)}
+          </a>
+          <Tooltip
+            className="p-0 pl-2"
+            customClass="mas-caption whitespace-nowrap"
+            content={Intl.t(`connect-wallet.connect-massa.unsupported-net`)}
+          />
+        </div>
+      ) : null}
       <div className="mt-4 mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
         <div className="mas-caption">
