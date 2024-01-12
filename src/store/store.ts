@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import accountStore, { AccountStoreState } from './accountStore';
 import configStore, { ConfigStoreState } from './configStore';
-import modeStore, { ModeStore } from './modeStore';
+import modeStore, { ModeStoreState } from './modeStore';
 import { BRIDGE_MODE } from '../utils/const';
 import { _getFromStorage } from '../utils/storage';
 import { BridgeMode } from '@/const';
@@ -15,7 +15,7 @@ export const useAccountStore = create<AccountStoreState>((set, get) => ({
   ...accountStore(set, get),
 }));
 
-export const useBridgeModeStore = create<ModeStore>((set, get) => ({
+export const useBridgeModeStore = create<ModeStoreState>((set, get) => ({
   ...modeStore(set, get),
 }));
 
