@@ -4,7 +4,7 @@ import {
   PopupModalHeader,
 } from '@massalabs/react-ui-kit';
 
-import { ConnectWalletCards } from '@/components';
+import { ConnectWallets } from '@/components';
 import Intl from '@/i18n/i18n';
 
 export function ConnectWalletPopup({ ...props }) {
@@ -26,7 +26,7 @@ export function ConnectWalletPopup({ ...props }) {
         </div>
       </PopupModalHeader>
       <PopupModalContent>
-        <ConnectWalletCards />
+        <ConnectWallets />
       </PopupModalContent>
     </PopupModal>
   );
