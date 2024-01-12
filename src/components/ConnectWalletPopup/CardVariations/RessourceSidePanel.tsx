@@ -50,16 +50,16 @@ export function ResourceSidePanel() {
         <>
           <InstructionBlock
             type="info"
-            title="Add Testnet to Metamask"
+            title="connect-wallet.ressource-sidepanel.add-metamask-testnet"
             description="connect-wallet.ressource-sidepanel.add-sepolia"
             link="https://support.metamask.io/hc/en-us/articles/13946422437147-How-to-view-testnets-in-MetaMask"
             linkKey="general.instructions"
           />
           <div className="w-full border-t border-info/5" />
           <InstructionBlock
-            title="Download Massa Station"
+            title="connect-wallet.ressource-sidepanel.download-massa-station"
             type="success"
-            description="connect-wallet.ressource-sidepanel.download-massa-station"
+            description="connect-wallet.ressource-sidepanel.download-massa-station-and-create-wallet"
             link={MASSA_STATION_INSTALL}
             linkKey="general.download"
           />
@@ -70,9 +70,9 @@ export function ResourceSidePanel() {
     if (isOnlyMetamaskConnected) {
       return (
         <InstructionBlock
-          title="Download Massa Station"
+          title="connect-wallet.ressource-sidepanel.download-massa-station"
           type="success"
-          description="connect-wallet.ressource-sidepanel.download-massa-station"
+          description="connect-wallet.ressource-sidepanel.download-massa-station-and-create-wallet"
           link={MASSA_STATION_INSTALL}
           linkKey="general.download"
         />
@@ -82,7 +82,7 @@ export function ResourceSidePanel() {
     if (isOnlyMassaWalletConnected) {
       return (
         <InstructionBlock
-          title="Add Testnet to Metamask"
+          title="connect-wallet.ressource-sidepanel.add-metamask-testnet"
           type="info"
           description="connect-wallet.ressource-sidepanel.add-sepolia"
           link="https://support.metamask.io/hc/en-us/articles/13946422437147-How-to-view-testnets-in-MetaMask"
