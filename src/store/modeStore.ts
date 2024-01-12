@@ -1,6 +1,6 @@
 import { BridgeMode } from '../const';
 
-export interface ModeStore {
+export interface ModeStoreState {
   currentMode: BridgeMode;
   availableModes: BridgeMode[];
   isMainnet: boolean;
@@ -9,7 +9,10 @@ export interface ModeStore {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const modeStore = (set: any, _get: any) => ({
+const modeStore = (
+  set: (params: Partial<ModeStoreState>) => void,
+  _get: () => ModeStoreState,
+) => ({
   currentMode: BridgeMode.mainnet,
   availableModes: Object.values(BridgeMode),
   isMainnet: true,
