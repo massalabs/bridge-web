@@ -10,7 +10,7 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { Unit, formatStandard, maskAddress } from '@/utils/massaFormat';
 
-export function ConnectedCard() {
+export function MassaConnect() {
   const [connectedAccount] = useAccountStore((state) => [
     state.connectedAccount,
   ]);

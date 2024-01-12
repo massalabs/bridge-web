@@ -7,7 +7,7 @@ import { MetaMaskSvg } from '@/assets';
 import Intl from '@/i18n/i18n';
 import { formatBalance } from '@/utils/utils';
 
-export function CustomConnectButton(): JSX.Element {
+export function EvmConnectButton(): JSX.Element {
   return (
     <ConnectButton.Custom>
       {({
