@@ -69,7 +69,10 @@ async function initMassaClient(): Promise<Client> {
   );
 }
 
-const accountStore = (set: any, get: any) => ({
+const accountStore = (
+  set: (params: Partial<AccountStoreState>) => void,
+  get: () => AccountStoreState,
+) => ({
   accounts: [],
   tokens: [],
   token: null,
@@ -83,11 +86,11 @@ const accountStore = (set: any, get: any) => ({
   isStationInstalled: false,
   providersFetched: [],
 
-  setAvailableAccounts: (accounts: IAccount) => {
-    set({ accounts: accounts });
+  setAvailableAccounts: (accounts: IAccount[]) => {
+    set({ accounts });
   },
 
-  setAvailableTokens: (tokens: IToken) => {
+  setAvailableTokens: (tokens: IToken[]) => {
     set({ tokens: tokens });
   },
 
@@ -178,7 +181,7 @@ const accountStore = (set: any, get: any) => ({
         providerList[0],
         selectedAccount,
       );
-      const previousConnectedAccount: IAccount = get().connectedAccount;
+      const previousConnectedAccount = get().connectedAccount;
 
       if (
         !previousConnectedAccount ||
