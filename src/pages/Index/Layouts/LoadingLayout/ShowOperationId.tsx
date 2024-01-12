@@ -1,11 +1,15 @@
 import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 
-import { LoadingBoxProps } from './LoadingLayout';
 import Intl from '@/i18n/i18n';
 import { maskAddress } from '@/utils/massaFormat';
 
-export function ShowOperationId(props: LoadingBoxProps) {
+interface ShowOperationIdProps {
+  operationId: string;
+  massaToEvm: boolean;
+}
+
+export function ShowOperationId(props: ShowOperationIdProps) {
   const { operationId, massaToEvm } = props;
 
   const smartExplorerUrl = massaToEvm

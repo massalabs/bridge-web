@@ -1,23 +1,22 @@
 import { Tooltip, Button } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 
-import { ClaimState } from './Claim';
-import { getSupportedTokenName } from '@/const';
+import { ClaimState } from './ClaimButton';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import Intl from '@/i18n/i18n';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface ClaimButton {
   operation: RedeemOperationToClaim;
   setClaimState: (state: ClaimState) => void;
+  symbol: string | undefined;
 }
 
-export function ClaimButton({ ...args }: ClaimButton) {
-  const { setClaimState, operation: op } = args;
+export function InitialClaim(args: ClaimButton) {
+  const { setClaimState, operation: op, symbol } = args;
   const { handleRedeem } = useEvmBridge();
   let { full, in2decimals } = formatAmount(op.amount);
-
-  const token = getSupportedTokenName(op.evmToken);
 
   async function _handleRedeem(
     amount: string,
@@ -27,34 +26,23 @@ export function ClaimButton({ ...args }: ClaimButton) {
   ) {
     setClaimState(ClaimState.PENDING);
     // decimals is set to zero because api reponses with correct amount already
-    const redeem = await handleRedeem(
-      parseUnits(amount, 0),
-      recipient,
-      inputOpId,
-      signatures,
-    );
-    if (redeem) {
-      // TODO: stuff maybe
-    } else {
-      // TODO: handle rejection error
-      setClaimState(ClaimState.NONE);
-    }
+    await handleRedeem(parseUnits(amount, 0), recipient, inputOpId, signatures);
   }
 
   return (
     <div
-      key={op.inputOpId}
       className="flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 
-          w-1/4 h-fit border border-tertiary rounded-2xl p-10"
+          w-[520px] h-12 border border-tertiary rounded-2xl px-10 py-14"
     >
       <div className="flex items-center">
         <p className="flex mas-menu-active">
-          {in2decimals} {token}{' '}
+          {in2decimals} {symbol}{' '}
         </p>
+
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
-          content={full + ' ' + token}
+          content={full + ' ' + symbol}
         />
       </div>
       <div>
@@ -63,7 +51,7 @@ export function ClaimButton({ ...args }: ClaimButton) {
             _handleRedeem(op.amount, op.recipient, op.inputOpId, op.signatures)
           }
         >
-          Claim {token}
+          {Intl.t('claim.claim')} {symbol}
         </Button>
       </div>
     </div>

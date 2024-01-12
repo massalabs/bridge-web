@@ -19,6 +19,14 @@
   "desktop": {
     "title": "Massa bridge is only available on desktop"
   },
+  "claim": {
+    "no-claim": "You have no token to claim at the moment",
+    "claim": "Claim",
+    "pending": "Pending",
+    "success": "You have successfully redeemed:",
+    "popup-title": "Claim tokens",
+    "popup-description": "Simply proceed to claim tokens on {chain} to finalize redeem transfer from earlier."
+  },
   "index": {
     "top-banner": {
       "bridge-off": "The Bridge process is temporarily down but you can still Redeem tokens. We expect to be back running soon!",

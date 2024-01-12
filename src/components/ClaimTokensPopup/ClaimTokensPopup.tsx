@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 
 import { Button } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
+import Intl from '@/i18n/i18n';
 import { useAccountStore, useOperationStore } from '@/store/store';
 import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
 
@@ -12,20 +13,18 @@ export function ClaimTokensPopup() {
     state.opToRedeem,
     state.setOpToRedeem,
   ]);
-  const [connectedAccount] = useAccountStore((state) => [
-    state.connectedAccount,
+  const [getConnectedAddress] = useAccountStore((state) => [
+    state.getConnectedAddress,
   ]);
 
   const { address: evmAddress } = useAccount();
 
-  const massaAddress = connectedAccount?.address();
+  const massaAddress = getConnectedAddress();
 
   const renderButton = opToRedeem && opToRedeem.length > 0;
-
-  // TODO: Refactor so connectedAccount is initialized in store
   useEffect(() => {
     getApiInfo();
-  }, [connectedAccount]);
+  }, [massaAddress]);
 
   async function getApiInfo() {
     if (!massaAddress || !evmAddress) return;
@@ -36,11 +35,23 @@ export function ClaimTokensPopup() {
     setOpToRedeem(pendingOperations);
   }
 
+  const { chain: evmConnectedChain } = useNetwork();
+
   function ClaimButton() {
     return (
-      <div className="absolute top-36 right-12 bg-red-500 p-36">
+      <div
+        className="flex flex-col gap-4 h-fit w-72 absolute top-32 right-12
+        border border-tertiary 
+        bg-secondary/50 backdrop-blur-lg text-f-primary rounded-2xl p-10"
+      >
+        <p className="mas-menu-active">{Intl.t('claim.popup-title')}</p>
+        <p>
+          {Intl.t('claim.popup-description', {
+            chain: evmConnectedChain?.name as string,
+          })}
+        </p>
         <Link to={'/claim'}>
-          <Button>Claim</Button>
+          <Button>{Intl.t('claim.claim')}</Button>
         </Link>
       </div>
     );
