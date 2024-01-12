@@ -9,7 +9,10 @@ export interface ModeStore {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const modeStore = (set: any, _get: any) => ({
+const modeStore = (
+  set: (params: Partial<ModeStore>) => void,
+  _get: () => ModeStore,
+) => ({
   currentMode: BridgeMode.mainnet,
   availableModes: Object.values(BridgeMode),
   isMainnet: true,
