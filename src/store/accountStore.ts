@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  BUILDNET,
-  CHAIN_ID,
-  Client,
-  ClientFactory,
-  DefaultProviderUrls,
-} from '@massalabs/massa-web3';
+import { Client, ClientFactory } from '@massalabs/massa-web3';
 import {
   providers,
   IAccount,
@@ -14,59 +8,26 @@ import {
 } from '@massalabs/wallet-provider';
 
 import { MASSA_STATION } from '@/const';
-import { getSupportedTokensList } from '@/custom/bridge/bridge';
-import {
-  getAllowance,
-  getMassaTokenSymbol,
-  getDecimals,
-  getMassaTokenName,
-  getBalance,
-} from '@/custom/token/token';
-import { BRIDGE_ACCOUNT_ADDRESS, BRIDGE_TOKEN } from '@/utils/const';
+import { BRIDGE_ACCOUNT_ADDRESS } from '@/utils/const';
 import { _getFromStorage, _setInStorage } from '@/utils/storage';
-
-export interface IToken {
-  name: string;
-  allowance: bigint;
-  decimals: number;
-  symbol: string;
-  massaToken: string;
-  evmToken: string;
-  chainId: number;
-  balance: bigint;
-}
 
 export interface AccountStoreState {
   connectedAccount: IAccount | null;
   massaClient: Client | null;
   accounts: IAccount[];
-  token: IToken | null;
-  tokens: IToken[];
   isFetching: boolean;
   balance: IAccountBalanceResponse;
   isStationInstalled: boolean;
   providersFetched: IProvider[];
 
   setConnectedAccount: (account?: IAccount) => void;
-  setToken: (token: IToken | null) => void;
 
   setAvailableAccounts: (accounts: any) => void;
-  setAvailableTokens: (tokens: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
   startRefetch: () => void;
 
   loadAccounts: (providerList: IProvider[]) => void;
   getAccounts: () => void;
-  getTokens: () => void;
-}
-
-let massaClient: Client | null = null;
-
-async function initMassaClient(): Promise<Client> {
-  return ClientFactory.createDefaultClient(
-    DefaultProviderUrls.BUILDNET,
-    CHAIN_ID[BUILDNET],
-  );
 }
 
 const accountStore = (
@@ -74,8 +35,6 @@ const accountStore = (
   get: () => AccountStoreState,
 ) => ({
   accounts: [],
-  tokens: [],
-  token: null,
   massaClient: null,
   connectedAccount: null,
   isFetching: false,
@@ -90,10 +49,6 @@ const accountStore = (
     set({ accounts });
   },
 
-  setAvailableTokens: (tokens: IToken[]) => {
-    set({ tokens: tokens });
-  },
-
   setStationInstalled: (isStationInstalled: boolean) => {
     set({ isStationInstalled: isStationInstalled });
   },
@@ -104,57 +59,6 @@ const accountStore = (
     setInterval(async () => {
       set({ providersFetched: await providers() });
     }, 5000);
-  },
-
-  getTokens: async () => {
-    set({ isFetching: true });
-
-    if (massaClient === null) {
-      massaClient = await initMassaClient();
-    }
-
-    const connectedAccount = get().connectedAccount;
-
-    const storedToken = _getFromStorage(BRIDGE_TOKEN)
-      ? JSON.parse(_getFromStorage(BRIDGE_TOKEN))
-      : undefined;
-
-    if (massaClient && connectedAccount) {
-      const supportedTokens = await getSupportedTokensList(massaClient);
-
-      const tokens: IToken[] = await Promise.all(
-        supportedTokens.map(async (tokenPair) => {
-          const [name, symbol, decimals, allowance, balance] =
-            await Promise.all([
-              getMassaTokenName(tokenPair.massaToken, massaClient!),
-              getMassaTokenSymbol(tokenPair.massaToken, massaClient!),
-              getDecimals(tokenPair.massaToken, massaClient!),
-              getAllowance(
-                tokenPair.massaToken,
-                massaClient!,
-                connectedAccount,
-              ),
-              getBalance(tokenPair.massaToken, massaClient!, connectedAccount),
-            ]);
-          return {
-            ...tokenPair,
-            name,
-            symbol,
-            decimals,
-            allowance,
-            balance,
-          };
-        }),
-      );
-
-      const selectedToken = tokens.find(
-        (token: IToken) => token.name === storedToken?.name,
-      );
-      const token = tokens.length ? selectedToken || tokens[0] : null;
-
-      set({ tokens, isFetching: false });
-      get().setToken(token);
-    }
   },
 
   loadAccounts: async (providerList: IProvider[]) => {
@@ -253,11 +157,6 @@ const accountStore = (
 
     _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
     set({ connectedAccount, massaClient, balance });
-  },
-
-  setToken: (token: IToken | null) => {
-    set({ token });
-    _setInStorage(BRIDGE_TOKEN, JSON.stringify(token));
   },
 });
 

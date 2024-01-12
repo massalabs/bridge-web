@@ -13,7 +13,7 @@ import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useTokenStore } from '@/store/store';
 import { loadingStates } from '@/utils/const';
 import {
   CustomError,
@@ -42,10 +42,10 @@ export function Claim({
   decimals,
 }: ClaimProps) {
   const { address: evmAddress } = useAccount();
-  const [connectedAccount, token] = useAccountStore((state) => [
+  const [connectedAccount] = useAccountStore((state) => [
     state.connectedAccount,
-    state.token,
   ]);
+  const [token] = useTokenStore((state) => [state.token]);
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { chain } = useNetwork();
 

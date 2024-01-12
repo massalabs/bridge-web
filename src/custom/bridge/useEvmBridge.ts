@@ -10,14 +10,14 @@ import {
 
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EVM_BRIDGE_ADDRESS, U256_MAX } from '@/const/const';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useTokenStore } from '@/store/store';
 
 const useEvmBridge = () => {
   const { address: accountAddress } = useAccount();
-  const [token, massaAccount] = useAccountStore((state) => [
-    state.token,
-    state.connectedAccount,
-  ]);
+  const [massaAccount] = useAccountStore((state) => [state.connectedAccount]);
+
+  const [token] = useTokenStore((state) => [state.token]);
+
   const evmToken = token?.evmToken as `0x${string}`;
 
   const evmUserAddress = accountAddress ? accountAddress : '0x00000';

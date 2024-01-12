@@ -7,7 +7,7 @@ import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { LoadingState } from '@/const';
 import { TokenPair } from '@/custom/serializable/tokenPair';
-import { IToken } from '@/store/accountStore';
+import { IToken } from '@/store/tokenStore';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 interface BurnRedeemParams {

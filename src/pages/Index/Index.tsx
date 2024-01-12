@@ -31,16 +31,18 @@ import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useTokenStore,
+} from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 
 export function Index() {
   const [
     getAccounts,
-    getTokens,
     massaClient,
     connectedAccount,
-    token,
     isFetching,
     setStationInstalled,
     isStationInstalled,
@@ -49,16 +51,19 @@ export function Index() {
     loadAccounts,
   ] = useAccountStore((state) => [
     state.getAccounts,
-    state.getTokens,
     state.massaClient,
     state.connectedAccount,
-    state.token,
     state.isFetching,
     state.setStationInstalled,
     state.isStationInstalled,
     state.startRefetch,
     state.providersFetched,
     state.loadAccounts,
+  ]);
+
+  const [token, getTokens] = useTokenStore((state) => [
+    state.token,
+    state.getTokens,
   ]);
 
   const [isMainnet, currentMode] = useBridgeModeStore((state) => [
@@ -132,7 +137,7 @@ export function Index() {
   useEffect(() => {
     if (isRedeem) {
       setLoading({ box: 'success', claim: 'success' });
-      getTokens();
+      getTokens(connectedAccount);
     }
   }, [isRedeem]);
 
@@ -183,6 +188,7 @@ export function Index() {
       const mintArgs = {
         massaClient,
         massaOperationID: lockTxID,
+        connectedAccount,
         setLoading,
         getTokens,
       };
@@ -227,7 +233,7 @@ export function Index() {
   }, []);
 
   useEffect(() => {
-    getTokens();
+    getTokens(connectedAccount);
   }, [connectedAccount]);
 
   useEffect(() => {
