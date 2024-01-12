@@ -21,8 +21,12 @@ import { Connected, Disconnected, NoAccounts, WrongChain } from '@/components';
 import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { IToken } from '@/store/accountStore';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useTokenStore,
+} from '@/store/store';
+import { IToken } from '@/store/tokenStore';
 import { MASSA_TO_EVM, SEPOLIA_CHAIN_ID } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
@@ -58,7 +62,7 @@ const iconsTokens: IIcons = {
 function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
   let { amount } = props;
 
-  const [token] = useAccountStore((state) => [state.token]);
+  const [token] = useTokenStore((state) => [state.token]);
 
   const evmToken = token?.evmToken as `0x${string}`;
   const { data } = useToken({ address: evmToken });
@@ -206,11 +210,12 @@ function MassaMiddle() {
 function EVMTokenOptions({ ...props }) {
   const { layout } = props;
 
-  const [tokens, setToken, token, isFetching] = useAccountStore((state) => [
+  const [isFetching] = useAccountStore((state) => [state.isFetching]);
+
+  const [token, tokens, setToken] = useTokenStore((state) => [
+    state.token,
     state.tokens,
     state.setToken,
-    state.token,
-    state.isFetching,
   ]);
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
@@ -241,11 +246,11 @@ function EVMTokenOptions({ ...props }) {
 function MassaTokenOptions({ ...props }) {
   const { layout } = props;
 
-  const [tokens, setToken, token, isFetching] = useAccountStore((state) => [
+  const [isFetching] = useAccountStore((state) => [state.isFetching]);
+  const [tokens, setToken, token] = useTokenStore((state) => [
     state.tokens,
     state.setToken,
     state.token,
-    state.isFetching,
   ]);
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
@@ -318,10 +323,9 @@ function EVMBalance({ ...props }) {
 function MassaBalance({ ...props }) {
   const { layout } = props;
 
-  const [token, isFetching] = useAccountStore((state) => [
-    state.token,
-    state.isFetching,
-  ]);
+  const [isFetching] = useAccountStore((state) => [state.isFetching]);
+
+  const [token] = useTokenStore((state) => [state.token]);
 
   return (
     <div className="flex items-center gap-2 h-6">

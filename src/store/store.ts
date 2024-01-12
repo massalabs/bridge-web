@@ -7,6 +7,7 @@ import operationStore, { OperationStoreState } from './operationStore';
 import { BRIDGE_MODE } from '../utils/const';
 import { _getFromStorage } from '../utils/storage';
 import { BridgeMode } from '@/const';
+export { useTokenStore } from './tokenStore';
 
 export const useConfigStore = create<ConfigStoreState>((...obj) => ({
   ...configStore(...obj),

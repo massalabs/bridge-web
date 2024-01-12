@@ -10,7 +10,11 @@ import { GetTokensPopUpModal } from '@/components';
 import { LayoutType } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useTokenStore,
+} from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface BridgeRedeemArgs {
@@ -45,10 +49,8 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
   const { tokenBalance: _tokenBalanceEVM } = useEvmBridge();
   const { isConnected: isEvmWalletConnected } = useAccount();
   const [isMainnet] = useBridgeModeStore((state) => [state.isMainnet]);
-  const [isFetching, token] = useAccountStore((state) => [
-    state.isFetching,
-    state.token,
-  ]);
+  const [isFetching] = useAccountStore((state) => [state.isFetching]);
+  const [token] = useTokenStore((state) => [state.token]);
 
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
 
