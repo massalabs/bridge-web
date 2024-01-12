@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  BUILDNET,
+  CHAIN_ID,
   Client,
   ClientFactory,
   DefaultProviderUrls,
-  ProviderType,
-  PublicApiClient,
 } from '@massalabs/massa-web3';
 import {
   providers,
@@ -63,20 +63,9 @@ export interface AccountStoreState {
 let massaClient: Client | null = null;
 
 async function initMassaClient(): Promise<Client> {
-  const clientConfig = {
-    retryStrategyOn: true,
-    providers: [
-      { url: DefaultProviderUrls.BUILDNET, type: ProviderType.PUBLIC },
-    ],
-    periodOffset: 9,
-  };
-
-  const publicApi = new PublicApiClient(clientConfig);
-  const status = await publicApi.getNodeStatus();
-
   return ClientFactory.createDefaultClient(
     DefaultProviderUrls.BUILDNET,
-    BigInt(status.chain_id),
+    CHAIN_ID[BUILDNET],
   );
 }
 
