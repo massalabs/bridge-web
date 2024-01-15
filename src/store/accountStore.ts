@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Client, ClientFactory } from '@massalabs/massa-web3';
-import {
-  providers,
-  IAccount,
-  IAccountBalanceResponse,
-  IProvider,
-} from '@massalabs/wallet-provider';
+import { providers, IAccount, IProvider } from '@massalabs/wallet-provider';
 
 import { MASSA_STATION } from '@/const';
 import { BRIDGE_ACCOUNT_ADDRESS } from '@/utils/const';
@@ -16,7 +11,6 @@ export interface AccountStoreState {
   massaClient: Client | null;
   accounts: IAccount[];
   isFetching: boolean;
-  balance: IAccountBalanceResponse;
   isStationInstalled: boolean;
   providersFetched: IProvider[];
 
@@ -39,10 +33,6 @@ const accountStore = (
   massaClient: null,
   connectedAccount: null,
   isFetching: false,
-  balance: {
-    finalBalance: '',
-    candidateBalance: '',
-  },
   isStationInstalled: false,
   providersFetched: [],
 
@@ -85,7 +75,6 @@ const accountStore = (
       const selectedAccount =
         fetchedAccounts.find((fa) => fa.address() === storedAccount) ||
         fetchedAccounts[0];
-      const firstAccountBalance = await selectedAccount.balance();
       const client = await ClientFactory.fromWalletProvider(
         providerList[0],
         selectedAccount,
@@ -100,7 +89,6 @@ const accountStore = (
           massaClient: client,
           accounts: fetchedAccounts,
           connectedAccount: selectedAccount,
-          balance: firstAccountBalance,
         });
       }
     } else {
@@ -108,10 +96,6 @@ const accountStore = (
         massaClient: null,
         accounts: [],
         connectedAccount: null,
-        balance: {
-          finalBalance: '',
-          candidateBalance: '',
-        },
         isFetching: false,
       });
     }
@@ -138,11 +122,9 @@ const accountStore = (
 
   setConnectedAccount: async (connectedAccount?: IAccount) => {
     if (!connectedAccount) {
-      const defaultBalance = { finalBalance: '0', candidateBalance: '0' };
       set({
         connectedAccount,
         massaClient: undefined,
-        balance: defaultBalance,
       });
       return;
     }
@@ -153,7 +135,6 @@ const accountStore = (
       set({ connectedAccount: undefined, massaClient: undefined });
       return;
     }
-    const balance = await connectedAccount.balance();
     const massaClient = await ClientFactory.fromWalletProvider(
       // if we want to support multiple providers like bearby, we need to pass the selected one here
       providerList[0],
@@ -161,7 +142,7 @@ const accountStore = (
     );
 
     _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
-    set({ connectedAccount, massaClient, balance });
+    set({ connectedAccount, massaClient });
   },
 });
 
