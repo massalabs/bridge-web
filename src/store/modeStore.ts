@@ -17,8 +17,7 @@ const modeStore = (
   availableModes: Object.values(BridgeMode),
   isMainnet: true,
   setCurrentMode: (mode: BridgeMode) => {
-    set({ currentMode: mode });
-    set({ isMainnet: mode === BridgeMode.mainnet });
+    set({ currentMode: mode, isMainnet: mode === BridgeMode.mainnet });
   },
 });
 

@@ -20,7 +20,6 @@ export interface AccountStoreState {
 
   setAvailableAccounts: (accounts: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
-  startRefetch: () => void;
 
   loadAccounts: (providerList: IProvider[]) => void;
   getAccounts: () => void;
@@ -47,14 +46,6 @@ const accountStore = (
 
   setStationInstalled: (isStationInstalled: boolean) => {
     set({ isStationInstalled: isStationInstalled });
-  },
-
-  startRefetch: async () => {
-    set({ providersFetched: await providers() });
-
-    setInterval(async () => {
-      set({ providersFetched: await providers() });
-    }, 5000);
   },
 
   loadAccounts: async (providerList: IProvider[]) => {

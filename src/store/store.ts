@@ -1,3 +1,4 @@
+import { providers } from '@massalabs/wallet-provider';
 import { create } from 'zustand';
 
 import accountStore, { AccountStoreState } from './accountStore';
@@ -35,8 +36,15 @@ async function initModeStore() {
   useBridgeModeStore.getState().setCurrentMode(mode);
 }
 
+async function initAccountStore() {
+  setInterval(async () => {
+    useAccountStore.setState({ providersFetched: await providers() });
+  }, 1000);
+}
+
 async function initializeStores() {
-  initModeStore();
+  await initModeStore();
+  await initAccountStore();
 }
 
 initializeStores();
