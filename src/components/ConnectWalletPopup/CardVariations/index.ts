@@ -1,4 +1,4 @@
-export * from './RessourceSidePanel';
+export * from './ResourceSidePanel';
 export * from './MassaSelect';
 export * from './MassaConnect';
 export * from './MetamaskNotInstalled';
