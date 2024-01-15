@@ -16,8 +16,8 @@ import {
 // TODO: add token name -> will come from api
 
 export function Claim() {
-  const [connectedAccount] = useAccountStore((state) => [
-    state.connectedAccount,
+  const [getConnectedAddress] = useAccountStore((state) => [
+    state.getConnectedAddress,
   ]);
   const [burnedOpList, setBurnedOpList] = useOperationStore((state) => [
     state.burnedOpList,
@@ -25,7 +25,7 @@ export function Claim() {
   ]);
   const { handleRedeem } = useEvmBridge();
   const { address: evmAddress } = useAccount();
-  const massaAddress = connectedAccount?.address();
+  const massaAddress = getConnectedAddress();
 
   useEffect(() => {
     getApiInfo();

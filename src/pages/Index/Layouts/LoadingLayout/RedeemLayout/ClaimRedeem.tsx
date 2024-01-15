@@ -42,8 +42,8 @@ export function Claim({
   decimals,
 }: ClaimProps) {
   const { address: evmAddress } = useAccount();
-  const [connectedAccount] = useAccountStore((state) => [
-    state.connectedAccount,
+  const [getConnectedAddress] = useAccountStore((state) => [
+    state.getConnectedAddress,
   ]);
   const [token] = useTokenStore((state) => [state.token]);
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
@@ -56,7 +56,7 @@ export function Claim({
   const [signatures, setSignatures] = useState<string[]>([]);
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
 
-  const massaAddress = connectedAccount?.address();
+  const massaAddress = getConnectedAddress();
 
   // Polls every 3 seconds to see if conditions are met to show claim
 
