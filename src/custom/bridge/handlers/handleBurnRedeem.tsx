@@ -21,9 +21,9 @@ interface BurnRedeemParams {
   setRedeemSteps: (state: string) => void;
 }
 
-export async function handleBurnRedeem({
-  ...args
-}: BurnRedeemParams): Promise<boolean> {
+export async function handleBurnRedeem(
+  args: BurnRedeemParams,
+): Promise<boolean> {
   const { setLoading } = args;
   try {
     await initiateBurn({ ...args });

@@ -8,7 +8,7 @@ import { _getFromStorage, _setInStorage } from '@/utils/storage';
 
 export interface AccountStoreState {
   connectedAccount: IAccount | null;
-  massaClient: Client | null;
+  massaClient: Client | undefined;
   accounts: IAccount[];
   isFetching: boolean;
   isStationInstalled: boolean;
@@ -16,6 +16,7 @@ export interface AccountStoreState {
 
   setConnectedAccount: (account?: IAccount) => void;
   getConnectedAddress: () => string | undefined;
+  setMassaClient(massaClient?: Client): void;
 
   setAvailableAccounts: (accounts: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
@@ -30,7 +31,7 @@ const accountStore = (
   get: () => AccountStoreState,
 ) => ({
   accounts: [],
-  massaClient: null,
+  massaClient: undefined,
   connectedAccount: null,
   isFetching: false,
   isStationInstalled: false,
@@ -93,7 +94,7 @@ const accountStore = (
       }
     } else {
       set({
-        massaClient: null,
+        massaClient: undefined,
         accounts: [],
         connectedAccount: null,
         isFetching: false,
@@ -120,29 +121,15 @@ const accountStore = (
     set({ isFetching: false });
   },
 
+  setMassaClient(massaClient?: Client) {
+    set({ massaClient });
+  },
+
   setConnectedAccount: async (connectedAccount?: IAccount) => {
-    if (!connectedAccount) {
-      set({
-        connectedAccount,
-        massaClient: undefined,
-      });
-      return;
+    set({ connectedAccount });
+    if (connectedAccount) {
+      _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
     }
-
-    const providerList = await providers();
-
-    if (!providerList.length) {
-      set({ connectedAccount: undefined, massaClient: undefined });
-      return;
-    }
-    const massaClient = await ClientFactory.fromWalletProvider(
-      // if we want to support multiple providers like bearby, we need to pass the selected one here
-      providerList[0],
-      connectedAccount,
-    );
-
-    _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
-    set({ connectedAccount, massaClient });
   },
 });
 
