@@ -190,9 +190,9 @@ function EVMMiddle() {
 }
 
 function MassaMiddle() {
-  const [isFetching, getConnectedAddress] = useAccountStore((state) => [
+  const [isFetching, connectedAccount] = useAccountStore((state) => [
     state.isFetching,
-    state.getConnectedAddress,
+    state.connectedAccount,
   ]);
 
   return (
@@ -200,7 +200,7 @@ function MassaMiddle() {
       <div className="mt-4 mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
         <div className="mas-caption">
-          {isFetching ? <FetchingLine /> : getConnectedAddress()}
+          {isFetching ? <FetchingLine /> : connectedAccount?.address()}
         </div>
       </div>
     </div>

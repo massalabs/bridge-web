@@ -1,6 +1,8 @@
 import { Button, Tooltip } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 
+import { useBridgeModeStore } from '../../store/store';
+import { EVM_EXPLORER } from '../../utils/const';
 import { SuccessCheck } from '@/components';
 import Intl from '@/i18n/i18n';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
@@ -20,7 +22,9 @@ export function SuccessClaim(args: SuccessClaimProps) {
     window.open(url, '_blank', 'noreferrer');
   };
 
-  const explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
+  const [currentMode] = useBridgeModeStore((state) => [state.currentMode]);
+
+  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + txHash;
 
   return (
     <div

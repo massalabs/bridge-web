@@ -158,9 +158,7 @@
       "error": {
         "rejected": "Claim rejected by user",
         "timeout": "Claim timeout out.",
-        "unknown": "Unknown error, Try again.",
-        "api-url": "There was an error accessing requested ressource. Contact team for more information.",
-        "api-empty": "Error accessing requested ressource. Try again."
+        "unknown": "Unknown error, Try again."
       }
     },
     "bridge": {

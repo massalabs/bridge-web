@@ -1,5 +1,4 @@
 import { Tooltip, Button } from '@massalabs/react-ui-kit';
-import { parseUnits } from 'viem';
 
 import { ClaimState } from './ClaimButton';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -25,8 +24,7 @@ export function InitialClaim(args: ClaimButton) {
     signatures: string[],
   ) {
     setClaimState(ClaimState.PENDING);
-    // decimals is set to zero because api reponses with correct amount already
-    await handleRedeem(parseUnits(amount, 0), recipient, inputOpId, signatures);
+    await handleRedeem(BigInt(amount), recipient, inputOpId, signatures);
   }
 
   return (

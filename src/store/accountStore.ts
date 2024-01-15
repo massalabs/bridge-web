@@ -17,7 +17,6 @@ export interface AccountStoreState {
   providersFetched: IProvider[];
 
   setConnectedAccount: (account?: IAccount) => void;
-  getConnectedAddress: () => string | undefined;
 
   setCurrentProvider: (provider?: IProvider) => void;
   setProviders: (providers: IProvider[]) => void;
@@ -49,10 +48,6 @@ const accountStore = (
   setProviders: (providers: IProvider[]) => {
     set({ providers });
     set({ massaClient: undefined }); // reset the client
-  },
-
-  getConnectedAddress(): string | undefined {
-    return get().connectedAccount?.address();
   },
 
   setAvailableAccounts: (accounts: IAccount[]) => {

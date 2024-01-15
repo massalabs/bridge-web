@@ -13,23 +13,22 @@ export function ClaimTokensPopup() {
     state.opToRedeem,
     state.setOpToRedeem,
   ]);
-  const [getConnectedAddress] = useAccountStore((state) => [
-    state.getConnectedAddress,
+  const [connectedAccount] = useAccountStore((state) => [
+    state.connectedAccount,
   ]);
 
   const { address: evmAddress } = useAccount();
 
-  const massaAddress = getConnectedAddress();
+  const renderButton = !!opToRedeem?.length;
 
-  const renderButton = opToRedeem && opToRedeem.length > 0;
   useEffect(() => {
     getApiInfo();
-  }, [massaAddress]);
+  }, [connectedAccount, evmAddress]);
 
   async function getApiInfo() {
-    if (!massaAddress || !evmAddress) return;
+    if (!connectedAccount || !evmAddress) return;
     const pendingOperations = await checkIfUserHasTokensToClaim(
-      massaAddress,
+      connectedAccount.address(),
       evmAddress,
     );
     setOpToRedeem(pendingOperations);
@@ -47,7 +46,7 @@ export function ClaimTokensPopup() {
         <p className="mas-menu-active">{Intl.t('claim.popup-title')}</p>
         <p>
           {Intl.t('claim.popup-description', {
-            chain: evmConnectedChain?.name as string,
+            chain: evmConnectedChain!.name,
           })}
         </p>
         <Link to={'/claim'}>

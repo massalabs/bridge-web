@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-import { EMPTY_API_RESPONSE, ERROR_API } from '@/utils/error';
-
 export interface Locked {
   amount: string;
   evmChainId: number;
@@ -59,14 +57,14 @@ export async function getBurnedOperationInfo(
   endPoint: string,
 ): Promise<Burned[]> {
   const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
-  if (!lambdaURL) throw new Error(ERROR_API);
+  if (!lambdaURL) throw new Error("Unable to get 'VITE_LAMBDA_URL' from .env");
   const response: LambdaResponse = await axios.get(lambdaURL + endPoint, {
     params: {
       evmAddress,
       massaAddress,
     },
   });
-  if (!response.data) throw new Error(EMPTY_API_RESPONSE);
+
   return response.data.burned;
 }
 

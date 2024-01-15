@@ -27,13 +27,12 @@ export function ClaimButton(args: ClaimOperationContainerProps) {
     setTxHash(hash);
   }
 
-  const _symbol = useContractRead({
+  // TODO: put this in a store (token store ?)
+  const { data: symbol } = useContractRead({
     address: operation.evmToken,
     abi: erc20ABI,
     functionName: 'symbol',
   });
-
-  const symbol = _symbol.data;
 
   return (
     <>
@@ -42,7 +41,10 @@ export function ClaimButton(args: ClaimOperationContainerProps) {
           case ClaimState.PENDING:
             return (
               <div className="flex w-full justify-center">
-                <PendingClaim onRedeemSuccess={onRedeemSuccess} />
+                <PendingClaim
+                  onRedeemSuccess={onRedeemSuccess}
+                  inputOpId={operation.inputOpId}
+                />
               </div>
             );
           case ClaimState.SUCCESS:

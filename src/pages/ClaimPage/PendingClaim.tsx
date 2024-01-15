@@ -7,17 +7,23 @@ import Intl from '@/i18n/i18n';
 
 interface PendingClaim {
   onRedeemSuccess: (state: `0x${string}` | null) => void;
+  inputOpId: string;
 }
 
 export function PendingClaim(args: PendingClaim) {
-  const { onRedeemSuccess } = args;
-  const redeemEventHandler = useContractEvent({
+  const { onRedeemSuccess, inputOpId } = args;
+  const stopListening = useContractEvent({
     address: EVM_BRIDGE_ADDRESS,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
-    listener(log) {
-      onRedeemSuccess(log[0].transactionHash);
-      redeemEventHandler?.();
+    listener(logs) {
+      const event = logs.find(
+        (log) => (log as any).args.burnOpId === inputOpId,
+      );
+      if (event) {
+        onRedeemSuccess(event.transactionHash);
+        stopListening?.();
+      }
     },
   });
   return (

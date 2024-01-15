@@ -11,8 +11,8 @@ import {
 } from '@/utils/lambdaApi';
 
 export function Claim() {
-  const [getConnectedAddress] = useAccountStore((state) => [
-    state.getConnectedAddress,
+  const [connectedAccount] = useAccountStore((state) => [
+    state.connectedAccount,
   ]);
   const [opToRedeem, setOpToRedeem] = useOperationStore((state) => [
     state.opToRedeem,
@@ -20,17 +20,16 @@ export function Claim() {
   ]);
 
   const { address: evmAddress } = useAccount();
-  const massaAddress = getConnectedAddress();
 
   useEffect(() => {
     getApiInfo();
-  }, []);
+  }, [connectedAccount, evmAddress]);
 
   async function getApiInfo() {
-    if (!massaAddress || !evmAddress) return;
+    if (!connectedAccount || !evmAddress) return;
 
     const pendingOperations = await checkIfUserHasTokensToClaim(
-      massaAddress,
+      connectedAccount.address(),
       evmAddress,
     );
     setOpToRedeem(pendingOperations);

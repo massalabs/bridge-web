@@ -1,3 +1,5 @@
+import { BridgeMode } from '../const';
+
 export const tagTypes = {
   success: 'success',
   error: 'error',
@@ -38,3 +40,8 @@ export const BRIDGE_MODE = 'massa-bridge-mode';
 // Networks
 export const SEPOLIA_CHAIN_ID = 11155111;
 export const ETH_MAINNET_CHAIN_ID = 1;
+
+export const EVM_EXPLORER = {
+  [BridgeMode.mainnet]: 'https://etherscan.io/',
+  [BridgeMode.testnet]: 'https://sepolia.etherscan.io/',
+};
