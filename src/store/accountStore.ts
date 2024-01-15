@@ -10,13 +10,17 @@ export interface AccountStoreState {
   connectedAccount: IAccount | null;
   massaClient: Client | undefined;
   accounts: IAccount[];
+  currentProvider: IProvider | undefined;
+  providers: IProvider[];
   isFetching: boolean;
   isStationInstalled: boolean;
   providersFetched: IProvider[];
 
   setConnectedAccount: (account?: IAccount) => void;
   getConnectedAddress: () => string | undefined;
-  setMassaClient(massaClient?: Client): void;
+
+  setCurrentProvider: (provider?: IProvider) => void;
+  setProviders: (providers: IProvider[]) => void;
 
   setAvailableAccounts: (accounts: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
@@ -32,9 +36,20 @@ const accountStore = (
   accounts: [],
   massaClient: undefined,
   connectedAccount: null,
+  currentProvider: undefined,
+  providers: [],
   isFetching: false,
   isStationInstalled: false,
   providersFetched: [],
+
+  setCurrentProvider: (currentProvider?: IProvider) => {
+    set({ currentProvider });
+  },
+
+  setProviders: (providers: IProvider[]) => {
+    set({ providers });
+    set({ massaClient: undefined }); // reset the client
+  },
 
   getConnectedAddress(): string | undefined {
     return get().connectedAccount?.address();
@@ -112,14 +127,23 @@ const accountStore = (
     set({ isFetching: false });
   },
 
-  setMassaClient(massaClient?: Client) {
-    set({ massaClient });
-  },
-
+  // set the connected account, and update the massa client
   setConnectedAccount: async (connectedAccount?: IAccount) => {
     set({ connectedAccount });
     if (connectedAccount) {
       _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
+
+      // update the massa client with the new account
+      const provider = get().currentProvider;
+      if (provider) {
+        set({
+          massaClient: await ClientFactory.fromWalletProvider(
+            // if we want to support multiple providers like bearby, we need to pass the selected one here
+            provider,
+            connectedAccount,
+          ),
+        });
+      }
     }
   },
 });
