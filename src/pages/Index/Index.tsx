@@ -46,7 +46,6 @@ export function Index() {
     isFetching,
     setStationInstalled,
     isStationInstalled,
-    startRefetch,
     providersFetched,
     loadAccounts,
   ] = useAccountStore((state) => [
@@ -56,7 +55,6 @@ export function Index() {
     state.isFetching,
     state.setStationInstalled,
     state.isStationInstalled,
-    state.startRefetch,
     state.providersFetched,
     state.loadAccounts,
   ]);
@@ -229,7 +227,6 @@ export function Index() {
   useEffect(() => {
     getAccounts();
     getProviderList();
-    startRefetch();
   }, []);
 
   useEffect(() => {
