@@ -14,7 +14,6 @@ export interface AccountStoreState {
   providers: IProvider[];
   isFetching: boolean;
   isStationInstalled: boolean;
-  providersFetched: IProvider[];
 
   setConnectedAccount: (account?: IAccount) => void;
   getConnectedAddress: () => string | undefined;
@@ -25,7 +24,7 @@ export interface AccountStoreState {
   setAvailableAccounts: (accounts: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
 
-  loadAccounts: (providerList: IProvider[]) => void;
+  loadAccounts: (providerList: IProvider[]) => Promise<void>;
   getAccounts: () => void;
 }
 
@@ -40,7 +39,6 @@ const accountStore = (
   providers: [],
   isFetching: false,
   isStationInstalled: false,
-  providersFetched: [],
 
   setCurrentProvider: (currentProvider?: IProvider) => {
     set({ currentProvider });
@@ -82,7 +80,7 @@ const accountStore = (
       const selectedAccount =
         fetchedAccounts.find((fa) => fa.address() === storedAccount) ||
         fetchedAccounts[0];
-      const client = await ClientFactory.fromWalletProvider(
+      const massaClient = await ClientFactory.fromWalletProvider(
         providerList[0],
         selectedAccount,
       );
@@ -93,7 +91,7 @@ const accountStore = (
         previousConnectedAccount?.name !== selectedAccount?.name
       ) {
         set({
-          massaClient: client,
+          massaClient,
           accounts: fetchedAccounts,
           connectedAccount: selectedAccount,
         });
