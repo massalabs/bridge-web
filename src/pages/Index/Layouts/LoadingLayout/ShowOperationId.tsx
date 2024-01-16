@@ -1,16 +1,29 @@
 import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 
-import { LoadingBoxProps } from './LoadingLayout';
+import { useBridgeModeStore } from '../../../../store/store';
+import { EVM_EXPLORER } from '../../../../utils/const';
 import Intl from '@/i18n/i18n';
 import { maskAddress } from '@/utils/massaFormat';
 
-export function ShowOperationId(props: LoadingBoxProps) {
+interface ShowOperationIdProps {
+  operationId: string;
+  massaToEvm: boolean;
+}
+
+export function ShowOperationId(props: ShowOperationIdProps) {
   const { operationId, massaToEvm } = props;
 
+  const [currentMode, isMainnet] = useBridgeModeStore((state) => [
+    state.currentMode,
+    state.isMainnet,
+  ]);
+
   const smartExplorerUrl = massaToEvm
-    ? `https://explorer.massa.net/operation/${operationId}`
-    : `https://sepolia.etherscan.io/tx/${operationId}`;
+    ? isMainnet
+      ? `https://explorer.massa.net/operation/${operationId}`
+      : undefined
+    : EVM_EXPLORER[currentMode] + 'tx/' + operationId;
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -32,9 +45,14 @@ export function ShowOperationId(props: LoadingBoxProps) {
           />
         </div>
         <div>
-          <Button variant="icon" onClick={() => openInNewTab(smartExplorerUrl)}>
-            <FiExternalLink size={18} />
-          </Button>
+          {smartExplorerUrl ? (
+            <Button
+              variant="icon"
+              onClick={() => openInNewTab(smartExplorerUrl)}
+            >
+              <FiExternalLink size={18} />
+            </Button>
+          ) : null}
         </div>
       </div>
     )

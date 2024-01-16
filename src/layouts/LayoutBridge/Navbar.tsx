@@ -67,12 +67,15 @@ export function Navbar({ ...props }) {
       py-8 w-full fixed z-10 backdrop-blur-sm"
     >
       <div className="flex items-center gap-8 h-fit">
-        <Link to={`/index`}>
-          <BridgeLogo theme={selectedTheme} />
-        </Link>
+        <BridgeLogo theme={selectedTheme} />
         <p className="mas-menu-default text-neutral h-fit">
-          <Link to={`/claim`}>CLAIM</Link>
+          <Link to="/index">Bridge</Link>
         </p>
+        {isEvmWalletConnected ? (
+          <p className="mas-menu-default text-neutral h-fit">
+            <Link to="/claim">Claim</Link>
+          </p>
+        ) : null}
       </div>
       <div className="flex flex-row items-center gap-4">
         <Dropdown

@@ -7,20 +7,15 @@ import { useAccount, useNetwork } from 'wagmi';
 import { ClaimSteps } from './RedeemLayout';
 import {
   endPoint,
-  getBurnedOperationInfo,
+  getBurnedByEvmAddress,
 } from '../../../../../utils/lambdaApi';
 import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useTokenStore } from '@/store/store';
+import { useTokenStore } from '@/store/store';
 import { loadingStates } from '@/utils/const';
-import {
-  CustomError,
-  isApiUrlError,
-  isEmptyApiResponse,
-  isRejectedByUser,
-} from '@/utils/error';
+import { CustomError, isRejectedByUser } from '@/utils/error';
 
 interface ClaimProps {
   loading: LoadingState;
@@ -42,9 +37,7 @@ export function Claim({
   decimals,
 }: ClaimProps) {
   const { address: evmAddress } = useAccount();
-  const [getConnectedAddress] = useAccountStore((state) => [
-    state.getConnectedAddress,
-  ]);
+
   const [token] = useTokenStore((state) => [state.token]);
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { chain } = useNetwork();
@@ -55,8 +48,6 @@ export function Claim({
   const [isReadyToClaim, setIsReadyToClaim] = useState(false);
   const [signatures, setSignatures] = useState<string[]>([]);
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
-
-  const massaAddress = getConnectedAddress();
 
   // Polls every 3 seconds to see if conditions are met to show claim
 
@@ -76,13 +67,9 @@ export function Claim({
   }, [loading.burn, isReadyToClaim]);
 
   async function _handleClaimRedeem(): Promise<boolean> {
-    if (!evmAddress || !massaAddress) return false;
+    if (!evmAddress) return false;
     try {
-      const burnedOpList = await getBurnedOperationInfo(
-        evmAddress,
-        massaAddress,
-        endPoint,
-      );
+      const burnedOpList = await getBurnedByEvmAddress(evmAddress, endPoint);
 
       const claimArgs = {
         burnedOpList,
@@ -98,24 +85,16 @@ export function Claim({
         setIsReadyToClaim(true);
       }
       return true;
-    } catch (error: unknown | undefined) {
+    } catch (error: any) {
       handleGetAPiErrors(error);
       return false;
     }
   }
 
-  function handleGetAPiErrors(error: undefined | unknown) {
-    const typedError = error as CustomError;
-    if (isApiUrlError(typedError)) {
-      toast.error(Intl.t('index.claim.error.api-url'));
-      setLoadingToError();
-    } else if (isEmptyApiResponse(typedError)) {
-      toast.error(Intl.t('index.claim.error.api-empty'));
-      setLoadingToError();
-    } else {
-      toast.error(Intl.t('index.claim.error.unkown'));
-      setLoadingToError();
-    }
+  function handleGetAPiErrors(error: any) {
+    console.log('Error fetching claim api', error.toString());
+    toast.error(Intl.t('index.claim.error.unkown'));
+    setLoadingToError();
   }
 
   function setLoadingToError() {
@@ -127,7 +106,7 @@ export function Claim({
   }
 
   async function _handleRedeem() {
-    if (!evmAddress || !massaAddress) return;
+    if (!evmAddress) return;
     try {
       if (hasClickedClaimed) {
         toast.error(Intl.t('index.loading-box.claim-error-1'));

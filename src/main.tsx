@@ -14,7 +14,7 @@ import './index.css';
 
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
-import { Claim } from './pages/Claim';
+import { Claim } from './pages/ClaimPage/ClaimPage';
 import { Base } from '@/components';
 import { PAGES } from '@/const/pages/pages';
 import { Error, NotFound, Index, Unavailable, SCDeploy } from '@/pages/index';

@@ -19,6 +19,14 @@
   "desktop": {
     "title": "Massa bridge is only available on desktop"
   },
+  "claim": {
+    "no-claim": "There are no active claims for address {address}",
+    "claim": "Claim",
+    "pending": "Pending",
+    "success": "You have successfully redeemed:",
+    "popup-title": "Claim tokens",
+    "popup-description": "Simply proceed to claim tokens on {chain} to finalize redeem transfer from earlier."
+  },
   "index": {
     "top-banner": {
       "bridge-off": "The Bridge process is temporarily down but you can still Redeem tokens. We expect to be back running soon!",
@@ -150,9 +158,7 @@
       "error": {
         "rejected": "Claim rejected by user",
         "timeout": "Claim timeout out.",
-        "unknown": "Unknown error, Try again.",
-        "api-url": "There was an error accessing requested ressource. Contact team for more information.",
-        "api-empty": "Error accessing requested ressource. Try again."
+        "unknown": "Unknown error, Try again."
       }
     },
     "bridge": {

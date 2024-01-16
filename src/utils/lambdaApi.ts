@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-import { EMPTY_API_RESPONSE, ERROR_API } from '@/utils/error';
-
 export interface Locked {
   amount: string;
   evmChainId: number;
@@ -53,20 +51,18 @@ export interface RedeemOperationToClaim {
   evmToken: `0x${string}`;
 }
 
-export async function getBurnedOperationInfo(
+export async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
-  massaAddress: string,
   endPoint: string,
 ): Promise<Burned[]> {
   const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
-  if (!lambdaURL) throw new Error(ERROR_API);
+  if (!lambdaURL) throw new Error("Unable to get 'VITE_LAMBDA_URL' from .env");
   const response: LambdaResponse = await axios.get(lambdaURL + endPoint, {
     params: {
       evmAddress,
-      massaAddress,
     },
   });
-  if (!response.data) throw new Error(EMPTY_API_RESPONSE);
+
   return response.data.burned;
 }
 
@@ -93,19 +89,6 @@ export function filterByOpId(
   );
 }
 
-// returns all processing operations from a massa address
-export function filterByMassaId(
-  BurnedOpList: Burned[],
-  massaAddress: string,
-): Burned[] {
-  return BurnedOpList.filter(
-    (item) =>
-      item.outputTxId === null &&
-      item.state === opertationStates.processing &&
-      item.emitter === massaAddress,
-  );
-}
-
 export function getOperationsToClaim(
   operationsArray: Burned[],
 ): RedeemOperationToClaim[] {
@@ -128,20 +111,22 @@ export function sortSignatures(signatures: Signatures[]): string[] {
 }
 
 export async function checkIfUserHasTokensToClaim(
-  massaAddress: string,
   evmAddress: `0x${string}`,
 ): Promise<RedeemOperationToClaim[]> {
-  const burnedOpList = await getBurnedOperationInfo(
-    evmAddress,
-    massaAddress,
-    endPoint,
-  );
+  const burnedOpList = await getBurnedByEvmAddress(evmAddress, endPoint);
 
-  const burnedOpToClaim = filterByMassaId(burnedOpList, massaAddress);
-
-  if (burnedOpToClaim && burnedOpToClaim.length > 0) {
-    return getOperationsToClaim(burnedOpToClaim);
-  } else {
-    return [];
-  }
+  return burnedOpList
+    .filter(
+      (item) =>
+        item.outputTxId === null &&
+        item.state === opertationStates.processing &&
+        item.recipient === evmAddress,
+    )
+    .map((opToClaim) => ({
+      recipient: opToClaim.recipient,
+      amount: opToClaim.amount,
+      inputOpId: opToClaim.inputOpId,
+      signatures: sortSignatures(opToClaim.signatures),
+      evmToken: opToClaim.evmToken,
+    }));
 }

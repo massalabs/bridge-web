@@ -11,11 +11,11 @@ export const CONTRACT_ADDRESS =
 export const TDAI_CONTRACT_ADDRESS =
   '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';
 
-export const TDAI_MASSA_ADDRESS =
-  'AS1xzTQiRSpq7hNzgPRJcaSLEU4qjaRZPx5JfFVywsJxpWprndtL';
-
 export const WETH_CONTRACT_ADDRESS =
   '0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424';
+
+export const TDAI_MASSA_ADDRESS =
+  'AS1xzTQiRSpq7hNzgPRJcaSLEU4qjaRZPx5JfFVywsJxpWprndtL';
 
 export const WETH_MASSA_ADDRESS =
   'AS12VrdTkW9EAt5ySsnhxKv33gr38hiRm22b63qR7r4h2JQQpzgad';
