@@ -55,7 +55,7 @@ export function Index() {
     state.isFetching,
     state.setStationInstalled,
     state.isStationInstalled,
-    state.providersFetched,
+    state.providers,
     state.loadAccounts,
   ]);
 

@@ -48,7 +48,7 @@ export function Footer(props: FooterProps) {
               href="/legal/ToS.pdf"
               target="_blank"
             >
-              {Intl.t(`index.footer.tos`)}
+              {Intl.t('index.footer.tos')}
             </a>
           </li>
           <li>
@@ -57,7 +57,7 @@ export function Footer(props: FooterProps) {
               href="/legal/PP.pdf"
               target="_blank"
             >
-              {Intl.t(`index.footer.pop`)}
+              {Intl.t('index.footer.pop')}
             </a>
           </li>
         </ul>
