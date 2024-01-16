@@ -9,37 +9,19 @@ import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 export default function useMassaProvider() {
-  const [
-    currentProvider,
+  const {
     setCurrentProvider,
-    providerList,
     addProvider,
     setConnectedAccount,
     setAvailableAccounts,
-  ] = useAccountStore((state) => [
-    state.currentProvider,
-    state.setCurrentProvider,
-    state.providers,
-    state.addProvider,
-    state.setConnectedAccount,
-    state.setAvailableAccounts,
-  ]);
+  } = useAccountStore();
 
-  async function addBearbyProvider(bearby: IProvider) {
-    // Warning: this promise never resolves if bearby wallet is not installed
-    // It's the reason why we don't await addBearbyProvider in initProvider
-    await bearby.connect();
-    addProvider(bearby);
-  }
-
-  async function initProvider() {
+  async function addBearbyProvider() {
     const providers = await getProviders();
     for (const provider of providers) {
       if (provider.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {
         // We don't await this promise because it never resolves if bearby wallet is not installed
-        addBearbyProvider(provider);
-      }
-      if (provider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
+        await provider.connect();
         addProvider(provider);
       }
     }
@@ -60,12 +42,10 @@ export default function useMassaProvider() {
   }
 
   useEffect(() => {
-    initProvider();
+    addBearbyProvider();
   }, []);
 
   return {
-    providerList,
-    currentProvider,
     selectProvider,
     resetProvider,
   };

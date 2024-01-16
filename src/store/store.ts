@@ -1,4 +1,3 @@
-import { providers } from '@massalabs/wallet-provider';
 import { create } from 'zustand';
 
 import accountStore, { AccountStoreState } from './accountStore';
@@ -8,6 +7,7 @@ import operationStore, { OperationStoreState } from './operationStore';
 import { BRIDGE_MODE_STORAGE_KEY } from '../utils/const';
 import { _getFromStorage } from '../utils/storage';
 import { BridgeMode } from '@/const';
+import { checkIfStationLive } from '@/utils/massaStation';
 export { useTokenStore } from './tokenStore';
 
 export const useConfigStore = create<ConfigStoreState>((...obj) => ({
@@ -38,7 +38,7 @@ async function initModeStore() {
 
 async function initAccountStore() {
   setInterval(async () => {
-    useAccountStore.setState({ providers: await providers() });
+    checkIfStationLive();
   }, 1000);
 }
 
