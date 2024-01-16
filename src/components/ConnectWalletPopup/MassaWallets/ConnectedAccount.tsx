@@ -29,7 +29,7 @@ export function ConnectedAccount({
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex gap-2">
+      <div className="flex gap-4">
         <div
           className="default-button flex min-h-12 items-center justify-center 
         px-4 default-secondary h-14 border-0 bg-secondary"
