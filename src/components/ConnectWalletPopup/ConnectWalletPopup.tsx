@@ -7,11 +7,11 @@ import {
 import { ConnectWallets } from './ConnectWallets';
 import Intl from '@/i18n/i18n';
 
-export function ConnectWalletPopup({
-  setOpen,
-}: {
+interface ConnectWalletPopupProps {
   setOpen: (open: boolean) => void;
-}) {
+}
+export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
+  const { setOpen } = props;
   return (
     <PopupModal
       customClass="w-fit max-w-4xl"
