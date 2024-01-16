@@ -38,7 +38,7 @@ async function initModeStore() {
 
 async function initAccountStore() {
   setInterval(async () => {
-    useAccountStore.setState({ providersFetched: await providers() });
+    useAccountStore.setState({ providers: await providers() });
   }, 1000);
 }
 
