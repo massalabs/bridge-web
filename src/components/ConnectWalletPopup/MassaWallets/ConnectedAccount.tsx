@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { Clipboard } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
-import { fetchBalance } from '@/bridge';
+import { fetchMASBalance } from '@/bridge';
 import { massaToken } from '@/const';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { Unit, formatStandard, maskAddress } from '@/utils/massaFormat';
 
 export function ConnectedAccount() {
@@ -14,13 +14,12 @@ export function ConnectedAccount() {
   const [connectedAccount] = useAccountStore((state) => [
     state.connectedAccount,
   ]);
-
-  // TODO: Remove this default value and use the network from the account
-  // Remove if we don't want to display the network
-  const network = 'Buildnet';
+  
+  const { isMainnet } = useBridgeModeStore()
 
   async function initBalance() {
-    const balance = await fetchBalance(connectedAccount);
+    if(!connectedAccount) return;
+    const balance = await fetchMASBalance(connectedAccount);
     setBalance(balance);
   }
 
@@ -35,7 +34,7 @@ export function ConnectedAccount() {
           className="default-button flex min-h-12 items-center justify-center 
         px-4 default-secondary h-14 border-0 bg-secondary"
         >
-          {network}
+          {isMainnet ? "Mainnet" : "Buildnet"}
         </div>
         <Clipboard
           customClass="h-14 rounded-lg text-center !mas-body"

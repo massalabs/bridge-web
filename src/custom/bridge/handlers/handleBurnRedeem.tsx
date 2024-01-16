@@ -5,15 +5,16 @@ import { parseUnits } from 'viem';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
-import { LoadingState } from '@/const';
+import { BridgeMode, LoadingState } from '@/const';
 import { TokenPair } from '@/custom/serializable/tokenPair';
 import { IToken } from '@/store/tokenStore';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 interface BurnRedeemParams {
+  mode: BridgeMode;
   client: Client;
   token: IToken;
-  evmAddress: `0x${string}`;
+  recipient: `0x${string}`;
   amount: string;
   decimals: number;
   setBurnTxID: (state: string) => void;
@@ -36,9 +37,10 @@ export async function handleBurnRedeem(
 }
 
 async function initiateBurn({
+  mode,
   client,
   token,
-  evmAddress,
+  recipient,
   amount,
   decimals,
   setBurnTxID,
@@ -58,8 +60,9 @@ async function initiateBurn({
   setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
 
   const operationId = await forwardBurn(
+    mode,
     client,
-    evmAddress,
+    recipient,
     tokenPair,
     parseUnits(amount, decimals),
   );

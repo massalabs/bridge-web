@@ -5,26 +5,28 @@ import { Link } from 'react-router-dom';
 import { useAccount, useNetwork } from 'wagmi';
 
 import Intl from '@/i18n/i18n';
-import { useOperationStore } from '@/store/store';
+import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
-  const [opToRedeem, setOpToRedeem] = useOperationStore((state) => [
-    state.opToRedeem,
-    state.setOpToRedeem,
-  ]);
+  const { opToRedeem, setOpToRedeem } = useOperationStore();
 
   const { address: evmAddress } = useAccount();
+
+  const { currentMode } = useBridgeModeStore();
 
   const renderButton = !!opToRedeem?.length;
 
   useEffect(() => {
     getApiInfo();
-  }, [evmAddress]);
+  }, [evmAddress, currentMode]);
 
   async function getApiInfo() {
     if (!evmAddress) return;
-    const pendingOperations = await checkIfUserHasTokensToClaim(evmAddress);
+    const pendingOperations = await checkIfUserHasTokensToClaim(
+      currentMode,
+      evmAddress,
+    );
     setOpToRedeem(pendingOperations);
   }
 

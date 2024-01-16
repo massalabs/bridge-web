@@ -1,11 +1,10 @@
 import { create } from 'zustand';
-
 import accountStore, { AccountStoreState } from './accountStore';
 import configStore, { ConfigStoreState } from './configStore';
 import modeStore, { ModeStoreState } from './modeStore';
 import operationStore, { OperationStoreState } from './operationStore';
-import { BRIDGE_MODE_STORAGE_KEY } from '../utils/const';
-import { _getFromStorage } from '../utils/storage';
+import { useTokenStore } from './tokenStore';
+import { BRIDGE_MODE_STORAGE_KEY, _getFromStorage } from '../utils/storage';
 import { BridgeMode } from '@/const';
 import { addOrRemoveProvider } from '@/utils/massaStation';
 export { useTokenStore } from './tokenStore';
@@ -42,9 +41,20 @@ async function initAccountStore() {
   }, 1000);
 }
 
+async function initTokenStore() {
+  let mode = _getFromStorage(BRIDGE_MODE_STORAGE_KEY) as BridgeMode;
+
+  if (!mode) {
+    mode = BridgeMode.mainnet;
+  }
+
+  useTokenStore.getState().getTokens(mode);
+}
+
 async function initializeStores() {
   await initModeStore();
   await initAccountStore();
+  await initTokenStore();
 }
 
 initializeStores();

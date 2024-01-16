@@ -12,12 +12,14 @@ import { waitIncludedOperation } from './massa-utils';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
 import {
-  CONTRACT_ADDRESS,
+  BridgeMode,
+  config,
   forwardBurnFees,
   increaseAllowanceFee,
 } from '@/const';
 
 export async function increaseAllowance(
+  mode: BridgeMode,
   client: Client,
   targetAddress: string,
   amount: bigint,
@@ -26,7 +28,7 @@ export async function increaseAllowance(
     targetAddress,
     functionName: 'increaseAllowance',
     parameter: new Args()
-      .addString(CONTRACT_ADDRESS)
+      .addString(config[mode].massaBridgeContract)
       .addU256(amount)
       .serialize(),
     ...increaseAllowanceFee,
@@ -38,18 +40,19 @@ export async function increaseAllowance(
 }
 
 export async function forwardBurn(
+  mode: BridgeMode,
   client: Client,
-  evmAddress: string,
+  recipient: string,
   tokenPair: TokenPair,
   amount: bigint,
 ): Promise<string> {
   const request = new ForwardingRequest(
     amount.toString(),
-    evmAddress,
+    recipient,
     tokenPair,
   );
   const opId = await client.smartContracts().callSmartContract({
-    targetAddress: CONTRACT_ADDRESS,
+    targetAddress: config[mode].massaBridgeContract,
     functionName: 'forwardBurn',
     parameter: new Args().addSerializable(request).serialize(),
     ...forwardBurnFees,
@@ -58,13 +61,14 @@ export async function forwardBurn(
 }
 
 export async function getSupportedTokensList(
+  mode: BridgeMode,
   client: IClient,
 ): Promise<TokenPair[]> {
   const smartContractsClient: ISmartContractsClient = client.smartContracts();
 
   const returnObject = await smartContractsClient.readSmartContract({
     maxGas: MAX_GAS_CALL,
-    targetAddress: CONTRACT_ADDRESS,
+    targetAddress: config[mode].massaBridgeContract,
     targetFunction: 'supportedTokensList',
     parameter: [],
   } as IReadData);

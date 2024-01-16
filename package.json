@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@inrupt/jest-jsdom-polyfills": "^2.5.0",
-    "@massalabs/massa-web3": "^3.0.2",
+    "@massalabs/massa-web3": "^3.0.3-dev",
     "@massalabs/react-ui-kit": "^0.0.4-dev",
     "@massalabs/wallet-provider": "^1.5.2-dev.20240116123440",
     "@rainbow-me/rainbowkit": "^1.0.7",

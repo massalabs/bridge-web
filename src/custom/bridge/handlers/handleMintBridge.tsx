@@ -3,9 +3,10 @@ import { IAccount } from '@massalabs/wallet-provider';
 
 import { ICustomError } from './handleErrorMessage';
 import { waitForMintEvent } from '../massa-utils';
-import { LoadingState } from '@/const';
+import { BridgeMode, LoadingState } from '@/const';
 
 interface MintBridge {
+  mode: BridgeMode;
   massaClient: Client;
   massaOperationID: string;
   connectedAccount?: IAccount;
@@ -15,6 +16,7 @@ interface MintBridge {
 
 export async function handleMintBridge(args: MintBridge): Promise<boolean> {
   const {
+    mode,
     massaClient,
     massaOperationID,
     connectedAccount,
@@ -25,7 +27,7 @@ export async function handleMintBridge(args: MintBridge): Promise<boolean> {
     setLoading({
       mint: 'loading',
     });
-    const success = await waitForMintEvent(massaClient, massaOperationID);
+    const success = await waitForMintEvent(mode, massaClient, massaOperationID);
     if (success) {
       setLoading({
         box: 'success',

@@ -5,6 +5,7 @@ import { useContractRead, erc20ABI } from 'wagmi';
 import { InitialClaim } from './InitialClaim';
 import { PendingClaim } from './PendingClaim';
 import { SuccessClaim } from './SuccessClaim';
+import { useBridgeModeStore } from '../../store/store';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 export enum ClaimState {
@@ -27,6 +28,8 @@ export function ClaimButton(args: ClaimOperationContainerProps) {
     setTxHash(hash);
   }
 
+  const { currentMode } = useBridgeModeStore();
+
   // TODO: put this in a store (token store ?)
   const { data: symbol } = useContractRead({
     address: operation.evmToken,
@@ -43,6 +46,7 @@ export function ClaimButton(args: ClaimOperationContainerProps) {
               <div className="flex w-full justify-center">
                 <PendingClaim
                   onRedeemSuccess={onRedeemSuccess}
+                  mode={currentMode}
                   inputOpId={operation.inputOpId}
                 />
               </div>

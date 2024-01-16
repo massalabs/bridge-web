@@ -1,6 +1,5 @@
 import { BridgeMode } from '../const';
-import { BRIDGE_MODE_STORAGE_KEY } from '../utils/const';
-import { _setInStorage } from '../utils/storage';
+import { BRIDGE_MODE_STORAGE_KEY, _setInStorage } from '../utils/storage';
 
 export interface ModeStoreState {
   currentMode: BridgeMode;
