@@ -16,7 +16,7 @@ const useEvmBridge = () => {
   const { address: accountAddress } = useAccount();
   const [massaAccount] = useAccountStore((state) => [state.connectedAccount]);
 
-  const [token] = useTokenStore((state) => [state.token]);
+  const [token] = useTokenStore((state) => [state.selectedToken]);
 
   const evmToken = token?.evmToken as `0x${string}`;
 

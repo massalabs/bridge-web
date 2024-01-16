@@ -50,7 +50,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
   const { isConnected: isEvmWalletConnected } = useAccount();
   const [isMainnet] = useBridgeModeStore((state) => [state.isMainnet]);
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
-  const [token] = useTokenStore((state) => [state.token]);
+  const [token] = useTokenStore((state) => [state.selectedToken]);
 
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
 

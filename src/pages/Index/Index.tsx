@@ -1,5 +1,4 @@
 import { useState, SyntheticEvent, useEffect } from 'react';
-
 import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import {
@@ -9,7 +8,6 @@ import {
   useToken,
   useContractEvent,
 } from 'wagmi';
-
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import { validateNetwork } from '../../utils/network';
@@ -36,9 +34,10 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching, isStationInstalled } =
     useAccountStore();
 
-  const [token, getTokens] = useTokenStore((state) => [
-    state.token,
+  const [token, getTokens, refreshBalances] = useTokenStore((state) => [
+    state.selectedToken,
     state.getTokens,
+    state.refreshBalances,
   ]);
 
   const [isMainnet, currentMode] = useBridgeModeStore((state) => [
@@ -112,9 +111,13 @@ export function Index() {
   useEffect(() => {
     if (isRedeem) {
       setLoading({ box: 'success', claim: 'success' });
-      getTokens(connectedAccount);
+      refreshBalances(connectedAccount!);
     }
   }, [isRedeem]);
+
+  useEffect(() => {
+    getTokens(connectedAccount);
+  }, [currentMode]);
 
   const redeemEventHandler = useContractEvent({
     address: EVM_BRIDGE_ADDRESS,
@@ -165,7 +168,7 @@ export function Index() {
         massaOperationID: lockTxID,
         connectedAccount,
         setLoading,
-        getTokens,
+        refreshBalances,
       };
       handleMintBridge(mintArgs);
     }
@@ -190,7 +193,7 @@ export function Index() {
   }, [approveIsSuccess, approveIsError]);
 
   useEffect(() => {
-    getTokens(connectedAccount);
+    refreshBalances(connectedAccount);
   }, [connectedAccount]);
 
   useEffect(() => {

@@ -62,7 +62,7 @@ const iconsTokens: IIcons = {
 function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
   let { amount } = props;
 
-  const [token] = useTokenStore((state) => [state.token]);
+  const [token] = useTokenStore((state) => [state.selectedToken]);
 
   const evmToken = token?.evmToken as `0x${string}`;
   const { data } = useToken({ address: evmToken });
@@ -215,9 +215,9 @@ function EVMTokenOptions({ ...props }) {
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
 
   const [token, tokens, setToken] = useTokenStore((state) => [
-    state.token,
+    state.selectedToken,
     state.tokens,
-    state.setToken,
+    state.setSelectedToken,
   ]);
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
@@ -251,8 +251,8 @@ function MassaTokenOptions({ ...props }) {
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
   const [tokens, setToken, token] = useTokenStore((state) => [
     state.tokens,
-    state.setToken,
-    state.token,
+    state.setSelectedToken,
+    state.selectedToken,
   ]);
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
@@ -327,7 +327,7 @@ function MassaBalance({ ...props }) {
 
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
 
-  const [token] = useTokenStore((state) => [state.token]);
+  const [token] = useTokenStore((state) => [state.selectedToken]);
 
   return (
     <div className="flex items-center gap-2 h-6">

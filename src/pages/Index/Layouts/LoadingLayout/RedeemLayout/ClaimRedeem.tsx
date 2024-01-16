@@ -38,7 +38,7 @@ export function Claim({
 }: ClaimProps) {
   const { address: evmAddress } = useAccount();
 
-  const [token] = useTokenStore((state) => [state.token]);
+  const [token] = useTokenStore((state) => [state.selectedToken]);
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { chain } = useNetwork();
 
