@@ -71,9 +71,11 @@ export function Navbar({ ...props }) {
         <p className="mas-menu-default text-neutral h-fit">
           <Link to="/index">Bridge</Link>
         </p>
-        <p className="mas-menu-default text-neutral h-fit">
-          <Link to="/claim">Claim</Link>
-        </p>
+        {isEvmWalletConnected ? (
+          <p className="mas-menu-default text-neutral h-fit">
+            <Link to="/claim">Claim</Link>
+          </p>
+        ) : null}
       </div>
       <div className="flex flex-row items-center gap-4">
         <Dropdown
