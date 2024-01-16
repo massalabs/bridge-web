@@ -1,4 +1,6 @@
 import { BridgeMode } from '../const';
+import { BRIDGE_MODE_STORAGE_KEY } from '../utils/const';
+import { _setInStorage } from '../utils/storage';
 
 export interface ModeStoreState {
   currentMode: BridgeMode;
@@ -18,6 +20,7 @@ const modeStore = (
   isMainnet: true,
   setCurrentMode: (mode: BridgeMode) => {
     set({ currentMode: mode, isMainnet: mode === BridgeMode.mainnet });
+    _setInStorage(BRIDGE_MODE_STORAGE_KEY, mode);
   },
 });
 

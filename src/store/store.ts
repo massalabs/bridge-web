@@ -5,7 +5,7 @@ import accountStore, { AccountStoreState } from './accountStore';
 import configStore, { ConfigStoreState } from './configStore';
 import modeStore, { ModeStoreState } from './modeStore';
 import operationStore, { OperationStoreState } from './operationStore';
-import { BRIDGE_MODE } from '../utils/const';
+import { BRIDGE_MODE_STORAGE_KEY } from '../utils/const';
 import { _getFromStorage } from '../utils/storage';
 import { BridgeMode } from '@/const';
 export { useTokenStore } from './tokenStore';
@@ -27,7 +27,7 @@ export const useOperationStore = create<OperationStoreState>((set, get) => ({
 }));
 
 async function initModeStore() {
-  let mode = _getFromStorage(BRIDGE_MODE) as BridgeMode;
+  let mode = _getFromStorage(BRIDGE_MODE_STORAGE_KEY) as BridgeMode;
 
   if (!mode) {
     mode = BridgeMode.mainnet;
