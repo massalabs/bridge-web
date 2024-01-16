@@ -50,3 +50,8 @@ export const supportedtokens = {
 };
 
 export const massaToken = 'MAS';
+
+export enum SUPPORTED_MASSA_WALLETS {
+  MASSASTATION = 'MASSASTATION',
+  BEARBY = 'BEARBY',
+}

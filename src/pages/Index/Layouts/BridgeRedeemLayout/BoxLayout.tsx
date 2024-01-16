@@ -18,7 +18,7 @@ import { EthSvg } from '@/assets/EthSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { Connected, Disconnected, NoAccounts, WrongChain } from '@/components';
-import { LayoutType } from '@/const';
+import { LayoutType, SUPPORTED_MASSA_WALLETS } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import {
@@ -152,7 +152,7 @@ function MassaHeader() {
           options={[
             {
               item: `Massa ${isMainnet ? 'Mainnet' : 'Buildnet'}`,
-              icon: iconsNetworks['MASSASTATION'],
+              icon: iconsNetworks[SUPPORTED_MASSA_WALLETS.MASSASTATION],
             },
           ]}
         />

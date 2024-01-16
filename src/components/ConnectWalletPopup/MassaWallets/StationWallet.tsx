@@ -13,7 +13,7 @@ export default function StationWallet() {
         {connectedAccount && (
           <div className="flex flex-col space-y-4 ">
             <StationSelectAccount />
-            <ConnectedAccount account={connectedAccount} />
+            <ConnectedAccount />
           </div>
         )}
       </div>

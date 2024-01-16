@@ -1,31 +1,32 @@
 import { useEffect, useState } from 'react';
 
 import { Clipboard } from '@massalabs/react-ui-kit';
-import { IAccount, IAccountBalanceResponse } from '@massalabs/wallet-provider';
+import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
+import { fetchBalance } from '@/bridge';
 import { massaToken } from '@/const';
 import Intl from '@/i18n/i18n';
+import { useAccountStore } from '@/store/store';
 import { Unit, formatStandard, maskAddress } from '@/utils/massaFormat';
 
-export function ConnectedAccount({
-  account,
+export function ConnectedAccount() {
+  const [balance, setBalance] = useState<IAccountBalanceResponse>();
+  const [connectedAccount] = useAccountStore((state) => [
+    state.connectedAccount,
+  ]);
+
   // TODO: Remove this default value and use the network from the account
   // Remove if we don't want to display the network
-  network = 'Buildnet',
-}: {
-  account: IAccount;
-  network?: string;
-}) {
-  const [balance, setBalance] = useState<IAccountBalanceResponse>();
+  const network = 'Buildnet';
 
   async function initBalance() {
-    const balance = await account.balance();
+    const balance = await fetchBalance(connectedAccount);
     setBalance(balance);
   }
 
   useEffect(() => {
     initBalance();
-  }, [account]);
+  }, [connectedAccount]);
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -38,8 +39,8 @@ export function ConnectedAccount({
         </div>
         <Clipboard
           customClass="h-14 rounded-lg text-center !mas-body"
-          rawContent={account?.address() ?? ''}
-          displayedContent={maskAddress(account?.address() ?? '', 15)}
+          rawContent={connectedAccount?.address() ?? ''}
+          displayedContent={maskAddress(connectedAccount?.address() ?? '', 15)}
         />
       </div>
       <div className="mas-body">

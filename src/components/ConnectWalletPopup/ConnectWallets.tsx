@@ -3,6 +3,7 @@ import { useAccount as useEvmAccount } from 'wagmi';
 import EvmWallet from './EvmWallets/EvmWallet';
 import MassaWallet from './MassaWallets/MassaWallet';
 import { ResourceSidePanel } from './ResourceSidePanel';
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 export function ConnectWallets() {
@@ -11,7 +12,7 @@ export function ConnectWallets() {
 
   const showSepoliaInstruction = !isEvmWalletConnected;
   const showStationDownload = !providerList.find(
-    (provider) => provider.name() === 'MASSASTATION',
+    (provider) => provider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION,
   );
 
   // TODO: Do we want to display the resource side panel if Bearby is installed?

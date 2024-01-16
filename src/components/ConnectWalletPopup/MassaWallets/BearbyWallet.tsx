@@ -22,7 +22,7 @@ export default function BearbyWallet() {
           />
         </div>
       </div>
-      {connectedAccount && <ConnectedAccount account={connectedAccount} />}
+      {connectedAccount && <ConnectedAccount />}
     </>
   );
 }

@@ -30,7 +30,7 @@ const SelectMassaWallet = ({
   // TODO - Check if this useMemo is still necessary
   const walletOptions = useMemo(() => {
     if (noWalletFound) {
-      return [{ item: Intl.t('connect-wallet.card-destination.no-wallets') }];
+      return [{ item: Intl.t('connect-wallet.card-destination.no-wallet') }];
     }
 
     return providerList.map((provider) => ({

@@ -33,13 +33,8 @@ import {
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 
 export function Index() {
-  const [massaClient, connectedAccount, isFetching, isStationInstalled] =
-    useAccountStore((state) => [
-      state.massaClient,
-      state.connectedAccount,
-      state.isFetching,
-      state.isStationInstalled,
-    ]);
+  const { massaClient, connectedAccount, isFetching, isStationInstalled } =
+    useAccountStore();
 
   const [token, getTokens] = useTokenStore((state) => [
     state.token,

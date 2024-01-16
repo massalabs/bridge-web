@@ -1,7 +1,7 @@
 import { Tag } from '@massalabs/react-ui-kit';
 
 import Intl from '@/i18n/i18n';
-import { MASSA_STATION_INSTALL, MASSA_STATION_URL } from '@/utils/const';
+import { MASSA_STATION_INSTALL } from '@/utils/const';
 
 function SepoliaInstructions() {
   return (
@@ -34,26 +34,6 @@ function MassaStationDownload() {
         target="_blank"
       >
         {Intl.t('general.download')}
-      </a>
-    </div>
-  );
-}
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-function MassaStationInstructions() {
-  return (
-    <div className="flex flex-col justify-center items-center gap-5">
-      <Tag type="success" content={Intl.t('connect-wallet.create-wallet')} />
-      <p className="text-center mas-menu-default w-60">
-        {Intl.t('connect-wallet.resource-sidepanel.create-massa-station')}
-      </p>
-      <a
-        className="mas-menu-underline"
-        href={MASSA_STATION_URL}
-        target="_blank"
-      >
-        {Intl.t('general.click-here')}
       </a>
     </div>
   );

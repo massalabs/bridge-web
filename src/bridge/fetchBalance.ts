@@ -8,6 +8,6 @@ export async function fetchBalance(account: IAccount | null) {
     return await account?.balance();
   } catch (error) {
     console.error('Error while retrieving balance: ', error);
-    toast.error(Intl.t(`index.balance.error`));
+    toast.error(Intl.t('index.balance.error'));
   }
 }

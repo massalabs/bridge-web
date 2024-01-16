@@ -3,12 +3,8 @@ import useMassaProvider from './hooks/useMassaProvider';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
-import { Connected, Disconnected } from '@/components';
-
-export enum SUPPORTED_MASSA_WALLETS {
-  MASSASTATION = 'MASSASTATION',
-  BEARBY = 'BEARBY',
-}
+import { Connected } from '@/components';
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
 
 const MassaWallet = () => {
   const { providerList, currentProvider, selectProvider, resetProvider } =
@@ -37,7 +33,7 @@ const MassaWallet = () => {
         <p className="">
           <SwitchWalletButton onClick={() => resetProvider()} />
         </p>
-        {currentProvider ? <Connected /> : <Disconnected />}
+        <Connected />
       </div>
       {renderWallet()}
     </>

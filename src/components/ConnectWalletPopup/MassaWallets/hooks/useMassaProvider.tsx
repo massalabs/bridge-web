@@ -5,6 +5,7 @@ import {
   providers as getProviders,
 } from '@massalabs/wallet-provider';
 
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 export default function useMassaProvider() {
@@ -34,11 +35,11 @@ export default function useMassaProvider() {
   async function initProvider() {
     const providers = await getProviders();
     for (const provider of providers) {
-      if (provider.name() === 'BEARBY') {
+      if (provider.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {
         // We don't await this promise because it never resolves if bearby wallet is not installed
         addBearbyProvider(provider);
       }
-      if (provider.name() === 'MASSASTATION') {
+      if (provider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
         addProvider(provider);
       }
     }

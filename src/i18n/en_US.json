@@ -195,10 +195,7 @@
       "switch": "switch wallet",
       "select-wallet": "Select a wallet:",
       "your-wallet": "Your wallet",
-      "no-wallets": "No wallets found",
-      "tag": {
-        "no-wallets": "No wallets found"
-      }
+      "no-wallet": "No wallet found"
     },
     "connected-cards": {
       "wallet-balance": "balance: "
@@ -215,13 +212,6 @@
       "no-metamask": "It seems like you don't have Metamask installed.",
       "install-metamask": "Install Metamask",
       "no-wallet": "No wallet detected"
-    },
-    "station-connect-error": {
-      "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it.",
-      "error-wallet": "Create a wallet at the  ",
-      "add-wallet": "following link.",
-      "error-account": "No wallet accounts found in Massa Wallet. ",
-      "add-account": "Create an account"
     },
     "resource-sidepanel": {
       "add-metamask-testnet": "Add Testnet to Metamask",

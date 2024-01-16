@@ -7,7 +7,7 @@ export function NoWallet() {
   return (
     <Tag
       type={tagTypes.error}
-      content={Intl.t(`connect-wallet.card-destination.tag.no-wallets`)}
+      content={Intl.t('connect-wallet.card-destination.no-wallet')}
     />
   );
 }
