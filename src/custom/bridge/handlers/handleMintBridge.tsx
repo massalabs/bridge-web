@@ -8,9 +8,9 @@ import { LoadingState } from '@/const';
 interface MintBridge {
   massaClient: Client;
   massaOperationID: string;
-  connectedAccount: IAccount | null;
+  connectedAccount?: IAccount;
   setLoading: (state: LoadingState) => void;
-  getTokens: (connectedAccount: IAccount | null) => void;
+  refreshBalances: (connectedAccount?: IAccount) => void;
 }
 
 export async function handleMintBridge(args: MintBridge): Promise<boolean> {
@@ -19,7 +19,7 @@ export async function handleMintBridge(args: MintBridge): Promise<boolean> {
     massaOperationID,
     connectedAccount,
     setLoading,
-    getTokens,
+    refreshBalances,
   } = args;
   try {
     setLoading({
@@ -31,7 +31,7 @@ export async function handleMintBridge(args: MintBridge): Promise<boolean> {
         box: 'success',
         mint: 'success',
       });
-      getTokens(connectedAccount);
+      refreshBalances(connectedAccount);
     }
   } catch (error) {
     handleMintError({ ...args }, error);

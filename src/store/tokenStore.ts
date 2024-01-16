@@ -33,13 +33,13 @@ export interface IToken {
 }
 
 export interface TokenStoreState {
-  token: IToken | null;
+  selectedToken?: IToken;
   tokens: IToken[];
   isFetching: boolean;
 
-  setToken: (token: IToken | null) => void;
-  setAvailableTokens: (tokens: IToken[]) => void;
-  getTokens: (connectedAccount: IAccount | null) => void;
+  setSelectedToken: (token?: IToken) => void;
+  getTokens: (connectedAccount?: IAccount) => void;
+  refreshBalances: (connectedAccount?: IAccount) => void;
 }
 
 let massaClient: Client | null = null;
@@ -52,65 +52,88 @@ async function initMassaClient(): Promise<Client> {
 }
 
 export const useTokenStore = create<TokenStoreState>((set, get) => ({
+  selectedToken: undefined,
   tokens: [],
-  token: null,
   isFetching: false,
 
-  setAvailableTokens: (tokens: IToken[]) => {
-    set({ tokens: tokens });
-  },
-
-  getTokens: async (connectedAccount: IAccount | null) => {
+  getTokens: async (connectedAccount?: IAccount) => {
     set({ isFetching: true });
 
-    if (massaClient === null) {
+    if (!massaClient) {
       massaClient = await initMassaClient();
     }
+
+    const supportedTokens = await getSupportedTokensList(massaClient);
+
+    const tokens = await Promise.all(
+      supportedTokens.map(async (tokenPair) => {
+        const [name, symbol, decimals] = await Promise.all([
+          getMassaTokenName(tokenPair.massaToken, massaClient!),
+          getMassaTokenSymbol(tokenPair.massaToken, massaClient!),
+          getDecimals(tokenPair.massaToken, massaClient!),
+        ]);
+        let allowance = BigInt(0);
+        let balance = BigInt(0);
+        if (connectedAccount) {
+          const [accountAllowance, accountBalance] = await Promise.all([
+            getAllowance(tokenPair.massaToken, massaClient!, connectedAccount),
+            getBalance(tokenPair.massaToken, massaClient!, connectedAccount),
+          ]);
+          allowance = accountAllowance;
+          balance = accountBalance;
+        }
+        return {
+          ...tokenPair,
+          name,
+          symbol,
+          decimals,
+          allowance,
+          balance,
+        };
+      }),
+    );
 
     const storedToken = _getFromStorage(BRIDGE_TOKEN)
       ? JSON.parse(_getFromStorage(BRIDGE_TOKEN))
       : undefined;
 
-    if (massaClient && connectedAccount) {
-      const supportedTokens = await getSupportedTokensList(massaClient);
+    const selectedToken = tokens.find(
+      (token) => token.massaToken === storedToken?.massaToken,
+    );
 
-      const tokens: IToken[] = await Promise.all(
-        supportedTokens.map(async (tokenPair) => {
-          const [name, symbol, decimals, allowance, balance] =
-            await Promise.all([
-              getMassaTokenName(tokenPair.massaToken, massaClient!),
-              getMassaTokenSymbol(tokenPair.massaToken, massaClient!),
-              getDecimals(tokenPair.massaToken, massaClient!),
-              getAllowance(
-                tokenPair.massaToken,
-                massaClient!,
-                connectedAccount,
-              ),
-              getBalance(tokenPair.massaToken, massaClient!, connectedAccount),
-            ]);
-          return {
-            ...tokenPair,
-            name,
-            symbol,
-            decimals,
-            allowance,
-            balance,
-          };
-        }),
-      );
-
-      const selectedToken = tokens.find(
-        (token: IToken) => token.name === storedToken?.name,
-      );
-      const token = tokens.length ? selectedToken || tokens[0] : null;
-
-      set({ tokens, isFetching: false });
-      get().setToken(token);
-    }
+    set({ tokens, isFetching: false });
+    get().setSelectedToken(selectedToken);
   },
 
-  setToken: (token: IToken | null) => {
-    set({ token });
-    _setInStorage(BRIDGE_TOKEN, JSON.stringify(token));
+  setSelectedToken: (selectedToken?: IToken) => {
+    set({ selectedToken });
+    _setInStorage(BRIDGE_TOKEN, JSON.stringify(selectedToken));
+  },
+
+  refreshBalances: async (connectedAccount?: IAccount) => {
+    const { tokens: supportedTokens } = get();
+
+    if (!connectedAccount) {
+      return;
+    }
+
+    if (!massaClient) {
+      massaClient = await initMassaClient();
+    }
+
+    set({ isFetching: true });
+
+    const tokens = await Promise.all(
+      supportedTokens.map(async (token) => {
+        const [accountAllowance, accountBalance] = await Promise.all([
+          getAllowance(token.massaToken, massaClient!, connectedAccount),
+          getBalance(token.massaToken, massaClient!, connectedAccount),
+        ]);
+        token.allowance = accountAllowance;
+        token.balance = accountBalance;
+        return token;
+      }),
+    );
+    set({ tokens, isFetching: false });
   },
 }));

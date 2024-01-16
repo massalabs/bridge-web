@@ -9,7 +9,7 @@ import { useTokenStore } from '@/store/store';
 export function SuccessLayout(props: LoadingBoxProps) {
   const { massaToEvm, amount, onClose } = props;
 
-  const [token] = useTokenStore((state) => [state.token]);
+  const [token] = useTokenStore((state) => [state.selectedToken]);
 
   const massa = Intl.t('general.massa');
   const sepolia = Intl.t('general.sepolia');

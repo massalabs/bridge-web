@@ -7,10 +7,10 @@ import { BRIDGE_ACCOUNT_ADDRESS } from '@/utils/const';
 import { _getFromStorage, _setInStorage } from '@/utils/storage';
 
 export interface AccountStoreState {
-  connectedAccount: IAccount | null;
-  massaClient: Client | undefined;
+  connectedAccount?: IAccount;
+  massaClient?: Client;
   accounts: IAccount[];
-  currentProvider: IProvider | undefined;
+  currentProvider?: IProvider;
   providers: IProvider[];
   isFetching: boolean;
   isStationInstalled: boolean;
@@ -35,7 +35,7 @@ const accountStore = (
 ) => ({
   accounts: [],
   massaClient: undefined,
-  connectedAccount: null,
+  connectedAccount: undefined,
   currentProvider: undefined,
   providers: [],
   isFetching: false,
@@ -115,7 +115,7 @@ const accountStore = (
       set({
         massaClient: undefined,
         accounts: [],
-        connectedAccount: null,
+        connectedAccount: undefined,
         isFetching: false,
       });
     }
