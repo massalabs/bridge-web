@@ -1,11 +1,8 @@
 import { useAccount } from 'wagmi';
 
-import {
-  Connected,
-  Disconnected,
-  EvmConnectButton,
-  MetamaskNotInstalled,
-} from '@/components';
+import EvmConnectButton from './EvmConnectButton';
+import { MetamaskNotInstalled } from './MetamaskNotInstalled';
+import { Connected, Disconnected } from '@/components';
 import Intl from '@/i18n/i18n';
 
 const ConnectEvmWallet = () => {

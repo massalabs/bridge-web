@@ -4,7 +4,7 @@ import { BsDiamondHalf } from 'react-icons/bs';
 
 import { useAccountStore } from '@/store/store';
 
-export function SelectMassaWalletAccount() {
+export function StationSelectAccount() {
   const [accounts, connectedAccount, setConnectedAccount] = useAccountStore(
     (state) => [
       state.accounts,

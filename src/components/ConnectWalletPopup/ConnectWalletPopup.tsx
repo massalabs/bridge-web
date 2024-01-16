@@ -4,12 +4,14 @@ import {
   PopupModalHeader,
 } from '@massalabs/react-ui-kit';
 
-import { ConnectWallets } from '@/components';
+import { ConnectWallets } from './ConnectWallets';
 import Intl from '@/i18n/i18n';
 
-export function ConnectWalletPopup({ ...props }) {
-  const { setOpen } = props;
-
+export function ConnectWalletPopup({
+  setOpen,
+}: {
+  setOpen: (open: boolean) => void;
+}) {
   return (
     <PopupModal
       customClass="w-fit max-w-4xl"

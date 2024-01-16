@@ -1,36 +1,47 @@
 import { useAccount as useEvmAccount } from 'wagmi';
 
-import ConnectEvmWallet from './ConnectEvmWallet';
-import ConnectMassaWallet from './ConnectMassaWallet';
-import { ResourceSidePanel } from '@/components';
+import EvmWallet from './EvmWallets/EvmWallet';
+import MassaWallet from './MassaWallets/MassaWallet';
+import { ResourceSidePanel } from './ResourceSidePanel';
 import { useAccountStore } from '@/store/store';
 
 export function ConnectWallets() {
   const { isConnected: isEvmWalletConnected } = useEvmAccount();
-  const [isMassaWalletInstalled] = useAccountStore((state) => [
-    state.accounts,
-    state.isStationInstalled,
-  ]);
+  const [providerList] = useAccountStore((state) => [state.providers]);
 
-  const isNeitherConnected = !isEvmWalletConnected && !isMassaWalletInstalled;
+  const showSepoliaInstruction = !isEvmWalletConnected;
+  const showStationDownload = !providerList.find(
+    (provider) => provider.name() === 'MASSASTATION',
+  );
 
-  const gridColsTemplate = isNeitherConnected ? 'grid-cols-3' : 'grid-cols-2';
+  // TODO: Do we want to display the resource side panel if Bearby is installed?
+  const showResourceSidePanel = showSepoliaInstruction || showStationDownload;
+
+  const gridTemplateColumns = showResourceSidePanel ? '2fr 2fr 1fr' : '1fr 1fr';
 
   return (
     <div
-      className={`pb-10 text-f-primary grid ${gridColsTemplate} grid-rows-2 gap-4`}
+      className={`pb-10 text-f-primary grid grid-rows-2 gap-4`}
+      style={{ gridTemplateColumns }}
     >
       <div className="col-span-2">
         <WalletCard>
-          <ConnectEvmWallet />
+          <EvmWallet />
         </WalletCard>
       </div>
-      <div className="col-span-2 col-start-1 row-start-2">
+      <div className="col-span-2">
         <WalletCard>
-          <ConnectMassaWallet />
+          <MassaWallet />
         </WalletCard>
       </div>
-      <ResourceSidePanel />
+      {showResourceSidePanel && (
+        <div className="row-span-2 col-start-3 row-start-1">
+          <ResourceSidePanel
+            showSepoliaInstruction={showSepoliaInstruction}
+            showStationDownload={showStationDownload}
+          />
+        </div>
+      )}
     </div>
   );
 }

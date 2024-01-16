@@ -32,7 +32,7 @@ const ErrorObject: IErrorObject = {
   },
 };
 
-export function MassaConnectError() {
+export function StationError() {
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
 
   return isFetching ? <FetchingStatus /> : <DisplayError />;
