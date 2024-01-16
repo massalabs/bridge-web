@@ -7,13 +7,13 @@ import { useAccount, useNetwork } from 'wagmi';
 import { ClaimSteps } from './RedeemLayout';
 import {
   endPoint,
-  getBurnedOperationInfo,
+  getBurnedByEvmAddress,
 } from '../../../../../utils/lambdaApi';
 import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useTokenStore } from '@/store/store';
+import { useTokenStore } from '@/store/store';
 import { loadingStates } from '@/utils/const';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
@@ -37,9 +37,7 @@ export function Claim({
   decimals,
 }: ClaimProps) {
   const { address: evmAddress } = useAccount();
-  const [connectedAccount] = useAccountStore((state) => [
-    state.connectedAccount,
-  ]);
+
   const [token] = useTokenStore((state) => [state.token]);
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { chain } = useNetwork();
@@ -69,13 +67,9 @@ export function Claim({
   }, [loading.burn, isReadyToClaim]);
 
   async function _handleClaimRedeem(): Promise<boolean> {
-    if (!evmAddress || !connectedAccount) return false;
+    if (!evmAddress) return false;
     try {
-      const burnedOpList = await getBurnedOperationInfo(
-        evmAddress,
-        connectedAccount.address(),
-        endPoint,
-      );
+      const burnedOpList = await getBurnedByEvmAddress(evmAddress, endPoint);
 
       const claimArgs = {
         burnedOpList,
@@ -112,7 +106,7 @@ export function Claim({
   }
 
   async function _handleRedeem() {
-    if (!evmAddress || !connectedAccount) return;
+    if (!evmAddress) return;
     try {
       if (hasClickedClaimed) {
         toast.error(Intl.t('index.loading-box.claim-error-1'));

@@ -5,16 +5,13 @@ import { Link } from 'react-router-dom';
 import { useAccount, useNetwork } from 'wagmi';
 
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useOperationStore } from '@/store/store';
+import { useOperationStore } from '@/store/store';
 import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
   const [opToRedeem, setOpToRedeem] = useOperationStore((state) => [
     state.opToRedeem,
     state.setOpToRedeem,
-  ]);
-  const [connectedAccount] = useAccountStore((state) => [
-    state.connectedAccount,
   ]);
 
   const { address: evmAddress } = useAccount();
@@ -23,14 +20,11 @@ export function ClaimTokensPopup() {
 
   useEffect(() => {
     getApiInfo();
-  }, [connectedAccount, evmAddress]);
+  }, [evmAddress]);
 
   async function getApiInfo() {
-    if (!connectedAccount || !evmAddress) return;
-    const pendingOperations = await checkIfUserHasTokensToClaim(
-      connectedAccount.address(),
-      evmAddress,
-    );
+    if (!evmAddress) return;
+    const pendingOperations = await checkIfUserHasTokensToClaim(evmAddress);
     setOpToRedeem(pendingOperations);
   }
 

@@ -4,16 +4,13 @@ import { useAccount } from 'wagmi';
 
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useOperationStore } from '@/store/store';
+import { useOperationStore } from '@/store/store';
 import {
   RedeemOperationToClaim,
   checkIfUserHasTokensToClaim,
 } from '@/utils/lambdaApi';
 
 export function Claim() {
-  const [connectedAccount] = useAccountStore((state) => [
-    state.connectedAccount,
-  ]);
   const [opToRedeem, setOpToRedeem] = useOperationStore((state) => [
     state.opToRedeem,
     state.setOpToRedeem,
@@ -23,15 +20,12 @@ export function Claim() {
 
   useEffect(() => {
     getApiInfo();
-  }, [connectedAccount, evmAddress]);
+  }, [evmAddress]);
 
   async function getApiInfo() {
-    if (!connectedAccount || !evmAddress) return;
+    if (!evmAddress) return;
 
-    const pendingOperations = await checkIfUserHasTokensToClaim(
-      connectedAccount.address(),
-      evmAddress,
-    );
+    const pendingOperations = await checkIfUserHasTokensToClaim(evmAddress);
     setOpToRedeem(pendingOperations);
   }
 
@@ -52,7 +46,7 @@ export function Claim() {
         })
       ) : (
         <p className="mas-menu-active text-info text-2xl">
-          {Intl.t('claim.no-claim')}
+          {Intl.t('claim.no-claim', { address: evmAddress! })}
         </p>
       )}
     </div>

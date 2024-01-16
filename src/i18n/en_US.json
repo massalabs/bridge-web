@@ -20,7 +20,7 @@
     "title": "Massa bridge is only available on desktop"
   },
   "claim": {
-    "no-claim": "You have no token to claim at the moment",
+    "no-claim": "There are no active claims for address {address}",
     "claim": "Claim",
     "pending": "Pending",
     "success": "You have successfully redeemed:",
