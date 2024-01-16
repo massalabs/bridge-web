@@ -14,7 +14,7 @@ import { validateNetwork } from '../../utils/network';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import { LayoutType, LoadingState, EVM_BRIDGE_ADDRESS } from '@/const';
+import { LayoutType, LoadingState, config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
@@ -29,6 +29,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
+import { IAccount } from '@massalabs/wallet-provider';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching, isStationInstalled } =
@@ -111,16 +112,12 @@ export function Index() {
   useEffect(() => {
     if (isRedeem) {
       setLoading({ box: 'success', claim: 'success' });
-      refreshBalances(connectedAccount!);
+      refreshBalances(currentMode, connectedAccount!);
     }
   }, [isRedeem]);
 
-  useEffect(() => {
-    getTokens(connectedAccount);
-  }, [currentMode]);
-
   const redeemEventHandler = useContractEvent({
-    address: EVM_BRIDGE_ADDRESS,
+    address: config[currentMode].evmBridgeContract,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
     listener() {
@@ -145,6 +142,10 @@ export function Index() {
   }, [evmConnectedChain, currentMode]);
 
   useEffect(() => {
+    getTokens(currentMode, connectedAccount);
+  }, [currentMode]);
+
+  useEffect(() => {
     setAmount('');
   }, [layout, token?.name]);
 
@@ -164,11 +165,13 @@ export function Index() {
     if (!massaClient) return;
     if (lockTxID) {
       const mintArgs = {
+        mode: currentMode,
         massaClient,
         massaOperationID: lockTxID,
         connectedAccount,
         setLoading,
-        refreshBalances,
+        refreshBalances: (connectedAccount?: IAccount) =>
+          refreshBalances(currentMode, connectedAccount),
       };
       handleMintBridge(mintArgs);
     }
@@ -193,8 +196,8 @@ export function Index() {
   }, [approveIsSuccess, approveIsError]);
 
   useEffect(() => {
-    refreshBalances(connectedAccount);
-  }, [connectedAccount]);
+    refreshBalances(currentMode, connectedAccount);
+  }, [currentMode, connectedAccount]);
 
   useEffect(() => {
     if (loading.box === 'none') closeLoadingBox();
@@ -252,6 +255,7 @@ export function Index() {
         return;
       }
       const approved = await handleApproveRedeem(
+        currentMode,
         massaClient,
         setLoading,
         token,
@@ -265,9 +269,10 @@ export function Index() {
         }
 
         await handleBurnRedeem({
+          mode: currentMode,
           client: massaClient,
           token,
-          evmAddress,
+          recipient: evmAddress,
           amount,
           decimals,
           setBurnTxID,

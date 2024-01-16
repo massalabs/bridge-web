@@ -9,16 +9,22 @@ import {
 } from 'wagmi';
 
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { EVM_BRIDGE_ADDRESS, U256_MAX } from '@/const/const';
-import { useAccountStore, useTokenStore } from '@/store/store';
+import { config, U256_MAX } from '@/const/const';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useTokenStore,
+} from '@/store/store';
 
 const useEvmBridge = () => {
   const { address: accountAddress } = useAccount();
-  const [massaAccount] = useAccountStore((state) => [state.connectedAccount]);
+  const { connectedAccount: massaAccount } = useAccountStore();
+  const { selectedToken } = useTokenStore();
+  const { currentMode } = useBridgeModeStore();
 
-  const [token] = useTokenStore((state) => [state.selectedToken]);
+  const bridgeContractAddr = config[currentMode].evmBridgeContract;
 
-  const evmToken = token?.evmToken as `0x${string}`;
+  const evmToken = selectedToken?.evmToken as `0x${string}`;
 
   const evmUserAddress = accountAddress ? accountAddress : '0x00000';
 
@@ -32,8 +38,8 @@ const useEvmBridge = () => {
     address: evmToken,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [evmUserAddress, EVM_BRIDGE_ADDRESS],
-    enabled: Boolean(accountAddress && token?.evmToken),
+    args: [evmUserAddress, bridgeContractAddr],
+    enabled: Boolean(accountAddress && evmToken),
     watch: true,
   });
 
@@ -43,32 +49,33 @@ const useEvmBridge = () => {
   const [hashApprove, setHashApprove] = useState<`0x${string}`>();
 
   useEffect(() => {
-    if (!token) return;
+    if (!selectedToken) return;
 
     setTokenBalance(balanceData.data?.value ?? 0n);
-  }, [token, balanceData.data?.value]);
+  }, [selectedToken, balanceData.data?.value]);
+
   useEffect(() => {
-    if (!token) return;
+    if (!selectedToken) return;
 
     setAllowance(_allowance.data || 0n);
-  }, [token, _allowance?.data]);
+  }, [selectedToken, _allowance?.data]);
 
   const approve = useContractWrite({
     functionName: 'approve',
     address: evmToken,
     abi: erc20ABI,
-    args: [EVM_BRIDGE_ADDRESS, U256_MAX],
+    args: [bridgeContractAddr, U256_MAX],
   });
 
   const lock = useContractWrite({
     abi: bridgeVaultAbi,
-    address: EVM_BRIDGE_ADDRESS,
+    address: bridgeContractAddr,
     functionName: 'lock',
   });
 
   const redeem = useContractWrite({
     abi: bridgeVaultAbi,
-    address: EVM_BRIDGE_ADDRESS,
+    address: bridgeContractAddr,
     functionName: 'redeem',
   });
 
@@ -80,13 +87,7 @@ const useEvmBridge = () => {
   ): Promise<boolean> {
     try {
       await redeem.writeAsync({
-        args: [
-          amount.toString(),
-          recipient,
-          burnopId,
-          token?.evmToken,
-          signatures,
-        ],
+        args: [amount.toString(), recipient, burnopId, evmToken, signatures],
       });
       return true;
     } catch (error) {
@@ -109,7 +110,7 @@ const useEvmBridge = () => {
   async function handleLock(amount: bigint) {
     try {
       let { hash } = await lock.writeAsync({
-        args: [amount.toString(), massaAccount?.address(), token?.evmToken],
+        args: [amount.toString(), massaAccount?.address(), evmToken],
       });
       setHashLock(hash);
       return lock;

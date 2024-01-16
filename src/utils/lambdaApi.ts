@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { BridgeMode, config } from '../const';
+
 export interface Locked {
   amount: string;
   evmChainId: number;
@@ -52,16 +54,18 @@ export interface RedeemOperationToClaim {
 }
 
 export async function getBurnedByEvmAddress(
+  mode: BridgeMode,
   evmAddress: `0x${string}`,
   endPoint: string,
 ): Promise<Burned[]> {
-  const lambdaURL: string = import.meta.env.VITE_LAMBDA_URL;
-  if (!lambdaURL) throw new Error("Unable to get 'VITE_LAMBDA_URL' from .env");
-  const response: LambdaResponse = await axios.get(lambdaURL + endPoint, {
-    params: {
-      evmAddress,
+  const response: LambdaResponse = await axios.get(
+    config[mode].lambdaUrl + endPoint,
+    {
+      params: {
+        evmAddress,
+      },
     },
-  });
+  );
 
   return response.data.burned;
 }
@@ -111,9 +115,10 @@ export function sortSignatures(signatures: Signatures[]): string[] {
 }
 
 export async function checkIfUserHasTokensToClaim(
+  mode: BridgeMode,
   evmAddress: `0x${string}`,
 ): Promise<RedeemOperationToClaim[]> {
-  const burnedOpList = await getBurnedByEvmAddress(evmAddress, endPoint);
+  const burnedOpList = await getBurnedByEvmAddress(mode, evmAddress, endPoint);
 
   return burnedOpList
     .filter(

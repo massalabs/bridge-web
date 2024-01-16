@@ -4,28 +4,30 @@ import { useAccount } from 'wagmi';
 
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
-import { useOperationStore } from '@/store/store';
+import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import {
   RedeemOperationToClaim,
   checkIfUserHasTokensToClaim,
 } from '@/utils/lambdaApi';
 
 export function Claim() {
-  const [opToRedeem, setOpToRedeem] = useOperationStore((state) => [
-    state.opToRedeem,
-    state.setOpToRedeem,
-  ]);
+  const { opToRedeem, setOpToRedeem } = useOperationStore();
 
   const { address: evmAddress } = useAccount();
 
+  const { currentMode } = useBridgeModeStore();
+
   useEffect(() => {
     getApiInfo();
-  }, [evmAddress]);
+  }, [evmAddress, currentMode]);
 
   async function getApiInfo() {
     if (!evmAddress) return;
 
-    const pendingOperations = await checkIfUserHasTokensToClaim(evmAddress);
+    const pendingOperations = await checkIfUserHasTokensToClaim(
+      currentMode,
+      evmAddress,
+    );
     setOpToRedeem(pendingOperations);
   }
 

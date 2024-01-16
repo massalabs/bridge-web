@@ -1,7 +1,7 @@
 import { Client, EOperationStatus, IEvent } from '@massalabs/massa-web3';
 import delay from 'delay';
 
-import { CONTRACT_ADDRESS } from '@/const';
+import { BridgeMode, config } from '@/const';
 import { safeJsonParse } from '@/utils/utils';
 
 const WAIT_STATUS_TIMEOUT = 300_000;
@@ -85,6 +85,7 @@ function isTokenMintedEvent(event: IEvent, lockTxId: string) {
 }
 
 export async function waitForMintEvent(
+  mode: BridgeMode,
   client: Client,
   lockTxId: string,
 ): Promise<boolean> {
@@ -93,7 +94,7 @@ export async function waitForMintEvent(
 
   while (counterMs < WAIT_STATUS_TIMEOUT) {
     const events = await client.smartContracts().getFilteredScOutputEvents({
-      emitter_address: CONTRACT_ADDRESS,
+      emitter_address: config[mode].massaBridgeContract,
       start: null,
       end: null,
       original_caller_address: null,

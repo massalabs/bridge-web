@@ -13,7 +13,7 @@ import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useTokenStore } from '@/store/store';
+import { useBridgeModeStore, useTokenStore } from '@/store/store';
 import { loadingStates } from '@/utils/const';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
@@ -38,11 +38,12 @@ export function Claim({
 }: ClaimProps) {
   const { address: evmAddress } = useAccount();
 
-  const [token] = useTokenStore((state) => [state.selectedToken]);
+  const { selectedToken } = useTokenStore();
+  const { currentMode } = useBridgeModeStore();
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { chain } = useNetwork();
 
-  const selectedToken = token?.symbol as string;
+  const symbol = selectedToken?.symbol as string;
   const selectedChain = chain?.name as string;
 
   const [isReadyToClaim, setIsReadyToClaim] = useState(false);
@@ -69,7 +70,11 @@ export function Claim({
   async function _handleClaimRedeem(): Promise<boolean> {
     if (!evmAddress) return false;
     try {
-      const burnedOpList = await getBurnedByEvmAddress(evmAddress, endPoint);
+      const burnedOpList = await getBurnedByEvmAddress(
+        currentMode,
+        evmAddress,
+        endPoint,
+      );
 
       const claimArgs = {
         burnedOpList,
@@ -162,7 +167,7 @@ export function Claim({
           </div>
         ) : (
           Intl.t('index.loading-box.claim-message', {
-            token: selectedToken,
+            token: symbol,
             network: selectedChain,
           })
         )}
@@ -173,7 +178,7 @@ export function Claim({
             _handleRedeem();
           }}
         >
-          {Intl.t('index.loading-box.claim')} {selectedToken}
+          {Intl.t('index.loading-box.claim')} {symbol}
         </Button>
       ) : null}
     </div>
