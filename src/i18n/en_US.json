@@ -190,7 +190,12 @@
     "button": "Connect",
     "card-destination": {
       "from": "Evm wallet",
-      "to": "Massa wallet"
+      "to": "Massa wallet",
+      "non-massa-wallet": "Switch accounts directly within your wallet.",
+      "switch": "switch wallet",
+      "select-wallet": "Select a wallet:",
+      "your-wallet": "Your wallet",
+      "no-wallet": "No wallet found"
     },
     "connected-cards": {
       "wallet-balance": "balance: "
@@ -205,16 +210,10 @@
       "invalid-network": "Current network is not supported. Please, switch to Sepolia testnet.",
       "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
-      "install-metamask": "Install Metamask"
+      "install-metamask": "Install Metamask",
+      "no-wallet": "No wallet detected"
     },
-    "station-connect-error": {
-      "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it.",
-      "error-wallet": "Create a wallet at the  ",
-      "add-wallet": "following link.",
-      "error-account": "No wallet accounts found in Massa Wallet. ",
-      "add-account": "Create an account"
-    },
-    "ressource-sidepanel": {
+    "resource-sidepanel": {
       "add-metamask-testnet": "Add Testnet to Metamask",
       "add-sepolia": "If you want to add Sepolia on your Metamask",
       "add-massa": "If you want to create Massa Wallet",

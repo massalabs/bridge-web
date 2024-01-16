@@ -2,9 +2,10 @@ import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
 import { IAccount } from '@massalabs/wallet-provider';
 import { BsDiamondHalf } from 'react-icons/bs';
 
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
-export function SelectMassaWalletAccount() {
+export function StationSelectAccount() {
   const [accounts, connectedAccount, setConnectedAccount] = useAccountStore(
     (state) => [
       state.accounts,
@@ -33,7 +34,7 @@ export function SelectMassaWalletAccount() {
         options={accounts.map((account: IAccount) => {
           return {
             item: account.name(),
-            icon: iconsAccounts['MASSASTATION'],
+            icon: iconsAccounts[SUPPORTED_MASSA_WALLETS.MASSASTATION],
             onClick: () => onAccountChange(account),
           };
         })}

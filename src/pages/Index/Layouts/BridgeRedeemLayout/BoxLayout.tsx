@@ -18,7 +18,7 @@ import { EthSvg } from '@/assets/EthSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { Connected, Disconnected, NoAccounts, WrongChain } from '@/components';
-import { LayoutType } from '@/const';
+import { LayoutType, SUPPORTED_MASSA_WALLETS } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import {
@@ -129,15 +129,17 @@ function EVMHeader() {
 }
 
 function MassaHeader() {
-  const [isFetching, accounts, isStationInstalled] = useAccountStore(
-    (state) => [state.isFetching, state.accounts, state.isStationInstalled],
-  );
+  const [isFetching, accounts, providerList] = useAccountStore((state) => [
+    state.isFetching,
+    state.accounts,
+    state.providers,
+  ]);
   const [isMainnet] = useBridgeModeStore((state) => [state.isMainnet]);
 
   const hasNoAccounts = accounts?.length <= 0;
 
   function displayStatus() {
-    if (!isStationInstalled) return <Disconnected />;
+    if (providerList.length <= 0) return <Disconnected />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }
@@ -150,7 +152,7 @@ function MassaHeader() {
           options={[
             {
               item: `Massa ${isMainnet ? 'Mainnet' : 'Buildnet'}`,
-              icon: iconsNetworks['MASSASTATION'],
+              icon: iconsNetworks[SUPPORTED_MASSA_WALLETS.MASSASTATION],
             },
           ]}
         />

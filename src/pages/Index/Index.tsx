@@ -1,7 +1,6 @@
 import { useState, SyntheticEvent, useEffect } from 'react';
 
 import { toast } from '@massalabs/react-ui-kit';
-import { providers } from '@massalabs/wallet-provider';
 import { parseUnits } from 'viem';
 import {
   useAccount,
@@ -17,12 +16,7 @@ import { validateNetwork } from '../../utils/network';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import {
-  LayoutType,
-  LoadingState,
-  MASSA_STATION,
-  EVM_BRIDGE_ADDRESS,
-} from '@/const';
+import { LayoutType, LoadingState, EVM_BRIDGE_ADDRESS } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
@@ -39,25 +33,8 @@ import {
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 
 export function Index() {
-  const [
-    getAccounts,
-    massaClient,
-    connectedAccount,
-    isFetching,
-    setStationInstalled,
-    isStationInstalled,
-    providersFetched,
-    loadAccounts,
-  ] = useAccountStore((state) => [
-    state.getAccounts,
-    state.massaClient,
-    state.connectedAccount,
-    state.isFetching,
-    state.setStationInstalled,
-    state.isStationInstalled,
-    state.providers,
-    state.loadAccounts,
-  ]);
+  const { massaClient, connectedAccount, isFetching, isStationInstalled } =
+    useAccountStore();
 
   const [token, getTokens] = useTokenStore((state) => [
     state.token,
@@ -213,37 +190,12 @@ export function Index() {
   }, [approveIsSuccess, approveIsError]);
 
   useEffect(() => {
-    if (providersFetched.length > 0) {
-      loadAccounts(providersFetched);
-
-      providersFetched.some((provider: { name: () => string }) => {
-        provider.name() === MASSA_STATION && setStationInstalled(true);
-      });
-    } else {
-      setStationInstalled(false);
-    }
-  }, [providersFetched]);
-
-  useEffect(() => {
-    getAccounts();
-    getProviderList();
-  }, []);
-
-  useEffect(() => {
     getTokens(connectedAccount);
   }, [connectedAccount]);
 
   useEffect(() => {
     if (loading.box === 'none') closeLoadingBox();
   }, [loading.box]);
-
-  async function getProviderList() {
-    const providerList = await providers();
-    const massaStationWallet = providerList.some(
-      (provider: { name: () => string }) => provider.name() === MASSA_STATION,
-    );
-    setStationInstalled(!!massaStationWallet);
-  }
 
   function handleToggleLayout() {
     setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
