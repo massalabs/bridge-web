@@ -14,19 +14,14 @@ import { capitalize } from '@/utils/utils';
 export function Navbar({ ...props }) {
   const { onSetTheme, setSelectedTheme, selectedTheme, setOpen } = props;
 
-  const [currentMode, availableModes, setCurrentMode] = useBridgeModeStore(
-    (state) => [state.currentMode, state.availableModes, state.setCurrentMode],
-  );
+  const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
 
-  const [accounts, isFetching, isStationInstalled] = useAccountStore(
-    (state) => [state.accounts, state.isFetching, state.isStationInstalled],
-  );
+  const { accounts, isFetching, connectedAccount } = useAccountStore();
 
   const { isConnected: isEvmWalletConnected } = useAccount();
 
   const hasAccounts = accounts?.length > 0;
-  const showPingAnimation =
-    window.ethereum?.isConnected() && isStationInstalled;
+  const showPingAnimation = window.ethereum?.isConnected() && connectedAccount;
 
   function ConnectedWallet() {
     return (
@@ -85,7 +80,7 @@ export function Navbar({ ...props }) {
           }))}
           select={availableModes.indexOf(currentMode)}
         />
-        {isEvmWalletConnected && hasAccounts && isStationInstalled ? (
+        {isEvmWalletConnected && hasAccounts && connectedAccount ? (
           <ConnectedWallet />
         ) : (
           <NotConnectedWallet />

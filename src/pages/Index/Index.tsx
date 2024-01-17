@@ -34,8 +34,7 @@ import {
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 
 export function Index() {
-  const { massaClient, connectedAccount, isFetching, isStationInstalled } =
-    useAccountStore();
+  const { massaClient, connectedAccount, isFetching } = useAccountStore();
 
   const [token, getTokens, refreshBalances] = useTokenStore((state) => [
     state.selectedToken,
@@ -102,9 +101,10 @@ export function Index() {
   const isLoading = loading.box !== 'none' ? true : false;
   const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
   const operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
-  let isButtonDisabled =
+
+  const isButtonDisabled =
     isFetching ||
-    !isStationInstalled ||
+    !connectedAccount ||
     !isEvmWalletConnected ||
     wrongNetwork ||
     isMainnet ||
