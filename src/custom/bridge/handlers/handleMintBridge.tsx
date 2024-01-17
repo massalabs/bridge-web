@@ -5,7 +5,7 @@ import { ICustomError } from './handleErrorMessage';
 import { waitForMintEvent } from '../massa-utils';
 import { BridgeMode, LoadingState } from '@/const';
 
-interface MintBridge {
+export interface MintArgs {
   mode: BridgeMode;
   massaClient: Client;
   massaOperationID: string;
@@ -14,7 +14,7 @@ interface MintBridge {
   refreshBalances: (connectedAccount?: IAccount) => void;
 }
 
-export async function handleMintBridge(args: MintBridge): Promise<boolean> {
+export async function handleMintBridge(args: MintArgs): Promise<boolean> {
   const {
     mode,
     massaClient,

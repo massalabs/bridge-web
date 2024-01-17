@@ -1,5 +1,8 @@
+import { BridgeMode } from '../../src/const';
 import { handleApproveRedeem } from '../../src/custom/bridge/handlers/handleApproveRedeem';
 import { Client } from '../__ mocks __/mocks';
+
+const mode = BridgeMode.testnet;
 
 const token = {
   name: 'Massa',
@@ -26,6 +29,7 @@ describe('handleApproveRedeem', () => {
     const mockSetLoading = jest.fn().mockImplementation();
 
     const result = await handleApproveRedeem(
+      mode,
       client as any,
       mockSetLoading,
       token,
@@ -51,6 +55,7 @@ describe('handleApproveRedeem', () => {
     const decimals = 18;
     const mockSetLoading = jest.fn().mockImplementation();
     const result = await handleApproveRedeem(
+      mode,
       client as any,
       mockSetLoading,
       token,
@@ -85,6 +90,7 @@ describe('handleApproveRedeem', () => {
     const mockSetLoading = jest.fn().mockImplementation();
 
     const result = await handleApproveRedeem(
+      mode,
       client as any,
       mockSetLoading,
       token,
@@ -126,6 +132,7 @@ describe('handleApproveRedeem', () => {
     const mockSetLoading = jest.fn().mockImplementation();
 
     const result = await handleApproveRedeem(
+      mode,
       client as any,
       mockSetLoading,
       token,
@@ -162,6 +169,7 @@ describe('handleApproveRedeem', () => {
     const mockSetLoading = jest.fn().mockImplementation();
 
     const result = await handleApproveRedeem(
+      mode,
       client as any,
       mockSetLoading,
       token,

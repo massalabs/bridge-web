@@ -14,11 +14,11 @@ export function ConnectedAccount() {
   const [connectedAccount] = useAccountStore((state) => [
     state.connectedAccount,
   ]);
-  
-  const { isMainnet } = useBridgeModeStore()
+
+  const { isMainnet } = useBridgeModeStore();
 
   async function initBalance() {
-    if(!connectedAccount) return;
+    if (!connectedAccount) return;
     const balance = await fetchMASBalance(connectedAccount);
     setBalance(balance);
   }
@@ -34,7 +34,7 @@ export function ConnectedAccount() {
           className="default-button flex min-h-12 items-center justify-center 
         px-4 default-secondary h-14 border-0 bg-secondary"
         >
-          {isMainnet ? "Mainnet" : "Buildnet"}
+          {isMainnet ? 'Mainnet' : 'Buildnet'}
         </div>
         <Clipboard
           customClass="h-14 rounded-lg text-center !mas-body"

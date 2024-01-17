@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Client, ClientFactory } from '@massalabs/massa-web3';
 import { providers, IAccount, IProvider } from '@massalabs/wallet-provider';
-
 import { MASSA_STATION, SUPPORTED_MASSA_WALLETS } from '@/const';
 import { BRIDGE_ACCOUNT_ADDRESS } from '@/utils/const';
 import { _getFromStorage, _setInStorage } from '@/utils/storage';

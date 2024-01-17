@@ -1,5 +1,7 @@
 import { useState, SyntheticEvent, useEffect } from 'react';
+
 import { toast } from '@massalabs/react-ui-kit';
+import { IAccount } from '@massalabs/wallet-provider';
 import { parseUnits } from 'viem';
 import {
   useAccount,
@@ -8,6 +10,7 @@ import {
   useToken,
   useContractEvent,
 } from 'wagmi';
+
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import { validateNetwork } from '../../utils/network';
@@ -29,7 +32,6 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
-import { IAccount } from '@massalabs/wallet-provider';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching, isStationInstalled } =
