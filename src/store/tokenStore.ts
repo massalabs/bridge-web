@@ -39,7 +39,6 @@ export interface IToken {
 export interface TokenStoreState {
   selectedToken?: IToken;
   tokens: IToken[];
-  isFetching: boolean;
 
   setSelectedToken: (token?: IToken) => void;
   getTokens: () => void;
@@ -56,15 +55,12 @@ async function initMassaClient(isMainnet: boolean): Promise<Client> {
 export const useTokenStore = create<TokenStoreState>((set, get) => ({
   selectedToken: undefined,
   tokens: [],
-  isFetching: false,
 
   getTokens: async () => {
     const { isMainnet, currentMode } = useBridgeModeStore.getState();
     const { connectedAccount } = useAccountStore.getState();
 
     const massaClient = await initMassaClient(isMainnet);
-
-    set({ isFetching: true });
 
     let tokenList: IToken[] = [];
     try {
@@ -117,7 +113,7 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
       (token) => token.massaToken === storedToken?.massaToken,
     );
 
-    set({ tokens: tokenList, isFetching: false });
+    set({ tokens: tokenList });
     get().setSelectedToken(selectedToken);
   },
 
@@ -141,8 +137,6 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
 
     const massaClient = await initMassaClient(isMainnet);
 
-    set({ isFetching: true });
-
     const tokens = await Promise.all(
       supportedTokens.map(async (token) => {
         const [accountAllowance, accountBalance] = await Promise.all([
@@ -159,6 +153,6 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
         return token;
       }),
     );
-    set({ tokens, isFetching: false });
+    set({ tokens });
   },
 }));

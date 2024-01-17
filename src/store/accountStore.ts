@@ -23,7 +23,7 @@ export interface AccountStoreState {
   removeProvider: (providerName: SUPPORTED_MASSA_WALLETS) => void;
 
   setConnectedAccount: (account?: IAccount) => void;
-  setAvailableAccounts: (accounts: any) => void;
+  setAvailableAccounts: (accounts: IAccount[]) => void;
   loadAccounts: (providerList: IProvider[]) => Promise<void>;
   getAccounts: () => void;
 }
