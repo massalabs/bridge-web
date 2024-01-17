@@ -48,7 +48,7 @@ async function initTokenStore() {
     mode = BridgeMode.mainnet;
   }
 
-  useTokenStore.getState().getTokens(mode);
+  useTokenStore.getState().getTokens();
 }
 
 async function initializeStores() {

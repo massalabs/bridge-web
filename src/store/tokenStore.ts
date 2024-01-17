@@ -8,10 +8,9 @@ import {
   DefaultProviderUrls,
   MAINNET,
 } from '@massalabs/massa-web3';
-import { IAccount } from '@massalabs/wallet-provider';
 import { create } from 'zustand';
-
-import { BridgeMode, config } from '../const';
+import { useAccountStore, useBridgeModeStore } from './store';
+import { config } from '../const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
 import {
   getAllowance,
@@ -41,46 +40,36 @@ export interface TokenStoreState {
   selectedToken?: IToken;
   tokens: IToken[];
   isFetching: boolean;
-  currentBridgeMode: BridgeMode;
 
   setSelectedToken: (token?: IToken) => void;
-  getTokens: (bridgeMode: BridgeMode, connectedAccount?: IAccount) => void;
-  refreshBalances: (
-    bridgeMode: BridgeMode,
-    connectedAccount?: IAccount,
-  ) => void;
+  getTokens: () => void;
+  refreshBalances: () => void;
 }
 
-let massaClient: Client | null = null;
-
-async function initMassaClient(bridgeMode: BridgeMode): Promise<Client> {
+async function initMassaClient(isMainnet: boolean): Promise<Client> {
   return ClientFactory.createDefaultClient(
-    bridgeMode == BridgeMode.mainnet
-      ? DefaultProviderUrls.MAINNET
-      : DefaultProviderUrls.BUILDNET,
-    bridgeMode == BridgeMode.mainnet ? CHAIN_ID[MAINNET] : CHAIN_ID[BUILDNET],
+    isMainnet ? DefaultProviderUrls.MAINNET : DefaultProviderUrls.BUILDNET,
+    isMainnet ? CHAIN_ID[MAINNET] : CHAIN_ID[BUILDNET],
   );
 }
 
 export const useTokenStore = create<TokenStoreState>((set, get) => ({
-  currentBridgeMode: BridgeMode.mainnet,
   selectedToken: undefined,
   tokens: [],
   isFetching: false,
 
-  getTokens: async (bridgeMode: BridgeMode, connectedAccount?: IAccount) => {
-    const { currentBridgeMode } = get();
+  getTokens: async () => {
+    const { isMainnet, currentMode } = useBridgeModeStore.getState();
+    const { connectedAccount } = useAccountStore.getState();
 
-    if (!massaClient || currentBridgeMode !== bridgeMode) {
-      massaClient = await initMassaClient(bridgeMode);
-    }
+    const massaClient = await initMassaClient(isMainnet);
 
-    set({ isFetching: true, currentBridgeMode: bridgeMode });
+    set({ isFetching: true });
 
     let tokenList: IToken[] = [];
     try {
       const supportedTokens = await getSupportedTokensList(
-        bridgeMode,
+        currentMode,
         massaClient,
       );
 
@@ -96,7 +85,7 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
           if (connectedAccount) {
             const [accountAllowance, accountBalance] = await Promise.all([
               getAllowance(
-                config[bridgeMode].massaBridgeContract,
+                config[currentMode].massaBridgeContract,
                 tokenPair.massaToken,
                 massaClient!,
                 connectedAccount,
@@ -140,27 +129,26 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     );
   },
 
-  refreshBalances: async (
-    bridgeMode: BridgeMode,
-    connectedAccount?: IAccount,
-  ) => {
-    const { tokens: supportedTokens, currentBridgeMode } = get();
+  refreshBalances: async () => {
+    const { tokens: supportedTokens } = get();
+
+    const { connectedAccount } = useAccountStore.getState();
 
     if (!connectedAccount) {
       return;
     }
 
-    if (!massaClient || currentBridgeMode !== bridgeMode) {
-      massaClient = await initMassaClient(bridgeMode);
-    }
+    const { isMainnet, currentMode } = useBridgeModeStore.getState();
 
-    set({ isFetching: true, currentBridgeMode: bridgeMode });
+    const massaClient = await initMassaClient(isMainnet);
+
+    set({ isFetching: true });
 
     const tokens = await Promise.all(
       supportedTokens.map(async (token) => {
         const [accountAllowance, accountBalance] = await Promise.all([
           getAllowance(
-            config[bridgeMode].massaBridgeContract,
+            config[currentMode].massaBridgeContract,
             token.massaToken,
             massaClient!,
             connectedAccount,

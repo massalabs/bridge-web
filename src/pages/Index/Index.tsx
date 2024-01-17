@@ -1,7 +1,5 @@
 import { useState, SyntheticEvent, useEffect } from 'react';
-
 import { toast } from '@massalabs/react-ui-kit';
-import { IAccount } from '@massalabs/wallet-provider';
 import { parseUnits } from 'viem';
 import {
   useAccount,
@@ -10,7 +8,6 @@ import {
   useToken,
   useContractEvent,
 } from 'wagmi';
-
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import { validateNetwork } from '../../utils/network';
@@ -114,7 +111,7 @@ export function Index() {
   useEffect(() => {
     if (isRedeem) {
       setLoading({ box: 'success', claim: 'success' });
-      refreshBalances(currentMode, connectedAccount!);
+      refreshBalances();
     }
   }, [isRedeem]);
 
@@ -144,7 +141,7 @@ export function Index() {
   }, [evmConnectedChain, currentMode]);
 
   useEffect(() => {
-    getTokens(currentMode, connectedAccount);
+    getTokens();
   }, [currentMode]);
 
   useEffect(() => {
@@ -172,8 +169,7 @@ export function Index() {
         massaOperationID: lockTxID,
         connectedAccount,
         setLoading,
-        refreshBalances: (connectedAccount?: IAccount) =>
-          refreshBalances(currentMode, connectedAccount),
+        refreshBalances,
       };
       handleMintBridge(mintArgs);
     }
@@ -198,7 +194,7 @@ export function Index() {
   }, [approveIsSuccess, approveIsError]);
 
   useEffect(() => {
-    refreshBalances(currentMode, connectedAccount);
+    refreshBalances();
   }, [currentMode, connectedAccount]);
 
   useEffect(() => {
