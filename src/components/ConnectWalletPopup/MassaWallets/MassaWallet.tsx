@@ -1,19 +1,20 @@
 import BearbyWallet from './BearbyWallet';
-import useMassaProvider from './hooks/useMassaProvider';
+import useSelectMassaProvider from './hooks/useSelectMassaProvider';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
 import { Connected } from '@/components';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
+import { useAccountStore } from '@/store/store';
 
 const MassaWallet = () => {
-  const { providerList, currentProvider, selectProvider, resetProvider } =
-    useMassaProvider();
+  const { selectProvider, resetProvider } = useSelectMassaProvider();
+  const { currentProvider, providers } = useAccountStore();
 
   if (!currentProvider)
     return (
       <SelectMassaWallet
-        providerList={providerList}
+        providerList={providers}
         onClick={(wallet) => selectProvider(wallet)}
       />
     );
@@ -30,9 +31,7 @@ const MassaWallet = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <p className="">
-          <SwitchWalletButton onClick={() => resetProvider()} />
-        </p>
+        <SwitchWalletButton onClick={() => resetProvider()} />
         <Connected />
       </div>
       {renderWallet()}

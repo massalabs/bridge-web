@@ -2,7 +2,7 @@
 import { Client, ClientFactory } from '@massalabs/massa-web3';
 import { providers, IAccount, IProvider } from '@massalabs/wallet-provider';
 
-import { MASSA_STATION } from '@/const';
+import { MASSA_STATION, SUPPORTED_MASSA_WALLETS } from '@/const';
 import { BRIDGE_ACCOUNT_ADDRESS } from '@/utils/const';
 import { _getFromStorage, _setInStorage } from '@/utils/storage';
 
@@ -20,6 +20,7 @@ export interface AccountStoreState {
   setCurrentProvider: (provider?: IProvider) => void;
   setProviders: (providers: IProvider[]) => void;
   addProvider: (provider: IProvider) => void;
+  removeProvider: (providerName: SUPPORTED_MASSA_WALLETS) => void;
 
   setAvailableAccounts: (accounts: any) => void;
   setStationInstalled: (isStationInstalled: boolean) => void;
@@ -57,6 +58,14 @@ const accountStore = (
     if (!existingProvider) {
       set({ providers: [...providerList, provider] });
     }
+  },
+
+  removeProvider: (providerName: SUPPORTED_MASSA_WALLETS) => {
+    const providerList = get().providers;
+    const filteredProviders = providerList.filter(
+      (p) => p.name() !== providerName,
+    );
+    set({ providers: filteredProviders });
   },
 
   setAvailableAccounts: (accounts: IAccount[]) => {
