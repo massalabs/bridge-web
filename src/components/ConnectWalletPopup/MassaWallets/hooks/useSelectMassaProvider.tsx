@@ -1,19 +1,22 @@
 import { useEffect } from 'react';
-import { IProvider, providers } from '@massalabs/wallet-provider';
+import { providers as getProviders } from '@massalabs/wallet-provider';
 
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 export default function useSelectMassaProvider() {
   const {
+    providers,
+    selectedProvider,
+    addProvider,
     setCurrentProvider,
     setConnectedAccount,
     setAvailableAccounts,
-    addProvider,
+    setSelectedProvider,
   } = useAccountStore();
 
   async function getBearbyProvider() {
-    const providerList = await providers();
+    const providerList = await getProviders();
     const bearby = providerList.find(
       (provider) => provider.name() === SUPPORTED_MASSA_WALLETS.BEARBY,
     );
@@ -23,15 +26,11 @@ export default function useSelectMassaProvider() {
     addProvider(bearby);
   }
 
-  async function selectProvider(provider: IProvider) {
-    if (
-      provider.name() === SUPPORTED_MASSA_WALLETS.BEARBY &&
-      !(await provider.connect())
-    ) {
-      return;
-    }
+  async function selectProvider(providerName: SUPPORTED_MASSA_WALLETS) {
+    setSelectedProvider(providerName);
 
-    setCurrentProvider(provider);
+    const provider = providers.find((p) => p.name() === providerName);
+    if (!provider) return;
     const accounts = await provider.accounts();
     // TODO: Verify we want to use the first account by default
     setConnectedAccount(accounts[0]);
@@ -39,6 +38,7 @@ export default function useSelectMassaProvider() {
   }
 
   function resetProvider() {
+    setSelectedProvider(undefined);
     setCurrentProvider(undefined);
     setConnectedAccount();
     setAvailableAccounts([]);
@@ -49,6 +49,7 @@ export default function useSelectMassaProvider() {
   }, []);
 
   return {
+    selectedProvider,
     selectProvider,
     resetProvider,
   };

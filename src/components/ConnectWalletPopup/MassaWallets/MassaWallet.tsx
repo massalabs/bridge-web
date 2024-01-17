@@ -9,9 +9,9 @@ import { useAccountStore } from '@/store/store';
 
 const MassaWallet = () => {
   const { selectProvider, resetProvider } = useSelectMassaProvider();
-  const { currentProvider, providers } = useAccountStore();
+  const { selectedProvider, providers } = useAccountStore();
 
-  if (!currentProvider)
+  if (!selectedProvider)
     return (
       <SelectMassaWallet
         providerList={providers}
@@ -20,7 +20,7 @@ const MassaWallet = () => {
     );
 
   const renderWallet = () => {
-    switch (currentProvider.name()) {
+    switch (selectedProvider) {
       case SUPPORTED_MASSA_WALLETS.MASSASTATION:
         return <StationWallet />;
       case SUPPORTED_MASSA_WALLETS.BEARBY:
