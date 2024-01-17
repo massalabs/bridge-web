@@ -1,5 +1,5 @@
 import BearbyWallet from './BearbyWallet';
-import useMassaProvider from './hooks/useMassaProvider';
+import useSelectMassaProvider from './hooks/useSelectMassaProvider';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
@@ -8,7 +8,7 @@ import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 const MassaWallet = () => {
-  const { selectProvider, resetProvider } = useMassaProvider();
+  const { selectProvider, resetProvider } = useSelectMassaProvider();
   const { currentProvider, providers } = useAccountStore();
 
   if (!currentProvider)
