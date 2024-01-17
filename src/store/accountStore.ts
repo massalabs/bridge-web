@@ -11,6 +11,7 @@ export interface AccountStoreState {
   massaClient?: Client;
   accounts: IAccount[];
   currentProvider?: IProvider;
+  selectedProvider?: SUPPORTED_MASSA_WALLETS | undefined;
   providers: IProvider[];
   isFetching: boolean;
   accountObserver: {
@@ -18,6 +19,7 @@ export interface AccountStoreState {
   } | null;
 
   setCurrentProvider: (provider?: IProvider) => void;
+  setSelectedProvider: (provider: SUPPORTED_MASSA_WALLETS | undefined) => void;
   setProviders: (providers: IProvider[]) => void;
   addProvider: (provider: IProvider) => void;
   removeProvider: (providerName: SUPPORTED_MASSA_WALLETS) => void;
@@ -37,8 +39,13 @@ const accountStore = (
   accountObserver: null,
   massaClient: undefined,
   currentProvider: undefined,
+  selectedProvider: undefined,
   providers: [],
   isFetching: false,
+
+  setSelectedProvider: (provider?: SUPPORTED_MASSA_WALLETS) => {
+    set({ selectedProvider: provider });
+  },
 
   setCurrentProvider: (currentProvider?: IProvider) => {
     if (currentProvider?.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {

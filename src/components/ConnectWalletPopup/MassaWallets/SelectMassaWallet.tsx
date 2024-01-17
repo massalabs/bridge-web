@@ -1,24 +1,24 @@
 import { useMemo } from 'react';
-
 import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
 import { IProvider } from '@massalabs/wallet-provider';
-
 import { BearbySvg } from '@/assets/BearbySvg';
-import { Disconnected } from '@/components';
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 
-interface WalletIcon {
-  [key: string]: JSX.Element;
-}
-
-const iconsWallets: WalletIcon = {
-  MASSASTATION: <MassaLogo size={32} />,
-  BEARBY: <BearbySvg />,
-};
+const walletList = [
+  {
+    name: SUPPORTED_MASSA_WALLETS.MASSASTATION,
+    icon: <MassaLogo size={32} />,
+  },
+  {
+    name: SUPPORTED_MASSA_WALLETS.BEARBY,
+    icon: <BearbySvg />,
+  },
+];
 
 interface SelectMassaWalletProps {
   providerList: IProvider[];
-  onClick: (wallet: IProvider) => void;
+  onClick: (wallet: SUPPORTED_MASSA_WALLETS) => void;
 }
 
 const SelectMassaWallet = ({
@@ -29,14 +29,10 @@ const SelectMassaWallet = ({
 
   // TODO - Check if this useMemo is still necessary
   const walletOptions = useMemo(() => {
-    if (noWalletFound) {
-      return [{ item: Intl.t('connect-wallet.card-destination.no-wallet') }];
-    }
-
-    return providerList.map((provider) => ({
-      item: provider.name(),
-      icon: iconsWallets[provider.name().toUpperCase()],
-      onClick: () => onClick(provider),
+    return walletList.map((provider) => ({
+      item: provider.name,
+      icon: provider.icon,
+      onClick: () => onClick(provider.name),
     }));
   }, [providerList, noWalletFound]);
 
@@ -46,10 +42,9 @@ const SelectMassaWallet = ({
         <p className="mas-body flex-col justify-center">
           {Intl.t('connect-wallet.card-destination.select-wallet')}
         </p>
-        <Disconnected />
       </div>
       <div className="w-full">
-        <Dropdown readOnly={noWalletFound} select={0} options={walletOptions} />
+        <Dropdown select={0} options={walletOptions} />
       </div>
     </>
   );
