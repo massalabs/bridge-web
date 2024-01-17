@@ -33,11 +33,7 @@ import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
 
-  const [token, getTokens, refreshBalances] = useTokenStore((state) => [
-    state.selectedToken,
-    state.getTokens,
-    state.refreshBalances,
-  ]);
+  const { selectedToken, refreshBalances } = useTokenStore();
 
   const [isMainnet, currentMode] = useBridgeModeStore((state) => [
     state.isMainnet,
@@ -68,7 +64,7 @@ export function Index() {
   const { isSuccess: approveIsSuccess, isError: approveIsError } =
     useWaitForTransaction({ hash: _hashApproveEVM });
 
-  const evmToken = token?.evmToken as `0x${string}`;
+  const evmToken = selectedToken?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
@@ -128,7 +124,7 @@ export function Index() {
   useEffect(() => {
     setError({ amount: '' });
     setDecimals(tokenData?.decimals || 18);
-  }, [amount, layout, token?.name, tokenData?.decimals]);
+  }, [amount, layout, selectedToken?.name, tokenData?.decimals]);
 
   useEffect(() => {
     if (!validateNetwork(isMainnet, evmConnectedChain?.id)) {
@@ -141,12 +137,8 @@ export function Index() {
   }, [evmConnectedChain, currentMode]);
 
   useEffect(() => {
-    getTokens();
-  }, [currentMode]);
-
-  useEffect(() => {
     setAmount('');
-  }, [layout, token?.name]);
+  }, [layout, selectedToken?.name]);
 
   useEffect(() => {
     if (lockIsSuccess) {
@@ -213,11 +205,11 @@ export function Index() {
     let _balance;
 
     if (IS_MASSA_TO_EVM) {
-      if (!token) {
+      if (!selectedToken) {
         return false;
       }
       _amount = parseUnits(amount, decimals);
-      _balance = token.balance;
+      _balance = selectedToken.balance;
     } else {
       _amount = parseUnits(amount, decimals);
       _balance = _tokenBalanceEVM;
@@ -245,27 +237,27 @@ export function Index() {
     });
 
     if (IS_MASSA_TO_EVM) {
-      if (!massaClient || !token || !amount) {
+      if (!massaClient || !selectedToken || !amount) {
         return;
       }
       const approved = await handleApproveRedeem(
         currentMode,
         massaClient,
         setLoading,
-        token,
+        selectedToken,
         amount,
         decimals,
       );
 
       if (approved) {
-        if (!token || !evmAddress || !amount) {
+        if (!selectedToken || !evmAddress || !amount) {
           return;
         }
 
         await handleBurnRedeem({
           mode: currentMode,
           client: massaClient,
-          token,
+          token: selectedToken,
           recipient: evmAddress,
           amount,
           decimals,

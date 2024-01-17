@@ -130,13 +130,12 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
   },
 
   refreshBalances: async () => {
-    const { tokens: supportedTokens } = get();
-
     const { connectedAccount } = useAccountStore.getState();
-
     if (!connectedAccount) {
       return;
     }
+
+    const { tokens: supportedTokens } = get();
 
     const { isMainnet, currentMode } = useBridgeModeStore.getState();
 
