@@ -1,6 +1,8 @@
 import { Client, ClientFactory } from '@massalabs/massa-web3';
 import { providers, IAccount, IProvider } from '@massalabs/wallet-provider';
+import { useTokenStore } from './tokenStore';
 import { MASSA_STATION, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { handleBearbyAccountChange } from '@/store/helpers/massaProviders';
 import { BRIDGE_ACCOUNT_ADDRESS } from '@/utils/const';
 import { _getFromStorage, _setInStorage } from '@/utils/storage';
 
@@ -11,16 +13,17 @@ export interface AccountStoreState {
   currentProvider?: IProvider;
   providers: IProvider[];
   isFetching: boolean;
-
-  setConnectedAccount: (account?: IAccount) => void;
+  accountObserver: {
+    unsubscribe: () => void;
+  } | null;
 
   setCurrentProvider: (provider?: IProvider) => void;
   setProviders: (providers: IProvider[]) => void;
   addProvider: (provider: IProvider) => void;
   removeProvider: (providerName: SUPPORTED_MASSA_WALLETS) => void;
 
+  setConnectedAccount: (account?: IAccount) => void;
   setAvailableAccounts: (accounts: any) => void;
-
   loadAccounts: (providerList: IProvider[]) => Promise<void>;
   getAccounts: () => void;
 }
@@ -30,13 +33,24 @@ const accountStore = (
   get: () => AccountStoreState,
 ) => ({
   accounts: [],
-  massaClient: undefined,
   connectedAccount: undefined,
+  accountObserver: null,
+  massaClient: undefined,
   currentProvider: undefined,
   providers: [],
   isFetching: false,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
+    if (currentProvider?.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {
+      if (!get().accountObserver) {
+        const observer = currentProvider.listenAccountChanges(
+          (newAddress: string) => {
+            handleBearbyAccountChange(newAddress);
+          },
+        );
+        set({ accountObserver: observer });
+      }
+    }
     set({ currentProvider });
   },
 
@@ -127,7 +141,7 @@ const accountStore = (
     set({ connectedAccount });
     if (connectedAccount) {
       _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
-
+      useTokenStore.getState().refreshBalances();
       // update the massa client with the new account
       const provider = get().currentProvider;
       if (provider) {

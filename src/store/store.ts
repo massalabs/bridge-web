@@ -6,7 +6,7 @@ import operationStore, { OperationStoreState } from './operationStore';
 import { useTokenStore } from './tokenStore';
 import { BRIDGE_MODE_STORAGE_KEY, _getFromStorage } from '../utils/storage';
 import { BridgeMode } from '@/const';
-import { addOrRemoveProvider } from '@/utils/massaStation';
+import { addOrRemoveProvider } from '@/store/helpers/massaProviders';
 export { useTokenStore } from './tokenStore';
 
 export const useConfigStore = create<ConfigStoreState>((...obj) => ({

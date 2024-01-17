@@ -31,3 +31,20 @@ async function addOrRemoveWalletProvider(
     removeProvider(walletName);
   }
 }
+
+export async function handleBearbyAccountChange(newAddress: string) {
+  const { connectedAccount, currentProvider, setConnectedAccount } =
+    useAccountStore.getState();
+
+  const oldAddress = connectedAccount?.address();
+
+  if (newAddress !== oldAddress) {
+    const newAccounts = await currentProvider?.accounts();
+
+    if (newAccounts?.length) {
+      // Bearby returns only one account
+      const newAccount = newAccounts[0];
+      setConnectedAccount(newAccount);
+    }
+  }
+}
