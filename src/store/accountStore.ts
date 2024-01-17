@@ -11,7 +11,6 @@ export interface AccountStoreState {
   currentProvider?: IProvider;
   providers: IProvider[];
   isFetching: boolean;
-  isStationInstalled: boolean;
 
   setConnectedAccount: (account?: IAccount) => void;
 
@@ -21,7 +20,6 @@ export interface AccountStoreState {
   removeProvider: (providerName: SUPPORTED_MASSA_WALLETS) => void;
 
   setAvailableAccounts: (accounts: any) => void;
-  setStationInstalled: (isStationInstalled: boolean) => void;
 
   loadAccounts: (providerList: IProvider[]) => Promise<void>;
   getAccounts: () => void;
@@ -37,7 +35,6 @@ const accountStore = (
   currentProvider: undefined,
   providers: [],
   isFetching: false,
-  isStationInstalled: false,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
     set({ currentProvider });
@@ -70,21 +67,10 @@ const accountStore = (
     set({ accounts });
   },
 
-  setStationInstalled: (isStationInstalled: boolean) => {
-    set({ isStationInstalled: isStationInstalled });
-  },
-
   loadAccounts: async (providerList: IProvider[]) => {
     const massaStationWallet = providerList.find(
       (provider: IProvider) => provider.name() === MASSA_STATION,
     );
-
-    if (massaStationWallet) {
-      set({ isStationInstalled: true });
-    } else {
-      set({ isStationInstalled: false });
-      return;
-    }
 
     const fetchedAccounts = await massaStationWallet?.accounts();
     const storedAccount = _getFromStorage(BRIDGE_ACCOUNT_ADDRESS);
@@ -126,16 +112,14 @@ const accountStore = (
       const providerList = await providers();
 
       if (providerList.length === 0) {
-        set({ isFetching: false, isStationInstalled: false });
         return;
       }
       await get().loadAccounts(providerList);
     } catch (error) {
       console.error(error);
-
-      set({ isFetching: false, isStationInstalled: false });
+    } finally {
+      set({ isFetching: false });
     }
-    set({ isFetching: false });
   },
 
   // set the connected account, and update the massa client
