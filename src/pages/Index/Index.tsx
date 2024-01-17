@@ -194,10 +194,6 @@ export function Index() {
   }, [approveIsSuccess, approveIsError]);
 
   useEffect(() => {
-    refreshBalances();
-  }, [currentMode, connectedAccount]);
-
-  useEffect(() => {
     if (loading.box === 'none') closeLoadingBox();
   }, [loading.box]);
 
