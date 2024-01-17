@@ -1,11 +1,27 @@
-import { IProvider } from '@massalabs/wallet-provider';
+import { useEffect } from 'react';
+import { IProvider, providers } from '@massalabs/wallet-provider';
 
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 export default function useSelectMassaProvider() {
-  const { setCurrentProvider, setConnectedAccount, setAvailableAccounts } =
-    useAccountStore();
+  const {
+    setCurrentProvider,
+    setConnectedAccount,
+    setAvailableAccounts,
+    addProvider,
+  } = useAccountStore();
+
+  async function getBearbyProvider() {
+    const providerList = await providers();
+    const bearby = providerList.find(
+      (provider) => provider.name() === SUPPORTED_MASSA_WALLETS.BEARBY,
+    );
+
+    if (!bearby) return;
+    await bearby.connect();
+    addProvider(bearby);
+  }
 
   async function selectProvider(provider: IProvider) {
     if (
@@ -27,6 +43,10 @@ export default function useSelectMassaProvider() {
     setConnectedAccount();
     setAvailableAccounts([]);
   }
+
+  useEffect(() => {
+    getBearbyProvider();
+  }, []);
 
   return {
     selectProvider,
