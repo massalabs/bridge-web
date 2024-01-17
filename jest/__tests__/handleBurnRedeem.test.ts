@@ -1,7 +1,13 @@
 import { EOperationStatus } from '@massalabs/massa-web3';
 
-import { handleBurnRedeem } from '../../src/custom/bridge/handlers/handleBurnRedeem';
-import { Client } from '../__ mocks __/mocks';
+import { BridgeMode } from '../../src/const';
+import {
+  BurnRedeemParams,
+  handleBurnRedeem,
+} from '../../src/custom/bridge/handlers/handleBurnRedeem';
+import { Client as MockedClient } from '../__ mocks __/mocks';
+
+const mode = BridgeMode.testnet;
 
 const token = {
   name: 'Massa',
@@ -15,39 +21,46 @@ const token = {
 };
 
 describe('handleBurnRedeem', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+  let burnArgs: BurnRedeemParams;
+  let mockSetLoading: jest.Mock;
+  let mockSetRedeemSteps: jest.Mock;
+  let clientMock: any;
 
-  test('should show success of burn (speculative success) event', async () => {
-    const client: any = new Client();
-
-    const mockGetOperationStatus = jest
-      .fn()
-      .mockResolvedValueOnce(EOperationStatus.SPECULATIVE_SUCCESS);
-
-    client.setMockGetOperationStatus(mockGetOperationStatus);
-    const smartContracts = client.smartContracts();
-
+  beforeEach(() => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
+    clientMock = new MockedClient() as any;
+    mockSetLoading = jest.fn().mockImplementation();
+    mockSetRedeemSteps = jest.fn().mockImplementation();
 
-    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
+    const recipient = '0x1234567890123456789012345678901234567890';
     const mocksetBurnTxID = jest.fn().mockImplementation();
 
-    const burnArgs = {
-      client,
+    burnArgs = {
+      mode,
+      client: clientMock,
       token,
-      evmAddress: mockEvmAddress,
+      recipient,
       amount,
       decimals,
       setBurnTxID: mocksetBurnTxID,
       setLoading: mockSetLoading,
       setRedeemSteps: mockSetRedeemSteps,
     };
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should show success of burn (speculative success) event', async () => {
+    const mockGetOperationStatus = jest
+      .fn()
+      .mockResolvedValueOnce(EOperationStatus.SPECULATIVE_SUCCESS);
+
+    clientMock.setMockGetOperationStatus(mockGetOperationStatus);
+    const smartContracts = clientMock.smartContracts();
 
     const result = await handleBurnRedeem(burnArgs);
 
@@ -75,35 +88,13 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show error because of operation has status of final_error', async () => {
-    const client: any = new Client();
-
     const mockGetOperationStatus = jest
       .fn()
       .mockRejectedValueOnce(EOperationStatus.FINAL_ERROR);
 
-    client.setMockGetOperationStatus(mockGetOperationStatus);
+    clientMock.setMockGetOperationStatus(mockGetOperationStatus);
 
-    const smartContracts = client.smartContracts();
-
-    const amount = '1313';
-    const decimals = 18;
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
-
-    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mocksetBurnTxID = jest.fn().mockImplementation();
-
-    const burnArgs = {
-      client,
-      token,
-      evmAddress: mockEvmAddress,
-      amount,
-      decimals,
-      setBurnTxID: mocksetBurnTxID,
-      setLoading: mockSetLoading,
-      setRedeemSteps: mockSetRedeemSteps,
-    };
+    const smartContracts = clientMock.smartContracts();
 
     const result = await handleBurnRedeem(burnArgs);
 
@@ -125,35 +116,13 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show error because of operation has status of speculative_error', async () => {
-    const client: any = new Client();
-
     const mockGetOperationStatus = jest
       .fn()
       .mockRejectedValueOnce(EOperationStatus.SPECULATIVE_ERROR);
 
-    client.setMockGetOperationStatus(mockGetOperationStatus);
+    clientMock.setMockGetOperationStatus(mockGetOperationStatus);
 
-    const smartContracts = client.smartContracts();
-
-    const amount = '1313';
-    const decimals = 18;
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
-
-    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mocksetBurnTxID = jest.fn().mockImplementation();
-
-    const burnArgs = {
-      client,
-      token,
-      evmAddress: mockEvmAddress,
-      amount,
-      decimals,
-      setBurnTxID: mocksetBurnTxID,
-      setLoading: mockSetLoading,
-      setRedeemSteps: mockSetRedeemSteps,
-    };
+    const smartContracts = clientMock.smartContracts();
 
     const result = await handleBurnRedeem(burnArgs);
 
@@ -175,37 +144,14 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show error because of timeout', async () => {
-    const client: any = new Client();
-
     const mockGetOperationStatus = jest.fn().mockRejectedValueOnce(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       Error('timeout', { cause: { error: 'timeout' } }),
     );
 
-    client.setMockGetOperationStatus(mockGetOperationStatus);
-
-    const smartContracts = client.smartContracts();
-
-    const amount = '1313';
-    const decimals = 18;
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
-
-    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mocksetBurnTxID = jest.fn().mockImplementation();
-
-    const burnArgs = {
-      client,
-      token,
-      evmAddress: mockEvmAddress,
-      amount,
-      decimals,
-      setBurnTxID: mocksetBurnTxID,
-      setLoading: mockSetLoading,
-      setRedeemSteps: mockSetRedeemSteps,
-    };
+    clientMock.setMockGetOperationStatus(mockGetOperationStatus);
+    const smartContracts = clientMock.smartContracts();
 
     const result = await handleBurnRedeem(burnArgs);
 
@@ -227,37 +173,15 @@ describe('handleBurnRedeem', () => {
   });
 
   test('should show error because user rejected burn', async () => {
-    const client: any = new Client();
-
     const mockCallSmartContract = jest
       .fn()
       .mockRejectedValueOnce(
         new Error('TransactionExecutionError: User rejected the request'),
       );
 
-    client.setMockCallSmartContract(mockCallSmartContract);
+    clientMock.setMockCallSmartContract(mockCallSmartContract);
 
-    const smartContracts = client.smartContracts();
-
-    const amount = '1313';
-    const decimals = 18;
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockSetRedeemSteps = jest.fn().mockImplementation();
-
-    const mockEvmAddress: any = '0x1234567890123456789012345678901234567890';
-    const mocksetBurnTxID = jest.fn().mockImplementation();
-
-    const burnArgs = {
-      client,
-      token,
-      evmAddress: mockEvmAddress,
-      amount,
-      decimals,
-      setBurnTxID: mocksetBurnTxID,
-      setLoading: mockSetLoading,
-      setRedeemSteps: mockSetRedeemSteps,
-    };
+    const smartContracts = clientMock.smartContracts();
 
     const result = await handleBurnRedeem(burnArgs);
 

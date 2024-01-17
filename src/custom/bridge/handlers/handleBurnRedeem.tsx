@@ -10,7 +10,7 @@ import { TokenPair } from '@/custom/serializable/tokenPair';
 import { IToken } from '@/store/tokenStore';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
-interface BurnRedeemParams {
+export interface BurnRedeemParams {
   mode: BridgeMode;
   client: Client;
   token: IToken;
