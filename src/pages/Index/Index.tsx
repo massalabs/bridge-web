@@ -10,7 +10,7 @@ import {
 } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
-import { validateNetwork } from '../../utils/network';
+import { validateEvmNetwork, validateMassaNetwork } from '../../utils/network';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
@@ -31,7 +31,8 @@ import {
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 
 export function Index() {
-  const { massaClient, connectedAccount, isFetching } = useAccountStore();
+  const { massaClient, connectedAccount, isFetching, connectedNetwork } =
+    useAccountStore();
 
   const { selectedToken, refreshBalances } = useTokenStore();
 
@@ -127,14 +128,23 @@ export function Index() {
   }, [amount, layout, selectedToken?.name, tokenData?.decimals]);
 
   useEffect(() => {
-    if (!validateNetwork(isMainnet, evmConnectedChain?.id)) {
+    if (
+      evmConnectedChain &&
+      !validateEvmNetwork(isMainnet, evmConnectedChain.id)
+    ) {
       toast.error(Intl.t('connect-wallet.wrong-evm-chain'));
+      setWrongNetwork(true);
+    } else if (
+      connectedNetwork &&
+      !validateMassaNetwork(isMainnet, connectedNetwork)
+    ) {
+      toast.error(Intl.t('connect-wallet.wrong-massa-chain'));
       setWrongNetwork(true);
     } else {
       toast.dismiss();
       setWrongNetwork(false);
     }
-  }, [evmConnectedChain, currentMode]);
+  }, [evmConnectedChain, currentMode, connectedNetwork]);
 
   useEffect(() => {
     setAmount('');

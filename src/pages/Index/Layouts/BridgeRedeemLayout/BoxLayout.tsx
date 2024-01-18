@@ -10,6 +10,8 @@ import {
   useToken,
 } from 'wagmi';
 
+import { MassaNetworks } from '../../../../utils/network';
+import { capitalize } from '../../../../utils/utils';
 import {
   FetchingLine,
   FetchingStatus,
@@ -147,7 +149,9 @@ function MassaHeader() {
           readOnly={true}
           options={[
             {
-              item: `Massa ${isMainnet ? 'Mainnet' : 'Buildnet'}`,
+              item: `Massa ${capitalize(
+                isMainnet ? MassaNetworks.mainnet : MassaNetworks.buildnet,
+              )}`,
               icon: iconsNetworks[SUPPORTED_MASSA_WALLETS.MASSASTATION],
             },
           ]}

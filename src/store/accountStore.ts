@@ -13,9 +13,13 @@ export interface AccountStoreState {
   currentProvider?: IProvider;
   providers: IProvider[];
   isFetching: boolean;
-  accountObserver: {
+  accountObserver?: {
     unsubscribe: () => void;
-  } | null;
+  };
+  networkObserver?: {
+    unsubscribe: () => void;
+  };
+  connectedNetwork?: string;
 
   isBearbyConnected: boolean;
 
@@ -32,7 +36,8 @@ const accountStore = (
 ) => ({
   accounts: [],
   connectedAccount: undefined,
-  accountObserver: null,
+  accountObserver: undefined,
+  networkObserver: undefined,
   massaClient: undefined,
   currentProvider: undefined,
   providers: [],
@@ -43,6 +48,13 @@ const accountStore = (
     try {
       set({ isFetching: true });
 
+      const previousProvider = get().currentProvider;
+
+      if (previousProvider?.name() !== currentProvider?.name()) {
+        get().accountObserver?.unsubscribe();
+        get().networkObserver?.unsubscribe();
+        set({ accountObserver: undefined, networkObserver: undefined });
+      }
       if (!currentProvider) {
         set({ currentProvider, connectedAccount: undefined, accounts: [] });
         return;
@@ -54,12 +66,24 @@ const accountStore = (
             .connect()
             .then(() => {
               set({ isBearbyConnected: true });
+              // get current network
+              currentProvider
+                .getNetwork()
+                .then((network) => {
+                  set({ connectedNetwork: network });
+                })
+                .catch((error) => {
+                  console.warn('error getting network from bearby', error);
+                });
+              // subscribe to network events
               const observer = currentProvider.listenAccountChanges(
                 (newAddress: string) => {
                   handleBearbyAccountChange(newAddress);
                 },
               );
               set({ currentProvider, accountObserver: observer });
+
+              // get connected account
               currentProvider
                 .accounts()
                 .then((accounts) => {
@@ -77,8 +101,16 @@ const accountStore = (
           return;
         }
       } else {
-        get().accountObserver?.unsubscribe();
-        set({ accountObserver: null, isBearbyConnected: false }); // unset isBearbyConnected ??
+        set({ isBearbyConnected: false });
+      }
+
+      if (!get().networkObserver) {
+        const networkObserver = currentProvider.listenNetworkChanges(
+          (newNetwork: string) => {
+            set({ connectedNetwork: newNetwork });
+          },
+        );
+        set({ networkObserver });
       }
 
       set({ currentProvider });
