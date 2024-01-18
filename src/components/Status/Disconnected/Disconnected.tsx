@@ -5,6 +5,6 @@ import { tagTypes } from '@/utils/const';
 
 export function Disconnected() {
   return (
-    <Tag type={tagTypes.error} content={Intl.t(`index.tag.not-connected`)} />
+    <Tag type={tagTypes.error} content={Intl.t('index.tag.not-connected')} />
   );
 }
