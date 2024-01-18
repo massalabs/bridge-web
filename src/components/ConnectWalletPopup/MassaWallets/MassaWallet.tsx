@@ -8,13 +8,14 @@ import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 const MassaWallet = () => {
-  const { currentProvider, providers, setCurrentProvider } = useAccountStore();
+  const { currentProvider, providers, setCurrentProvider, isFetching } =
+    useAccountStore();
 
   const [selectedProvider, setSelectedProvider] = useState<
     SUPPORTED_MASSA_WALLETS | undefined
   >(undefined);
 
-  if (!selectedProvider)
+  if (!selectedProvider || isFetching)
     return (
       <SelectMassaWallet
         onClick={(providerName) => {
