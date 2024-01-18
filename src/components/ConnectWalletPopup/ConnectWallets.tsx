@@ -3,8 +3,8 @@ import { useAccount as useEvmAccount } from 'wagmi';
 import EvmWallet from './EvmWallets/EvmWallet';
 import MassaWallet from './MassaWallets/MassaWallet';
 import { ResourceSidePanel } from './ResourceSidePanel';
-import { SUPPORTED_MASSA_WALLETS } from '@/const';
-import { useAccountStore } from '@/store/store';
+import { BridgeMode, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 export function ConnectWallets() {
   const { isConnected: isEvmWalletConnected } = useEvmAccount();
@@ -15,14 +15,17 @@ export function ConnectWallets() {
     (provider) => provider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION,
   );
 
-  // TODO: Do we want to display the resource side panel if Bearby is installed?
-  const showResourceSidePanel = showSepoliaInstruction || showStationDownload;
+  const { currentMode } = useBridgeModeStore();
+
+  const showResourceSidePanel =
+    currentMode === BridgeMode.testnet &&
+    (showSepoliaInstruction || showStationDownload);
 
   const gridTemplateColumns = showResourceSidePanel ? '2fr 2fr 1fr' : '1fr 1fr';
 
   return (
     <div
-      className={`pb-10 text-f-primary grid grid-rows-2 gap-4`}
+      className="pb-10 text-f-primary grid grid-rows-2 gap-4"
       style={{ gridTemplateColumns }}
     >
       <div className="col-span-2">
@@ -51,7 +54,7 @@ export function WalletCard({ ...props }) {
   const { children } = props;
 
   return (
-    <div className="bg-deep-blue h-60 p-6 rounded-2xl flex flex-col justify-center items-center">
+    <div className="bg-deep-blue p-6 rounded-2xl flex flex-col justify-center items-center">
       <div className="flex flex-col w-full mas-body">{children}</div>
     </div>
   );
