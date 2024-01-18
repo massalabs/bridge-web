@@ -1,27 +1,24 @@
-import { providers, IProvider } from '@massalabs/wallet-provider';
-
-import { SUPPORTED_MASSA_WALLETS } from '@/const';
+import { providers } from '@massalabs/wallet-provider';
 import { useAccountStore } from '@/store/store';
 
-export async function addOrRemoveProvider() {
-  const providerList = await providers();
-  addOrRemoveWalletProvider(providerList, SUPPORTED_MASSA_WALLETS.MASSASTATION);
-}
+export async function updateProviders() {
+  const {
+    addProvider,
+    removeProvider,
+    providers: currentProviders,
+  } = useAccountStore.getState();
 
-async function addOrRemoveWalletProvider(
-  providerList: IProvider[],
-  walletName: SUPPORTED_MASSA_WALLETS,
-) {
-  const { addProvider, removeProvider } = useAccountStore.getState();
+  let providerList = await providers();
 
-  const walletProvider = providerList.find(
-    (provider) => provider.name() === walletName,
-  );
-
-  if (walletProvider) {
-    addProvider(walletProvider);
-  } else {
-    removeProvider(walletName);
+  // add new providers
+  for (const provider of providerList) {
+    addProvider(provider);
+  }
+  // remove old providers
+  for (const provider of currentProviders) {
+    if (!providerList.some((p) => p.name() === provider.name())) {
+      removeProvider(provider);
+    }
   }
 }
 

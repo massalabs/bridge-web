@@ -18,23 +18,24 @@ const walletList = [
 
 interface SelectMassaWalletProps {
   providerList: IProvider[];
-  onClick: (wallet: SUPPORTED_MASSA_WALLETS) => void;
+  onClick: (provider: IProvider) => void;
 }
 
 const SelectMassaWallet = ({
   providerList,
   onClick,
 }: SelectMassaWalletProps) => {
-  const noWalletFound = providerList.length === 0;
-
   // TODO - Check if this useMemo is still necessary
   const walletOptions = useMemo(() => {
-    return walletList.map((provider) => ({
-      item: provider.name,
-      icon: provider.icon,
-      onClick: () => onClick(provider.name),
-    }));
-  }, [providerList, noWalletFound]);
+    return walletList
+      .filter((wallet) => providerList.some((p) => p.name() === wallet.name))
+      .map((provider) => ({
+        item: provider.name,
+        icon: provider.icon,
+        onClick: () =>
+          onClick(providerList.find((p) => p.name() === provider.name)!),
+      }));
+  }, [providerList]);
 
   return (
     <>

@@ -6,7 +6,7 @@ import operationStore, { OperationStoreState } from './operationStore';
 import { useTokenStore } from './tokenStore';
 import { BRIDGE_MODE_STORAGE_KEY, _getFromStorage } from '../utils/storage';
 import { BridgeMode } from '@/const';
-import { addOrRemoveProvider } from '@/store/helpers/massaProviders';
+import { updateProviders } from '@/store/helpers/massaProviders';
 export { useTokenStore } from './tokenStore';
 
 export const useConfigStore = create<ConfigStoreState>((...obj) => ({
@@ -37,7 +37,7 @@ async function initModeStore() {
 
 async function initAccountStore() {
   setInterval(async () => {
-    addOrRemoveProvider();
+    updateProviders();
   }, 1000);
 }
 

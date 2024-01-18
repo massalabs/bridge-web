@@ -1,26 +1,34 @@
+import { useState } from 'react';
 import BearbyWallet from './BearbyWallet';
-import useSelectMassaProvider from './hooks/useSelectMassaProvider';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
-import { Connected } from '@/components';
+import { Connected, Disconnected } from '@/components';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 const MassaWallet = () => {
-  const { selectProvider, resetProvider } = useSelectMassaProvider();
-  const { selectedProvider, providers } = useAccountStore();
+  const { currentProvider, providers, setCurrentProvider } = useAccountStore();
 
-  if (!selectedProvider)
+  // This state is used to check if Bearby is selected but not installed
+  // in this case, currentProvider is undefined
+  const [isBearbySelected, setBearbySelected] = useState(false);
+
+  if (!currentProvider && !isBearbySelected)
     return (
       <SelectMassaWallet
         providerList={providers}
-        onClick={(wallet) => selectProvider(wallet)}
+        onClick={(provider) => {
+          setBearbySelected(provider.name() === SUPPORTED_MASSA_WALLETS.BEARBY);
+          setCurrentProvider(provider);
+        }}
       />
     );
-
   const renderWallet = () => {
-    switch (selectedProvider) {
+    if (isBearbySelected) {
+      return <BearbyWallet />;
+    }
+    switch (currentProvider?.name()) {
       case SUPPORTED_MASSA_WALLETS.MASSASTATION:
         return <StationWallet />;
       case SUPPORTED_MASSA_WALLETS.BEARBY:
@@ -31,8 +39,13 @@ const MassaWallet = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <SwitchWalletButton onClick={() => resetProvider()} />
-        <Connected />
+        <SwitchWalletButton
+          onClick={() => {
+            setBearbySelected(false);
+            setCurrentProvider();
+          }}
+        />
+        {currentProvider ? <Connected /> : <Disconnected />}
       </div>
       {renderWallet()}
     </>

@@ -195,7 +195,8 @@
       "switch": "switch wallet",
       "select-wallet": "Select a wallet:",
       "your-wallet": "Your wallet",
-      "no-wallet": "No wallet found"
+      "no-wallet": "No wallet found",
+      "not-installed": "wallet is not installed."
     },
     "connected-cards": {
       "wallet-balance": "balance: "
