@@ -1,5 +1,6 @@
 import { ConnectedAccount } from './ConnectedAccount';
 import { StationSelectAccount } from './StationSelectAccount';
+import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
 export default function StationWallet() {
@@ -15,17 +16,15 @@ export default function StationWallet() {
           </div>
         ) : (
           <div className="flex flex-col space-y-4 ">
-            {/* TODO: Traduction */}
-            Install wallet and create account
+            MassaStation{' '}
+            {Intl.t('connect-wallet.card-destination.not-detected')}
             <a
-              // TODO: Put the right link
               href="https://docs.massa.net/docs/massaStation/massa-wallet/getting-started"
               target="_blank"
               rel="noreferrer"
               className="text-f-primary underline"
             >
-              {/* TODO: Traduction */}
-              Create an account
+              {Intl.t('connect-wallet.create-wallet')}
             </a>
           </div>
         )}

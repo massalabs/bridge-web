@@ -10,25 +10,24 @@ import { useAccountStore } from '@/store/store';
 const MassaWallet = () => {
   const { currentProvider, providers, setCurrentProvider } = useAccountStore();
 
-  // This state is used to check if Bearby is selected but not installed
-  // in this case, currentProvider is undefined
-  const [isBearbySelected, setBearbySelected] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<
+    SUPPORTED_MASSA_WALLETS | undefined
+  >(undefined);
 
-  if (!currentProvider && !isBearbySelected)
+  if (!selectedProvider)
     return (
       <SelectMassaWallet
-        providerList={providers}
-        onClick={(provider) => {
-          setBearbySelected(provider.name() === SUPPORTED_MASSA_WALLETS.BEARBY);
-          setCurrentProvider(provider);
+        onClick={(providerName) => {
+          setSelectedProvider(providerName);
+          const provider = providers.find((p) => p.name() === providerName);
+          if (provider) {
+            setCurrentProvider(provider);
+          }
         }}
       />
     );
   const renderWallet = () => {
-    if (isBearbySelected) {
-      return <BearbyWallet />;
-    }
-    switch (currentProvider?.name()) {
+    switch (selectedProvider) {
       case SUPPORTED_MASSA_WALLETS.MASSASTATION:
         return <StationWallet />;
       case SUPPORTED_MASSA_WALLETS.BEARBY:
@@ -41,7 +40,7 @@ const MassaWallet = () => {
       <div className="flex justify-between items-center mb-4">
         <SwitchWalletButton
           onClick={() => {
-            setBearbySelected(false);
+            setSelectedProvider(undefined);
             setCurrentProvider();
           }}
         />
