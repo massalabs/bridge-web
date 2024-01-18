@@ -21,8 +21,6 @@ export interface AccountStoreState {
 
   setCurrentProvider: (provider?: IProvider) => void;
   setProviders: (providers: IProvider[]) => void;
-  addProvider: (provider: IProvider) => void;
-  removeProvider: (provider: IProvider) => void;
 
   setConnectedAccount: (account?: IAccount) => void;
   setAvailableAccounts: (accounts: IAccount[]) => void;
@@ -107,27 +105,15 @@ const accountStore = (
 
   setProviders: (providers: IProvider[]) => {
     set({ providers });
-    set({ massaClient: undefined }); // reset the client
-  },
 
-  addProvider: (provider: IProvider) => {
-    const providerList = get().providers;
-    const providerExists = providerList.some(
-      (p) => p.name() === provider.name(),
-    );
-    if (!providerExists) {
-      providerList.push(provider);
-      set({ providers: providerList });
-    }
-  },
-
-  removeProvider: (provider: IProvider) => {
-    const providerList = get().providers;
-    const filteredProviders = providerList.filter(
-      (p) => p.name() !== provider.name(),
-    );
-    if (providerList.length !== filteredProviders.length) {
-      set({ providers: filteredProviders });
+    // if current provider is not in the new list of providers, unset it
+    if (!providers.some((p) => p.name() === get().currentProvider?.name())) {
+      set({
+        massaClient: undefined,
+        currentProvider: undefined,
+        connectedAccount: undefined,
+        accounts: [],
+      });
     }
   },
 
