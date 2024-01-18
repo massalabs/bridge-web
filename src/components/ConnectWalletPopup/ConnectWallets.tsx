@@ -1,25 +1,11 @@
-import { useAccount as useEvmAccount } from 'wagmi';
-
+import { useShowResourceSidePanel } from './ConnectWalletPopup';
 import EvmWallet from './EvmWallets/EvmWallet';
 import MassaWallet from './MassaWallets/MassaWallet';
 import { ResourceSidePanel } from './ResourceSidePanel';
-import { BridgeMode, SUPPORTED_MASSA_WALLETS } from '@/const';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 export function ConnectWallets() {
-  const { isConnected: isEvmWalletConnected } = useEvmAccount();
-  const [providerList] = useAccountStore((state) => [state.providers]);
-
-  const showSepoliaInstruction = !isEvmWalletConnected;
-  const showStationDownload = !providerList.find(
-    (provider) => provider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION,
-  );
-
-  const { currentMode } = useBridgeModeStore();
-
-  const showResourceSidePanel =
-    currentMode === BridgeMode.testnet &&
-    (showSepoliaInstruction || showStationDownload);
+  const { showResourceSidePanel, showSepoliaInstruction, showStationDownload } =
+    useShowResourceSidePanel();
 
   const gridTemplateColumns = showResourceSidePanel ? '2fr 2fr 1fr' : '1fr 1fr';
 
