@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
 import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
-import { IProvider } from '@massalabs/wallet-provider';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
@@ -17,25 +15,17 @@ const walletList = [
 ];
 
 interface SelectMassaWalletProps {
-  providerList: IProvider[];
-  onClick: (provider: IProvider) => void;
+  onClick: (providerName: SUPPORTED_MASSA_WALLETS) => void;
 }
 
-const SelectMassaWallet = ({
-  providerList,
-  onClick,
-}: SelectMassaWalletProps) => {
-  // TODO - Check if this useMemo is still necessary
-  const walletOptions = useMemo(() => {
-    return walletList
-      .filter((wallet) => providerList.some((p) => p.name() === wallet.name))
-      .map((provider) => ({
-        item: provider.name,
-        icon: provider.icon,
-        onClick: () =>
-          onClick(providerList.find((p) => p.name() === provider.name)!),
-      }));
-  }, [providerList]);
+const SelectMassaWallet = ({ onClick }: SelectMassaWalletProps) => {
+  const walletOptions = () => {
+    return walletList.map((provider) => ({
+      item: provider.name,
+      icon: provider.icon,
+      onClick: () => onClick(provider.name),
+    }));
+  };
 
   return (
     <>
@@ -45,7 +35,7 @@ const SelectMassaWallet = ({
         </p>
       </div>
       <div className="w-full">
-        <Dropdown select={0} options={walletOptions} />
+        <Dropdown select={0} options={walletOptions()} />
       </div>
     </>
   );
