@@ -129,17 +129,13 @@ function EVMHeader() {
 }
 
 function MassaHeader() {
-  const [isFetching, accounts, providerList] = useAccountStore((state) => [
-    state.isFetching,
-    state.accounts,
-    state.providers,
-  ]);
-  const [isMainnet] = useBridgeModeStore((state) => [state.isMainnet]);
+  const { isFetching, accounts, currentProvider } = useAccountStore();
+  const { isMainnet } = useBridgeModeStore();
 
-  const hasNoAccounts = accounts?.length <= 0;
+  const hasNoAccounts = !accounts.length;
 
   function displayStatus() {
-    if (providerList.length <= 0) return <Disconnected />;
+    if (!currentProvider) return <Disconnected />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }

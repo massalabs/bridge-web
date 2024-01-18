@@ -1,23 +1,14 @@
 import { ConnectedAccount } from './ConnectedAccount';
 import { StationSelectAccount } from './StationSelectAccount';
-import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { useAccountStore } from '@/store/store';
 
 export default function StationWallet() {
-  const { accounts, providers } = useAccountStore();
-  const isProviderAvailable = providers.find(
-    (provider) => provider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION,
-  );
-
-  if (!isProviderAvailable) {
-    // TODO: Put the right Error message
-    return <div>No provider found ERROR</div>;
-  }
+  const { accounts } = useAccountStore();
 
   return (
     <div className="flex flex-col gap-4">
       <div className="mas-body">
-        {accounts.length > 0 ? (
+        {accounts.length ? (
           <div className="flex flex-col space-y-4 ">
             <StationSelectAccount />
             <ConnectedAccount />
