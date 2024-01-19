@@ -72,6 +72,15 @@ const accountStore = (
         }
       }
 
+      if (!get().networkObserver) {
+        const networkObserver = currentProvider.listenNetworkChanges(
+          (newNetwork: string) => {
+            set({ connectedNetwork: newNetwork });
+          },
+        );
+        set({ networkObserver });
+      }
+
       if (currentProvider?.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {
         if (!get().isBearbyConnected) {
           currentProvider
@@ -114,15 +123,6 @@ const accountStore = (
         }
       } else {
         set({ isBearbyConnected: false });
-      }
-
-      if (!get().networkObserver) {
-        const networkObserver = currentProvider.listenNetworkChanges(
-          (newNetwork: string) => {
-            set({ connectedNetwork: newNetwork });
-          },
-        );
-        set({ networkObserver });
       }
 
       set({ currentProvider });
