@@ -1,10 +1,11 @@
-import { providers } from '@massalabs/wallet-provider';
+import { providers as getProviders } from '@massalabs/wallet-provider';
 import { useAccountStore } from '@/store/store';
 
 export async function updateProviders() {
   const { setProviders } = useAccountStore.getState();
-
-  setProviders(await providers());
+  const providers = await getProviders();
+  setProviders(providers);
+  return providers;
 }
 
 export async function handleBearbyAccountChange(newAddress: string) {
