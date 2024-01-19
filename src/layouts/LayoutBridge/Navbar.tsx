@@ -3,15 +3,24 @@ import {
   Button,
   Dropdown,
   ThemeMode,
+  Theme,
 } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
+import { Banner } from '@/components';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { capitalize } from '@/utils/utils';
 
-export function Navbar({ ...props }) {
+interface NavbarProps {
+  onSetTheme?: (theme: string) => void;
+  setSelectedTheme: (theme: string) => void;
+  selectedTheme: Theme;
+  setOpen: (state: boolean) => void;
+}
+
+export function Navbar(props: NavbarProps) {
   const { onSetTheme, setSelectedTheme, selectedTheme, setOpen } = props;
 
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
@@ -57,36 +66,39 @@ export function Navbar({ ...props }) {
   }
 
   return (
-    <div
-      className="hidden sm:flex flex-row items-center justify-between px-6 
-      py-8 w-full fixed z-10 backdrop-blur-sm"
-    >
-      <div className="flex items-center gap-8 h-fit">
-        <BridgeLogo theme={selectedTheme} />
-        <p className="mas-menu-default text-neutral h-fit">
-          <Link to="/index">Bridge</Link>
-        </p>
-        {isEvmWalletConnected ? (
+    <div className="hidden sm:flex flex-col z-10 w-full">
+      <div
+        className="flex flex-row items-center justify-between px-6 
+      py-8 w-full"
+      >
+        <div className="flex items-center gap-8 h-fit">
+          <BridgeLogo theme={selectedTheme} />
           <p className="mas-menu-default text-neutral h-fit">
-            <Link to="/claim">Claim</Link>
+            <Link to="/index">Bridge</Link>
           </p>
-        ) : null}
+          {isEvmWalletConnected ? (
+            <p className="mas-menu-default text-neutral h-fit">
+              <Link to="/claim">Claim</Link>
+            </p>
+          ) : null}
+        </div>
+        <div className="flex flex-row items-center gap-4">
+          <Dropdown
+            options={availableModes.map((m) => ({
+              item: capitalize(m),
+              onClick: () => setCurrentMode(m),
+            }))}
+            select={availableModes.indexOf(currentMode)}
+          />
+          {isEvmWalletConnected && hasAccounts && connectedAccount ? (
+            <ConnectedWallet />
+          ) : (
+            <NotConnectedWallet />
+          )}
+          <ThemeMode onSetTheme={handleSetTheme} />
+        </div>
       </div>
-      <div className="flex flex-row items-center gap-4">
-        <Dropdown
-          options={availableModes.map((m) => ({
-            item: capitalize(m),
-            onClick: () => setCurrentMode(m),
-          }))}
-          select={availableModes.indexOf(currentMode)}
-        />
-        {isEvmWalletConnected && hasAccounts && connectedAccount ? (
-          <ConnectedWallet />
-        ) : (
-          <NotConnectedWallet />
-        )}
-        <ThemeMode onSetTheme={handleSetTheme} />
-      </div>
+      <Banner textToDisplay={Intl.t('index.top-banner.mainnet-coming-soon')} />
     </div>
   );
 }

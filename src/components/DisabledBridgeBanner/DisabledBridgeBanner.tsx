@@ -4,8 +4,8 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import Intl from '@/i18n/i18n';
 
 export function DisabledBridgeBanner() {
-  const bridgeOff = Intl.t(`index.top-banner.bridge-off`);
-  const redeemOff = Intl.t(`index.top-banner.redeem-off`);
+  const bridgeOff = Intl.t('index.top-banner.bridge-off');
+  const redeemOff = Intl.t('index.top-banner.redeem-off');
 
   return (
     (BRIDGE_OFF || REDEEM_OFF) && (
