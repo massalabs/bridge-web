@@ -27,7 +27,7 @@ export function MainLayout({ ...props }) {
         selectedTheme={selectedTheme}
         setOpen={setOpen}
       />
-      <div className="hidden sm:flex flex-col justify-center items-center pt-32 pb-10">
+      <div className="hidden sm:flex flex-col justify-center items-center pt-8 pb-10">
         <DisabledBridgeBanner />
         {children}
       </div>
