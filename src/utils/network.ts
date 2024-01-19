@@ -12,7 +12,7 @@ export const MassaNetworks = {
 // function that validate the connected network is the right one
 export function validateEvmNetwork(
   isMainnet: boolean,
-  evmChainId: number,
+  evmChainId?: number,
 ): boolean {
   if (isMainnet) {
     return evmChainId === ETH_MAINNET_CHAIN_ID;
@@ -23,7 +23,7 @@ export function validateEvmNetwork(
 
 export function validateMassaNetwork(
   isMainnet: boolean,
-  massaNetwork: string,
+  massaNetwork?: string,
 ): boolean {
   if (isMainnet) {
     return massaNetwork === MassaNetworks.mainnet;

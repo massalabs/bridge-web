@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MassaLogo } from '@massalabs/react-ui-kit';
 import BearbyWallet from './BearbyWallet';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
+import { validateMassaNetwork } from '../../../utils/network';
 import { BearbySvg } from '@/assets/BearbySvg';
-import { Connected, Disconnected } from '@/components';
+import { Connected, Disconnected, WrongChain } from '@/components';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 const MassaWallet = () => {
   const {
@@ -16,11 +17,18 @@ const MassaWallet = () => {
     providers,
     setCurrentProvider,
     isFetching,
+    connectedNetwork,
   } = useAccountStore();
+  const { isMainnet } = useBridgeModeStore();
 
   const [selectedProvider, setSelectedProvider] = useState<
     SUPPORTED_MASSA_WALLETS | undefined
   >(currentProvider?.name() as SUPPORTED_MASSA_WALLETS);
+
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+  useEffect(() => {
+    setWrongNetwork(!validateMassaNetwork(isMainnet, connectedNetwork));
+  }, [isMainnet, connectedNetwork]);
 
   if (!selectedProvider || isFetching)
     return (
@@ -69,8 +77,12 @@ const MassaWallet = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center mb-4">
           {renderSelectedWallet()}
-          {currentProvider && connectedAccount ? (
-            <Connected />
+          {connectedAccount ? (
+            wrongNetwork ? (
+              <WrongChain />
+            ) : (
+              <Connected />
+            )
           ) : (
             <Disconnected />
           )}
