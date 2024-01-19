@@ -8,7 +8,7 @@ import {
 } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
 
-import { ConnectWalletPopup, Footer } from '@/components';
+import { Banner, ConnectWalletPopup, Footer } from '@/components';
 import { TopBanner } from '@/components/TopBanner/TopBanner';
 import { NETWORKS } from '@/const';
 import Intl from '@/i18n/i18n';
@@ -88,24 +88,26 @@ export function LayoutBridge({ ...props }) {
       from-bright-blue to-deep-blue to-60% overflow-auto w-full min-h-screen
       "
     >
-      <div
-        className="hidden sm:flex flex-row items-center justify-between px-6 
-      py-8 w-full fixed z-10 backdrop-blur-sm"
-      >
-        <BridgeLogo theme={selectedTheme} />
-        <div className="flex flex-row items-center gap-4">
-          <Dropdown
-            readOnly={true}
-            options={options}
-            select={NETWORKS.indexOf(currentNetwork ?? '')}
-          />
-          {isEvmWalletConnected && hasAccounts && isStationInstalled ? (
-            <ConnectedWallet />
-          ) : (
-            <NotConnectedWallet />
-          )}
-          <ThemeMode onSetTheme={handleSetTheme} />
+      <div className="hidden sm:flex flex-col w-full fixed z-10 backdrop-blur-sm">
+        <div className="flex flex-row px-6 py-8  items-center justify-between  w-full">
+          <BridgeLogo theme={selectedTheme} />
+          <div className="flex flex-row items-center gap-4">
+            <Dropdown
+              readOnly={true}
+              options={options}
+              select={NETWORKS.indexOf(currentNetwork ?? '')}
+            />
+            {isEvmWalletConnected && hasAccounts && isStationInstalled ? (
+              <ConnectedWallet />
+            ) : (
+              <NotConnectedWallet />
+            )}
+            <ThemeMode onSetTheme={handleSetTheme} />
+          </div>
         </div>
+        <Banner
+          textToDisplay={Intl.t('index.top-banner.mainnet-coming-soon')}
+        />
       </div>
       <div className="hidden sm:flex flex-col justify-center items-center pt-32 pb-10 ">
         <TopBanner />

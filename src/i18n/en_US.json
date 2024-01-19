@@ -22,7 +22,8 @@
   "index": {
     "top-banner": {
       "bridge-off": "The Bridge process is temporarily down but you can still Redeem tokens. We expect to be back running soon!",
-      "redeem-off": "The Redeem process is temporarily down but you can still Bridge tokens. We expect to be back running soon!"
+      "redeem-off": "The Redeem process is temporarily down but you can still Bridge tokens. We expect to be back running soon!",
+      "mainnet-coming-soon": "Massa Bridge on Mainnet is coming soon!"
     },
     "footer": {
       "tos": "Terms of Service",
