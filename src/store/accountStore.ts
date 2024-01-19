@@ -3,8 +3,11 @@ import { IAccount, IProvider } from '@massalabs/wallet-provider';
 import { useTokenStore } from './tokenStore';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { handleBearbyAccountChange } from '@/store/helpers/massaProviders';
-import { BRIDGE_ACCOUNT_ADDRESS } from '@/utils/const';
-import { _getFromStorage, _setInStorage } from '@/utils/storage';
+import {
+  LAST_USED_ACCOUNT,
+  _getFromStorage,
+  _setInStorage,
+} from '@/utils/storage';
 
 export interface AccountStoreState {
   connectedAccount?: IAccount;
@@ -58,6 +61,15 @@ const accountStore = (
       if (!currentProvider) {
         set({ currentProvider, connectedAccount: undefined, accounts: [] });
         return;
+      }
+
+      let lastUsedAccount = '';
+      const storedAccount = _getFromStorage(LAST_USED_ACCOUNT);
+      if (storedAccount) {
+        const { provider, address } = JSON.parse(storedAccount);
+        if (provider === currentProvider?.name()) {
+          lastUsedAccount = address;
+        }
       }
 
       if (currentProvider?.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {
@@ -119,11 +131,9 @@ const accountStore = (
         .accounts()
         .then((accounts) => {
           get().setAvailableAccounts(accounts);
-          const storedAccount = _getFromStorage(
-            BRIDGE_ACCOUNT_ADDRESS + currentProvider?.name(),
-          );
+
           const selectedAccount =
-            accounts.find((account) => account.address() === storedAccount) ||
+            accounts.find((account) => account.address() === lastUsedAccount) ||
             accounts[0];
           get().setConnectedAccount(selectedAccount);
         })
@@ -159,8 +169,11 @@ const accountStore = (
     if (connectedAccount) {
       const provider = get().currentProvider!;
       _setInStorage(
-        BRIDGE_ACCOUNT_ADDRESS + provider?.name(),
-        connectedAccount.address(),
+        LAST_USED_ACCOUNT,
+        JSON.stringify({
+          provider: provider?.name(),
+          address: connectedAccount.address(),
+        }),
       );
       useTokenStore.getState().refreshBalances();
       // update the massa client with the new account

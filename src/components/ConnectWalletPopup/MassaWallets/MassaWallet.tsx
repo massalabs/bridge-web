@@ -20,7 +20,7 @@ const MassaWallet = () => {
 
   const [selectedProvider, setSelectedProvider] = useState<
     SUPPORTED_MASSA_WALLETS | undefined
-  >(undefined);
+  >(currentProvider?.name() as SUPPORTED_MASSA_WALLETS);
 
   if (!selectedProvider || isFetching)
     return (
