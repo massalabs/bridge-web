@@ -29,7 +29,7 @@
     "@inrupt/jest-jsdom-polyfills": "^2.5.0",
     "@massalabs/massa-web3": "^3.0.3-dev",
     "@massalabs/react-ui-kit": "^0.0.4-dev",
-    "@massalabs/wallet-provider": "^1.5.2-dev.20240116123440",
+    "@massalabs/wallet-provider": "^1.5.2-dev",
     "@rainbow-me/rainbowkit": "^1.0.7",
     "@tanstack/react-query": "^4.29.5",
     "@types/jsdom": "^21.1.5",

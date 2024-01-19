@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
@@ -9,9 +9,6 @@ import {
   useSwitchNetwork,
   useToken,
 } from 'wagmi';
-
-import { MassaNetworks } from '../../../../utils/network';
-import { capitalize } from '../../../../utils/utils';
 import {
   FetchingLine,
   FetchingStatus,
@@ -29,9 +26,19 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { IToken } from '@/store/tokenStore';
-import { MASSA_TO_EVM, SEPOLIA_CHAIN_ID } from '@/utils/const';
+import {
+  ETH_MAINNET_CHAIN_ID,
+  MASSA_TO_EVM,
+  SEPOLIA_CHAIN_ID,
+} from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
+import {
+  MassaNetworks,
+  validateEvmNetwork,
+  validateMassaNetwork,
+} from '@/utils/network';
 import { formatAmount } from '@/utils/parseAmount';
+import { capitalize } from '@/utils/utils';
 
 interface Layout {
   header: ReactNode;
@@ -47,7 +54,7 @@ export interface IIcons {
 
 const iconsNetworks = {
   MASSASTATION: <MassaLogo size={40} />,
-  SEPOLIA: <BsDiamondHalf size={40} />,
+  ETHEREUM: <BsDiamondHalf size={40} />,
 };
 
 const iconsTokens: IIcons = {
@@ -87,37 +94,33 @@ function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
 }
 
 function EVMHeader() {
-  const { chain, chains } = useNetwork();
+  const { chain } = useNetwork();
   const { isConnected } = useAccount();
+  const { isMainnet } = useBridgeModeStore();
 
-  const [isFetching] = useAccountStore((state) => [state.isFetching]);
-
-  const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+  useEffect(() => {
+    setWrongNetwork(!validateEvmNetwork(isMainnet, chain?.id));
+  }, [isMainnet, chain]);
 
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
         <Dropdown
-          readOnly={!isConnected || isFetching || !IS_EVM_SEPOLIA_CHAIN}
-          options={
-            chains.length
-              ? chains.map((chain: { name: string }) => ({
-                  item: chain.name + ' Testnet',
-                  icon: iconsNetworks['SEPOLIA'],
-                }))
-              : [
-                  {
-                    icon: iconsNetworks['SEPOLIA'],
-                    item: 'Sepolia Testnet',
-                  },
-                ]
-          }
+          readOnly={true}
+          options={[
+            {
+              // todo add icons if we want to support different chains
+              icon: iconsNetworks.ETHEREUM,
+              item: isMainnet ? 'Ethereum Mainnet' : 'Sepolia Testnet',
+            },
+          ]}
         />
       </div>
       <div className="flex items-center gap-3">
         <p className="mas-body">Metamask</p>
         {isConnected ? (
-          !IS_EVM_SEPOLIA_CHAIN && isConnected ? (
+          wrongNetwork ? (
             <WrongChain />
           ) : (
             <Connected />
@@ -131,13 +134,21 @@ function EVMHeader() {
 }
 
 function MassaHeader() {
-  const { isFetching, accounts, currentProvider } = useAccountStore();
+  const { isFetching, accounts, currentProvider, connectedNetwork } =
+    useAccountStore();
   const { isMainnet } = useBridgeModeStore();
+
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+  useEffect(() => {
+    setWrongNetwork(!validateMassaNetwork(isMainnet, connectedNetwork));
+  }, [isMainnet, connectedNetwork]);
 
   const hasNoAccounts = !accounts.length;
 
   function displayStatus() {
-    if (!currentProvider) return <Disconnected />;
+    if (isFetching) return <FetchingStatus />;
+    else if (!currentProvider) return <Disconnected />;
+    else if (wrongNetwork) return <WrongChain />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }
@@ -159,7 +170,7 @@ function MassaHeader() {
       </div>
       <div className="flex items-center gap-3">
         <p className="mas-body">Massa</p>
-        {isFetching ? <FetchingStatus /> : displayStatus()}
+        {displayStatus()}
       </div>
     </div>
   );
@@ -169,18 +180,23 @@ function EVMMiddle() {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
   const { address, isConnected } = useAccount();
+  const { isMainnet } = useBridgeModeStore();
 
-  const IS_NOT_EVM_SEPOLIA_CHAIN =
-    chain?.id !== SEPOLIA_CHAIN_ID && isConnected;
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+  useEffect(() => {
+    setWrongNetwork(!validateEvmNetwork(isMainnet, chain?.id));
+  }, [isMainnet, chain]);
 
   return (
     <div>
-      {IS_NOT_EVM_SEPOLIA_CHAIN ? (
+      {isConnected && wrongNetwork ? (
         <div
           className="flex justify-end mas-h3 text-f-disabled-1 underline cursor-pointer"
-          onClick={() => switchNetwork?.(SEPOLIA_CHAIN_ID)}
+          onClick={() =>
+            switchNetwork?.(isMainnet ? ETH_MAINNET_CHAIN_ID : SEPOLIA_CHAIN_ID)
+          }
         >
-          {Intl.t(`connect-wallet.connect-metamask.switch-network`)}
+          {Intl.t('connect-wallet.connect-metamask.switch-network')}
         </div>
       ) : null}
       <div className="mt-4 mb-4 flex items-center gap-2">
