@@ -11,7 +11,7 @@ const ConnectEvmWallet = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex gap-2 items-center mb-4">
         <p className="mas-body">
           {Intl.t('connect-wallet.card-destination.from')}
         </p>
