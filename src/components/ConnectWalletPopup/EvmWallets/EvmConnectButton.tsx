@@ -78,7 +78,7 @@ export default function EvmConnectButton(): JSX.Element {
                       className="bg-secondary rounded-lg hover:bg-tertiary h-14 gap-5 w-full"
                       posIcon={<FiEdit size={14} />}
                     >
-                      {account.displayName}&nbsp;&nbsp;&nbsp;
+                      {account.displayName}
                     </Button>
                   </div>
                   <div className="mas-body">

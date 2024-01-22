@@ -200,6 +200,8 @@
       "not-installed": "wallet is not installed.",
       "not-detected": "wallet is not detected."
     },
+    "MASSASTATION": "MassaWallet",
+    "BEARBY": "Bearby",
     "connected-cards": {
       "wallet-balance": "balance: "
     },

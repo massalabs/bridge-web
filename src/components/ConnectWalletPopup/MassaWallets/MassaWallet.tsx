@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MassaLogo } from '@massalabs/react-ui-kit';
+import { MassaWallet as MassaWalletLogo } from '@massalabs/react-ui-kit';
 import BearbyWallet from './BearbyWallet';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
@@ -8,6 +8,7 @@ import { validateMassaNetwork } from '../../../utils/network';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { Connected, Disconnected, WrongChain } from '@/components';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
+import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 const MassaWallet = () => {
@@ -48,6 +49,9 @@ const MassaWallet = () => {
         return <StationWallet />;
       case SUPPORTED_MASSA_WALLETS.BEARBY:
         return <BearbyWallet />;
+      default:
+        // Should not happen
+        return <>Error: no wallet selected</>;
     }
   };
 
@@ -57,8 +61,8 @@ const MassaWallet = () => {
         // TODO: change it to Massa Wallet Plugin logo
         return (
           <>
-            <MassaLogo size={28} />
-            {SUPPORTED_MASSA_WALLETS.MASSASTATION}
+            <MassaWalletLogo size={28} />
+            {Intl.t(`connect-wallet.${SUPPORTED_MASSA_WALLETS.MASSASTATION}`)}
           </>
         );
       case SUPPORTED_MASSA_WALLETS.BEARBY:
@@ -66,7 +70,7 @@ const MassaWallet = () => {
         return (
           <>
             <BearbySvg />
-            {SUPPORTED_MASSA_WALLETS.BEARBY}
+            {Intl.t(`connect-wallet.${SUPPORTED_MASSA_WALLETS.BEARBY}`)}
           </>
         );
     }
