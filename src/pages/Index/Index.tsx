@@ -3,14 +3,12 @@ import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import {
   useAccount,
-  useNetwork,
   useWaitForTransaction,
   useToken,
   useContractEvent,
 } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
-import { validateEvmNetwork, validateMassaNetwork } from '../../utils/network';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
@@ -22,6 +20,7 @@ import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -31,8 +30,7 @@ import {
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
 
 export function Index() {
-  const { massaClient, connectedAccount, isFetching, connectedNetwork } =
-    useAccountStore();
+  const { massaClient, connectedAccount, isFetching } = useAccountStore();
 
   const { selectedToken, refreshBalances } = useTokenStore();
 
@@ -40,8 +38,6 @@ export function Index() {
     state.isMainnet,
     state.currentMode,
   ]);
-
-  const { chain: evmConnectedChain } = useNetwork();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -90,6 +86,8 @@ export function Index() {
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
+  useNetworkCheck(setWrongNetwork);
+
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
   const isLoading = loading.box !== 'none' ? true : false;
@@ -126,25 +124,6 @@ export function Index() {
     setError({ amount: '' });
     setDecimals(tokenData?.decimals || 18);
   }, [amount, layout, selectedToken?.name, tokenData?.decimals]);
-
-  useEffect(() => {
-    if (
-      evmConnectedChain &&
-      !validateEvmNetwork(isMainnet, evmConnectedChain.id)
-    ) {
-      toast.error(Intl.t('connect-wallet.wrong-evm-chain'));
-      setWrongNetwork(true);
-    } else if (
-      connectedNetwork &&
-      !validateMassaNetwork(isMainnet, connectedNetwork)
-    ) {
-      toast.error(Intl.t('connect-wallet.wrong-massa-chain'));
-      setWrongNetwork(true);
-    } else {
-      toast.dismiss();
-      setWrongNetwork(false);
-    }
-  }, [evmConnectedChain, currentMode, connectedNetwork]);
 
   useEffect(() => {
     setAmount('');
