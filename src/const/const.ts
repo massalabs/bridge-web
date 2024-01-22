@@ -58,7 +58,7 @@ export const increaseAllowanceFee = {
   maxGas: 100_000_000n,
 };
 
-export const supportedtokens = {
+export const supportedTokens = {
   tDai: 'tDAI',
   WETH: 'WETH',
 };

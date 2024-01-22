@@ -1,4 +1,4 @@
-import { Dropdown, MassaLogo } from '@massalabs/react-ui-kit';
+import { Dropdown, MassaWallet } from '@massalabs/react-ui-kit';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { Disconnected } from '@/components';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
@@ -7,7 +7,7 @@ import Intl from '@/i18n/i18n';
 const walletList = [
   {
     name: SUPPORTED_MASSA_WALLETS.MASSASTATION,
-    icon: <MassaLogo size={32} />,
+    icon: <MassaWallet size={32} />,
   },
   {
     name: SUPPORTED_MASSA_WALLETS.BEARBY,
@@ -22,7 +22,7 @@ interface SelectMassaWalletProps {
 const SelectMassaWallet = ({ onClick }: SelectMassaWalletProps) => {
   const walletOptions = () => {
     return walletList.map((provider) => ({
-      item: provider.name,
+      item: Intl.t(`connect-wallet.${provider.name}`),
       icon: provider.icon,
       onClick: () => onClick(provider.name),
     }));
