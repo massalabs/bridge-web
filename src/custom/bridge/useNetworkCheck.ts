@@ -26,13 +26,11 @@ export function useNetworkCheck(
       evmConnectedChain &&
       !validateEvmNetwork(isMainnet, evmConnectedChain.id)
     ) {
-      console.log('toast evm');
       setToastIdEvm(
         toast.error(Intl.t('connect-wallet.wrong-evm-chain'), { id: 'evm' }),
       );
       setWrongNetwork(true);
     } else {
-      console.log('dismiss evm');
       toast.dismiss(toastIdEvm);
       evmOk = true;
     }
@@ -51,7 +49,6 @@ export function useNetworkCheck(
       );
       setWrongNetwork(true);
     } else {
-      console.log('dismiss massa');
       toast.dismiss(toastIdMassa);
       massaOk = true;
     }

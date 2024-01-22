@@ -58,7 +58,6 @@ const MassaWallet = () => {
   const renderSelectedWallet = () => {
     switch (selectedProvider) {
       case SUPPORTED_MASSA_WALLETS.MASSASTATION:
-        // TODO: change it to Massa Wallet Plugin logo
         return (
           <>
             <MassaWalletLogo size={28} />
@@ -66,7 +65,6 @@ const MassaWallet = () => {
           </>
         );
       case SUPPORTED_MASSA_WALLETS.BEARBY:
-        // TODO: check if we need to update Bearby logo
         return (
           <>
             <BearbySvg />
