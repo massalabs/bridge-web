@@ -2,6 +2,7 @@ export const MASSA_WALLET = 'Massa Wallet';
 export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
 export const MASSA_STATION = 'MASSASTATION';
 export const MASSA = 'Massa';
+export const ETHEREUM = 'Ethereum';
 export const METAMASK = 'Metamask';
 // SMART CONTRACTS ADDRESSES
 

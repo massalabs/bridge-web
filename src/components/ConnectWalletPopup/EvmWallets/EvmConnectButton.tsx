@@ -1,6 +1,5 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { BsDiamondHalf } from 'react-icons/bs';
 import { FiEdit } from 'react-icons/fi';
 
 import { MetaMaskSvg } from '@/assets';
@@ -73,26 +72,14 @@ export default function EvmConnectButton(): JSX.Element {
               return (
                 <>
                   <div className="flex w-full gap-4">
-                    <div className="min-w-[50%]">
-                      <Button
-                        variant="secondary"
-                        customClass="h-14 border-0 bg-secondary hover:bg-tertiary"
-                        onClick={openChainModal}
-                        preIcon={<BsDiamondHalf size={40} />}
-                      >
-                        {chain.name}
-                      </Button>
-                    </div>
-                    <div className="min-w-[50%] pr-4">
-                      <Button
-                        onClick={openAccountModal}
-                        type="button"
-                        className="bg-secondary rounded-lg hover:bg-tertiary h-14 gap-5 w-full"
-                        posIcon={<FiEdit size={14} />}
-                      >
-                        {account.displayName}&nbsp;&nbsp;&nbsp;
-                      </Button>
-                    </div>
+                    <Button
+                      onClick={openAccountModal}
+                      type="button"
+                      className="bg-secondary rounded-lg hover:bg-tertiary h-14 gap-5 w-full"
+                      posIcon={<FiEdit size={14} />}
+                    >
+                      {account.displayName}&nbsp;&nbsp;&nbsp;
+                    </Button>
                   </div>
                   <div className="mas-body">
                     {account.displayBalance

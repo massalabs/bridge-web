@@ -37,7 +37,12 @@ const SelectMassaWallet = ({ onClick }: SelectMassaWalletProps) => {
         <Disconnected />
       </div>
       <div className="w-full">
-        <Dropdown select={0} options={walletOptions()} />
+        <Dropdown
+          options={walletOptions()}
+          defaultItem={{
+            item: Intl.t('connect-wallet.card-destination.select-wallet'),
+          }}
+        />
       </div>
     </>
   );

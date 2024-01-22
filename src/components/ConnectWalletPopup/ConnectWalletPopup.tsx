@@ -6,7 +6,7 @@ import {
 import { useAccount as useEvmAccount } from 'wagmi';
 
 import { ConnectWallets } from './ConnectWallets';
-import { BridgeMode, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { BridgeMode, ETHEREUM, MASSA, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
@@ -36,6 +36,8 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
 
   const { showResourceSidePanel } = useShowResourceSidePanel();
 
+  const networks = { network1: ETHEREUM, network2: MASSA };
+
   return (
     <PopupModal
       customClass={`max-w-4xl ${showResourceSidePanel ? 'w-1/3' : 'w-2/6'}`}
@@ -48,7 +50,9 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
           <label className="mas-title mb-4">
             {Intl.t('connect-wallet.title')}
           </label>
-          <div className="mas-body">{Intl.t('connect-wallet.description')}</div>
+          <div className="mas-body">
+            {Intl.t('connect-wallet.description', networks)}
+          </div>
         </div>
       </PopupModalHeader>
       <PopupModalContent>
