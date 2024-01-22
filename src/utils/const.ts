@@ -15,10 +15,14 @@ export enum loadingStates {
   none = 'none',
 }
 
-export const MASSA_STATION_INSTALL = 'https://station.massa.net/';
-export const MASSA_STATION_URL = 'https://station.massa';
-export const linkToCreateAccount =
-  'https://station.massa/plugin/massa-labs/massa-wallet/web-app/index';
+export const MASSA_STATION_INSTALL = 'https://station.massa.net';
+export const MASSA_STATION_PING = 'https://station.massa/web/index';
+export const MASSA_WALLET_PING =
+  'https://station.massa/plugin/massa-labs/massa-wallet/api/accounts';
+export const MASSA_STATION_STORE = 'https://station.massa/web/store';
+export const MASSA_WALLET_CREATE_ACCOUNT =
+  'http://station.massa/plugin/massa-labs/massa-wallet/web-app/account-create';
+export const BEARBY_INSTALL = 'https://bearby.io';
 
 export const BRIDGE = 'bridge';
 export const APPROVE = 'approve';

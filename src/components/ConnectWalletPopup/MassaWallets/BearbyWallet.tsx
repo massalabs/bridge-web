@@ -1,8 +1,10 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
 
 import { ConnectedAccount } from './ConnectedAccount';
+import { WalletError } from './WalletError';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
+import { BEARBY_INSTALL } from '@/utils/const';
 
 export default function BearbyWallet() {
   const { connectedAccount } = useAccountStore();
@@ -23,9 +25,13 @@ export default function BearbyWallet() {
             />
           </div>
         ) : (
-          <div className="mas-body">
-            Bearby {Intl.t('connect-wallet.card-destination.not-installed')}
-          </div>
+          <WalletError
+            description={Intl.t(
+              'connect-wallet.card-destination.bearby-not-installed',
+            )}
+            link={BEARBY_INSTALL}
+            linkLabel={Intl.t('connect-wallet.card-destination.get-bearby')}
+          />
         )}
       </div>
       {connectedAccount && <ConnectedAccount />}

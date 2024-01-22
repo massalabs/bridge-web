@@ -184,7 +184,6 @@
   },
   "connect-wallet": {
     "download-massa": "Download Massa Wallet",
-    "create-wallet": "Create a Massa Wallet",
     "title": "Connect wallets",
     "connected": "Connected wallets",
     "description": "Connect wallets from {network1} and {network2}, to bridge tokens.",
@@ -197,7 +196,14 @@
       "select-wallet": "Select wallet",
       "your-wallet": "Your wallet",
       "no-wallet": "No wallet found",
-      "not-installed": "wallet is not installed.",
+      "bearby-not-installed": "Bearby extension is either turned off or not installed. Make sure the extension is on and refresh the page.",
+      "get-bearby": "Get Bearby here",
+      "massa-station-not-detected": "Massa Station desktop app is not detected. Make sure the app is opened, or click below to install it.",
+      "get-massa-station": "Get Massa Station",
+      "massa-wallet-not-detected": "Massa Wallet is not detected. Make sure the plugin is installed, or click below to install it.",
+      "get-massa-wallet": "Get Massa Wallet",
+      "massa-wallet-no-account": "No wallet accounts found in Massa Wallet.",
+      "massa-wallet-create-account": "Create an account",
       "not-detected": "wallet is not detected."
     },
     "MASSASTATION": "MassaWallet",
