@@ -3,10 +3,11 @@ import { useEffect } from 'react';
 import { Toast } from '@massalabs/react-ui-kit';
 import { Outlet, useNavigate } from 'react-router-dom';
 
+import { BridgeMode } from '@/const';
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
 import { useLocalStorage } from '@/custom/useLocalStorage';
 import { MainLayout } from '@/layouts/LayoutBridge/MainLayout';
-import { useConfigStore } from '@/store/store';
+import { useBridgeModeStore, useConfigStore } from '@/store/store';
 
 export interface IOutletContextType {
   themeIcon: JSX.Element;
@@ -26,6 +27,7 @@ export function Base() {
 
   // Store
   const setThemeStore = useConfigStore((s) => s.setTheme);
+  const { currentMode } = useBridgeModeStore();
 
   // Functions
   function handleSetTheme() {
@@ -45,9 +47,12 @@ export function Base() {
     }
   }, [navigate]);
 
+  const themeClassName =
+    theme + (currentMode === BridgeMode.mainnet ? '' : '-testnet');
+
   // Template
   return (
-    <div className={theme}>
+    <div className={themeClassName}>
       <MainLayout onSetTheme={handleSetTheme} storedTheme={theme}>
         <Outlet />
         <Toast />

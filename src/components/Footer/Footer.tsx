@@ -5,7 +5,11 @@ import { MassaIconSvg, MassaStationIconSvg } from '@/assets';
 import Intl from '@/i18n/i18n';
 
 interface FooterProps {
-  selectedTheme: 'theme-light' | 'theme-dark' | undefined;
+  selectedTheme:
+    | 'theme-light'
+    | 'theme-dark'
+    | 'theme-light-testnet'
+    | 'theme-dark-testnet';
 }
 
 export function Footer(props: FooterProps) {
