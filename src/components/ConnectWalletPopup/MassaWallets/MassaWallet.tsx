@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { MassaWallet as MassaWalletLogo } from '@massalabs/react-ui-kit';
+import {
+  MassaWallet as MassaWalletLogo,
+  Tooltip,
+} from '@massalabs/react-ui-kit';
 import BearbyWallet from './BearbyWallet';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
@@ -77,7 +80,7 @@ const MassaWallet = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <div className="flex gap-2 items-center mb-4">
+        <div className="flex gap-2 items-center">
           {renderSelectedWallet()}
           {connectedAccount ? (
             wrongNetwork ? (
@@ -87,6 +90,14 @@ const MassaWallet = () => {
             )
           ) : (
             <Disconnected />
+          )}
+          {selectedProvider === SUPPORTED_MASSA_WALLETS.BEARBY && (
+            <Tooltip
+              customClass="mas-caption w-fit whitespace-nowrap"
+              content={Intl.t(
+                'connect-wallet.card-destination.non-massa-wallet',
+              )}
+            />
           )}
         </div>
         <SwitchWalletButton

@@ -1,5 +1,4 @@
-import { Tooltip } from '@massalabs/react-ui-kit';
-
+import { Balance } from './Balance';
 import { ConnectedAccount } from './ConnectedAccount';
 import { WalletError } from './WalletError';
 import Intl from '@/i18n/i18n';
@@ -9,32 +8,22 @@ import { BEARBY_INSTALL } from '@/utils/const';
 export default function BearbyWallet() {
   const { connectedAccount } = useAccountStore();
 
-  return (
-    <>
-      <div className="flex justify-between items-center mb-4">
-        {connectedAccount ? (
-          <div className="flex items-center">
-            <div className="mas-body">
-              Bearby {Intl.t('connect-wallet.card-destination.to')}
-            </div>
-            <Tooltip
-              customClass="mas-caption w-fit whitespace-nowrap"
-              content={Intl.t(
-                'connect-wallet.card-destination.non-massa-wallet',
-              )}
-            />
-          </div>
-        ) : (
-          <WalletError
-            description={Intl.t(
-              'connect-wallet.card-destination.bearby-not-installed',
-            )}
-            link={BEARBY_INSTALL}
-            linkLabel={Intl.t('connect-wallet.card-destination.get-bearby')}
-          />
-        )}
+  if (connectedAccount) {
+    return (
+      <div className="flex flex-col gap-4 mas-body">
+        <ConnectedAccount />
+        <Balance />
       </div>
-      {connectedAccount && <ConnectedAccount />}
-    </>
+    );
+  }
+
+  return (
+    <WalletError
+      description={Intl.t(
+        'connect-wallet.card-destination.bearby-not-installed',
+      )}
+      link={BEARBY_INSTALL}
+      linkLabel={Intl.t('connect-wallet.card-destination.get-bearby')}
+    />
   );
 }
