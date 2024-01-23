@@ -35,7 +35,7 @@ export const useOperationStore = create<OperationStoreState>((set, get) => ({
 function initConfigStore() {
   const theme = _getFromStorage(BRIDGE_THEME_STORAGE_KEY) as string;
 
-  useConfigStore.getState().setTheme(theme ?? 'theme-dark');
+  useConfigStore.getState().setTheme(theme === '' ? 'theme-dark' : theme);
 }
 
 async function initModeStore() {

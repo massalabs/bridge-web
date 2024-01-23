@@ -70,7 +70,7 @@ module.exports = {
         neutral: colorDarkBlue,
         info: colorLightBlue,
         'deep-blue': colorWhite,
-        'bright-blue': colorGradientLightBlue,
+        'bright-blue': colorDarkGrey, // changed
         // states:
         's-success': colorGreen,
         's-error': colorError,
@@ -136,7 +136,7 @@ module.exports = {
         neutral: colorWhite,
         info: colorDarkGrey,
         'deep-blue': colorDeepBlue,
-        'bright-blue': colorWhite,
+        'bright-blue': colorWhite, // changed
         // states:
         's-success': colorGreen,
         's-error': colorError,

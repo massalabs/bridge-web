@@ -32,7 +32,8 @@ export function Base() {
   }, [navigate]);
 
   const themeClassName =
-    theme.replace('theme-', '') + (currentMode === BridgeMode.mainnet ? '' : '-testnet');
+    theme.replace('theme-', '') +
+    (currentMode === BridgeMode.mainnet ? '' : '-testnet');
 
   // Template
   return (
