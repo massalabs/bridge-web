@@ -2,9 +2,9 @@ import { SvgProps } from '.';
 
 /* eslint-disable max-len */
 export function MassaStationIconSvg(props: SvgProps) {
-  const { selectedTheme } = props;
+  const { theme } = props;
 
-  return selectedTheme === 'theme-dark' ? (
+  return theme === 'theme-dark' ? (
     <svg
       width="16"
       height="17"

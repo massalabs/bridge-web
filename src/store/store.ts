@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import accountStore, { AccountStoreState } from './accountStore';
-import configStore, { ConfigStoreState } from './configStore';
+import configStore, {
+  BRIDGE_THEME_STORAGE_KEY,
+  ConfigStoreState,
+} from './configStore';
 import modeStore, { ModeStoreState } from './modeStore';
 import operationStore, { OperationStoreState } from './operationStore';
 import { useTokenStore } from './tokenStore';
@@ -28,6 +31,12 @@ export const useBridgeModeStore = create<ModeStoreState>((set, get) => ({
 export const useOperationStore = create<OperationStoreState>((set, get) => ({
   ...operationStore(set, get),
 }));
+
+function initConfigStore() {
+  const theme = _getFromStorage(BRIDGE_THEME_STORAGE_KEY) as string;
+
+  useConfigStore.getState().setTheme(theme ?? 'theme-dark');
+}
 
 async function initModeStore() {
   let mode = _getFromStorage(BRIDGE_MODE_STORAGE_KEY) as BridgeMode;
@@ -67,6 +76,7 @@ async function initTokenStore() {
 }
 
 async function initializeStores() {
+  initConfigStore();
   await initModeStore();
   await initAccountStore();
   await initTokenStore();

@@ -3,5 +3,5 @@ export * from './MassaIconSvg';
 export * from './MassaStationIconSvg';
 
 export interface SvgProps {
-  selectedTheme: string;
+  theme: string;
 }
