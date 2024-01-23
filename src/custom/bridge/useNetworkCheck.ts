@@ -41,7 +41,6 @@ export function useNetworkCheck(
       connectedNetwork &&
       !validateMassaNetwork(isMainnet, connectedNetwork)
     ) {
-      console.log('toast massa');
       setToastIdMassa(
         toast.error(
           Intl.t('connect-wallet.wrong-massa-chain', { id: 'massa' }),
