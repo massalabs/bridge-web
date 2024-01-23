@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Balance } from './Balance';
 import { ConnectedAccount } from './ConnectedAccount';
 import { StationSelectAccount } from './StationSelectAccount';
 import { WalletError } from './WalletError';
@@ -85,17 +86,20 @@ export default function StationWallet() {
   const error = !stationIsOn || !massaWalletIsOn || !accounts.length;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="mas-body">
-        {!error ? (
-          <div className="flex flex-col space-y-4 ">
+    <div className="flex flex-col gap-4 mas-body">
+      {!error ? (
+        <div className="flex gap-4">
+          <div className="w-1/2">
             <StationSelectAccount />
-            <ConnectedAccount />
           </div>
-        ) : (
-          renderError()
-        )}
-      </div>
+          <div className="w-1/2">
+            <ConnectedAccount maskLength={5} />
+          </div>
+        </div>
+      ) : (
+        renderError()
+      )}
+      <Balance />
     </div>
   );
 }

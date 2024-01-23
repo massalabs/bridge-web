@@ -40,8 +40,10 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
 
   return (
     <PopupModal
-      customClass={`min-w-[470px] max-w-4xl ${
-        showResourceSidePanel ? 'w-1/3' : 'w-2/6'
+      customClass={`${
+        showResourceSidePanel
+          ? 'w-10/12 max-w-[900px]'
+          : 'w-1/3 min-w-[470px] max-w-[700px]'
       }`}
       customClassNested="border border-tertiary bg-secondary/50 backdrop-blur-lg"
       fullMode={true}

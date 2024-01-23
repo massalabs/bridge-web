@@ -21,16 +21,14 @@ export function StationSelectAccount() {
   };
 
   return (
-    <div className="min-w-1/2">
-      <Dropdown
-        select={selectedAccountKey}
-        options={accounts.map((account: IAccount) => {
-          return {
-            item: account.name(),
-            onClick: () => onAccountChange(account),
-          };
-        })}
-      />
-    </div>
+    <Dropdown
+      select={selectedAccountKey}
+      options={accounts.map((account: IAccount) => {
+        return {
+          item: account.name(),
+          onClick: () => onAccountChange(account),
+        };
+      })}
+    />
   );
 }

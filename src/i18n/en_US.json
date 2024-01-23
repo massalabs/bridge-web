@@ -186,7 +186,7 @@
     "download-massa": "Download Massa Wallet",
     "title": "Connect wallets",
     "connected": "Connected wallets",
-    "description": "Connect wallets from {network1} and {network2}, to bridge tokens.",
+    "description": "Connect wallets for {network1} and {network2}, to bridge tokens.",
     "button": "Connect",
     "card-destination": {
       "from": "Ethereum wallet",
