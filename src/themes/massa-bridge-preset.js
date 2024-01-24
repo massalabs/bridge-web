@@ -10,6 +10,7 @@ import {
   colorBasicBlue,
   colorGradientDarkBlue,
   colorGradientLightBlue,
+  colorGradientLightTestnet,
   colorLightBlue,
   colorWarning,
   colorError,
@@ -70,7 +71,7 @@ module.exports = {
         neutral: colorDarkBlue,
         info: colorLightBlue,
         'deep-blue': colorWhite,
-        'bright-blue': colorDarkGrey, // changed
+        'bright-blue': colorGradientLightTestnet, // changed
         // states:
         's-success': colorGreen,
         's-error': colorError,

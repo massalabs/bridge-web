@@ -3,6 +3,7 @@
 import React, { ComponentPropsWithoutRef } from 'react';
 import { BridgeMode } from '@/const';
 import { useBridgeModeStore, useConfigStore } from '@/store/store';
+import { colorDarkBlue, colorInfo, colorWhite } from '@/themes/bridgeColors';
 
 export function BridgeLogo(props: ComponentPropsWithoutRef<'div'>) {
   const { ...rest } = props;
@@ -16,19 +17,19 @@ export function BridgeLogo(props: ComponentPropsWithoutRef<'div'>) {
   // TODO: check if this can be refactored using the color from the theme.
   if (currentMode === BridgeMode.mainnet) {
     if (theme === 'theme-dark') {
-      textColor = '#fff';
-      shapeColor = '#4AB2FF';
+      textColor = colorWhite;
+      shapeColor = colorInfo;
     } else {
-      textColor = '#000';
-      shapeColor = '#4AB2FF';
+      textColor = colorDarkBlue;
+      shapeColor = colorInfo;
     }
   } else {
     if (theme === 'theme-dark') {
-      textColor = '#fff';
-      shapeColor = '#fff';
+      textColor = colorWhite;
+      shapeColor = colorWhite;
     } else {
-      textColor = '#000';
-      shapeColor = '#000';
+      textColor = colorDarkBlue;
+      shapeColor = colorDarkBlue;
     }
   }
 

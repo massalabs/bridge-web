@@ -7,6 +7,7 @@ export const colorDeepBlue = '#0F1322';
 export const colorBasicBlue = '#1D1F30';
 export const colorGradientDarkBlue = '#3271A5';
 export const colorGradientLightBlue = '#AADBFF';
+export const colorGradientLightTestnet = '#3A3D49';
 export const colorLightBlue = '#363A58';
 export const colorWarning = '#FFA41D';
 export const colorError = '#FF4F4F';
