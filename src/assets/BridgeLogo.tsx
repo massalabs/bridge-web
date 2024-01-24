@@ -5,8 +5,12 @@ import { BridgeMode } from '@/const';
 import { useBridgeModeStore, useConfigStore } from '@/store/store';
 import { colorDarkBlue, colorInfo, colorWhite } from '@/themes/bridgeColors';
 
-export function BridgeLogo(props: ComponentPropsWithoutRef<'div'>) {
-  const { ...rest } = props;
+interface BridgeLogoProps extends ComponentPropsWithoutRef<'div'> {
+  customClass?: string;
+}
+
+export function BridgeLogo(props: BridgeLogoProps) {
+  const { customClass, ...rest } = props;
 
   const { theme } = useConfigStore();
   const { currentMode } = useBridgeModeStore();
@@ -34,19 +38,23 @@ export function BridgeLogo(props: ComponentPropsWithoutRef<'div'>) {
   }
 
   return (
-    <div className="w-fit" data-testid="station-logo" {...rest}>
+    <div
+      className={`w-fit ${customClass}`}
+      data-testid="station-logo"
+      {...rest}
+    >
       <BridgeLogoSVG textColor={textColor} shapeColor={shapeColor} />
     </div>
   );
 }
 
-interface BridgeLogoProps {
+interface BridgeLogoSVGProps {
   textColor: string;
   shapeColor: string;
 }
 
 /* eslint-disable max-len */
-function BridgeLogoSVG(props: BridgeLogoProps) {
+function BridgeLogoSVG(props: BridgeLogoSVGProps) {
   const { textColor, shapeColor } = props;
 
   return (

@@ -74,11 +74,11 @@ export function Navbar(props: NavbarProps) {
         <div className="flex items-center gap-8 h-fit">
           <BridgeLogo />
           <p className="mas-menu-default text-neutral h-fit">
-            <Link to="/index">Bridge</Link>
+            <Link to="/index">{Intl.t('index.loading-box.bridge')}</Link>
           </p>
           {isEvmWalletConnected ? (
             <p className="mas-menu-default text-neutral h-fit">
-              <Link to="/claim">Claim</Link>
+              <Link to="/claim">{Intl.t('index.loading-box.claim')}</Link>
             </p>
           ) : null}
         </div>
