@@ -64,10 +64,7 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
 
     let tokenList: IToken[] = [];
     try {
-      const supportedTokens = await getSupportedTokensList(
-        currentMode,
-        massaClient,
-      );
+      const supportedTokens = await getSupportedTokensList();
 
       tokenList = await Promise.all(
         supportedTokens.map(async (tokenPair) => {

@@ -229,14 +229,7 @@ export function Index() {
       if (!massaClient || !selectedToken || !amount) {
         return;
       }
-      const approved = await handleApproveRedeem(
-        currentMode,
-        massaClient,
-        setLoading,
-        selectedToken,
-        amount,
-        decimals,
-      );
+      const approved = await handleApproveRedeem(setLoading, amount);
 
       if (approved) {
         if (!selectedToken || !evmAddress || !amount) {
@@ -244,12 +237,8 @@ export function Index() {
         }
 
         await handleBurnRedeem({
-          mode: currentMode,
-          client: massaClient,
-          token: selectedToken,
           recipient: evmAddress,
           amount,
-          decimals,
           setBurnTxID,
           setLoading,
           setRedeemSteps,

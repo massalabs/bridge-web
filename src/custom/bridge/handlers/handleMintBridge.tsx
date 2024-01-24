@@ -1,38 +1,28 @@
-import { Client } from '@massalabs/massa-web3';
 import { IAccount } from '@massalabs/wallet-provider';
-
 import { ICustomError } from './handleErrorMessage';
+import { useAccountStore } from '../../../store/store';
 import { waitForMintEvent } from '../massa-utils';
-import { BridgeMode, LoadingState } from '@/const';
+import { LoadingState } from '@/const';
 
 export interface MintArgs {
-  mode: BridgeMode;
-  massaClient: Client;
   massaOperationID: string;
-  connectedAccount?: IAccount;
   setLoading: (state: LoadingState) => void;
   refreshBalances: (connectedAccount?: IAccount) => void;
 }
 
 export async function handleMintBridge(args: MintArgs): Promise<boolean> {
-  const {
-    mode,
-    massaClient,
-    massaOperationID,
-    connectedAccount,
-    setLoading,
-    refreshBalances,
-  } = args;
+  const { massaOperationID, setLoading, refreshBalances } = args;
   try {
     setLoading({
       mint: 'loading',
     });
-    const success = await waitForMintEvent(mode, massaClient, massaOperationID);
+    const success = await waitForMintEvent(massaOperationID);
     if (success) {
       setLoading({
         box: 'success',
         mint: 'success',
       });
+      const { connectedAccount } = useAccountStore.getState();
       refreshBalances(connectedAccount);
     }
   } catch (error) {
