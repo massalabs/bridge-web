@@ -23,7 +23,9 @@ const ConnectEvmWallet = () => {
     <>
       <div className="flex gap-2 items-center mb-4">
         <p className="mas-body">
-          {Intl.t('connect-wallet.card-destination.from')}
+          {isConnected
+            ? 'Metamask'
+            : Intl.t('connect-wallet.card-destination.from')}
         </p>
         {isConnected ? (
           wrongNetwork ? (
