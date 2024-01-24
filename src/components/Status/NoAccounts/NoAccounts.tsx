@@ -5,6 +5,6 @@ import { tagTypes } from '@/utils/const';
 
 export function NoAccounts() {
   return (
-    <Tag type={tagTypes.error} content={Intl.t(`index.tag.no-accounts`)} />
+    <Tag type={tagTypes.error} content={Intl.t('index.tag.no-accounts')} />
   );
 }

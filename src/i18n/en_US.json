@@ -218,12 +218,10 @@
     "wrong-massa-chain": "Invalid MASSA network. Please, switch it from your wallet settings.",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
-      "title": "Metamask",
       "invalid-network": "Current network is not supported. Please, switch to Sepolia testnet.",
       "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
-      "install-metamask": "Install Metamask",
-      "no-wallet": "No wallet detected"
+      "install-metamask": "Install Metamask"
     },
     "resource-sidepanel": {
       "add-metamask-testnet": "Add Testnet to Metamask",
