@@ -5,7 +5,7 @@ import Intl from '../../../i18n/i18n';
 import { LoadingState } from '@/const';
 import { CustomError, isParameterError, isRejectedByUser } from '@/utils/error';
 
-interface LockBridgeParams {
+export interface LockBridgeParams {
   setLoading: (state: LoadingState) => void;
   amount: string;
   _handleLockEVM: any;

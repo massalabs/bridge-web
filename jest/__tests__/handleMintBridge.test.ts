@@ -7,17 +7,14 @@ import { smartContractsMock } from '../__ mocks __/mocks';
 describe('handleMintBridge', () => {
   let mintArgs: MintArgs;
   let mockSetLoading: jest.Mock;
-  let clientMock: any;
 
   beforeEach(() => {
     const lockTxID = 'mockLockTxId';
     mockSetLoading = jest.fn().mockImplementation();
-    const mockRefreshBalances = jest.fn().mockImplementation();
 
     mintArgs = {
       massaOperationID: lockTxID,
       setLoading: mockSetLoading,
-      refreshBalances: mockRefreshBalances,
     };
   });
 

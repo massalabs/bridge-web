@@ -1,7 +1,7 @@
 import {
   Args,
+  Client,
   IReadData,
-  ISmartContractsClient,
   MAX_GAS_CALL,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
@@ -29,7 +29,7 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
       .serialize(),
     ...increaseAllowanceFee,
   });
-  console.log('WAIT opId', opId);
+
   await waitIncludedOperation(opId);
 
   return opId;
@@ -61,14 +61,12 @@ export async function forwardBurn(
   return opId;
 }
 
-export async function getSupportedTokensList(): Promise<TokenPair[]> {
-  const { massaClient } = useAccountStore.getState();
+export async function getSupportedTokensList(
+  publicClient: Client,
+): Promise<TokenPair[]> {
   const { currentMode } = useBridgeModeStore.getState();
 
-  const smartContractsClient: ISmartContractsClient =
-    massaClient!.smartContracts();
-
-  const returnObject = await smartContractsClient.readSmartContract({
+  const returnObject = await publicClient.smartContracts().readSmartContract({
     maxGas: MAX_GAS_CALL,
     targetAddress: config[currentMode].massaBridgeContract,
     targetFunction: 'supportedTokensList',
