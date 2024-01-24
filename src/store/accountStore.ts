@@ -175,7 +175,6 @@ const accountStore = (
           address: connectedAccount.address(),
         }),
       );
-      useTokenStore.getState().refreshBalances();
       // update the massa client with the new account
       set({
         massaClient: await ClientFactory.fromWalletProvider(
@@ -183,6 +182,8 @@ const accountStore = (
           connectedAccount,
         ),
       });
+      // once current account is set, refresh balances
+      useTokenStore.getState().refreshBalances();
     }
   },
 });

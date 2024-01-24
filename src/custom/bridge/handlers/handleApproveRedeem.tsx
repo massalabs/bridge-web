@@ -1,11 +1,9 @@
-import { Client } from '@massalabs/massa-web3';
 import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
-
-import { BridgeMode, U256_MAX } from '../../../const/const';
+import { U256_MAX } from '../../../const/const';
 import { LoadingState } from '../../../const/types/types';
 import Intl from '../../../i18n/i18n';
-import { IToken } from '../../../store/tokenStore';
+import { useTokenStore } from '../../../store/tokenStore';
 import { increaseAllowance } from '../bridge';
 import {
   CustomError,
@@ -14,22 +12,19 @@ import {
 } from '@/utils/error';
 
 export async function handleApproveRedeem(
-  mode: BridgeMode,
-  client: Client,
   setLoading: (state: LoadingState) => void,
-  token: IToken,
   amount: string,
-  decimals: number,
 ) {
   try {
+    const { selectedToken } = useTokenStore.getState();
+
     setLoading({
       approve: 'loading',
     });
 
-    let _amount = parseUnits(amount, decimals);
-
-    if (token.allowance < _amount) {
-      await increaseAllowance(mode, client, token.massaToken, U256_MAX);
+    const _amount = parseUnits(amount, selectedToken!.decimals);
+    if (selectedToken!.allowance < _amount) {
+      await increaseAllowance(U256_MAX);
     }
 
     setLoading({

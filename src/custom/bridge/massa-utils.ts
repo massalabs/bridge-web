@@ -1,7 +1,8 @@
 import { Client, EOperationStatus, IEvent } from '@massalabs/massa-web3';
 import delay from 'delay';
 
-import { BridgeMode, config } from '@/const';
+import { useAccountStore, useBridgeModeStore } from '../../store/store';
+import { config } from '@/const';
 import { safeJsonParse } from '@/utils/utils';
 
 const WAIT_STATUS_TIMEOUT = 300_000;
@@ -29,14 +30,19 @@ async function getOperationEvents(
 }
 
 export async function waitIncludedOperation(
-  client: Client,
   opId: string,
   onlyFinal = false,
 ): Promise<void> {
+  const { massaClient } = useAccountStore.getState();
+
   const start = Date.now();
   let counterMs = 0;
   while (counterMs < WAIT_STATUS_TIMEOUT) {
-    const opStatus = await checkForOperationStatus(client, opId, onlyFinal);
+    const opStatus = await checkForOperationStatus(
+      massaClient!,
+      opId,
+      onlyFinal,
+    );
 
     if (opStatus) {
       return;
@@ -45,7 +51,7 @@ export async function waitIncludedOperation(
     await delay(STATUS_POLL_INTERVAL_MS);
     counterMs = Date.now() - start;
   }
-  const status = await getOperationStatus(client, opId);
+  const status = await getOperationStatus(massaClient!, opId);
   throw new Error(
     `Fail to wait operation finality for ${opId}: Timeout reached. status: ${status}`,
     { cause: { error: 'timeout', details: opId } },
@@ -84,29 +90,30 @@ function isTokenMintedEvent(event: IEvent, lockTxId: string) {
   );
 }
 
-export async function waitForMintEvent(
-  mode: BridgeMode,
-  client: Client,
-  lockTxId: string,
-): Promise<boolean> {
+export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
   const start = Date.now();
   let counterMs = 0;
 
+  const { massaClient } = useAccountStore.getState();
+  const { currentMode } = useBridgeModeStore.getState();
+
   while (counterMs < WAIT_STATUS_TIMEOUT) {
-    const events = await client.smartContracts().getFilteredScOutputEvents({
-      emitter_address: config[mode].massaBridgeContract,
-      start: null,
-      end: null,
-      original_caller_address: null,
-      original_operation_id: null,
-      is_final: true,
-    });
+    const events = await massaClient!
+      .smartContracts()
+      .getFilteredScOutputEvents({
+        emitter_address: config[currentMode].massaBridgeContract,
+        start: null,
+        end: null,
+        original_caller_address: null,
+        original_operation_id: null,
+        is_final: true,
+      });
 
     const mintEvent = events.find((e) => isTokenMintedEvent(e, lockTxId));
     if (mintEvent) {
       try {
         await checkForOperationStatus(
-          client,
+          massaClient!,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           mintEvent.context.origin_operation_id!,
         );

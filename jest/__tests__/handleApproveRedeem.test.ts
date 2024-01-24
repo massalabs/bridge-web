@@ -1,19 +1,7 @@
-import { BridgeMode } from '../../src/const';
+import { EOperationStatus } from '@massalabs/massa-web3';
+import { U256_MAX } from '../../src/const';
 import { handleApproveRedeem } from '../../src/custom/bridge/handlers/handleApproveRedeem';
-import { Client } from '../__ mocks __/mocks';
-
-const mode = BridgeMode.testnet;
-
-const token = {
-  name: 'Massa',
-  allowance: 1311000000000000000000n,
-  decimals: 2,
-  symbol: 'MAS',
-  massaToken: 'MAST',
-  evmToken: 'EVMT',
-  chainId: 1091029012,
-  balance: 1000n,
-};
+import { smartContractsMock } from '../__ mocks __/mocks';
 
 describe('handleApproveRedeem', () => {
   afterEach(() => {
@@ -21,52 +9,37 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should increaseAllowance and approve redeem', async () => {
-    const client = new Client();
-    const smartContracts = client.smartContracts();
-    const amount = '1313';
-    const decimals = 18;
-
-    const mockSetLoading = jest.fn().mockImplementation();
-
-    const result = await handleApproveRedeem(
-      mode,
-      client as any,
-      mockSetLoading,
-      token,
-      amount,
-      decimals,
+    const amount = U256_MAX.toString();
+    const opId = 'opId';
+    smartContractsMock.callSmartContract.mockResolvedValueOnce(opId);
+    smartContractsMock.getOperationStatus.mockResolvedValueOnce(
+      EOperationStatus.FINAL_SUCCESS,
     );
+
+    const mockSetLoading = jest.fn();
+
+    const result = await handleApproveRedeem(mockSetLoading, amount);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(smartContracts.callSmartContract).toHaveBeenCalled();
-    expect(smartContracts.getOperationStatus).toHaveBeenCalled();
+    expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
+    expect(smartContractsMock.getOperationStatus).toHaveBeenCalledWith(opId);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
     expect(result).toBeTruthy();
   });
 
-  test('should show success of redeem approval', async () => {
-    const client = new Client();
-    const smartContracts = client.smartContracts();
+  test('should not increaseAllowance and show success of redeem approval', async () => {
+    const amount = '1';
 
-    const amount = '13';
-    const decimals = 18;
     const mockSetLoading = jest.fn().mockImplementation();
-    const result = await handleApproveRedeem(
-      mode,
-      client as any,
-      mockSetLoading,
-      token,
-      amount,
-      decimals,
-    );
+    const result = await handleApproveRedeem(mockSetLoading, amount);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(smartContracts.callSmartContract).not.toHaveBeenCalled();
-    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
+    expect(smartContractsMock.callSmartContract).not.toHaveBeenCalled();
+    expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
 
@@ -74,34 +47,20 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should show error if there is a problem during approval', async () => {
-    const client = new Client();
+    smartContractsMock.callSmartContract.mockRejectedValueOnce(
+      new Error('error'),
+    );
 
-    const mockCallSmartContract = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('error'));
-
-    client.setMockCallSmartContract(mockCallSmartContract);
-
-    const smartContracts = client.smartContracts();
-
-    const amount = '1313';
-    const decimals = 18;
+    const amount = U256_MAX.toString();
 
     const mockSetLoading = jest.fn().mockImplementation();
 
-    const result = await handleApproveRedeem(
-      mode,
-      client as any,
-      mockSetLoading,
-      token,
-      amount,
-      decimals,
-    );
+    const result = await handleApproveRedeem(mockSetLoading, amount);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(smartContracts.callSmartContract).toHaveBeenCalled();
-    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
+    expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
+    expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
@@ -112,9 +71,7 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should error if user rejected approval', async () => {
-    const client = new Client();
-
-    const mockCallSmartContract = jest
+    smartContractsMock.callSmartContract = jest
       .fn()
       .mockRejectedValueOnce(
         () =>
@@ -123,27 +80,16 @@ describe('handleApproveRedeem', () => {
           ),
       );
 
-    client.setMockCallSmartContract(mockCallSmartContract);
-    const smartContracts = client.smartContracts();
-
-    const amount = '1313';
-    const decimals = 18;
+    const amount = U256_MAX.toString();
 
     const mockSetLoading = jest.fn().mockImplementation();
 
-    const result = await handleApproveRedeem(
-      mode,
-      client as any,
-      mockSetLoading,
-      token,
-      amount,
-      decimals,
-    );
+    const result = await handleApproveRedeem(mockSetLoading, amount);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(smartContracts.callSmartContract).toHaveBeenCalled();
-    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
+    expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
+    expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       box: 'error',
@@ -153,34 +99,20 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should show error is approval timeout', async () => {
-    const client = new Client();
-
-    const mockCallSmartContract = jest
+    smartContractsMock.callSmartContract = jest
       .fn()
       .mockRejectedValueOnce(new Error('timeout'));
 
-    client.setMockCallSmartContract(mockCallSmartContract);
-
-    const smartContracts = client.smartContracts();
-
-    const amount = '1313';
-    const decimals = 18;
+    const amount = U256_MAX.toString();
 
     const mockSetLoading = jest.fn().mockImplementation();
 
-    const result = await handleApproveRedeem(
-      mode,
-      client as any,
-      mockSetLoading,
-      token,
-      amount,
-      decimals,
-    );
+    const result = await handleApproveRedeem(mockSetLoading, amount);
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
 
-    expect(smartContracts.callSmartContract).toHaveBeenCalled();
-    expect(smartContracts.getOperationStatus).not.toHaveBeenCalled();
+    expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
+    expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
     expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
       approve: 'error',
