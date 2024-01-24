@@ -1,18 +1,18 @@
 import { useState } from 'react';
 
-import { BridgeLogo } from '@massalabs/react-ui-kit';
-
 import { Navbar } from './Navbar';
+import { BridgeLogo } from '@/assets/BridgeLogo';
 import { ConnectWalletPopup, Footer } from '@/components';
 import { DisabledBridgeBanner } from '@/components/DisabledBridgeBanner/DisabledBridgeBanner';
 import Intl from '@/i18n/i18n';
 
-export function MainLayout({ ...props }) {
-  const { onSetTheme, storedTheme, children } = props;
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
 
-  const [selectedTheme, setSelectedTheme] = useState(
-    storedTheme || 'theme-dark',
-  );
+export function MainLayout(props: MainLayoutProps) {
+  const { children } = props;
+
   const [open, setOpen] = useState(false);
 
   return (
@@ -21,25 +21,20 @@ export function MainLayout({ ...props }) {
       from-bright-blue to-deep-blue to-60% overflow-auto w-full min-h-screen
       "
     >
-      <Navbar
-        onSetTheme={onSetTheme}
-        setSelectedTheme={setSelectedTheme}
-        selectedTheme={selectedTheme}
-        setOpen={setOpen}
-      />
+      <Navbar setOpen={setOpen} />
       <div className="hidden sm:flex flex-col justify-center items-center pt-8 pb-10">
         <DisabledBridgeBanner />
         {children}
       </div>
       {open && <ConnectWalletPopup setOpen={setOpen} />}
       <div className="hidden sm:block">
-        <Footer selectedTheme={selectedTheme} />
+        <Footer />
       </div>
 
       {/* display only on mobile*/}
       <div className="sm:hidden h-screen flex items-center justify-center">
         <div className="flex flex-col w-full gap-10 p-4">
-          <BridgeLogo theme={selectedTheme} />
+          <BridgeLogo />
           <p className="mas-banner text-6xl text-f-primary mb-6">
             {Intl.t('desktop.title')}
           </p>

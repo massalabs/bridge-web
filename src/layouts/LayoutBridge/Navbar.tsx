@@ -1,31 +1,27 @@
-import {
-  BridgeLogo,
-  Button,
-  Dropdown,
-  ThemeMode,
-  Theme,
-} from '@massalabs/react-ui-kit';
+import { Button, Dropdown, Theme, ThemeMode } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
+import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useConfigStore,
+} from '@/store/store';
 import { capitalize } from '@/utils/utils';
 
 interface NavbarProps {
-  onSetTheme?: (theme: string) => void;
-  setSelectedTheme: (theme: string) => void;
-  selectedTheme: Theme;
   setOpen: (state: boolean) => void;
 }
 
 export function Navbar(props: NavbarProps) {
-  const { onSetTheme, setSelectedTheme, selectedTheme, setOpen } = props;
+  const { setOpen } = props;
 
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
-
   const { accounts, isFetching, connectedAccount } = useAccountStore();
+  const { setTheme } = useConfigStore();
 
   const { isConnected: isEvmWalletConnected } = useAccount();
 
@@ -60,9 +56,9 @@ export function Navbar(props: NavbarProps) {
     );
   }
 
-  function handleSetTheme(theme: string) {
-    setSelectedTheme(theme);
-    onSetTheme?.(theme);
+  function handleSetTheme(theme: Theme) {
+    let toggledTheme = theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
+    setTheme(toggledTheme);
   }
 
   return (
@@ -72,7 +68,7 @@ export function Navbar(props: NavbarProps) {
       py-8 w-full"
       >
         <div className="flex items-center gap-8 h-fit">
-          <BridgeLogo theme={selectedTheme} />
+          <BridgeLogo />
           <p className="mas-menu-default text-neutral h-fit">
             <Link to="/index">Bridge</Link>
           </p>
