@@ -118,7 +118,11 @@ function EVMHeader() {
         />
       </div>
       <div className="flex items-center gap-3">
-        <p className="mas-body">Metamask</p>
+        <p className="mas-body">
+          {isConnected
+            ? 'Metamask'
+            : Intl.t('connect-wallet.card-destination.from')}
+        </p>
         {isConnected ? (
           wrongNetwork ? (
             <WrongChain />
@@ -153,6 +157,8 @@ function MassaHeader() {
     return <Connected />;
   }
 
+  const isConnected = !isFetching && currentProvider && !hasNoAccounts;
+
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
@@ -169,7 +175,11 @@ function MassaHeader() {
         />
       </div>
       <div className="flex items-center gap-3">
-        <p className="mas-body">Massa</p>
+        <p className="mas-body">
+          {isConnected && currentProvider
+            ? Intl.t(`connect-wallet.${currentProvider.name()}`)
+            : Intl.t('connect-wallet.card-destination.to')}
+        </p>
         {displayStatus()}
       </div>
     </div>
