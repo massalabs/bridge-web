@@ -2,13 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
-import {
-  useAccount,
-  useFeeData,
-  useNetwork,
-  useSwitchNetwork,
-  useToken,
-} from 'wagmi';
+import { useAccount, useFeeData, useNetwork, useToken } from 'wagmi';
 import {
   FetchingLine,
   FetchingStatus,
@@ -26,11 +20,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { IToken } from '@/store/tokenStore';
-import {
-  ETH_MAINNET_CHAIN_ID,
-  MASSA_TO_EVM,
-  SEPOLIA_CHAIN_ID,
-} from '@/utils/const';
+import { MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import {
   MassaNetworks,
@@ -187,28 +177,10 @@ function MassaHeader() {
 }
 
 function EVMMiddle() {
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
-  const { address, isConnected } = useAccount();
-  const { isMainnet } = useBridgeModeStore();
-
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
-  useEffect(() => {
-    setWrongNetwork(!validateEvmNetwork(isMainnet, chain?.id));
-  }, [isMainnet, chain]);
+  const { address } = useAccount();
 
   return (
     <div>
-      {isConnected && wrongNetwork ? (
-        <div
-          className="flex justify-end mas-h3 text-f-disabled-1 underline cursor-pointer"
-          onClick={() =>
-            switchNetwork?.(isMainnet ? ETH_MAINNET_CHAIN_ID : SEPOLIA_CHAIN_ID)
-          }
-        >
-          {Intl.t('connect-wallet.connect-metamask.switch-network')}
-        </div>
-      ) : null}
       <div className="mt-4 mb-4 flex items-center gap-2">
         <p className="mas-body2">Wallet address:</p>
         <p className="mas-caption">{address}</p>

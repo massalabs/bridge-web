@@ -26,7 +26,7 @@ export function Balance() {
   return (
     <div className="mas-body">
       {Intl.t('connect-wallet.connected-cards.wallet-balance')}
-      {formatStandard(Number(balance?.candidateBalance), Unit.MAS, 9)}
+      {formatStandard(Number(balance?.candidateBalance), Unit.MAS, 9)}{' '}
       {massaToken}
     </div>
   );

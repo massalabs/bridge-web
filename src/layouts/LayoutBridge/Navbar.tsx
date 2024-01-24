@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
+import { useWrongNetwork } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -22,21 +23,24 @@ export function Navbar(props: NavbarProps) {
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
   const { accounts, isFetching, connectedAccount } = useAccountStore();
   const { setTheme } = useConfigStore();
+  const { wrongNetwork } = useWrongNetwork();
 
   const { isConnected: isEvmWalletConnected } = useAccount();
 
   const hasAccounts = accounts?.length > 0;
-  const showPingAnimation = window.ethereum?.isConnected() && connectedAccount;
+  const showPingAnimation =
+    (window.ethereum?.isConnected() && !!connectedAccount) || wrongNetwork;
 
   function ConnectedWallet() {
     return (
       <Button
         disabled={isFetching}
         variant="secondary"
-        customClass="h-[54px]"
+        customClass="h-[54px] relative"
         onClick={() => setOpen(true)}
       >
         {Intl.t('connect-wallet.connected')}
+        {showPingAnimation && <PingAnimation />}
       </Button>
     );
   }
