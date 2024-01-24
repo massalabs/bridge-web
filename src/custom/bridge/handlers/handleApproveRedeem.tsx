@@ -40,15 +40,15 @@ export async function handleApproveRedeem(
     const isErrorTimeout =
       typedError.cause && typedError.cause.error === 'timeout';
     if (isInsufficientBalanceError(error)) {
-      toast.error(Intl.t(`index.approve.error.insufficient-funds`));
+      toast.error(Intl.t('index.approve.error.insufficient-funds'));
     } else if (isRejectedByUser(typedError)) {
-      toast.error(Intl.t(`index.approve.error.rejected`));
+      toast.error(Intl.t('index.approve.error.rejected'));
     } else if (isErrorTimeout) {
       // if there is timeout during waitIncludedOperation
-      toast.error(Intl.t(`index.approve.error.timeout`));
+      toast.error(Intl.t('index.approve.error.timeout'));
     } else {
       // error during allowance increase
-      toast.error(Intl.t(`index.approve.error.allowance-error`));
+      toast.error(Intl.t('index.approve.error.allowance-error'));
     }
     setLoading({
       box: 'error',
