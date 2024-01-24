@@ -1,17 +1,15 @@
-import { IAccount } from '@massalabs/wallet-provider';
 import { ICustomError } from './handleErrorMessage';
-import { useAccountStore } from '../../../store/store';
+import { useTokenStore } from '../../../store/store';
 import { waitForMintEvent } from '../massa-utils';
 import { LoadingState } from '@/const';
 
 export interface MintArgs {
   massaOperationID: string;
   setLoading: (state: LoadingState) => void;
-  refreshBalances: (connectedAccount?: IAccount) => void;
 }
 
 export async function handleMintBridge(args: MintArgs): Promise<boolean> {
-  const { massaOperationID, setLoading, refreshBalances } = args;
+  const { massaOperationID, setLoading } = args;
   try {
     setLoading({
       mint: 'loading',
@@ -22,8 +20,8 @@ export async function handleMintBridge(args: MintArgs): Promise<boolean> {
         box: 'success',
         mint: 'success',
       });
-      const { connectedAccount } = useAccountStore.getState();
-      refreshBalances(connectedAccount);
+      const { refreshBalances } = useTokenStore.getState();
+      refreshBalances();
     }
   } catch (error) {
     handleMintError({ ...args }, error);

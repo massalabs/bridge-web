@@ -20,6 +20,7 @@ export const initTokenStoreMock = () => {
       ({
         selectedToken: token,
         tokens: [token],
+        refreshBalances: jest.fn(),
       } as any as TokenStoreState),
   );
 };

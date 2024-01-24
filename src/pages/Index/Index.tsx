@@ -17,8 +17,14 @@ import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
-import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
+import {
+  LockBridgeParams,
+  handleLockBridge,
+} from '@/custom/bridge/handlers/handleLockBridge';
+import {
+  MintArgs,
+  handleMintBridge,
+} from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import Intl from '@/i18n/i18n';
@@ -144,13 +150,9 @@ export function Index() {
   useEffect(() => {
     if (!massaClient) return;
     if (lockTxID) {
-      const mintArgs = {
-        mode: currentMode,
-        massaClient,
+      const mintArgs: MintArgs = {
         massaOperationID: lockTxID,
-        connectedAccount,
         setLoading,
-        refreshBalances,
       };
       handleMintBridge(mintArgs);
     }
@@ -160,7 +162,7 @@ export function Index() {
     if (approveIsSuccess) {
       setLoading({ approve: 'success' });
       if (!amount) return;
-      const lockArgs = {
+      const lockArgs: LockBridgeParams = {
         setLoading,
         amount,
         _handleLockEVM,
