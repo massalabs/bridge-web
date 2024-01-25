@@ -10,13 +10,16 @@ export class ForwardingRequest implements ISerializable<ForwardingRequest> {
   opId = '';
   caller = '';
   logIdx = 0;
+  public amount = '0';
 
   constructor(
-    public amount: string = '',
+    amount: string | bigint,
     public receiver: string = '',
     public tokenPair: TokenPair = new TokenPair('', '', 0),
     public signatures: Uint8Array = new Uint8Array(),
-  ) {}
+  ) {
+    this.amount = amount.toString();
+  }
 
   serialize(): Uint8Array {
     const args = new Args();
