@@ -1,5 +1,4 @@
 import { persist } from 'zustand/middleware';
-import { _setInStorage } from '@/utils/storage';
 
 export const BRIDGE_THEME_STORAGE_KEY = 'bridge-theme';
 
@@ -22,7 +21,6 @@ const configStore = persist<ConfigStoreState>(
     setLang: (lang: string) => set({ lang }),
     setTheme: (theme: string) => {
       set({ theme });
-      _setInStorage(BRIDGE_THEME_STORAGE_KEY, theme);
     },
 
     dropLang: () => set({ lang: 'en_US' }),
