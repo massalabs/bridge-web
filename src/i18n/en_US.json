@@ -45,8 +45,6 @@
     "tag": {
       "not-connected": "Not connected",
       "connected": "Connected",
-      "not-installed": "Not installed",
-      "no-accounts": "No accounts",
       "wrong-chain": "Unsupported network",
       "wrong-chain-massa-station-tooltip": "Switch to {network} in top-right corner of Station's homepage",
       "wrong-chain-bearby-tooltip": "Switch to {network} in top-left corner of Bearby's extension"
@@ -180,8 +178,7 @@
   "unexpected-error": {
     "title": "Ops!",
     "description": "An unexpected error has occurred",
-    "link": "Instructions",
-    "no-wallet": "No wallet is associated with your Massa Account. Please create one and try again!"
+    "link": "Instructions"
   },
   "connect-wallet": {
     "download-massa": "Download Massa Wallet",
@@ -196,7 +193,6 @@
       "switch": "switch wallet",
       "select-wallet": "Select wallet",
       "your-wallet": "Your wallet",
-      "no-wallet": "No wallet found",
       "bearby-not-installed": "Bearby extension is either turned off or not installed. Make sure the extension is on and refresh the page.",
       "get-bearby": "Get Bearby here",
       "massa-station-not-detected": "Massa Station desktop app is not detected. Make sure the app is opened, or click below to install it.",
