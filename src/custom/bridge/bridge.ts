@@ -5,6 +5,7 @@ import {
   MAX_GAS_CALL,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
+import { parseUnits } from 'viem';
 import { waitIncludedOperation } from './massa-utils';
 import {
   useAccountStore,
@@ -43,13 +44,15 @@ export async function forwardBurn(
   const { selectedToken } = useTokenStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
 
+  const amt = parseUnits(amount, selectedToken!.decimals);
+
   const tokenPair = new TokenPair(
     selectedToken!.massaToken,
     selectedToken!.evmToken,
     selectedToken!.chainId,
   );
 
-  const request = new ForwardingRequest(amount, recipient, tokenPair);
+  const request = new ForwardingRequest(amt, recipient, tokenPair);
 
   const opId = await massaClient!.smartContracts().callSmartContract({
     targetAddress: config[currentMode].massaBridgeContract,
