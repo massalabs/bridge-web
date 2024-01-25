@@ -46,13 +46,17 @@ export function WrongChain(props: WrongChainProps) {
   return (
     <Tag type={tagTypes.warning}>
       <div className="flex items-center">
-        <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
         {currentProvider && (
           <Tooltip
             className="w-fit p-0 hover:cursor-pointer"
             customClass="p-0 mas-caption w-fit whitespace-nowrap"
             content={Intl.t(transKey, { network })}
-            icon={<FiHelpCircle className="text-s-warning" />}
+            icon={
+              <div className="flex items-center">
+                <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
+                <FiHelpCircle className="text-s-warning" />
+              </div>
+            }
           />
         )}
       </div>
