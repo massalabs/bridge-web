@@ -1,23 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import EvmConnectButton from './EvmConnectButton';
 import { MetamaskNotInstalled } from './MetamaskNotInstalled';
-import { useBridgeModeStore } from '../../../store/store';
-import { validateEvmNetwork } from '../../../utils/network';
 import { Connected, Disconnected, WrongChain } from '@/components';
+import { useWrongNetwork } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 
 const ConnectEvmWallet = () => {
-  const { chain } = useNetwork();
-  const { isMainnet } = useBridgeModeStore();
-
   const { isConnected } = useAccount();
   const isMetamaskInstalled = window.ethereum?.isConnected();
-
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
-  useEffect(() => {
-    setWrongNetwork(!validateEvmNetwork(isMainnet, chain?.id));
-  }, [isMainnet, chain]);
+  const { wrongNetwork } = useWrongNetwork();
 
   return (
     <>

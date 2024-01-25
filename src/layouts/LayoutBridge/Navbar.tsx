@@ -4,7 +4,9 @@ import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
+import { useWrongNetwork } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
+import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -22,21 +24,24 @@ export function Navbar(props: NavbarProps) {
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
   const { accounts, isFetching, connectedAccount } = useAccountStore();
   const { setTheme } = useConfigStore();
+  const { wrongNetwork } = useWrongNetwork();
 
   const { isConnected: isEvmWalletConnected } = useAccount();
 
   const hasAccounts = accounts?.length > 0;
-  const showPingAnimation = window.ethereum?.isConnected() && connectedAccount;
+  const showPingAnimation =
+    (window.ethereum?.isConnected() && !!connectedAccount) || wrongNetwork;
 
   function ConnectedWallet() {
     return (
       <Button
         disabled={isFetching}
         variant="secondary"
-        customClass="h-[54px]"
+        customClass="h-[54px] relative"
         onClick={() => setOpen(true)}
       >
         {Intl.t('connect-wallet.connected')}
+        {showPingAnimation && <PingAnimation />}
       </Button>
     );
   }
@@ -56,9 +61,8 @@ export function Navbar(props: NavbarProps) {
     );
   }
 
-  function handleSetTheme(theme: Theme) {
-    let toggledTheme = theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
-    setTheme(toggledTheme);
+  function handleSetTheme(newTheme: Theme) {
+    setTheme(newTheme);
   }
 
   return (
@@ -70,11 +74,11 @@ export function Navbar(props: NavbarProps) {
         <div className="flex items-center gap-8 h-fit">
           <BridgeLogo />
           <p className="mas-menu-default text-neutral h-fit">
-            <Link to="/index">Bridge</Link>
+            <Link to="/index">{Intl.t('index.loading-box.bridge')}</Link>
           </p>
           {isEvmWalletConnected ? (
             <p className="mas-menu-default text-neutral h-fit">
-              <Link to="/claim">Claim</Link>
+              <Link to="/claim">{Intl.t('index.loading-box.claim')}</Link>
             </p>
           ) : null}
         </div>
@@ -91,10 +95,13 @@ export function Navbar(props: NavbarProps) {
           ) : (
             <NotConnectedWallet />
           )}
-          <ThemeMode onSetTheme={handleSetTheme} />
+          <ThemeMode
+            onSetTheme={handleSetTheme}
+            storageKey={BRIDGE_THEME_STORAGE_KEY}
+          />
         </div>
       </div>
-      <Banner textToDisplay={Intl.t('index.top-banner.mainnet-coming-soon')} />
+      <Banner>{Intl.t('index.top-banner.mainnet-coming-soon')}</Banner>
     </div>
   );
 }

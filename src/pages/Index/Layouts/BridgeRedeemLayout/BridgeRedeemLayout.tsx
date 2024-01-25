@@ -93,7 +93,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
                 name="amount"
                 value={amount}
                 onValueChange={(o) => setAmount(o.value)}
-                placeholder={Intl.t(`index.input.placeholder.amount`)}
+                placeholder={Intl.t('index.input.placeholder.amount')}
                 suffix=""
                 decimalScale={decimals}
                 error={error?.amount}
@@ -156,7 +156,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
           </Button>
         </div>
         <div className="mb-5 p-6 bg-primary rounded-2xl">
-          <p className="mb-4 mas-body">{Intl.t(`index.to`)}</p>
+          <p className="mb-4 mas-body">{Intl.t('index.to')}</p>
           {boxLayout(layout).down.header}
           {boxLayout(layout).down.wallet}
           <div className="mb-4 flex items-center gap-2">
@@ -182,8 +182,8 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
         <div>
           <Button disabled={isButtonDisabled} onClick={(e) => handleSubmit(e)}>
             {IS_MASSA_TO_EVM
-              ? Intl.t(`index.button.redeem`)
-              : Intl.t(`index.button.bridge`)}
+              ? Intl.t('index.button.redeem')
+              : Intl.t('index.button.bridge')}
           </Button>
         </div>
       </div>

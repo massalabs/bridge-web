@@ -6,6 +6,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { BridgeMode } from '@/const';
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
 import { MainLayout } from '@/layouts/LayoutBridge/MainLayout';
+import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import { useBridgeModeStore, useConfigStore } from '@/store/store';
 
 export interface IOutletContextType {
@@ -40,7 +41,7 @@ export function Base() {
     <div data-theme={themeClassName}>
       <MainLayout>
         <Outlet />
-        <Toast />
+        <Toast storageKey={BRIDGE_THEME_STORAGE_KEY} />
       </MainLayout>
     </div>
   );
