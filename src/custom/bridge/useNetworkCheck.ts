@@ -42,9 +42,9 @@ export function useNetworkCheck(
       !validateMassaNetwork(isMainnet, connectedNetwork)
     ) {
       setToastIdMassa(
-        toast.error(
-          Intl.t('connect-wallet.wrong-massa-chain', { id: 'massa' }),
-        ),
+        toast.error(Intl.t('connect-wallet.wrong-massa-chain'), {
+          id: 'massa',
+        }),
       );
       setWrongNetwork(true);
     } else {
