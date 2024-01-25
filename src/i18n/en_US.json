@@ -48,7 +48,8 @@
       "not-installed": "Not installed",
       "no-accounts": "No accounts",
       "wrong-chain": "Unsupported network",
-      "wrong-chain-massa-station-tooltip": "Switch to {network} in top-right corner of Station's homepage"
+      "wrong-chain-massa-station-tooltip": "Switch to {network} in top-right corner of Station's homepage",
+      "wrong-chain-bearby-tooltip": "Switch to {network} in top-left corner of Bearby's extension"
     },
     "faq": {
       "get-tokens": {

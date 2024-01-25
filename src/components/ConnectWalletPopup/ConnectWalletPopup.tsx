@@ -6,7 +6,7 @@ import {
 import { useAccount as useEvmAccount } from 'wagmi';
 
 import { ConnectWallets } from './ConnectWallets';
-import { BridgeMode, ETHEREUM, MASSA, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { Blockchain, BridgeMode, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
@@ -36,7 +36,10 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
 
   const { showResourceSidePanel } = useShowResourceSidePanel();
 
-  const networks = { network1: ETHEREUM, network2: MASSA };
+  const networks = {
+    network1: Blockchain.ETHEREUM,
+    network2: Blockchain.MASSA,
+  };
 
   return (
     <PopupModal

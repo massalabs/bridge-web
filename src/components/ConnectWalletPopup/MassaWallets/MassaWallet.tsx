@@ -8,26 +8,18 @@ import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
 import { BearbySvg } from '@/assets/BearbySvg';
-import { Connected, Disconnected, WrongChain } from '@/components';
-import { MASSA, SUPPORTED_MASSA_WALLETS } from '@/const';
-import { useWrongNetworkMASSA } from '@/custom/bridge/useWrongNetwork';
+import { ChainStatus } from '@/components/Status/ChainStatus';
+import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
 const MassaWallet = () => {
-  const {
-    connectedAccount,
-    currentProvider,
-    providers,
-    setCurrentProvider,
-    isFetching,
-  } = useAccountStore();
+  const { currentProvider, providers, setCurrentProvider, isFetching } =
+    useAccountStore();
 
   const [selectedProvider, setSelectedProvider] = useState<
     SUPPORTED_MASSA_WALLETS | undefined
   >(currentProvider?.name() as SUPPORTED_MASSA_WALLETS);
-
-  const { wrongNetwork } = useWrongNetworkMASSA();
 
   if (!selectedProvider || isFetching)
     return (
@@ -77,15 +69,7 @@ const MassaWallet = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
           {renderSelectedWallet()}
-          {connectedAccount ? (
-            wrongNetwork ? (
-              <WrongChain blockchain={MASSA} />
-            ) : (
-              <Connected />
-            )
-          ) : (
-            <Disconnected />
-          )}
+          <ChainStatus blockchain={Blockchain.MASSA} />
           {selectedProvider === SUPPORTED_MASSA_WALLETS.BEARBY && (
             <Tooltip
               customClass="mas-caption w-fit whitespace-nowrap"

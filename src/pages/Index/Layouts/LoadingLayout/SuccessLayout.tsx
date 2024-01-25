@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { LoadingBoxProps } from './LoadingLayout';
-import { MASSA, METAMASK } from '@/const';
+import { Blockchain, METAMASK } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { useTokenStore } from '@/store/store';
@@ -30,7 +30,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
       </div>
       <p className="mb-1">
         {Intl.t('index.loading-box.check', {
-          name: massaToEvm ? METAMASK : MASSA,
+          name: massaToEvm ? METAMASK : Blockchain.MASSA,
         })}
       </p>
 

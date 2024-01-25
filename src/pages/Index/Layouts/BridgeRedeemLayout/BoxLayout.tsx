@@ -1,17 +1,14 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
-import { useAccount, useFeeData, useNetwork, useToken } from 'wagmi';
-import {
-  FetchingLine,
-  FetchingStatus,
-} from '../LoadingLayout/FetchingComponent';
+import { useAccount, useFeeData, useToken } from 'wagmi';
+import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { EthSvg } from '@/assets/EthSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
-import { Connected, Disconnected, NoAccounts, WrongChain } from '@/components';
-import { ETHEREUM, LayoutType, MASSA, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { ChainStatus } from '@/components/Status/ChainStatus';
+import { Blockchain, LayoutType, SUPPORTED_MASSA_WALLETS } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import {
@@ -22,11 +19,7 @@ import {
 import { IToken } from '@/store/tokenStore';
 import { MASSA_TO_EVM } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
-import {
-  MassaNetworks,
-  validateEvmNetwork,
-  validateMassaNetwork,
-} from '@/utils/network';
+import { MassaNetworks } from '@/utils/network';
 import { formatAmount } from '@/utils/parseAmount';
 import { capitalize } from '@/utils/utils';
 
@@ -84,14 +77,8 @@ function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
 }
 
 function EVMHeader() {
-  const { chain } = useNetwork();
   const { isConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
-
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
-  useEffect(() => {
-    setWrongNetwork(!validateEvmNetwork(isMainnet, chain?.id));
-  }, [isMainnet, chain]);
 
   return (
     <div className="flex items-center justify-between">
@@ -113,39 +100,17 @@ function EVMHeader() {
             ? 'Metamask'
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        {isConnected ? (
-          wrongNetwork ? (
-            <WrongChain blockchain={ETHEREUM} />
-          ) : (
-            <Connected />
-          )
-        ) : (
-          <Disconnected />
-        )}
+        <ChainStatus blockchain={Blockchain.ETHEREUM} />
       </div>
     </div>
   );
 }
 
 function MassaHeader() {
-  const { isFetching, accounts, currentProvider, connectedNetwork } =
-    useAccountStore();
+  const { isFetching, accounts, currentProvider } = useAccountStore();
   const { isMainnet } = useBridgeModeStore();
 
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
-  useEffect(() => {
-    setWrongNetwork(!validateMassaNetwork(isMainnet, connectedNetwork));
-  }, [isMainnet, connectedNetwork]);
-
   const hasNoAccounts = !accounts.length;
-
-  function displayStatus() {
-    if (isFetching) return <FetchingStatus />;
-    else if (!currentProvider) return <Disconnected />;
-    else if (wrongNetwork) return <WrongChain blockchain={MASSA} />;
-    else if (hasNoAccounts) return <NoAccounts />;
-    return <Connected />;
-  }
 
   const isConnected = !isFetching && currentProvider && !hasNoAccounts;
 
@@ -170,7 +135,7 @@ function MassaHeader() {
             ? Intl.t(`connect-wallet.${currentProvider.name()}`)
             : Intl.t('connect-wallet.card-destination.to')}
         </p>
-        {displayStatus()}
+        <ChainStatus blockchain={Blockchain.MASSA} />
       </div>
     </div>
   );

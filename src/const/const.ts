@@ -1,10 +1,10 @@
-export const MASSA_WALLET = 'Massa Wallet';
 export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
-export const MASSA_STATION = 'MASSASTATION';
-export const MASSA = 'Massa';
-export const ETHEREUM = 'Ethereum';
 export const METAMASK = 'Metamask';
-export type Blockchain = typeof MASSA | typeof ETHEREUM;
+export enum Blockchain {
+  ETHEREUM = 'Ethereum',
+  MASSA = 'Massa',
+}
+
 // SMART CONTRACTS ADDRESSES
 
 export const TDAI_CONTRACT_ADDRESS =
