@@ -1,5 +1,6 @@
 import { Tag, Tooltip } from '@massalabs/react-ui-kit';
 
+import { FiHelpCircle } from 'react-icons/fi';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -51,6 +52,7 @@ export function WrongChain(props: WrongChainProps) {
             className="w-fit p-0 hover:cursor-pointer"
             customClass="p-0 mas-caption w-fit whitespace-nowrap"
             content={Intl.t(transKey, { network })}
+            icon={<FiHelpCircle className="text-s-warning" />}
           />
         )}
       </div>
