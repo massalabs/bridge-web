@@ -13,7 +13,10 @@ export function Footer() {
   return (
     <footer className="py-20 px-28 text-f-primary">
       <div className="pt-10 flex justify-between items-center border-t border-neutral/40">
-        <BridgeLogo onClick={() => navigate('buildnet/index')} />
+        <BridgeLogo
+          onClick={() => navigate('/index')}
+          className="cursor-pointer"
+        />
         <ul className="m-0 p-0 list-none flex items-center gap-6">
           <li>
             <a

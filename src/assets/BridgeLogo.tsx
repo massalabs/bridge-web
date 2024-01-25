@@ -1,6 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import React, { ComponentPropsWithoutRef } from 'react';
+import { ComponentPropsWithoutRef } from 'react';
 import { BridgeMode } from '@/const';
 import { useBridgeModeStore, useConfigStore } from '@/store/store';
 import { colorDarkBlue, colorInfo, colorWhite } from '@/themes/bridgeColors';

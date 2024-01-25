@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import Intl from '@/i18n/i18n';
+import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -56,9 +57,8 @@ export function Navbar(props: NavbarProps) {
     );
   }
 
-  function handleSetTheme(theme: Theme) {
-    let toggledTheme = theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
-    setTheme(toggledTheme);
+  function handleSetTheme(newTheme: Theme) {
+    setTheme(newTheme);
   }
 
   return (
@@ -91,10 +91,13 @@ export function Navbar(props: NavbarProps) {
           ) : (
             <NotConnectedWallet />
           )}
-          <ThemeMode onSetTheme={handleSetTheme} />
+          <ThemeMode
+            onSetTheme={handleSetTheme}
+            storageKey={BRIDGE_THEME_STORAGE_KEY}
+          />
         </div>
       </div>
-      <Banner textToDisplay={Intl.t('index.top-banner.mainnet-coming-soon')} />
+      <Banner>{Intl.t('index.top-banner.mainnet-coming-soon')}</Banner>
     </div>
   );
 }

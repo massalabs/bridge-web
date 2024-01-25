@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 
-import { BridgeLogo } from '@massalabs/react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 
+import { BridgeLogo } from '@/assets/BridgeLogo';
 import { NO_BRIDGE } from '@/const/env/maintenance';
-import { useLocalStorage } from '@/custom/useLocalStorage';
 import Intl from '@/i18n/i18n';
+import { useConfigStore } from '@/store/store';
 
 export function Unavailable() {
   const navigate = useNavigate();
 
-  const [theme] = useLocalStorage<string>('bridge-theme', 'theme-dark');
+  const { theme } = useConfigStore();
 
   useEffect(() => {
     if (!NO_BRIDGE) {
@@ -26,9 +26,7 @@ export function Unavailable() {
       >
         <div className="h-screen flex items-center justify-center">
           <div className="flex flex-col w-full p-4">
-            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-            {/* @ts-ignore */}
-            <BridgeLogo className="mb-8" theme={theme} />
+            <BridgeLogo className="mb-8" />
             <p className="mas-banner text-6xl text-f-primary mb-6">
               {Intl.t('unavailable.title')}
             </p>
