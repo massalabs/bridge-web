@@ -25,8 +25,7 @@ class I18n {
     const result = dot.pick(key, copy);
 
     if (!result) {
-      // eslint-disable-next-line no-console
-      console.warn(`I18n::t:: No translation found for ${key}`);
+      throw new Error(`I18n::t:: No translation found for "${key}"`);
     }
 
     return interpolations

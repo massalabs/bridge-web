@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
-import { useWrongNetwork } from '@/custom/bridge/useWrongNetwork';
+import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import {
@@ -24,7 +24,7 @@ export function Navbar(props: NavbarProps) {
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
   const { accounts, isFetching, connectedAccount } = useAccountStore();
   const { setTheme } = useConfigStore();
-  const { wrongNetwork } = useWrongNetwork();
+  const { wrongNetwork } = useWrongNetworkEVM();
 
   const { isConnected: isEvmWalletConnected } = useAccount();
 

@@ -7,11 +7,9 @@ import { SEPOLIA_FAUCET_LINK } from '@/utils/const';
 export function ETH() {
   return (
     <GradientCard customClass="w-72 h-80">
-      <Tag
-        type="default"
-        content={Intl.t(`get-tokens.tag.ETH`)}
-        customClass="mb-4"
-      />
+      <Tag type="default" customClass="mb-4">
+        {Intl.t('get-tokens.tag.ETH')}
+      </Tag>
       <p className="mas-menu-default text-center mb-4">
         {Intl.t(`get-tokens.card.ETH-description`)}
       </p>

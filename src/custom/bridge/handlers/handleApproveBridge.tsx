@@ -9,7 +9,7 @@ export async function handleApproveBridge(
   setLoading: (state: LoadingState) => void,
   amount: string,
   decimals: number,
-  _handleApproveEVM: any,
+  _handleApproveEVM: () => void,
   _allowanceEVM: bigint,
 ): Promise<boolean> {
   try {

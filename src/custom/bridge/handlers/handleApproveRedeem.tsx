@@ -30,11 +30,11 @@ export async function handleApproveRedeem(
     setLoading({
       approve: 'success',
     });
-  } catch (error: any) {
+  } catch (error) {
     const typedError = error as CustomError;
     const isErrorTimeout =
       typedError.cause && typedError.cause.error === 'timeout';
-    if (isInsufficientBalanceError(error)) {
+    if (isInsufficientBalanceError(error as Error)) {
       toast.error(Intl.t('index.approve.error.insufficient-funds'));
     } else if (isRejectedByUser(typedError)) {
       toast.error(Intl.t('index.approve.error.rejected'));

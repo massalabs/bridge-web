@@ -6,7 +6,7 @@ import { MASSA_STATION_INSTALL } from '@/utils/const';
 function SepoliaInstructions() {
   return (
     <div className="flex flex-col justify-center items-center gap-5">
-      <Tag type="info" content="Add Sepolia testnet" />
+      <Tag type="info">Add Sepolia testnet</Tag>
       <p className="text-center mas-menu-default w-60">
         {Intl.t('connect-wallet.resource-sidepanel.add-sepolia')}
       </p>
@@ -24,7 +24,7 @@ function SepoliaInstructions() {
 function MassaStationDownload() {
   return (
     <div className="flex flex-col justify-center items-center gap-5">
-      <Tag type="success" content={Intl.t('connect-wallet.download-massa')} />
+      <Tag type="success">{Intl.t('connect-wallet.download-massa')}</Tag>
       <p className="text-center mas-menu-default w-60">
         {Intl.t('connect-wallet.resource-sidepanel.download-massa-station')}
       </p>

@@ -4,14 +4,14 @@ import { FiEdit } from 'react-icons/fi';
 import { useSwitchNetwork } from 'wagmi';
 
 import { MetaMaskSvg } from '@/assets';
-import { useWrongNetwork } from '@/custom/bridge/useWrongNetwork';
+import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 import { ETH_MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID } from '@/utils/const';
 import { formatBalance } from '@/utils/utils';
 
 export default function EvmConnectButton(): JSX.Element {
-  const { wrongNetwork } = useWrongNetwork();
+  const { wrongNetwork } = useWrongNetworkEVM();
 
   const { isMainnet } = useBridgeModeStore();
   const { switchNetwork } = useSwitchNetwork();

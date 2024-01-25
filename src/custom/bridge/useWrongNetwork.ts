@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNetwork } from 'wagmi';
-import { useBridgeModeStore } from '@/store/store';
-import { validateEvmNetwork } from '@/utils/network';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import { validateEvmNetwork, validateMassaNetwork } from '@/utils/network';
 
-export function useWrongNetwork() {
+export function useWrongNetworkEVM() {
   const { chain } = useNetwork();
   const { isMainnet } = useBridgeModeStore();
 
@@ -12,6 +12,21 @@ export function useWrongNetwork() {
   useEffect(() => {
     setWrongNetwork(!validateEvmNetwork(isMainnet, chain?.id));
   }, [isMainnet, chain]);
+
+  return {
+    wrongNetwork,
+  };
+}
+
+export function useWrongNetworkMASSA() {
+  const { connectedNetwork } = useAccountStore();
+
+  const { isMainnet } = useBridgeModeStore();
+
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+  useEffect(() => {
+    setWrongNetwork(!validateMassaNetwork(isMainnet, connectedNetwork));
+  }, [isMainnet, connectedNetwork]);
 
   return {
     wrongNetwork,

@@ -4,6 +4,7 @@ import { MassaIconSvg, MassaStationIconSvg } from '@/assets';
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import Intl from '@/i18n/i18n';
 import { useConfigStore } from '@/store/store';
+import { MASSA_STATION_INSTALL } from '@/utils/const';
 
 export function Footer() {
   const { theme } = useConfigStore();
@@ -31,7 +32,7 @@ export function Footer() {
           <li>
             <a
               className="mas-menu-default no-underline cursor-pointer flex items-center gap-2"
-              href="https://station.massa.net"
+              href={MASSA_STATION_INSTALL}
               target="_blank"
             >
               <MassaStationIconSvg theme={theme} />
