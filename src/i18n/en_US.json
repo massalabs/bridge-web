@@ -91,7 +91,6 @@
       "burn-rejected": "Burn (rejected)",
       "inconsistent-not-found": "Burn (inconsistent or not found)",
       "claim-step": "Claim {state}",
-      "claim-step-none": "",
       "claim-step-retrieving-info": "(retrieving info...)",
       "claim-step-awaiting-signature": "(awaiting signature...)",
       "claim-step-claiming": "(claiming...)",

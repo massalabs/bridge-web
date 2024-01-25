@@ -52,14 +52,15 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
 }
 function getClaimStepTranslation(claimStep: ClaimSteps) {
   switch (claimStep) {
-    case ClaimSteps.None:
-      return Intl.t('index.loading-box.claim-step-none');
     case ClaimSteps.RetrievingInfo:
       return Intl.t('index.loading-box.claim-step-retrieving-info');
     case ClaimSteps.AwaitingSignature:
       return Intl.t('index.loading-box.claim-step-awaiting-signature');
     case ClaimSteps.Claiming:
       return Intl.t('index.loading-box.claim-step-claiming');
+    case ClaimSteps.None:
+    default:
+      return '';
   }
 }
 

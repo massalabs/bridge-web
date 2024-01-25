@@ -57,8 +57,7 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
   tokens: [],
 
   getTokens: async () => {
-    const { isMainnet, currentMode } = useBridgeModeStore.getState();
-    const { connectedAccount } = useAccountStore.getState();
+    const { isMainnet } = useBridgeModeStore.getState();
 
     const massaClient = await initMassaClient(isMainnet);
 
@@ -73,28 +72,13 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
             getMassaTokenSymbol(tokenPair.massaToken, massaClient!),
             getDecimals(tokenPair.massaToken, massaClient!),
           ]);
-          let allowance = BigInt(0);
-          let balance = BigInt(0);
-          if (connectedAccount) {
-            const [accountAllowance, accountBalance] = await Promise.all([
-              getAllowance(
-                config[currentMode].massaBridgeContract,
-                tokenPair.massaToken,
-                massaClient!,
-                connectedAccount,
-              ),
-              getBalance(tokenPair.massaToken, massaClient!, connectedAccount),
-            ]);
-            allowance = accountAllowance;
-            balance = accountBalance;
-          }
           return {
             ...tokenPair,
             name,
             symbol,
             decimals,
-            allowance,
-            balance,
+            allowance: BigInt(0),
+            balance: BigInt(0),
           };
         }),
       );
@@ -111,6 +95,8 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     );
 
     set({ tokens: tokenList });
+    get().refreshBalances();
+
     get().setSelectedToken(selectedToken);
   },
 
@@ -129,6 +115,11 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     }
 
     const { tokens: supportedTokens } = get();
+
+    if (!supportedTokens.length) {
+      // token list not fetched yet
+      return;
+    }
 
     const { isMainnet, currentMode } = useBridgeModeStore.getState();
 
