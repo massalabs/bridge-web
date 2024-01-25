@@ -2,13 +2,14 @@ import { useAccount } from 'wagmi';
 import EvmConnectButton from './EvmConnectButton';
 import { MetamaskNotInstalled } from './MetamaskNotInstalled';
 import { Connected, Disconnected, WrongChain } from '@/components';
-import { useWrongNetwork } from '@/custom/bridge/useWrongNetwork';
+import { ETHEREUM } from '@/const';
+import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 
 const ConnectEvmWallet = () => {
   const { isConnected } = useAccount();
   const isMetamaskInstalled = window.ethereum?.isConnected();
-  const { wrongNetwork } = useWrongNetwork();
+  const { wrongNetwork } = useWrongNetworkEVM();
 
   return (
     <>
@@ -20,7 +21,7 @@ const ConnectEvmWallet = () => {
         </p>
         {isConnected ? (
           wrongNetwork ? (
-            <WrongChain />
+            <WrongChain blockchain={ETHEREUM} />
           ) : (
             <Connected />
           )

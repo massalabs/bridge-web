@@ -5,9 +5,8 @@ import { tagTypes } from '@/utils/const';
 
 export function NoWallet() {
   return (
-    <Tag
-      type={tagTypes.error}
-      content={Intl.t('connect-wallet.card-destination.no-wallet')}
-    />
+    <Tag type={tagTypes.error}>
+      {Intl.t('connect-wallet.card-destination.no-wallet')}
+    </Tag>
   );
 }

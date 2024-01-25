@@ -11,7 +11,7 @@ import { EthSvg } from '@/assets/EthSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { Connected, Disconnected, NoAccounts, WrongChain } from '@/components';
-import { LayoutType, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { ETHEREUM, LayoutType, MASSA, SUPPORTED_MASSA_WALLETS } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import {
@@ -115,7 +115,7 @@ function EVMHeader() {
         </p>
         {isConnected ? (
           wrongNetwork ? (
-            <WrongChain />
+            <WrongChain blockchain={ETHEREUM} />
           ) : (
             <Connected />
           )
@@ -142,7 +142,7 @@ function MassaHeader() {
   function displayStatus() {
     if (isFetching) return <FetchingStatus />;
     else if (!currentProvider) return <Disconnected />;
-    else if (wrongNetwork) return <WrongChain />;
+    else if (wrongNetwork) return <WrongChain blockchain={MASSA} />;
     else if (hasNoAccounts) return <NoAccounts />;
     return <Connected />;
   }

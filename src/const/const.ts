@@ -4,6 +4,7 @@ export const MASSA_STATION = 'MASSASTATION';
 export const MASSA = 'Massa';
 export const ETHEREUM = 'Ethereum';
 export const METAMASK = 'Metamask';
+export type Blockchain = typeof MASSA | typeof ETHEREUM;
 // SMART CONTRACTS ADDRESSES
 
 export const TDAI_CONTRACT_ADDRESS =

@@ -39,13 +39,11 @@ export function TDAI() {
 
   return (
     <GradientCard customClass="w-72 h-80">
-      <Tag
-        type="warning"
-        content={Intl.t(`get-tokens.tag.tDAI`)}
-        customClass="mb-4"
-      />
+      <Tag type="warning" customClass="mb-4">
+        {Intl.t('get-tokens.tag.tDAI')}
+      </Tag>
       <p className="mas-menu-default text-center mb-4">
-        {Intl.t(`get-tokens.card.tDAI-description`)}
+        {Intl.t('get-tokens.card.tDAI-description')}
       </p>
       {waitForTransaction.isLoading || contractWrite.isLoading ? (
         <p className="mas-menu-default mb-4">{Intl.t('get-tokens.minting')}</p>

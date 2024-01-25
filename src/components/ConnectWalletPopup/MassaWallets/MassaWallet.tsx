@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   MassaWallet as MassaWalletLogo,
   Tooltip,
@@ -7,12 +7,12 @@ import BearbyWallet from './BearbyWallet';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
-import { validateMassaNetwork } from '../../../utils/network';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { Connected, Disconnected, WrongChain } from '@/components';
-import { SUPPORTED_MASSA_WALLETS } from '@/const';
+import { MASSA, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { useWrongNetworkMASSA } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import { useAccountStore } from '@/store/store';
 
 const MassaWallet = () => {
   const {
@@ -21,18 +21,13 @@ const MassaWallet = () => {
     providers,
     setCurrentProvider,
     isFetching,
-    connectedNetwork,
   } = useAccountStore();
-  const { isMainnet } = useBridgeModeStore();
 
   const [selectedProvider, setSelectedProvider] = useState<
     SUPPORTED_MASSA_WALLETS | undefined
   >(currentProvider?.name() as SUPPORTED_MASSA_WALLETS);
 
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
-  useEffect(() => {
-    setWrongNetwork(!validateMassaNetwork(isMainnet, connectedNetwork));
-  }, [isMainnet, connectedNetwork]);
+  const { wrongNetwork } = useWrongNetworkMASSA();
 
   if (!selectedProvider || isFetching)
     return (
@@ -84,7 +79,7 @@ const MassaWallet = () => {
           {renderSelectedWallet()}
           {connectedAccount ? (
             wrongNetwork ? (
-              <WrongChain />
+              <WrongChain blockchain={MASSA} />
             ) : (
               <Connected />
             )

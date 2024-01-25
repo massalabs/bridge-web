@@ -39,13 +39,11 @@ export function WETH() {
 
   return (
     <GradientCard customClass="w-72 h-80">
-      <Tag
-        type="default"
-        content={Intl.t('get-tokens.tag.WETH')}
-        customClass="mb-4"
-      />
+      <Tag type="default" customClass="mb-4">
+        {Intl.t('get-tokens.tag.WETH')}
+      </Tag>
       <p className="mas-menu-default text-center mb-4">
-        {Intl.t(`get-tokens.card.WETH-description`)}
+        {Intl.t('get-tokens.card.WETH-description')}
       </p>
       {waitForTransaction.isLoading || contractWrite.isLoading ? (
         <p className="mas-menu-default mb-4">{Intl.t('get-tokens.minting')}</p>
@@ -57,7 +55,7 @@ export function WETH() {
             contractWrite.write?.();
           }}
         >
-          {Intl.t(`get-tokens.card.mint`, { token: 'WETH' })}
+          {Intl.t('get-tokens.card.mint', { token: 'WETH' })}
         </p>
       )}
     </GradientCard>

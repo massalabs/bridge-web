@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
+import { Button } from '@massalabs/react-ui-kit';
+import { MASSA_STATION_URL } from '@massalabs/wallet-provider/dist/esm/massaStation/MassaStationProvider';
 import axios from 'axios';
 import { Balance } from './Balance';
 import { ConnectedAccount } from './ConnectedAccount';
 import { StationSelectAccount } from './StationSelectAccount';
 import { WalletError } from './WalletError';
+import { useWrongNetworkMASSA } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import {
@@ -23,6 +26,8 @@ export default function StationWallet() {
   const [massaWalletIsOn, setMassaWalletIsOn] = useState<boolean | undefined>(
     undefined,
   );
+
+  const { wrongNetwork } = useWrongNetworkMASSA();
 
   useEffect(() => {
     axios
@@ -70,6 +75,18 @@ export default function StationWallet() {
       );
     }
 
+    if (wrongNetwork) {
+      return (
+        <Button
+          variant="secondary"
+          customClass="h-14"
+          onClick={() => window.open(MASSA_STATION_URL)}
+        >
+          {Intl.t('connect-wallet.connect-metamask.switch-network')}
+        </Button>
+      );
+    }
+
     return (
       <WalletError
         description={Intl.t(
@@ -83,7 +100,8 @@ export default function StationWallet() {
     );
   };
 
-  const error = !stationIsOn || !massaWalletIsOn || !accounts.length;
+  const error =
+    !stationIsOn || !massaWalletIsOn || !accounts.length || wrongNetwork;
 
   return (
     <div className="flex flex-col gap-4 mas-body">

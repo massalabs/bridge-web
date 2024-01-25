@@ -33,10 +33,9 @@ export function Base() {
   }, [navigate]);
 
   const themeClassName =
-    theme.replace('theme-', '') +
+    theme.replace('"', '').replace('"', '').replace('theme-', '') +
     (currentMode === BridgeMode.mainnet ? '' : '-testnet');
 
-  // Template
   return (
     <div data-theme={themeClassName}>
       <MainLayout>

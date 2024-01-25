@@ -47,7 +47,8 @@
       "connected": "Connected",
       "not-installed": "Not installed",
       "no-accounts": "No accounts",
-      "wrong-chain": "Unsupported network"
+      "wrong-chain": "Unsupported network",
+      "wrong-chain-massa-station-tooltip": "Switch to {network} in top-right corner of Station's homepage"
     },
     "faq": {
       "get-tokens": {
