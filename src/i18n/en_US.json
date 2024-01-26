@@ -5,7 +5,6 @@
     "loading": "loading...",
     "massa": "Massa Buildnet",
     "sepolia": "Sepolia",
-    "download": "Download",
     "instructions": "Instructions"
   },
   "sc-deploy": {
@@ -181,7 +180,6 @@
     "link": "Instructions"
   },
   "connect-wallet": {
-    "download-massa": "Download Massa Wallet",
     "title": "Connect wallets",
     "connected": "Connected wallets",
     "description": "Connect wallets for {network1} and {network2}, to bridge tokens.",
@@ -222,11 +220,7 @@
     },
     "resource-sidepanel": {
       "add-metamask-testnet": "Add Testnet to Metamask",
-      "add-sepolia": "If you want to add Sepolia on your Metamask",
-      "add-massa": "If you want to create Massa Wallet",
-      "download-massa-station": "Download Massa Station",
-      "download-massa-station-and-create-wallet": "Download Massa Station and create Massa Wallet",
-      "create-massa-station": "Launch your Massa Station and create a Massa Wallet"
+      "add-sepolia": "If you want to add Sepolia on your Metamask"
     }
   },
   "get-tokens": {

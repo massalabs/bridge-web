@@ -4,7 +4,7 @@ import MassaWallet from './MassaWallets/MassaWallet';
 import { ResourceSidePanel } from './ResourceSidePanel';
 
 export function ConnectWallets() {
-  const { showResourceSidePanel, showSepoliaInstruction, showStationDownload } =
+  const { showResourceSidePanel, showSepoliaInstruction } =
     useShowResourceSidePanel();
 
   const gridTemplateColumns = showResourceSidePanel ? '2fr 2fr 1fr' : '1fr 1fr';
@@ -26,10 +26,7 @@ export function ConnectWallets() {
       </div>
       {showResourceSidePanel && (
         <div className="row-span-2 col-start-3 row-start-1">
-          <ResourceSidePanel
-            showSepoliaInstruction={showSepoliaInstruction}
-            showStationDownload={showStationDownload}
-          />
+          <ResourceSidePanel showSepoliaInstruction={showSepoliaInstruction} />
         </div>
       )}
     </div>

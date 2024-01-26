@@ -1,7 +1,6 @@
 import { Tag } from '@massalabs/react-ui-kit';
 
 import Intl from '@/i18n/i18n';
-import { MASSA_STATION_INSTALL } from '@/utils/const';
 
 function SepoliaInstructions() {
   return (
@@ -21,31 +20,13 @@ function SepoliaInstructions() {
   );
 }
 
-function MassaStationDownload() {
-  return (
-    <div className="flex flex-col justify-center items-center gap-5">
-      <Tag type="success">{Intl.t('connect-wallet.download-massa')}</Tag>
-      <p className="text-center mas-menu-default w-60">
-        {Intl.t('connect-wallet.resource-sidepanel.download-massa-station')}
-      </p>
-      <a
-        className="mas-menu-underline"
-        href={MASSA_STATION_INSTALL}
-        target="_blank"
-      >
-        {Intl.t('general.download')}
-      </a>
-    </div>
-  );
+interface ResourceSidePanelProps {
+  showSepoliaInstruction: boolean;
 }
 
-export function ResourceSidePanel({
-  showSepoliaInstruction,
-  showStationDownload,
-}: {
-  showSepoliaInstruction: boolean;
-  showStationDownload: boolean;
-}) {
+export function ResourceSidePanel(props: ResourceSidePanelProps) {
+  const { showSepoliaInstruction } = props;
+
   return (
     <div
       className={`
@@ -54,7 +35,6 @@ export function ResourceSidePanel({
         flex flex-col justify-center items-center gap-11`}
     >
       {showSepoliaInstruction && <SepoliaInstructions />}
-      {showStationDownload && <MassaStationDownload />}
     </div>
   );
 }
