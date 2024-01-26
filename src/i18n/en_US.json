@@ -4,8 +4,7 @@
     "select-this-account": "Select this account",
     "loading": "loading...",
     "massa": "Massa Buildnet",
-    "sepolia": "Sepolia",
-    "instructions": "Instructions"
+    "sepolia": "Sepolia"
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -217,10 +216,6 @@
       "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
       "install-metamask": "Install Metamask"
-    },
-    "resource-sidepanel": {
-      "add-metamask-testnet": "Add Testnet to Metamask",
-      "add-sepolia": "If you want to add Sepolia on your Metamask"
     }
   },
   "get-tokens": {
