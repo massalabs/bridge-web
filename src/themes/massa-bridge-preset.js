@@ -67,7 +67,7 @@ module.exports = {
         primary: colorWhite,
         secondary: colorLightGrey,
         tertiary: colorDarkGrey,
-        brand: colorInfo,
+        brand: colorDarkBlue, // changed
         neutral: colorDarkBlue,
         info: colorLightBlue,
         'deep-blue': colorWhite,
@@ -133,7 +133,7 @@ module.exports = {
         primary: colorDarkBlue,
         secondary: colorBasicBlue,
         tertiary: colorLightBlue,
-        brand: colorInfo,
+        brand: colorWhite, // changed
         neutral: colorWhite,
         info: colorDarkGrey,
         'deep-blue': colorDeepBlue,

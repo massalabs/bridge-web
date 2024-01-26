@@ -6,7 +6,7 @@ interface GradientCardProps {
 }
 
 export function GradientCard(props: GradientCardProps) {
-  const { children, customClass } = props;
+  const { children, customClass = '' } = props;
 
   return (
     <div

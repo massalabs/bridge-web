@@ -51,13 +51,12 @@ export function WrongChain(props: WrongChainProps) {
             className="w-fit p-0 hover:cursor-pointer"
             customClass="p-0 mas-caption w-fit whitespace-nowrap"
             content={Intl.t(transKey, { network })}
-            icon={
-              <div className="flex items-center">
-                <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
-                <FiHelpCircle className="text-s-warning" />
-              </div>
-            }
-          />
+          >
+            <div className="flex items-center">
+              <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
+              <FiHelpCircle className="text-s-warning" />
+            </div>
+          </Tooltip>
         )}
       </div>
     </Tag>
