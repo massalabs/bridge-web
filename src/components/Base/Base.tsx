@@ -33,7 +33,7 @@ export function Base() {
   }, [navigate]);
 
   const themeClassName =
-    theme.replace('"', '').replace('"', '').replace('theme-', '') +
+    theme.replace('theme-', '') +
     (currentMode === BridgeMode.mainnet ? '' : '-testnet');
 
   return (
