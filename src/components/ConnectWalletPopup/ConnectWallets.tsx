@@ -1,19 +1,9 @@
-import { useShowResourceSidePanel } from './ConnectWalletPopup';
 import EvmWallet from './EvmWallets/EvmWallet';
 import MassaWallet from './MassaWallets/MassaWallet';
-import { ResourceSidePanel } from './ResourceSidePanel';
 
 export function ConnectWallets() {
-  const { showResourceSidePanel, showSepoliaInstruction, showStationDownload } =
-    useShowResourceSidePanel();
-
-  const gridTemplateColumns = showResourceSidePanel ? '2fr 2fr 1fr' : '1fr 1fr';
-
   return (
-    <div
-      className="pb-10 text-f-primary grid grid-rows-2 gap-4"
-      style={{ gridTemplateColumns }}
-    >
+    <div className="pb-10 text-f-primary grid grid-rows-2 gap-4">
       <div className="col-span-2">
         <WalletCard>
           <EvmWallet />
@@ -24,14 +14,6 @@ export function ConnectWallets() {
           <MassaWallet />
         </WalletCard>
       </div>
-      {showResourceSidePanel && (
-        <div className="row-span-2 col-start-3 row-start-1">
-          <ResourceSidePanel
-            showSepoliaInstruction={showSepoliaInstruction}
-            showStationDownload={showStationDownload}
-          />
-        </div>
-      )}
     </div>
   );
 }

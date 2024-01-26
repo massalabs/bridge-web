@@ -37,7 +37,7 @@ export default function EvmConnectButton(): JSX.Element {
 
         return (
           <div
-            className="flex flex-col items-center gap-4"
+            className="flex flex-col gap-4"
             {...(!ready && {
               'aria-hidden': true,
             })}
@@ -96,7 +96,7 @@ export default function EvmConnectButton(): JSX.Element {
                   </div>
                   <div className="mas-body">
                     {account.displayBalance
-                      ? ` ${Intl.t(
+                      ? `${Intl.t(
                           'connect-wallet.connected-cards.wallet-balance',
                         )} ${formatBalance(account.balanceFormatted)} ETH`
                       : ''}

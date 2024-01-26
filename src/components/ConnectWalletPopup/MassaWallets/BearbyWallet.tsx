@@ -1,5 +1,5 @@
-import { Balance } from './Balance';
 import { ConnectedAccount } from './ConnectedAccount';
+import { MASBalance } from './MASBalance';
 import { WalletError } from './WalletError';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
@@ -12,7 +12,7 @@ export default function BearbyWallet() {
     return (
       <div className="flex flex-col gap-4 mas-body">
         <ConnectedAccount />
-        <Balance />
+        <MASBalance />
       </div>
     );
   }

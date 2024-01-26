@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
 import { MASSA_STATION_URL } from '@massalabs/wallet-provider/dist/esm/massaStation/MassaStationProvider';
 import axios from 'axios';
-import { Balance } from './Balance';
 import { ConnectedAccount } from './ConnectedAccount';
+import { MASBalance } from './MASBalance';
 import { StationSelectAccount } from './StationSelectAccount';
 import { WalletError } from './WalletError';
 import { useWrongNetworkMASSA } from '@/custom/bridge/useWrongNetwork';
@@ -100,24 +100,21 @@ export default function StationWallet() {
     );
   };
 
-  const error =
-    !stationIsOn || !massaWalletIsOn || !accounts.length || wrongNetwork;
+  if (!stationIsOn || !massaWalletIsOn || !accounts.length || wrongNetwork) {
+    return renderError();
+  }
 
   return (
     <div className="flex flex-col gap-4 mas-body">
-      {!error ? (
-        <div className="flex gap-4">
-          <div className="w-1/2">
-            <StationSelectAccount />
-          </div>
-          <div className="w-1/2">
-            <ConnectedAccount maskLength={5} />
-          </div>
+      <div className="flex gap-4">
+        <div className="w-1/2">
+          <StationSelectAccount />
         </div>
-      ) : (
-        renderError()
-      )}
-      <Balance />
+        <div className="w-1/2">
+          <ConnectedAccount maskLength={5} />
+        </div>
+      </div>
+      <MASBalance />
     </div>
   );
 }

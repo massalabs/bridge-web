@@ -4,9 +4,7 @@
     "select-this-account": "Select this account",
     "loading": "loading...",
     "massa": "Massa Buildnet",
-    "sepolia": "Sepolia",
-    "download": "Download",
-    "instructions": "Instructions"
+    "sepolia": "Sepolia"
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -181,7 +179,6 @@
     "link": "Instructions"
   },
   "connect-wallet": {
-    "download-massa": "Download Massa Wallet",
     "title": "Connect wallets",
     "connected": "Connected wallets",
     "description": "Connect wallets for {network1} and {network2}, to bridge tokens.",
@@ -219,14 +216,6 @@
       "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
       "install-metamask": "Install Metamask"
-    },
-    "resource-sidepanel": {
-      "add-metamask-testnet": "Add Testnet to Metamask",
-      "add-sepolia": "If you want to add Sepolia on your Metamask",
-      "add-massa": "If you want to create Massa Wallet",
-      "download-massa-station": "Download Massa Station",
-      "download-massa-station-and-create-wallet": "Download Massa Station and create Massa Wallet",
-      "create-massa-station": "Launch your Massa Station and create a Massa Wallet"
     }
   },
   "get-tokens": {

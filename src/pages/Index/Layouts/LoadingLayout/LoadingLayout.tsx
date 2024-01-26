@@ -78,7 +78,7 @@ export function LoadingLayout(props: LoadingBoxProps) {
 
   return (
     <div
-      className="p-10 max-w-3/12 w-3/12 min-h-96 border border-tertiary rounded-2xl
+      className="p-10 max-w-3/12 w-4/12 min-h-96 border border-tertiary rounded-2xl
               bg-secondary/50 text-f-primary"
     >
       {/* TODO: refactor to make exit component */}

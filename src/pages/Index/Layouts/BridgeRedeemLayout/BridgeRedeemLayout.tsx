@@ -79,7 +79,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
   return (
     <>
       <div
-        className={`p-10 max-w-2xl w-full border border-tertiary rounded-2xl
+        className={`p-10 max-w-3xl w-full border border-tertiary rounded-2xl
             bg-secondary/50 text-f-primary mb-5 ${isBlurred}`}
       >
         <div className="p-6 bg-primary rounded-2xl mb-5">
