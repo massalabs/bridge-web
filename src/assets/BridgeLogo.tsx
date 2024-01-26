@@ -8,7 +8,7 @@ interface BridgeLogoProps extends ComponentPropsWithoutRef<'div'> {
 }
 
 export function BridgeLogo(props: BridgeLogoProps) {
-  const { customClass, ...rest } = props;
+  const { customClass = '', ...rest } = props;
 
   const { theme } = useConfigStore();
   const { currentMode } = useBridgeModeStore();
