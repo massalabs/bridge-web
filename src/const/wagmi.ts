@@ -1,13 +1,13 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 import { publicProvider } from '@wagmi/core/providers/public';
-import { configureChains, createConfig, sepolia } from 'wagmi';
+import { configureChains, createConfig, sepolia, mainnet } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 
 const ALCHEMY_API_KEY = import.meta.env['VITE_ALCHEMY_API_KEY'] || '';
 
 export const { chains, publicClient } = configureChains(
-  [sepolia],
+  [sepolia, mainnet],
   [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()],
   { batch: { multicall: true } },
 );
