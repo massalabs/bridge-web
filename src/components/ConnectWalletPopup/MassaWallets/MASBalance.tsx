@@ -8,7 +8,7 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { Unit, formatStandard } from '@/utils/massaFormat';
 
-export function Balance() {
+export function MASBalance() {
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
 
   const { connectedAccount } = useAccountStore();
