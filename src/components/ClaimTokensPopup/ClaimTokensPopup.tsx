@@ -32,7 +32,10 @@ export function ClaimTokensPopup() {
 
   const { chain: evmConnectedChain } = useNetwork();
 
+  const evmChainName = evmConnectedChain?.name;
+
   function ClaimButton() {
+    if (!evmChainName) return null;
     return (
       <div
         className="flex flex-col gap-4 h-fit w-72 absolute top-32 right-12
@@ -42,7 +45,7 @@ export function ClaimTokensPopup() {
         <p className="mas-menu-active">{Intl.t('claim.popup-title')}</p>
         <p>
           {Intl.t('claim.popup-description', {
-            chain: evmConnectedChain!.name,
+            chain: evmChainName,
           })}
         </p>
         <Link to={'/claim'}>
