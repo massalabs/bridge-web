@@ -83,10 +83,6 @@ describe('handleMintBridge', () => {
       2,
       Status.Error,
     );
-    expect(globalStatusesStoreStateMock.setError).toHaveBeenNthCalledWith(
-      1,
-      Status.Error,
-    );
 
     expect(result).toBeFalsy();
   });
@@ -102,10 +98,6 @@ describe('handleMintBridge', () => {
     );
     expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
       2,
-      Status.Error,
-    );
-    expect(globalStatusesStoreStateMock.setError).toHaveBeenNthCalledWith(
-      1,
       Status.Error,
     );
 

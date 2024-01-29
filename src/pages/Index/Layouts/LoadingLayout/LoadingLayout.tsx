@@ -20,22 +20,19 @@ export interface LoadingBoxProps {
 export function LoadingLayout(props: LoadingBoxProps) {
   const { onClose, massaToEvm } = props;
 
-  const { box, error } = useGlobalStatusesStore();
+  const { box } = useGlobalStatusesStore();
 
   const IS_BOX_SUCCESS = box === 'success';
   const IS_BOX_WARNING = box === 'warning';
   const IS_BOX_ERROR = box === 'error';
-  const IS_GLOBAL_ERROR = error !== 'none';
 
-  const displaySubtitle =
-    !IS_BOX_SUCCESS && !IS_GLOBAL_ERROR && !IS_BOX_WARNING && !IS_BOX_ERROR;
+  const displaySubtitle = !IS_BOX_SUCCESS && !IS_BOX_WARNING && !IS_BOX_ERROR;
 
-  const isNotProcessing =
-    IS_BOX_SUCCESS || IS_GLOBAL_ERROR || IS_BOX_WARNING || IS_BOX_ERROR;
+  const isNotProcessing = IS_BOX_SUCCESS || IS_BOX_WARNING || IS_BOX_ERROR;
 
   function getLoadingBoxHeader() {
     if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
-    else if (IS_GLOBAL_ERROR || IS_BOX_ERROR) {
+    else if (IS_BOX_ERROR) {
       return massaToEvm
         ? Intl.t('index.loading-box.title-redeem-error')
         : Intl.t('index.loading-box.title-bridge-error');

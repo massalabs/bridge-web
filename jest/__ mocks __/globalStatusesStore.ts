@@ -16,14 +16,12 @@ export const globalStatusesStoreStateMock = {
   claim: Status.None,
   lock: Status.None,
   mint: Status.None,
-  error: Status.None,
   setBox: jest.fn().mockImplementation(),
   setApprove: jest.fn().mockImplementation(),
   setBurn: jest.fn().mockImplementation(),
   setClaim: jest.fn().mockImplementation(),
   setLock: jest.fn().mockImplementation(),
   setMint: jest.fn().mockImplementation(),
-  setError: jest.fn().mockImplementation(),
   reset: jest.fn().mockImplementation(),
 } as GlobalStatusesStoreState;
 

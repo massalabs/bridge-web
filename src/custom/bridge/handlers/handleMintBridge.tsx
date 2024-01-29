@@ -48,6 +48,5 @@ function handleMintError(
   } else {
     console.error(error);
     globalStatusesStore.setMint(Status.Error);
-    globalStatusesStore.setError(Status.Error);
   }
 }
