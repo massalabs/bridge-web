@@ -138,13 +138,11 @@ export function Claim({
 
     if (isRejectedByUser(typedError)) {
       toast.error(Intl.t('index.claim.error.rejected'));
-      setClaim(Status.Error);
-      setBox(Status.Error);
+      setLoadingToError();
       setClaimStep(ClaimSteps.Reject);
     } else {
       toast.error(Intl.t('index.claim.error.unknown'));
-      setClaim(Status.Error);
-      setBox(Status.Error);
+      setLoadingToError();
       setClaimStep(ClaimSteps.Error);
       console.error(error);
     }
