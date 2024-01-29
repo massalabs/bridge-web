@@ -302,10 +302,12 @@ function MassaBalance() {
   );
 }
 
-export function boxLayout(): {
+interface BoxLayoutResult {
   up: Layout;
   down: Layout;
-  } {
+}
+
+export function boxLayout(): BoxLayoutResult {
   const { side } = useBridgeModeStore.getState();
 
   const layouts = {
