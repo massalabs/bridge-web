@@ -20,7 +20,6 @@ export const initAccountStoreMock = () => {
         accountObserver: undefined,
         networkObserver: undefined,
         connectedNetwork: 'buildnet',
-        isBearbyConnected: false,
         setProviders: jest.fn(),
       } as any as AccountStoreState),
   );

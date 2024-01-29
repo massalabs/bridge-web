@@ -1,6 +1,8 @@
 import { EOperationStatus } from '@massalabs/massa-web3';
 import { U256_MAX } from '../../src/const';
 import { handleApproveRedeem } from '../../src/custom/bridge/handlers/handleApproveRedeem';
+import { Status } from '../../src/store/globalStatusesStore';
+import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
 import { smartContractsMock } from '../__ mocks __/mocks';
 
 describe('handleApproveRedeem', () => {
@@ -16,16 +18,20 @@ describe('handleApproveRedeem', () => {
       EOperationStatus.FINAL_SUCCESS,
     );
 
-    const mockSetLoading = jest.fn();
+    const result = await handleApproveRedeem(amount);
 
-    const result = await handleApproveRedeem(mockSetLoading, amount);
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).toHaveBeenCalledWith(opId);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      2,
+      Status.Success,
+    );
 
     expect(result).toBeTruthy();
   });
@@ -33,15 +39,20 @@ describe('handleApproveRedeem', () => {
   test('should not increaseAllowance and show success of redeem approval', async () => {
     const amount = '1';
 
-    const mockSetLoading = jest.fn().mockImplementation();
-    const result = await handleApproveRedeem(mockSetLoading, amount);
+    const result = await handleApproveRedeem(amount);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(smartContractsMock.callSmartContract).not.toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      2,
+      Status.Success,
+    );
 
     expect(result).toBeTruthy();
   });
@@ -53,19 +64,24 @@ describe('handleApproveRedeem', () => {
 
     const amount = U256_MAX.toString();
 
-    const mockSetLoading = jest.fn().mockImplementation();
+    const result = await handleApproveRedeem(amount);
 
-    const result = await handleApproveRedeem(mockSetLoading, amount);
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      approve: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });
@@ -82,19 +98,24 @@ describe('handleApproveRedeem', () => {
 
     const amount = U256_MAX.toString();
 
-    const mockSetLoading = jest.fn().mockImplementation();
+    const result = await handleApproveRedeem(amount);
 
-    const result = await handleApproveRedeem(mockSetLoading, amount);
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      approve: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
     expect(result).toBeFalsy();
   });
 
@@ -105,19 +126,24 @@ describe('handleApproveRedeem', () => {
 
     const amount = U256_MAX.toString();
 
-    const mockSetLoading = jest.fn().mockImplementation();
+    const result = await handleApproveRedeem(amount);
 
-    const result = await handleApproveRedeem(mockSetLoading, amount);
-
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      approve: 'error',
-      box: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });

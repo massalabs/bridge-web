@@ -1,5 +1,3 @@
-import { EOperationStatus } from '@massalabs/massa-web3';
-
 export const smartContractsMock = {
   callSmartContract: jest.fn(),
   getOperationStatus: jest.fn(),

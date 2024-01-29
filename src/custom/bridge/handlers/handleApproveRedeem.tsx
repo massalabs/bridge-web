@@ -1,35 +1,28 @@
 import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { U256_MAX } from '../../../const/const';
-import { LoadingState } from '../../../const/types/types';
 import Intl from '../../../i18n/i18n';
 import { useTokenStore } from '../../../store/tokenStore';
 import { increaseAllowance } from '../bridge';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import {
   CustomError,
   isInsufficientBalanceError,
   isRejectedByUser,
 } from '@/utils/error';
 
-export async function handleApproveRedeem(
-  setLoading: (state: LoadingState) => void,
-  amount: string,
-) {
+export async function handleApproveRedeem(amount: string) {
+  const { setApprove, setBox } = useGlobalStatusesStore.getState();
   try {
     const { selectedToken } = useTokenStore.getState();
-
-    setLoading({
-      approve: 'loading',
-    });
+    setApprove(Status.Loading);
 
     const _amount = parseUnits(amount, selectedToken!.decimals);
     if (selectedToken!.allowance < _amount) {
       await increaseAllowance(U256_MAX);
     }
 
-    setLoading({
-      approve: 'success',
-    });
+    setApprove(Status.Success);
   } catch (error) {
     const typedError = error as CustomError;
     const isErrorTimeout =
@@ -45,10 +38,9 @@ export async function handleApproveRedeem(
       // error during allowance increase
       toast.error(Intl.t('index.approve.error.allowance-error'));
     }
-    setLoading({
-      box: 'error',
-      approve: 'error',
-    });
+
+    setBox(Status.Error);
+    setApprove(Status.Error);
     return false;
   }
   return true;

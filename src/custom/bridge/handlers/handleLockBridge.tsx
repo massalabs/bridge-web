@@ -2,28 +2,29 @@ import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 
 import Intl from '../../../i18n/i18n';
-import { LoadingState } from '@/const';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { CustomError, isParameterError, isRejectedByUser } from '@/utils/error';
 
 export interface LockBridgeParams {
-  setLoading: (state: LoadingState) => void;
   amount: string;
   _handleLockEVM: any;
   decimals: number;
 }
 
 export async function handleLockBridge({
-  setLoading,
   amount,
   _handleLockEVM,
   decimals,
 }: LockBridgeParams): Promise<boolean> {
+  const { setBox, setLock } = useGlobalStatusesStore.getState();
+
   try {
-    setLoading({ lock: 'loading' });
+    setLock(Status.Loading);
     await _handleLockEVM(parseUnits(amount, decimals));
   } catch (error) {
     handleLockError(error);
-    setLoading({ lock: 'error', box: 'error' });
+    setLock(Status.Error);
+    setBox(Status.Error);
     return false;
   }
   return true;
@@ -32,12 +33,12 @@ export async function handleLockBridge({
 function handleLockError(error: undefined | unknown) {
   const typedError = error as CustomError;
   if (isRejectedByUser(typedError)) {
-    toast.error(Intl.t(`index.lock.error.rejected`));
+    toast.error(Intl.t('index.lock.error.rejected'));
   } else if (isParameterError(typedError)) {
     // if allowance entered in approval is still < amount
-    toast.error(Intl.t(`index.lock.error.wrong-allowance`));
+    toast.error(Intl.t('index.lock.error.wrong-allowance'));
   } else {
-    toast.error(Intl.t(`index.lock.error.unknown`));
+    toast.error(Intl.t('index.lock.error.unknown'));
     console.error(error);
   }
 }

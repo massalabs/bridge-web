@@ -15,6 +15,7 @@ import {
 import { BridgeMode } from '@/const';
 import { updateProviders } from '@/store/helpers/massaProviders';
 export { useTokenStore } from './tokenStore';
+export { useGlobalStatusesStore } from './globalStatusesStore';
 
 export const useConfigStore = create<ConfigStoreState>((...obj) => ({
   ...configStore(...obj),
