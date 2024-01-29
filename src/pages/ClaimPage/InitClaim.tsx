@@ -1,19 +1,30 @@
 import { Tooltip, Button } from '@massalabs/react-ui-kit';
 
 import { ClaimState } from './ClaimButton';
+import { ICustomError } from '@/custom/bridge/handlers/handleErrorMessage';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
+import { isRejectedByUser } from '@/utils/error';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface ClaimButton {
   operation: RedeemOperationToClaim;
   setClaimState: (state: ClaimState) => void;
+  onRedeemReject: () => void;
+  onRedeemError: () => void;
+  onRedeemPending: () => void;
   symbol: string | undefined;
 }
 
-export function InitialClaim(args: ClaimButton) {
-  const { setClaimState, operation: op, symbol } = args;
+export function InitClaim(args: ClaimButton) {
+  const {
+    operation: op,
+    symbol,
+    onRedeemReject,
+    onRedeemError,
+    onRedeemPending,
+  } = args;
   const { handleRedeem } = useEvmBridge();
   let { full, in2decimals } = formatAmount(op.amount);
 
@@ -24,8 +35,17 @@ export function InitialClaim(args: ClaimButton) {
     inputOpId: string,
     signatures: string[],
   ) {
-    setClaimState(ClaimState.PENDING);
-    await handleRedeem(amount, recipient, token, inputOpId, signatures);
+    try {
+      onRedeemPending();
+      await handleRedeem(amount, recipient, token, inputOpId, signatures);
+    } catch (error) {
+      const typedError = error as ICustomError;
+      if (isRejectedByUser(typedError)) {
+        onRedeemReject();
+      } else {
+        onRedeemError();
+      }
+    }
   }
 
   return (
