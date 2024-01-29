@@ -1,4 +1,6 @@
 import { handleApproveBridge } from '../../src/custom/bridge/handlers/handleApproveBridge';
+import { Status } from '../../src/store/globalStatusesStore';
+import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
 import { Utils } from '../__ mocks __/mocks';
 
 describe('handleApproveBridge', () => {
@@ -10,24 +12,28 @@ describe('handleApproveBridge', () => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
-
     const _handleApproveEVM = jest.fn().mockImplementation();
     const _allowanceEVM = 1314000000000000000000n;
 
     const result = await handleApproveBridge(
-      mockSetLoading,
       amount,
       decimals,
       _handleApproveEVM,
       _allowanceEVM,
+      globalStatusesStoreStateMock,
     );
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(_handleApproveEVM).not.toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, { approve: 'success' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      2,
+      Status.Success,
+    );
 
     expect(result).toBeTruthy();
   });
@@ -41,20 +47,21 @@ describe('handleApproveBridge', () => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
-
     const _handleApproveEVM = approve.writeAsync;
     const _allowanceEVM = 1311000000000000000000n;
 
     const result = await handleApproveBridge(
-      mockSetLoading,
       amount,
       decimals,
       _handleApproveEVM,
       _allowanceEVM,
+      globalStatusesStoreStateMock,
     );
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(_handleApproveEVM).toHaveBeenCalled();
 
@@ -73,27 +80,33 @@ describe('handleApproveBridge', () => {
 
     const amount = '1313';
     const decimals = 18;
-    const mockSetLoading = jest.fn().mockImplementation();
 
     const _handleApproveEVM = approve.writeAsync;
     const _allowanceEVM = 1311000000000000000000n;
 
     const result = await handleApproveBridge(
-      mockSetLoading,
       amount,
       decimals,
       _handleApproveEVM,
       _allowanceEVM,
+      globalStatusesStoreStateMock,
     );
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { approve: 'loading' });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(_handleApproveEVM).toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      approve: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });

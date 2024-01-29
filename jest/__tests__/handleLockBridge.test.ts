@@ -1,4 +1,6 @@
 import { handleLockBridge } from '../../src/custom/bridge/handlers/handleLockBridge';
+import { Status } from '../../src/store/globalStatusesStore';
+import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
 import { Utils } from '../__ mocks __/mocks';
 
 describe('handleLockBridge', () => {
@@ -16,20 +18,21 @@ describe('handleLockBridge', () => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
-
     const _handleLockEVM = lock.writeAsync;
 
     const lockArgs = {
-      setLoading: mockSetLoading,
       amount,
       _handleLockEVM,
       decimals,
+      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { lock: 'loading' });
+    expect(globalStatusesStoreStateMock.setLock).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(_handleLockEVM).toHaveBeenCalled();
 
@@ -51,27 +54,32 @@ describe('handleLockBridge', () => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
-
     const _handleLockEVM = lock.writeAsync;
 
     const lockArgs = {
-      setLoading: mockSetLoading,
       amount,
       _handleLockEVM,
       decimals,
+      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { lock: 'loading' });
+    expect(globalStatusesStoreStateMock.setLock).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(_handleLockEVM).toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      lock: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setLock).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });
@@ -93,27 +101,32 @@ describe('handleLockBridge', () => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
-
     const _handleLockEVM = lock.writeAsync;
 
     const lockArgs = {
-      setLoading: mockSetLoading,
       amount,
       _handleLockEVM,
       decimals,
+      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { lock: 'loading' });
+    expect(globalStatusesStoreStateMock.setLock).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(_handleLockEVM).toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      lock: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setLock).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });
@@ -137,27 +150,32 @@ describe('handleLockBridge', () => {
     const amount = '1313';
     const decimals = 18;
 
-    const mockSetLoading = jest.fn().mockImplementation();
-
     const _handleLockEVM = lock.writeAsync;
 
     const lockArgs = {
-      setLoading: mockSetLoading,
       amount,
       _handleLockEVM,
       decimals,
+      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { lock: 'loading' });
+    expect(globalStatusesStoreStateMock.setLock).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
 
     expect(_handleLockEVM).toHaveBeenCalled();
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'error',
-      lock: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setLock).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });

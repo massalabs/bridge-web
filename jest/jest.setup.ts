@@ -7,7 +7,9 @@ import { jest } from '@jest/globals';
 global.jest = jest;
 
 import { initAccountStoreMock } from './__ mocks __/accountStore';
+import { initGlobalStatusesStoreMock } from './__ mocks __/globalStatusesStore';
 import { initTokenStoreMock } from './__ mocks __/tokensStore';
 
 initTokenStoreMock();
 initAccountStoreMock();
+initGlobalStatusesStoreMock();

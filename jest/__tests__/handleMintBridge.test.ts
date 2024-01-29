@@ -2,19 +2,19 @@ import {
   MintArgs,
   handleMintBridge,
 } from '../../src/custom/bridge/handlers/handleMintBridge';
+import { Status } from '../../src/store/globalStatusesStore';
+import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
 import { smartContractsMock } from '../__ mocks __/mocks';
 
 describe('handleMintBridge', () => {
   let mintArgs: MintArgs;
-  let mockSetLoading: jest.Mock;
 
   beforeEach(() => {
     const lockTxID = 'mockLockTxId';
-    mockSetLoading = jest.fn().mockImplementation();
 
     mintArgs = {
       massaOperationID: lockTxID,
-      setLoading: mockSetLoading,
+      globalStatusesStore: globalStatusesStoreStateMock,
     };
   });
 
@@ -55,11 +55,18 @@ describe('handleMintBridge', () => {
 
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'success',
-      mint: 'success',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Success,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Success,
+    );
     expect(result).toBeTruthy();
   });
 
@@ -68,11 +75,18 @@ describe('handleMintBridge', () => {
 
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      error: 'error',
-      mint: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setError).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });
@@ -82,11 +96,18 @@ describe('handleMintBridge', () => {
 
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      error: 'error',
-      mint: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
+    expect(globalStatusesStoreStateMock.setError).toHaveBeenNthCalledWith(
+      1,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });
@@ -100,11 +121,18 @@ describe('handleMintBridge', () => {
 
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'warning',
-      mint: 'warning',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Warning,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Warning,
+    );
 
     expect(result).toBeFalsy();
   });
