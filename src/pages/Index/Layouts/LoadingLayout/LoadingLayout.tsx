@@ -1,7 +1,6 @@
 import { FiX } from 'react-icons/fi';
 
 import { BridgeLayout } from './BridgeLayout';
-import { GlobalErrorLayout } from './GlobalErrorLayout';
 import { loadingState } from './LoadingState';
 import { RedeemLayout } from './RedeemLayout/RedeemLayout';
 import { SuccessLayout } from './SuccessLayout';
@@ -63,8 +62,6 @@ export function LoadingLayout(props: LoadingBoxProps) {
 
   function getLoadingBoxContent() {
     switch (true) {
-      case IS_GLOBAL_ERROR:
-        return <GlobalErrorLayout />;
       case IS_BOX_SUCCESS:
         return <SuccessLayout {...props} />;
       case IS_BOX_WARNING:
