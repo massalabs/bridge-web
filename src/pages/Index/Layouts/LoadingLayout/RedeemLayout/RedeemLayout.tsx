@@ -58,6 +58,10 @@ function getClaimStepTranslation(claimStep: ClaimSteps) {
       return Intl.t('index.loading-box.claim-step-awaiting-signature');
     case ClaimSteps.Claiming:
       return Intl.t('index.loading-box.claim-step-claiming');
+    case ClaimSteps.Reject:
+      return Intl.t('index.loading-box.claim-step-rejected');
+    case ClaimSteps.Error:
+      return Intl.t('index.loading-box.claim-step-error');
     case ClaimSteps.None:
     default:
       return '';
@@ -69,4 +73,6 @@ export const enum ClaimSteps {
   RetrievingInfo,
   AwaitingSignature,
   Claiming,
+  Error,
+  Reject,
 }

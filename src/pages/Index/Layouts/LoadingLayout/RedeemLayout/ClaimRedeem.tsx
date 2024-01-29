@@ -144,15 +144,15 @@ export function Claim({
       setLoading({
         claim: loadingStates.error,
         box: loadingStates.error,
-        error: loadingStates.error,
       });
+      setClaimStep(ClaimSteps.Reject);
     } else {
       toast.error(Intl.t(`index.claim.error.unknown`));
       setLoading({
         claim: loadingStates.error,
         box: loadingStates.error,
-        error: loadingStates.error,
       });
+      setClaimStep(ClaimSteps.Error);
       console.error(error);
     }
   }
