@@ -3,12 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { MassaIconSvg, MassaStationIconSvg } from '@/assets';
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import Intl from '@/i18n/i18n';
-import { useConfigStore } from '@/store/store';
 import { MASSA_STATION_INSTALL } from '@/utils/const';
 
 export function Footer() {
-  const { theme } = useConfigStore();
-
   const navigate = useNavigate();
 
   return (
@@ -25,7 +22,7 @@ export function Footer() {
               href="https://massa.net"
               target="_blank"
             >
-              <MassaIconSvg theme={theme} />
+              <MassaIconSvg />
               {Intl.t(`index.footer.massa`)}
             </a>
           </li>
@@ -35,7 +32,7 @@ export function Footer() {
               href={MASSA_STATION_INSTALL}
               target="_blank"
             >
-              <MassaStationIconSvg theme={theme} />
+              <MassaStationIconSvg />
               {Intl.t(`index.footer.massa-station`)}
             </a>
           </li>
