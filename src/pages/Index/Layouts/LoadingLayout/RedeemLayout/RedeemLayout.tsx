@@ -2,24 +2,23 @@ import { useState } from 'react';
 
 import { Claim } from './ClaimRedeem';
 import { LoadingBoxProps } from '../LoadingLayout';
-import { loadingState } from '../LoadingState';
+import { LoadingState } from '../LoadingState';
 import { ShowOperationId } from '../ShowOperationId';
 import Intl from '@/i18n/i18n';
-import { loadingStates } from '@/utils/const';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 
 export function RedeemLayout({ ...props }: LoadingBoxProps) {
-  const { loading, redeemSteps, setLoading, operationId, amount, decimals } =
-    props;
+  const { redeemSteps, operationId, amount, decimals } = props;
+
+  const { burn, approve, claim } = useGlobalStatusesStore();
 
   const [claimStep, setClaimStep] = useState(ClaimSteps.None);
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
-  const isBurnSuccessfull = loading.burn === loadingStates.success;
+  const isBurnSuccessful = burn === Status.Success;
 
   const claimArgs = {
-    loading,
     setClaimStep,
-    setLoading,
     operationId,
     amount,
     decimals,
@@ -30,11 +29,11 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
       <div className="flex flex-col gap-6">
         <div className="flex justify-between">
           <p className="mas-body-2">{Intl.t('index.loading-box.approve')}</p>
-          {loadingState(loading.approve)}
+          <LoadingState state={approve} />
         </div>
         <div className="flex justify-between">
           <p className="mas-body-2">{redeemSteps}</p>
-          {loadingState(loading.burn)}
+          <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">
           <p className="mas-body-2">
@@ -42,9 +41,9 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
               state: getClaimStepTranslation(claimStep),
             })}
           </p>
-          {loadingState(loading.claim)}
+          <LoadingState state={claim} />
         </div>
-        {isBurnSuccessfull && <Claim {...claimArgs} />}
+        {isBurnSuccessful && <Claim {...claimArgs} />}
         <ShowOperationId {...props} />
       </div>
     </>

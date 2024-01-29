@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { FiPauseCircle } from 'react-icons/fi';
 
 import { Spinner, ErrorCheck, WarningCheck, SuccessCheck } from '@/components';
-import { StateType } from '@/const';
+import { Status } from '@/store/globalStatusesStore';
 
 interface Loading {
   loading: ReactNode;
@@ -13,7 +13,13 @@ interface Loading {
   none: ReactNode;
 }
 
-export function loadingState(state: StateType, size?: 'md' | 'sm' | 'lg') {
+interface LoadingStateProps {
+  state: Status;
+  size?: 'md' | 'sm' | 'lg';
+}
+
+export function LoadingState(props: LoadingStateProps) {
+  const { state, size } = props;
   const loading: Loading = {
     loading: <Spinner size={size} />,
     error: <ErrorCheck size={size} />,

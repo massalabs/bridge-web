@@ -12,7 +12,7 @@ import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import { LayoutType, LoadingState, config } from '@/const';
+import { LayoutType, config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
@@ -28,9 +28,11 @@ import {
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import Intl from '@/i18n/i18n';
+import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
   useBridgeModeStore,
+  useGlobalStatusesStore,
   useTokenStore,
 } from '@/store/store';
 import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
@@ -80,15 +82,11 @@ export function Index() {
     Intl.t('index.loading-box.burn'),
   );
   const [isRedeem, setIsRedeem] = useState<boolean>(false);
-  const [loading, _setLoading] = useState<LoadingState>({
-    box: 'none',
-    approve: 'none',
-    burn: 'none',
-    claim: 'none',
-    lock: 'none',
-    mint: 'none',
-    error: 'none',
-  });
+
+  const globalStatusesStore = useGlobalStatusesStore();
+  const { box, setBox, setClaim, setLock, setApprove, reset } =
+    globalStatusesStore;
+
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
@@ -96,8 +94,8 @@ export function Index() {
 
   const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
 
-  const isLoading = loading.box !== 'none' ? true : false;
-  const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
+  const isLoading = box !== 'none';
+  const isBlurred = box !== 'none' ? 'blur-md' : '';
   const operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
 
   const isButtonDisabled =
@@ -111,7 +109,8 @@ export function Index() {
 
   useEffect(() => {
     if (isRedeem) {
-      setLoading({ box: 'success', claim: 'success' });
+      setBox(Status.Success);
+      setClaim(Status.Success);
       refreshBalances();
     }
   }, [isRedeem]);
@@ -137,13 +136,14 @@ export function Index() {
 
   useEffect(() => {
     if (lockIsSuccess) {
-      setLoading({ lock: 'success' });
+      setLock(Status.Success);
       let data = lockData;
       if (!data) return;
       setLockTxID(data.transactionHash);
     }
     if (lockIsError) {
-      setLoading({ box: 'error', lock: 'error' });
+      setBox(Status.Error);
+      setLock(Status.Error);
     }
   }, [lockIsSuccess, lockIsError]);
 
@@ -152,7 +152,7 @@ export function Index() {
     if (lockTxID) {
       const mintArgs: MintArgs = {
         massaOperationID: lockTxID,
-        setLoading,
+        globalStatusesStore,
       };
       handleMintBridge(mintArgs);
     }
@@ -160,25 +160,26 @@ export function Index() {
 
   useEffect(() => {
     if (approveIsSuccess) {
-      setLoading({ approve: 'success' });
+      setApprove(Status.Success);
       if (!amount) return;
       const lockArgs: LockBridgeParams = {
-        setLoading,
         amount,
         _handleLockEVM,
         decimals,
+        globalStatusesStore,
       };
       handleLockBridge(lockArgs);
     }
     if (approveIsError) {
-      setLoading({ box: 'error', approve: 'error' });
+      setBox(Status.Error);
+      setApprove(Status.Error);
       toast.error(Intl.t('index.approve.error.failed'));
     }
   }, [approveIsSuccess, approveIsError]);
 
   useEffect(() => {
-    if (loading.box === 'none') closeLoadingBox();
-  }, [loading.box]);
+    if (box === Status.None) closeLoadingBox();
+  }, [box]);
 
   function handleToggleLayout() {
     setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
@@ -223,15 +224,13 @@ export function Index() {
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
-    setLoading({
-      box: 'loading',
-    });
+    setBox(Status.Loading);
 
     if (IS_MASSA_TO_EVM) {
       if (!massaClient || !selectedToken || !amount) {
         return;
       }
-      const approved = await handleApproveRedeem(setLoading, amount);
+      const approved = await handleApproveRedeem(amount, globalStatusesStore);
 
       if (approved) {
         if (!selectedToken || !evmAddress || !amount) {
@@ -242,8 +241,8 @@ export function Index() {
           recipient: evmAddress,
           amount,
           setBurnTxID,
-          setLoading,
           setRedeemSteps,
+          globalStatusesStore,
         });
       }
     } else {
@@ -251,41 +250,27 @@ export function Index() {
         return;
       }
       const approved = await handleApproveBridge(
-        setLoading,
         amount,
         decimals,
         _handleApproveEVM,
         _allowanceEVM,
+        globalStatusesStore,
       );
 
       if (approved) {
         const lockArgs = {
-          setLoading,
           amount,
           _handleLockEVM,
           decimals,
+          globalStatusesStore,
         };
         await handleLockBridge(lockArgs);
       }
     }
   }
 
-  function setLoading(state: LoadingState) {
-    _setLoading((prevState) => {
-      return { ...prevState, ...state };
-    });
-  }
-
   function closeLoadingBox() {
-    setLoading({
-      box: 'none',
-      approve: 'none',
-      burn: 'none',
-      claim: 'none',
-      lock: 'none',
-      mint: 'none',
-      error: 'none',
-    });
+    reset();
     setAmount('');
     // the lockTxID & burnTdID is not reset after mint/claim
     setLockTxID('');
@@ -298,8 +283,6 @@ export function Index() {
       {isLoading ? (
         <LoadingLayout
           onClose={closeLoadingBox}
-          loading={loading}
-          setLoading={setLoading}
           massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}

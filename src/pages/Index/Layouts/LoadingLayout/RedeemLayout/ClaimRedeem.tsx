@@ -9,18 +9,19 @@ import {
   endPoint,
   getBurnedByEvmAddress,
 } from '../../../../../utils/lambdaApi';
-import { LoadingState } from '@/const';
 import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore, useTokenStore } from '@/store/store';
-import { loadingStates } from '@/utils/const';
+import { Status } from '@/store/globalStatusesStore';
+import {
+  useBridgeModeStore,
+  useGlobalStatusesStore,
+  useTokenStore,
+} from '@/store/store';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 interface ClaimProps {
-  loading: LoadingState;
   setClaimStep: (claimStep: ClaimSteps) => void;
-  setLoading: (loading: LoadingState) => void;
   operationId: string;
   amount: string;
   decimals: number;
@@ -29,9 +30,7 @@ interface ClaimProps {
 // If operation found, renders claim button that calls redeem function
 
 export function Claim({
-  loading,
   setClaimStep,
-  setLoading,
   operationId,
   amount,
   decimals,
@@ -42,6 +41,7 @@ export function Claim({
   const { currentMode } = useBridgeModeStore();
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { chain } = useNetwork();
+  const { burn, setClaim, setBox } = useGlobalStatusesStore();
 
   const symbol = selectedToken?.symbol as string;
   const selectedChain = chain?.name as string;
@@ -54,8 +54,8 @@ export function Claim({
 
   // TODO: determine if we need a timeout here
   useEffect(() => {
-    setLoading({ claim: loadingStates.loading });
-    if (loading.burn === loadingStates.success && !isReadyToClaim) {
+    setClaim(Status.Loading);
+    if (burn === Status.Success && !isReadyToClaim) {
       setClaimStep(ClaimSteps.RetrievingInfo);
       const timer = setInterval(() => {
         _handleClaimRedeem();
@@ -65,7 +65,7 @@ export function Claim({
     if (isReadyToClaim) {
       setClaimStep(ClaimSteps.AwaitingSignature);
     }
-  }, [loading.burn, isReadyToClaim]);
+  }, [burn, isReadyToClaim]);
 
   async function _handleClaimRedeem(): Promise<boolean> {
     if (!evmAddress) return false;
@@ -98,16 +98,13 @@ export function Claim({
 
   function handleGetAPiErrors(error: any) {
     console.log('Error fetching claim api', error.toString());
-    toast.error(Intl.t('index.claim.error.unkown'));
+    toast.error(Intl.t('index.claim.error.unknown'));
     setLoadingToError();
   }
 
   function setLoadingToError() {
-    setLoading({
-      claim: loadingStates.error,
-      box: loadingStates.error,
-      error: loadingStates.error,
-    });
+    setClaim(Status.Error);
+    setBox(Status.Error);
   }
 
   async function _handleRedeem() {
@@ -140,18 +137,14 @@ export function Claim({
     const typedError = error as CustomError;
 
     if (isRejectedByUser(typedError)) {
-      toast.error(Intl.t(`index.claim.error.rejected`));
-      setLoading({
-        claim: loadingStates.error,
-        box: loadingStates.error,
-      });
+      toast.error(Intl.t('index.claim.error.rejected'));
+      setClaim(Status.Error);
+      setBox(Status.Error);
       setClaimStep(ClaimSteps.Reject);
     } else {
-      toast.error(Intl.t(`index.claim.error.unknown`));
-      setLoading({
-        claim: loadingStates.error,
-        box: loadingStates.error,
-      });
+      toast.error(Intl.t('index.claim.error.unknown'));
+      setClaim(Status.Error);
+      setBox(Status.Error);
       setClaimStep(ClaimSteps.Error);
       console.error(error);
     }
@@ -160,7 +153,7 @@ export function Claim({
   return (
     <div className="flex flex-col gap-6 justify-center">
       <div className="mas-body-2 text-center max-w-full">
-        {loading.burn === loadingStates.success && !isReadyToClaim ? (
+        {burn === Status.Success && !isReadyToClaim ? (
           <div>
             {Intl.t('index.loading-box.claim-pending-1')}
             <br />

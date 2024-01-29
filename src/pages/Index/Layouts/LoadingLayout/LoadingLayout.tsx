@@ -1,17 +1,15 @@
 import { FiX } from 'react-icons/fi';
 
 import { BridgeLayout } from './BridgeLayout';
-import { loadingState } from './LoadingState';
+import { LoadingState } from './LoadingState';
 import { RedeemLayout } from './RedeemLayout/RedeemLayout';
 import { SuccessLayout } from './SuccessLayout';
 import { WarningLayout } from './WarningLayout';
-import { LoadingState } from '@/const';
 import Intl from '@/i18n/i18n';
+import { useGlobalStatusesStore } from '@/store/globalStatusesStore';
 
 export interface LoadingBoxProps {
   onClose: () => void;
-  loading: LoadingState;
-  setLoading: (loading: LoadingState) => void;
   massaToEvm: boolean;
   amount: string;
   redeemSteps: string;
@@ -20,12 +18,14 @@ export interface LoadingBoxProps {
 }
 
 export function LoadingLayout(props: LoadingBoxProps) {
-  const { onClose, loading, massaToEvm } = props;
+  const { onClose, massaToEvm } = props;
 
-  const IS_BOX_SUCCESS = loading.box === 'success';
-  const IS_BOX_WARNING = loading.box === 'warning';
-  const IS_BOX_ERROR = loading.box === 'error';
-  const IS_GLOBAL_ERROR = loading.error !== 'none';
+  const { box, error } = useGlobalStatusesStore();
+
+  const IS_BOX_SUCCESS = box === 'success';
+  const IS_BOX_WARNING = box === 'warning';
+  const IS_BOX_ERROR = box === 'error';
+  const IS_GLOBAL_ERROR = error !== 'none';
 
   const displaySubtitle =
     !IS_BOX_SUCCESS && !IS_GLOBAL_ERROR && !IS_BOX_WARNING && !IS_BOX_ERROR;
@@ -92,7 +92,9 @@ export function LoadingLayout(props: LoadingBoxProps) {
         </div>
       ) : null}
       <div className="flex flex-col items-center justify-start mb-10">
-        <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
+        <div className="mb-4">
+          <LoadingState state={box} size="lg" />
+        </div>
         <p className="mas-subtitle pt-6">{getLoadingBoxHeader()}</p>
         {displaySubtitle && (
           <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>

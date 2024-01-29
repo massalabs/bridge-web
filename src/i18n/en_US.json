@@ -93,7 +93,7 @@
       "claim-step-awaiting-signature": "(awaiting signature...)",
       "claim-step-claiming": "(claiming...)",
       "claim-step-rejected": "(rejected by user)",
-      "claim-step-error": "(unkown error)",
+      "claim-step-error": "(unknown error)",
       "burned": "Burn was successfull",
       "bridged": "You have successfully bridged:",
       "claim-pending-1": "We are waiting for information to initiate claim.",

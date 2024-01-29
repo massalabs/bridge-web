@@ -14,9 +14,13 @@ interface ChainStatusProps {
 export function ChainStatus(props: ChainStatusProps) {
   const { blockchain } = props;
 
+  const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
+  const { connectedAccount } = useAccountStore();
+
+  const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
+  const { isConnected: isConnectedEVM } = useAccount();
+
   if (blockchain === Blockchain.MASSA) {
-    const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
-    const { connectedAccount } = useAccountStore();
     const isConnectMassa = !!connectedAccount;
 
     return (
@@ -33,9 +37,6 @@ export function ChainStatus(props: ChainStatusProps) {
       </>
     );
   }
-
-  const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
-  const { isConnected: isConnectedEVM } = useAccount();
 
   return (
     <>
