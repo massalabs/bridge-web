@@ -18,10 +18,7 @@ describe('handleApproveRedeem', () => {
       EOperationStatus.FINAL_SUCCESS,
     );
 
-    const result = await handleApproveRedeem(
-      amount,
-      globalStatusesStoreStateMock,
-    );
+    const result = await handleApproveRedeem(amount);
 
     expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
       1,
@@ -42,10 +39,7 @@ describe('handleApproveRedeem', () => {
   test('should not increaseAllowance and show success of redeem approval', async () => {
     const amount = '1';
 
-    const result = await handleApproveRedeem(
-      amount,
-      globalStatusesStoreStateMock,
-    );
+    const result = await handleApproveRedeem(amount);
 
     expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
       1,
@@ -70,10 +64,7 @@ describe('handleApproveRedeem', () => {
 
     const amount = U256_MAX.toString();
 
-    const result = await handleApproveRedeem(
-      amount,
-      globalStatusesStoreStateMock,
-    );
+    const result = await handleApproveRedeem(amount);
 
     expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
       1,
@@ -107,10 +98,7 @@ describe('handleApproveRedeem', () => {
 
     const amount = U256_MAX.toString();
 
-    const result = await handleApproveRedeem(
-      amount,
-      globalStatusesStoreStateMock,
-    );
+    const result = await handleApproveRedeem(amount);
 
     expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
       1,
@@ -138,10 +126,7 @@ describe('handleApproveRedeem', () => {
 
     const amount = U256_MAX.toString();
 
-    const result = await handleApproveRedeem(
-      amount,
-      globalStatusesStoreStateMock,
-    );
+    const result = await handleApproveRedeem(amount);
 
     expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
       1,

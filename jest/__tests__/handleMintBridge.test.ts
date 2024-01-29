@@ -14,7 +14,6 @@ describe('handleMintBridge', () => {
 
     mintArgs = {
       massaOperationID: lockTxID,
-      globalStatusesStore: globalStatusesStoreStateMock,
     };
   });
 

@@ -1,6 +1,6 @@
 import { useTokenStore } from '../../../store/store';
 import { waitForMintEvent } from '../massa-utils';
-import { GlobalStatusesStoreState, Status } from '@/store/globalStatusesStore';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 
 interface ICustomError extends Error {
   cause?: {
@@ -11,42 +11,40 @@ interface ICustomError extends Error {
 
 export interface MintArgs {
   massaOperationID: string;
-  globalStatusesStore: GlobalStatusesStoreState;
 }
 
 export async function handleMintBridge(args: MintArgs): Promise<boolean> {
-  const { massaOperationID, globalStatusesStore } = args;
+  const { massaOperationID } = args;
+  const { setBox, setMint } = useGlobalStatusesStore.getState();
 
   try {
-    globalStatusesStore.setMint(Status.Loading);
+    setMint(Status.Loading);
     const success = await waitForMintEvent(massaOperationID);
     if (success) {
-      globalStatusesStore.setBox(Status.Success);
-      globalStatusesStore.setMint(Status.Success);
+      setBox(Status.Success);
+      setMint(Status.Success);
       const { refreshBalances } = useTokenStore.getState();
       refreshBalances();
     }
   } catch (error) {
-    handleMintError(globalStatusesStore, error);
+    handleMintError(error);
     return false;
   }
   return true;
 }
 
-function handleMintError(
-  globalStatusesStore: GlobalStatusesStoreState,
-  error: undefined | unknown,
-) {
+function handleMintError(error: undefined | unknown) {
+  const { setBox, setMint } = useGlobalStatusesStore.getState();
   const typedError = error as ICustomError;
 
   const cause = typedError?.cause;
   const isTimeout = cause?.error === 'timeout';
 
   if (isTimeout) {
-    globalStatusesStore.setBox(Status.Warning);
-    globalStatusesStore.setMint(Status.Warning);
+    setBox(Status.Warning);
+    setMint(Status.Warning);
   } else {
     console.error(error);
-    globalStatusesStore.setMint(Status.Error);
+    setMint(Status.Error);
   }
 }

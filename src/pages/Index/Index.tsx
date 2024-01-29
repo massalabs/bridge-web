@@ -83,9 +83,8 @@ export function Index() {
   );
   const [isRedeem, setIsRedeem] = useState<boolean>(false);
 
-  const globalStatusesStore = useGlobalStatusesStore();
   const { box, setBox, setClaim, setLock, setApprove, reset } =
-    globalStatusesStore;
+    useGlobalStatusesStore();
 
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
@@ -152,7 +151,6 @@ export function Index() {
     if (lockTxID) {
       const mintArgs: MintArgs = {
         massaOperationID: lockTxID,
-        globalStatusesStore,
       };
       handleMintBridge(mintArgs);
     }
@@ -166,7 +164,6 @@ export function Index() {
         amount,
         _handleLockEVM,
         decimals,
-        globalStatusesStore,
       };
       handleLockBridge(lockArgs);
     }
@@ -230,7 +227,7 @@ export function Index() {
       if (!massaClient || !selectedToken || !amount) {
         return;
       }
-      const approved = await handleApproveRedeem(amount, globalStatusesStore);
+      const approved = await handleApproveRedeem(amount);
 
       if (approved) {
         if (!selectedToken || !evmAddress || !amount) {
@@ -242,7 +239,6 @@ export function Index() {
           amount,
           setBurnTxID,
           setRedeemSteps,
-          globalStatusesStore,
         });
       }
     } else {
@@ -254,7 +250,6 @@ export function Index() {
         decimals,
         _handleApproveEVM,
         _allowanceEVM,
-        globalStatusesStore,
       );
 
       if (approved) {
@@ -262,7 +257,6 @@ export function Index() {
           amount,
           _handleLockEVM,
           decimals,
-          globalStatusesStore,
         };
         await handleLockBridge(lockArgs);
       }

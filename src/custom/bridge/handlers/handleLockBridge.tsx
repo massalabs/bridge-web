@@ -2,29 +2,29 @@ import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 
 import Intl from '../../../i18n/i18n';
-import { GlobalStatusesStoreState, Status } from '@/store/globalStatusesStore';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { CustomError, isParameterError, isRejectedByUser } from '@/utils/error';
 
 export interface LockBridgeParams {
   amount: string;
   _handleLockEVM: any;
   decimals: number;
-  globalStatusesStore: GlobalStatusesStoreState;
 }
 
 export async function handleLockBridge({
   amount,
   _handleLockEVM,
   decimals,
-  globalStatusesStore,
 }: LockBridgeParams): Promise<boolean> {
+  const { setBox, setLock } = useGlobalStatusesStore.getState();
+
   try {
-    globalStatusesStore.setLock(Status.Loading);
+    setLock(Status.Loading);
     await _handleLockEVM(parseUnits(amount, decimals));
   } catch (error) {
     handleLockError(error);
-    globalStatusesStore.setLock(Status.Error);
-    globalStatusesStore.setBox(Status.Error);
+    setLock(Status.Error);
+    setBox(Status.Error);
     return false;
   }
   return true;

@@ -24,7 +24,6 @@ describe('handleBurnRedeem', () => {
       amount,
       setBurnTxID: mocksetBurnTxID,
       setRedeemSteps: mockSetRedeemSteps,
-      globalStatusesStore: globalStatusesStoreStateMock,
     };
   });
 

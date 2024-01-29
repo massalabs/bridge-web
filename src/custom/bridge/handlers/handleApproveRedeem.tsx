@@ -4,28 +4,25 @@ import { U256_MAX } from '../../../const/const';
 import Intl from '../../../i18n/i18n';
 import { useTokenStore } from '../../../store/tokenStore';
 import { increaseAllowance } from '../bridge';
-import { Status, GlobalStatusesStoreState } from '@/store/globalStatusesStore';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import {
   CustomError,
   isInsufficientBalanceError,
   isRejectedByUser,
 } from '@/utils/error';
 
-export async function handleApproveRedeem(
-  amount: string,
-  globalStatusesStore: GlobalStatusesStoreState,
-) {
+export async function handleApproveRedeem(amount: string) {
+  const { setApprove, setBox } = useGlobalStatusesStore.getState();
   try {
     const { selectedToken } = useTokenStore.getState();
-
-    globalStatusesStore.setApprove(Status.Loading);
+    setApprove(Status.Loading);
 
     const _amount = parseUnits(amount, selectedToken!.decimals);
     if (selectedToken!.allowance < _amount) {
       await increaseAllowance(U256_MAX);
     }
 
-    globalStatusesStore.setApprove(Status.Success);
+    setApprove(Status.Success);
   } catch (error) {
     const typedError = error as CustomError;
     const isErrorTimeout =
@@ -42,8 +39,8 @@ export async function handleApproveRedeem(
       toast.error(Intl.t('index.approve.error.allowance-error'));
     }
 
-    globalStatusesStore.setBox(Status.Error);
-    globalStatusesStore.setApprove(Status.Error);
+    setBox(Status.Error);
+    setApprove(Status.Error);
     return false;
   }
   return true;

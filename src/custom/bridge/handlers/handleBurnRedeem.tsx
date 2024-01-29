@@ -2,7 +2,7 @@ import { toast } from '@massalabs/react-ui-kit';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
-import { Status, GlobalStatusesStoreState } from '@/store/globalStatusesStore';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export interface BurnRedeemParams {
@@ -10,19 +10,19 @@ export interface BurnRedeemParams {
   amount: string;
   setBurnTxID: (state: string) => void;
   setRedeemSteps: (state: string) => void;
-  globalStatusesStore: GlobalStatusesStoreState;
 }
 
 export async function handleBurnRedeem(
   args: BurnRedeemParams,
 ): Promise<boolean> {
-  const { globalStatusesStore } = args;
+  const { setBurn, setBox } = useGlobalStatusesStore.getState();
+
   try {
     await initiateBurn(args);
   } catch (error) {
     handleBurnError(args, error);
-    globalStatusesStore.setBox(Status.Error);
-    globalStatusesStore.setBurn(Status.Error);
+    setBox(Status.Error);
+    setBurn(Status.Error);
     return false;
   }
   return true;
@@ -33,9 +33,10 @@ async function initiateBurn({
   amount,
   setBurnTxID,
   setRedeemSteps,
-  globalStatusesStore,
 }: BurnRedeemParams) {
-  globalStatusesStore.setBurn(Status.Loading);
+  const { setBurn } = useGlobalStatusesStore.getState();
+
+  setBurn(Status.Loading);
 
   setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
 
@@ -47,7 +48,7 @@ async function initiateBurn({
 
   await waitIncludedOperation(operationId);
 
-  globalStatusesStore.setBurn(Status.Success);
+  setBurn(Status.Success);
 
   setRedeemSteps(Intl.t('index.loading-box.burned-final'));
 }

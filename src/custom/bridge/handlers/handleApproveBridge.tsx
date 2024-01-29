@@ -2,7 +2,7 @@ import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 
 import Intl from '../../../i18n/i18n';
-import { Status, GlobalStatusesStoreState } from '@/store/globalStatusesStore';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export async function handleApproveBridge(
@@ -10,16 +10,16 @@ export async function handleApproveBridge(
   decimals: number,
   _handleApproveEVM: () => void,
   _allowanceEVM: bigint,
-  globalStatusesStore: GlobalStatusesStoreState,
 ): Promise<boolean> {
+  const { setApprove, setBox } = useGlobalStatusesStore.getState();
   try {
-    globalStatusesStore.setApprove(Status.Loading);
+    setApprove(Status.Loading);
     let _amount = parseUnits(amount, decimals);
     if (_allowanceEVM < _amount) {
       await _handleApproveEVM();
       return false;
     }
-    globalStatusesStore.setApprove(Status.Success);
+    setApprove(Status.Success);
   } catch (error) {
     const typedError = error as CustomError;
     if (isRejectedByUser(typedError)) {
@@ -28,8 +28,8 @@ export async function handleApproveBridge(
       // error comes from increaseAllowanceFunction
       toast.error(Intl.t('index.approve.error.allowance-error'));
     }
-    globalStatusesStore.setApprove(Status.Error);
-    globalStatusesStore.setBox(Status.Error);
+    setApprove(Status.Error);
+    setBox(Status.Error);
     return false;
   }
   return true;
