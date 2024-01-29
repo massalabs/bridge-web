@@ -79,7 +79,9 @@ export function Navbar(props: NavbarProps) {
       py-8 w-full"
       >
         <div className="flex items-center gap-8 h-fit">
-          <BridgeLogo />
+          <Link to="/index">
+            <BridgeLogo />
+          </Link>
           <p className="mas-menu-default text-neutral h-fit">
             <Link to="/index">{Intl.t('index.loading-box.bridge')}</Link>
           </p>
