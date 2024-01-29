@@ -80,14 +80,15 @@ const useEvmBridge = () => {
   });
 
   async function handleRedeem(
-    amount: bigint,
+    amount: string,
     recipient: `0x${string}`,
+    token: `0x${string}`,
     burnopId: string,
     signatures: string[],
   ): Promise<boolean> {
     try {
       await redeem.writeAsync({
-        args: [amount.toString(), recipient, burnopId, evmToken, signatures],
+        args: [amount, recipient, burnopId, token, signatures],
       });
       return true;
     } catch (error) {

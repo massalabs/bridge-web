@@ -18,8 +18,7 @@ interface ClaimOperationContainerProps {
   operation: RedeemOperationToClaim;
 }
 
-export function ClaimButton(args: ClaimOperationContainerProps) {
-  const { operation } = args;
+export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   const [claimState, setClaimState] = useState(ClaimState.NONE);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 

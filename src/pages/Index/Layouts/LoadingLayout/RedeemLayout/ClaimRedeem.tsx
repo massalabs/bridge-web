@@ -111,7 +111,7 @@ export function Claim({
   }
 
   async function _handleRedeem() {
-    if (!evmAddress) return;
+    if (!evmAddress || !selectedToken) return;
     try {
       if (hasClickedClaimed) {
         toast.error(Intl.t('index.loading-box.claim-error-1'));
@@ -120,8 +120,9 @@ export function Claim({
 
       setHasClickedClaimed(true);
       const evmRedeem = await _handleRedeemEVM(
-        parseUnits(amount, decimals),
+        parseUnits(amount, decimals).toString(),
         evmAddress,
+        selectedToken.evmToken as `0x${string}`,
         operationId,
         signatures,
       );

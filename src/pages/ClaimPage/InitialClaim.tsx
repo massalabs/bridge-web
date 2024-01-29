@@ -20,11 +20,12 @@ export function InitialClaim(args: ClaimButton) {
   async function _handleRedeem(
     amount: string,
     recipient: `0x${string}`,
+    token: `0x${string}`,
     inputOpId: string,
     signatures: string[],
   ) {
     setClaimState(ClaimState.PENDING);
-    await handleRedeem(BigInt(amount), recipient, inputOpId, signatures);
+    await handleRedeem(amount, recipient, token, inputOpId, signatures);
   }
 
   return (
@@ -46,7 +47,13 @@ export function InitialClaim(args: ClaimButton) {
       <div>
         <Button
           onClick={() =>
-            _handleRedeem(op.amount, op.recipient, op.inputOpId, op.signatures)
+            _handleRedeem(
+              op.amount,
+              op.recipient,
+              op.evmToken,
+              op.inputOpId,
+              op.signatures,
+            )
           }
         >
           {Intl.t('claim.claim')} {symbol}
