@@ -24,7 +24,6 @@ describe('handleLockBridge', () => {
       amount,
       _handleLockEVM,
       decimals,
-      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);
@@ -60,7 +59,6 @@ describe('handleLockBridge', () => {
       amount,
       _handleLockEVM,
       decimals,
-      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);
@@ -107,7 +105,6 @@ describe('handleLockBridge', () => {
       amount,
       _handleLockEVM,
       decimals,
-      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);
@@ -156,7 +153,6 @@ describe('handleLockBridge', () => {
       amount,
       _handleLockEVM,
       decimals,
-      globalStatusesStore: globalStatusesStoreStateMock,
     };
 
     const result = await handleLockBridge(lockArgs);

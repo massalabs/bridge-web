@@ -20,7 +20,6 @@ describe('handleApproveBridge', () => {
       decimals,
       _handleApproveEVM,
       _allowanceEVM,
-      globalStatusesStoreStateMock,
     );
 
     expect(globalStatusesStoreStateMock.setApprove).toHaveBeenNthCalledWith(
