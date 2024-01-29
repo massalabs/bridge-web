@@ -19,8 +19,10 @@ export const BEARBY_INSTALL = 'https://bearby.io';
 export const BRIDGE = 'bridge';
 export const APPROVE = 'approve';
 
-export const MASSA_TO_EVM = 'massaToEvm';
-export const EVM_TO_MASSA = 'evmToMassa';
+export enum SIDE {
+  MASSA_TO_EVM = 'massaToEvm',
+  EVM_TO_MASSA = 'evmToMassa',
+}
 
 export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
 

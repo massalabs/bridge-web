@@ -2,22 +2,18 @@ import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 
 import { useBridgeModeStore } from '../../../../store/store';
-import { EVM_EXPLORER } from '../../../../utils/const';
+import { EVM_EXPLORER, SIDE } from '../../../../utils/const';
 import Intl from '@/i18n/i18n';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface ShowOperationIdProps {
   operationId: string;
-  massaToEvm: boolean;
 }
 
 export function ShowOperationId(props: ShowOperationIdProps) {
-  const { operationId, massaToEvm } = props;
-
-  const [currentMode, isMainnet] = useBridgeModeStore((state) => [
-    state.currentMode,
-    state.isMainnet,
-  ]);
+  const { operationId } = props;
+  const { currentMode, isMainnet, side } = useBridgeModeStore();
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const smartExplorerUrl = massaToEvm
     ? isMainnet
