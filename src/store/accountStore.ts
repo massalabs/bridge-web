@@ -24,8 +24,6 @@ export interface AccountStoreState {
   };
   connectedNetwork?: string;
 
-  isBearbyConnected: boolean;
-
   setCurrentProvider: (provider?: IProvider) => void;
   setProviders: (providers: IProvider[]) => void;
 
@@ -45,7 +43,6 @@ const accountStore = (
   currentProvider: undefined,
   providers: [],
   isFetching: false,
-  isBearbyConnected: false,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
     try {
@@ -82,47 +79,42 @@ const accountStore = (
       }
 
       if (currentProvider?.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {
-        if (!get().isBearbyConnected) {
-          currentProvider
-            .connect()
-            .then(() => {
-              set({ isBearbyConnected: true });
-              // get current network
-              currentProvider
-                .getNetwork()
-                .then((network) => {
-                  set({ connectedNetwork: network });
-                })
-                .catch((error) => {
-                  console.warn('error getting network from bearby', error);
-                });
-              // subscribe to network events
-              const observer = currentProvider.listenAccountChanges(
-                (newAddress: string) => {
-                  handleBearbyAccountChange(newAddress);
-                },
-              );
-              set({ currentProvider, accountObserver: observer });
+        currentProvider
+          .connect()
+          .then(() => {
+            // get current network
+            currentProvider
+              .getNetwork()
+              .then((network) => {
+                set({ connectedNetwork: network });
+              })
+              .catch((error) => {
+                console.warn('error getting network from bearby', error);
+              });
+            // subscribe to network events
+            const observer = currentProvider.listenAccountChanges(
+              (newAddress: string) => {
+                handleBearbyAccountChange(newAddress);
+              },
+            );
+            set({ currentProvider, accountObserver: observer });
 
-              // get connected account
-              currentProvider
-                .accounts()
-                .then((accounts) => {
-                  // bearby expose only 1 account
-                  get().setConnectedAccount(accounts[0]);
-                  get().setAvailableAccounts(accounts);
-                })
-                .catch((error) => {
-                  console.warn('error getting accounts from bearby', error);
-                });
-            })
-            .catch((error) => {
-              console.warn('error connecting to bearby', error);
-            });
-          return;
-        }
-      } else {
-        set({ isBearbyConnected: false });
+            // get connected account
+            currentProvider
+              .accounts()
+              .then((accounts) => {
+                // bearby expose only 1 account
+                get().setConnectedAccount(accounts[0]);
+                get().setAvailableAccounts(accounts);
+              })
+              .catch((error) => {
+                console.warn('error getting accounts from bearby', error);
+              });
+          })
+          .catch((error) => {
+            console.warn('error connecting to bearby', error);
+          });
+        return;
       }
 
       set({ currentProvider });
