@@ -28,6 +28,7 @@ export function RejectedClaim(args: FailedClaimProps) {
   ) {
     try {
       onStateChange(ClaimState.PENDING);
+      throw new Error('test');
       await handleRedeem(amount, recipient, token, inputOpId, signatures);
     } catch (error) {
       const typedError = error as CustomError;

@@ -26,7 +26,8 @@
     "popup-description": "Simply proceed to claim tokens on {chain} to finalize redeem transfer from earlier.",
     "rejected": "Claim rejected",
     "rejected-1": "You have rejected your ",
-    "rejected-2": "please try again."
+    "rejected-2": "please try again.",
+    "error": "Failed to redeem "
   },
   "index": {
     "top-banner": {
