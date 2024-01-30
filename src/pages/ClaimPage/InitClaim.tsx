@@ -1,4 +1,4 @@
-import { Tooltip, Button } from '@massalabs/react-ui-kit';
+import { Tooltip, Button, toast } from '@massalabs/react-ui-kit';
 import { ClaimState } from './ClaimButton';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
@@ -30,6 +30,7 @@ export function InitClaim(args: ClaimButton) {
     } catch (error) {
       const typedError = error as CustomError;
       if (isRejectedByUser(typedError)) {
+        toast.error(Intl.t('claim.rejected'));
         onStateChange(ClaimState.REJECTED);
       } else {
         onStateChange(ClaimState.ERROR);
@@ -44,10 +45,9 @@ export function InitClaim(args: ClaimButton) {
           w-[520px] h-12 border border-tertiary rounded-2xl px-10 py-14"
     >
       <div className="flex items-center">
-        <p className="flex mas-menu-active">
+        <strong>
           {in2decimals} {symbol}{' '}
-        </p>
-
+        </strong>
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
           content={full + ' ' + symbol}

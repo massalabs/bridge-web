@@ -30,29 +30,29 @@ export function SuccessClaim(args: SuccessClaimProps) {
     <div
       className="flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 
-          w-[520px] h-12 border border-tertiary rounded-2xl 
+          w-[620px] h-12 border border-tertiary rounded-2xl 
           px-10 py-14"
     >
       <div className="flex items-center">
-        <div className="flex items-center gap-1">
-          <p>{Intl.t('claim.success')}</p>
-          <p className="mas-menu-active">
-            {in2decimals} {symbol}
-          </p>
-        </div>
+        {Intl.t('claim.success')}
+        <strong>
+          {' '}
+          {in2decimals} {symbol}{' '}
+        </strong>
 
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
           content={full + ' ' + symbol}
         />
-        {/* this may be temporary, I am waiting for designs */}
+      </div>
+      <div className="flex gap-4 items-center">
         {txHash && (
           <Button variant="icon" onClick={() => openInNewTab(explorerUrl)}>
             <FiExternalLink size={18} />
           </Button>
         )}
+        <SuccessCheck size="md" />
       </div>
-      <SuccessCheck size="md" />
     </div>
   );
 }

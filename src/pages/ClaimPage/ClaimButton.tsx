@@ -79,7 +79,11 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
           case ClaimState.REJECTED:
             return (
               <div className="flex w-full justify-center">
-                <RejectedClaim operation={operation} symbol={symbol} />
+                <RejectedClaim
+                  operation={operation}
+                  symbol={symbol}
+                  onStateChange={onStateChange}
+                />
               </div>
             );
           case ClaimState.ERROR:
