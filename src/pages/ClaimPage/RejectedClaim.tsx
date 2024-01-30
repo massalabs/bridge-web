@@ -1,10 +1,10 @@
-import { Button, toast } from '@massalabs/react-ui-kit';
-import { ClaimState } from './ClaimButton';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
-import Intl from '@/i18n/i18n';
-import { CustomError, isRejectedByUser } from '@/utils/error';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
+import { ClaimState } from './ClaimButton';
+import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { CustomError, isRejectedByUser } from '@/utils/error';
+import { toast, Button } from '@massalabs/react-ui-kit';
+import Intl from '@/i18n/i18n';
 
 interface FailedClaimProps {
   operation: RedeemOperationToClaim;
@@ -39,7 +39,6 @@ export function RejectedClaim(args: FailedClaimProps) {
       }
     }
   }
-
   return (
     <div
       className="flex justify-between items-center
