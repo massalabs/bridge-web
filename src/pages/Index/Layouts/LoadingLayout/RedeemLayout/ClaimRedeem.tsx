@@ -49,6 +49,7 @@ export function Claim({
   const [isReadyToClaim, setIsReadyToClaim] = useState(false);
   const [signatures, setSignatures] = useState<string[]>([]);
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
+  const [userHasRejected, setUserHasRejected] = useState(false);
 
   // Polls every 3 seconds to see if conditions are met to show claim
 
@@ -109,6 +110,7 @@ export function Claim({
 
   async function _handleRedeem() {
     if (!evmAddress || !selectedToken) return;
+    setUserHasRejected(false);
     try {
       if (hasClickedClaimed) {
         toast.error(Intl.t('index.loading-box.claim-error-1'));
@@ -138,8 +140,10 @@ export function Claim({
 
     if (isRejectedByUser(typedError)) {
       toast.error(Intl.t('index.claim.error.rejected'));
-      setLoadingToError();
+      setClaim(Status.Error);
+      setHasClickedClaimed(false);
       setClaimStep(ClaimSteps.Reject);
+      setUserHasRejected(true);
     } else {
       toast.error(Intl.t('index.claim.error.unknown'));
       setLoadingToError();
@@ -157,12 +161,16 @@ export function Claim({
             <br />
             {Intl.t('index.loading-box.claim-pending-2')}
           </div>
-        ) : (
+        ) : userHasRejected ? (
+          <div className="text-s-error">
+            {Intl.t('index.loading-box.rejected-by-user')}
+          </div>
+        ) : !hasClickedClaimed ? (
           Intl.t('index.loading-box.claim-message', {
             token: symbol,
             network: selectedChain,
           })
-        )}
+        ) : null}
       </div>
       {isReadyToClaim && !hasClickedClaimed ? (
         <Button
