@@ -8,16 +8,17 @@ import { EthSvg } from '@/assets/EthSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain, LayoutType, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
   useBridgeModeStore,
+  useOperationStore,
   useTokenStore,
 } from '@/store/store';
 import { IToken } from '@/store/tokenStore';
-import { MASSA_TO_EVM } from '@/utils/const';
+import { SIDE } from '@/utils/const';
 import { formatStandard } from '@/utils/massaFormat';
 import { MassaNetworks } from '@/utils/network';
 import { formatAmount } from '@/utils/parseAmount';
@@ -41,17 +42,21 @@ const iconsNetworks = {
 };
 
 const iconsTokens: IIcons = {
-  massaToEvm: {
+  [SIDE.MASSA_TO_EVM]: {
     tDAI: <EthSvg />,
     WETH: <EthSvg />,
   },
-  evmToMassa: {
+  [SIDE.EVM_TO_MASSA]: {
     tDAI: <TDaiSvg />,
     WETH: <WEthSvg />,
   },
 };
 
-function TokenBalance({ ...props }: { amount?: bigint; layout?: LayoutType }) {
+interface TokenBalanceProps {
+  amount?: bigint;
+}
+
+function TokenBalance(props: TokenBalanceProps) {
   let { amount } = props;
 
   const [token] = useTokenStore((state) => [state.selectedToken]);
@@ -183,7 +188,7 @@ function EVMTokenOptions({ ...props }) {
     state.setSelectedToken,
   ]);
 
-  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
+  const IS_MASSA_TO_EVM = layout === SIDE.MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
     Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
@@ -200,7 +205,7 @@ function EVMTokenOptions({ ...props }) {
           item: token.symbol,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          icon: iconsTokens['evmToMassa'][token.symbol],
+          icon: iconsTokens[SIDE.EVM_TO_MASSA][token.symbol],
           onClick: () => setToken(token),
         };
       })}
@@ -217,7 +222,7 @@ function MassaTokenOptions({ ...props }) {
     state.setSelectedToken,
     state.selectedToken,
   ]);
-  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
+  const IS_MASSA_TO_EVM = layout === SIDE.MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
     Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
@@ -234,7 +239,7 @@ function MassaTokenOptions({ ...props }) {
           item: token.symbol,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          icon: iconsTokens['massaToEvm'][token.symbol],
+          icon: iconsTokens[SIDE.MASSA_TO_EVM][token.symbol],
           onClick: () => setToken(token),
         };
       })}
@@ -264,9 +269,7 @@ function MassaFees() {
   );
 }
 
-function EVMBalance({ ...props }) {
-  const { layout } = props;
-
+function EVMBalance() {
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
 
   const { tokenBalance } = useEvmBridge();
@@ -275,19 +278,13 @@ function EVMBalance({ ...props }) {
     <div className="flex items-center gap-2 h-6">
       <p className="mas-body2">Balance:</p>
       <div className="mas-body">
-        {isFetching ? (
-          <FetchingLine />
-        ) : (
-          <TokenBalance amount={tokenBalance} layout={layout} />
-        )}
+        {isFetching ? <FetchingLine /> : <TokenBalance amount={tokenBalance} />}
       </div>
     </div>
   );
 }
 
-function MassaBalance({ ...props }) {
-  const { layout } = props;
-
+function MassaBalance() {
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
 
   const [token] = useTokenStore((state) => [state.selectedToken]);
@@ -299,51 +296,55 @@ function MassaBalance({ ...props }) {
         {isFetching ? (
           <FetchingLine />
         ) : (
-          <TokenBalance amount={token?.balance} layout={layout} />
+          <TokenBalance amount={token?.balance} />
         )}
       </div>
     </div>
   );
 }
 
-export function boxLayout(layout: LayoutType = 'massaToEvm'): {
+interface BoxLayoutResult {
   up: Layout;
   down: Layout;
-} {
+}
+
+export function boxLayout(): BoxLayoutResult {
+  const { side } = useOperationStore.getState();
+
   const layouts = {
-    massaToEvm: {
+    [SIDE.MASSA_TO_EVM]: {
       up: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <MassaTokenOptions layout={layout} />,
+        token: <MassaTokenOptions />,
         fees: null,
-        balance: <MassaBalance layout={layout} />,
+        balance: <MassaBalance />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <EVMTokenOptions layout={layout} />,
+        token: <EVMTokenOptions />,
         fees: <MassaFees />,
         balance: null,
       },
     },
-    evmToMassa: {
+    [SIDE.EVM_TO_MASSA]: {
       up: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <EVMTokenOptions layout={layout} />,
+        token: <EVMTokenOptions />,
         fees: null,
-        balance: <EVMBalance layout={layout} />,
+        balance: <EVMBalance />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <MassaTokenOptions layout={layout} />,
+        token: <MassaTokenOptions />,
         fees: <EVMFees />,
         balance: null,
       },
     },
   };
 
-  return layouts[layout];
+  return layouts[side];
 }

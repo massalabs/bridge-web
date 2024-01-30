@@ -12,7 +12,7 @@ import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import { LayoutType, config } from '@/const';
+import { config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
@@ -33,19 +33,16 @@ import {
   useAccountStore,
   useBridgeModeStore,
   useGlobalStatusesStore,
+  useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
+import { SIDE } from '@/utils/const';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
-
   const { selectedToken, refreshBalances } = useTokenStore();
-
-  const [isMainnet, currentMode] = useBridgeModeStore((state) => [
-    state.isMainnet,
-    state.currentMode,
-  ]);
+  const { isMainnet, currentMode } = useBridgeModeStore();
+  const { side, setSide } = useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -74,7 +71,6 @@ export function Index() {
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [amount, setAmount] = useState<string | undefined>('');
-  const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
   const [burnTxID, setBurnTxID] = useState<string>('');
   const [lockTxID, setLockTxID] = useState<string>('');
@@ -91,11 +87,11 @@ export function Index() {
 
   useNetworkCheck(setWrongNetwork);
 
-  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const isLoading = box !== 'none';
   const isBlurred = box !== 'none' ? 'blur-md' : '';
-  const operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
+  const operationId = massaToEvm ? burnTxID : lockTxID;
 
   const isButtonDisabled =
     isFetching ||
@@ -103,8 +99,8 @@ export function Index() {
     !isEvmWalletConnected ||
     wrongNetwork ||
     isMainnet ||
-    (BRIDGE_OFF && !IS_MASSA_TO_EVM) ||
-    (REDEEM_OFF && IS_MASSA_TO_EVM);
+    (BRIDGE_OFF && !massaToEvm) ||
+    (REDEEM_OFF && massaToEvm);
 
   useEffect(() => {
     if (isRedeem) {
@@ -127,11 +123,11 @@ export function Index() {
   useEffect(() => {
     setError({ amount: '' });
     setDecimals(tokenData?.decimals || 18);
-  }, [amount, layout, selectedToken?.name, tokenData?.decimals]);
+  }, [amount, side, selectedToken?.name, tokenData?.decimals]);
 
   useEffect(() => {
     setAmount('');
-  }, [layout, selectedToken?.name]);
+  }, [side, selectedToken?.name]);
 
   useEffect(() => {
     if (lockIsSuccess) {
@@ -179,7 +175,7 @@ export function Index() {
   }, [box]);
 
   function handleToggleLayout() {
-    setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
+    setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
 
   function validate() {
@@ -193,7 +189,7 @@ export function Index() {
     let _amount;
     let _balance;
 
-    if (IS_MASSA_TO_EVM) {
+    if (massaToEvm) {
       if (!selectedToken) {
         return false;
       }
@@ -223,7 +219,7 @@ export function Index() {
     if (!validate()) return;
     setBox(Status.Loading);
 
-    if (IS_MASSA_TO_EVM) {
+    if (massaToEvm) {
       if (!massaClient || !selectedToken || !amount) {
         return;
       }
@@ -277,7 +273,6 @@ export function Index() {
       {isLoading ? (
         <LoadingLayout
           onClose={closeLoadingBox}
-          massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
           operationId={operationId}
@@ -286,9 +281,7 @@ export function Index() {
       ) : (
         <BridgeRedeemLayout
           isBlurred={isBlurred}
-          IS_MASSA_TO_EVM={IS_MASSA_TO_EVM}
           isButtonDisabled={isButtonDisabled}
-          layout={layout}
           amount={amount}
           error={error}
           decimals={decimals}
