@@ -26,21 +26,21 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   const [claimState, setClaimState] = useState(ClaimState.INIT);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 
-  function onRedeemPending() {
-    setClaimState(ClaimState.PENDING);
-  }
-
-  function onRedeemSuccess(hash: `0x${string}` | null) {
-    setClaimState(ClaimState.SUCCESS);
-    setTxHash(hash);
-  }
-
-  function onRedeemReject() {
-    setClaimState(ClaimState.REJECTED);
-  }
-
-  function onRedeemError() {
-    setClaimState(ClaimState.ERROR);
+  function onStateChange(state: ClaimState, txHash?: `0x${string}` | null) {
+    switch (state) {
+      case ClaimState.PENDING:
+        setClaimState(ClaimState.PENDING);
+        break;
+      case ClaimState.SUCCESS:
+        if (txHash) {
+          setTxHash(txHash);
+        }
+        return setClaimState(ClaimState.SUCCESS);
+      case ClaimState.REJECTED:
+        return setClaimState(ClaimState.REJECTED);
+      case ClaimState.ERROR:
+        return setClaimState(ClaimState.ERROR);
+    }
   }
 
   const { currentMode } = useBridgeModeStore();
@@ -60,7 +60,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
             return (
               <div className="flex w-full justify-center">
                 <PendingClaim
-                  onRedeemSuccess={onRedeemSuccess}
+                  onStateChange={onStateChange}
                   mode={currentMode}
                   inputOpId={operation.inputOpId}
                 />
@@ -92,10 +92,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
             return (
               <div className="flex w-full justify-center">
                 <InitClaim
-                  setClaimState={setClaimState}
-                  onRedeemReject={onRedeemReject}
-                  onRedeemError={onRedeemError}
-                  onRedeemPending={onRedeemPending}
+                  onStateChange={onStateChange}
                   operation={operation}
                   symbol={symbol}
                 />
