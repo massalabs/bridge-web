@@ -6,7 +6,7 @@ import { RedeemLayout } from './RedeemLayout/RedeemLayout';
 import { SuccessLayout } from './SuccessLayout';
 import { WarningLayout } from './WarningLayout';
 import Intl from '@/i18n/i18n';
-import { useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
@@ -25,9 +25,9 @@ export function LoadingLayout(props: LoadingBoxProps) {
 
   const { box } = useGlobalStatusesStore();
 
-  const IS_BOX_SUCCESS = box === 'success';
-  const IS_BOX_WARNING = box === 'warning';
-  const IS_BOX_ERROR = box === 'error';
+  const IS_BOX_SUCCESS = box === Status.Success;
+  const IS_BOX_WARNING = box === Status.Warning;
+  const IS_BOX_ERROR = box === Status.Error;
 
   const displaySubtitle = !IS_BOX_SUCCESS && !IS_BOX_WARNING && !IS_BOX_ERROR;
 

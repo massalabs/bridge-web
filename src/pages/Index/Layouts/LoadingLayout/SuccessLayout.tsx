@@ -12,7 +12,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
-  const [token] = useTokenStore((state) => [state.selectedToken]);
+  const { selectedToken: token } = useTokenStore();
 
   const massa = Intl.t('general.massa');
   const sepolia = Intl.t('general.sepolia');

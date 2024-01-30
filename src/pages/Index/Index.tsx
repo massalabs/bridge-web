@@ -89,8 +89,8 @@ export function Index() {
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
-  const isLoading = box !== 'none';
-  const isBlurred = box !== 'none' ? 'blur-md' : '';
+  const isLoading = box !== Status.None;
+  const isBlurred = isLoading ? 'blur-md' : '';
   const operationId = massaToEvm ? burnTxID : lockTxID;
 
   const isButtonDisabled =

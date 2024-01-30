@@ -72,7 +72,7 @@ export async function getBurnedByEvmAddress(
 
 export const endPoint = 'bridge-getHistory-prod';
 
-export enum opertationStates {
+export enum operationStates {
   new = 'new',
   processing = 'processing',
   done = 'done',
@@ -88,7 +88,7 @@ export function filterByOpId(
   return BurnedOpList.find(
     (item) =>
       item.outputTxId === null &&
-      item.state === opertationStates.processing &&
+      item.state === operationStates.processing &&
       item.inputOpId === operationId,
   );
 }
@@ -124,7 +124,7 @@ export async function checkIfUserHasTokensToClaim(
     .filter(
       (item) =>
         item.outputTxId === null &&
-        item.state === opertationStates.processing &&
+        item.state === operationStates.processing &&
         item.recipient === evmAddress,
     )
     .map((opToClaim) => ({

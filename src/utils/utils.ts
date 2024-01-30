@@ -1,9 +1,3 @@
-import { NavigateFunction } from 'react-router-dom';
-
-export function goToErrorPage(navigate: NavigateFunction) {
-  navigate('error');
-}
-
 export function formatBalance(
   balanceFormatted: string | undefined,
 ): string | undefined {
