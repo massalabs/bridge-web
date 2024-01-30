@@ -1,18 +1,11 @@
 import { useState, SyntheticEvent, useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
-import {
-  useAccount,
-  useWaitForTransaction,
-  useToken,
-  useContractEvent,
-} from 'wagmi';
+import { useAccount, useWaitForTransaction, useToken } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
-import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import { config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
@@ -40,8 +33,8 @@ import { SIDE } from '@/utils/const';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
-  const { selectedToken, refreshBalances } = useTokenStore();
-  const { isMainnet, currentMode } = useBridgeModeStore();
+  const { selectedToken } = useTokenStore();
+  const { isMainnet } = useBridgeModeStore();
   const { side, setSide } = useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
@@ -50,7 +43,6 @@ export function Index() {
   const {
     handleApprove: _handleApproveEVM,
     handleLock: _handleLockEVM,
-    handleRedeem: _handleRedeemEVM,
     allowance: _allowanceEVM,
     tokenBalance: _tokenBalanceEVM,
     hashLock: _hashLockEVM,
@@ -77,10 +69,7 @@ export function Index() {
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
-  const [isRedeem, setIsRedeem] = useState<boolean>(false);
-
-  const { box, setBox, setClaim, setLock, setApprove, reset } =
-    useGlobalStatusesStore();
+  const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
 
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
@@ -101,24 +90,6 @@ export function Index() {
     isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
-
-  useEffect(() => {
-    if (isRedeem) {
-      setBox(Status.Success);
-      setClaim(Status.Success);
-      refreshBalances();
-    }
-  }, [isRedeem]);
-
-  const redeemEventHandler = useContractEvent({
-    address: config[currentMode].evmBridgeContract,
-    abi: bridgeVaultAbi,
-    eventName: 'Redeemed',
-    listener() {
-      setIsRedeem(true);
-      redeemEventHandler?.();
-    },
-  });
 
   useEffect(() => {
     setError({ amount: '' });
