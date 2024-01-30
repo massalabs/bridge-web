@@ -1,18 +1,19 @@
 import { useContractEvent } from 'wagmi';
 
+import { ClaimState } from './ClaimButton';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { Spinner } from '@/components';
 import { BridgeMode, config } from '@/const';
 import Intl from '@/i18n/i18n';
 
 interface PendingClaim {
-  onRedeemSuccess: (state: `0x${string}` | null) => void;
+  onStateChange: (state: ClaimState, txHash?: `0x${string}` | null) => void;
   mode: BridgeMode;
   inputOpId: string;
 }
 
 export function PendingClaim(args: PendingClaim) {
-  const { onRedeemSuccess, inputOpId, mode } = args;
+  const { onStateChange, inputOpId, mode } = args;
   const stopListening = useContractEvent({
     address: config[mode].evmBridgeContract,
     abi: bridgeVaultAbi,
@@ -22,7 +23,7 @@ export function PendingClaim(args: PendingClaim) {
         (log) => (log as any).args.burnOpId === inputOpId,
       );
       if (event) {
-        onRedeemSuccess(event.transactionHash);
+        onStateChange(ClaimState.SUCCESS, event.transactionHash);
         stopListening?.();
       }
     },

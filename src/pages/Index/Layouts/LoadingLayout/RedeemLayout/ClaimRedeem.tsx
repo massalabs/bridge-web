@@ -97,7 +97,7 @@ export function Claim({
   }
 
   function handleGetAPiErrors(error: any) {
-    console.log('Error fetching claim api', error.toString());
+    console.error('Error fetching claim api', error.toString());
     toast.error(Intl.t('index.claim.error.unknown'));
     setLoadingToError();
   }

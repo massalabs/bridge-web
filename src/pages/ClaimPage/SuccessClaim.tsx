@@ -46,9 +46,11 @@ export function SuccessClaim(args: SuccessClaimProps) {
           content={full + ' ' + symbol}
         />
         {/* this may be temporary, I am waiting for designs */}
-        <Button variant="icon" onClick={() => openInNewTab(explorerUrl)}>
-          <FiExternalLink size={18} />
-        </Button>
+        {txHash && (
+          <Button variant="icon" onClick={() => openInNewTab(explorerUrl)}>
+            <FiExternalLink size={18} />
+          </Button>
+        )}
       </div>
       <SuccessCheck size="md" />
     </div>
