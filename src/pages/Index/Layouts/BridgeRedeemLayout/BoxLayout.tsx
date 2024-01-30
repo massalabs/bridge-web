@@ -14,6 +14,7 @@ import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
   useBridgeModeStore,
+  useOperationStore,
   useTokenStore,
 } from '@/store/store';
 import { IToken } from '@/store/tokenStore';
@@ -308,7 +309,7 @@ interface BoxLayoutResult {
 }
 
 export function boxLayout(): BoxLayoutResult {
-  const { side } = useBridgeModeStore.getState();
+  const { side } = useOperationStore.getState();
 
   const layouts = {
     [SIDE.MASSA_TO_EVM]: {

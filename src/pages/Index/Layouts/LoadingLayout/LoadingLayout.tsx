@@ -7,7 +7,7 @@ import { SuccessLayout } from './SuccessLayout';
 import { WarningLayout } from './WarningLayout';
 import Intl from '@/i18n/i18n';
 import { useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useBridgeModeStore } from '@/store/store';
+import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
 export interface LoadingBoxProps {
@@ -20,7 +20,7 @@ export interface LoadingBoxProps {
 
 export function LoadingLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { side } = useBridgeModeStore();
+  const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const { box } = useGlobalStatusesStore();

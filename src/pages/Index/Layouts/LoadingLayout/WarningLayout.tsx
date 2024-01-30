@@ -1,12 +1,12 @@
 import { LoadingBoxProps } from './LoadingLayout';
 import { ShowOperationId } from './ShowOperationId';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore } from '@/store/store';
+import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
 export function WarningLayout(props: LoadingBoxProps) {
   const { operationId } = props;
-  const { side } = useBridgeModeStore();
+  const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   return (

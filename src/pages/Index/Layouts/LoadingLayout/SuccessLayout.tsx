@@ -4,12 +4,12 @@ import { LoadingBoxProps } from './LoadingLayout';
 import { Blockchain, METAMASK } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore, useTokenStore } from '@/store/store';
+import { useOperationStore, useTokenStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { amount, onClose } = props;
-  const { side } = useBridgeModeStore();
+  const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const [token] = useTokenStore((state) => [state.selectedToken]);

@@ -9,7 +9,7 @@ import {
 import { WETH, ETH, TDAI } from './Tokens';
 import { GradientCard } from '@/components';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore } from '@/store/store';
+import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
 export interface IErrorsMap {
@@ -62,7 +62,7 @@ function MassaToEVMContent() {
 export function GetTokensPopUpModal(props: GetTokensModalProps) {
   const { setOpenModal } = props;
 
-  const { side } = useBridgeModeStore();
+  const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   return (

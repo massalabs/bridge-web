@@ -33,16 +33,16 @@ import {
   useAccountStore,
   useBridgeModeStore,
   useGlobalStatusesStore,
+  useOperationStore,
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
-
   const { selectedToken, refreshBalances } = useTokenStore();
-
-  const { isMainnet, currentMode, side, setSide } = useBridgeModeStore();
+  const { isMainnet, currentMode } = useBridgeModeStore();
+  const { side, setSide } = useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();

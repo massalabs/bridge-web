@@ -12,6 +12,7 @@ import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
   useBridgeModeStore,
+  useOperationStore,
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
@@ -44,7 +45,8 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
 
   const { tokenBalance: _tokenBalanceEVM } = useEvmBridge();
   const { isConnected: isEvmWalletConnected } = useAccount();
-  const { isMainnet, side } = useBridgeModeStore();
+  const { isMainnet } = useBridgeModeStore();
+  const { side } = useOperationStore();
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
   const [token] = useTokenStore((state) => [state.selectedToken]);
 
