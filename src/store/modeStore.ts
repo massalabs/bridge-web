@@ -1,6 +1,5 @@
 import { useTokenStore } from './tokenStore';
 import { Blockchain, BridgeMode } from '../const';
-import { BRIDGE_MODE_STORAGE_KEY, _setInStorage } from '../utils/storage';
 
 export interface ModeStoreState {
   currentMode: BridgeMode;
@@ -33,8 +32,6 @@ const modeStore = (
   setCurrentMode: (mode: BridgeMode) => {
     const previousMode = get().currentMode;
     set({ currentMode: mode });
-
-    _setInStorage(BRIDGE_MODE_STORAGE_KEY, mode);
 
     // if the mode has changed, we need to refresh the tokens
 
