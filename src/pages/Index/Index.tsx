@@ -1,6 +1,6 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
-import { parseUnits } from 'viem';
+import { Log, parseUnits } from 'viem';
 import {
   useAccount,
   useWaitForTransaction,
@@ -72,7 +72,7 @@ export function Index() {
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
-  const [isRedeem, setIsRedeem] = useState<boolean>(false);
+  const [redeemLogs, setRedeemLogs] = useState<Log[]>([]);
 
   const { box, setBox, setClaim, setLock, setApprove, reset } =
     useGlobalStatusesStore();
@@ -97,23 +97,24 @@ export function Index() {
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
 
+  const stopListeningRedeemedEvent = useContractEvent({
+    address: config[currentMode].evmBridgeContract,
+    abi: bridgeVaultAbi,
+    eventName: 'Redeemed',
+    listener(logs) {
+      setRedeemLogs(logs);
+      stopListeningRedeemedEvent?.();
+    },
+  });
+
   useEffect(() => {
-    if (isRedeem) {
+    const event = redeemLogs.find((log: any) => log.args.burnOpId === burnTxID);
+    if (event && box === Status.Loading) {
       setBox(Status.Success);
       setClaim(Status.Success);
       refreshBalances();
     }
-  }, [isRedeem, setBox, setClaim, refreshBalances]);
-
-  const redeemEventHandler = useContractEvent({
-    address: config[currentMode].evmBridgeContract,
-    abi: bridgeVaultAbi,
-    eventName: 'Redeemed',
-    listener() {
-      setIsRedeem(true);
-      redeemEventHandler?.();
-    },
-  });
+  }, [redeemLogs, box, burnTxID, setBox, setClaim, refreshBalances]);
 
   useEffect(() => {
     setError({ amount: '' });
