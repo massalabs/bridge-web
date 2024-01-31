@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent, useEffect } from 'react';
+import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import {
@@ -21,10 +21,7 @@ import {
   LockBridgeParams,
   handleLockBridge,
 } from '@/custom/bridge/handlers/handleLockBridge';
-import {
-  MintArgs,
-  handleMintBridge,
-} from '@/custom/bridge/handlers/handleMintBridge';
+import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import Intl from '@/i18n/i18n';
@@ -50,7 +47,6 @@ export function Index() {
   const {
     handleApprove: _handleApproveEVM,
     handleLock: _handleLockEVM,
-    handleRedeem: _handleRedeemEVM,
     allowance: _allowanceEVM,
     tokenBalance: _tokenBalanceEVM,
     hashLock: _hashLockEVM,
@@ -89,8 +85,8 @@ export function Index() {
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
-  const isLoading = box !== 'none';
-  const isBlurred = box !== 'none' ? 'blur-md' : '';
+  const isLoading = box !== Status.None;
+  const isBlurred = isLoading ? 'blur-md' : '';
   const operationId = massaToEvm ? burnTxID : lockTxID;
 
   const isButtonDisabled =
@@ -108,7 +104,7 @@ export function Index() {
       setClaim(Status.Success);
       refreshBalances();
     }
-  }, [isRedeem]);
+  }, [isRedeem, setBox, setClaim, refreshBalances]);
 
   const redeemEventHandler = useContractEvent({
     address: config[currentMode].evmBridgeContract,
@@ -140,17 +136,16 @@ export function Index() {
       setBox(Status.Error);
       setLock(Status.Error);
     }
-  }, [lockIsSuccess, lockIsError]);
+  }, [lockIsSuccess, lockIsError, lockData, setLock, setBox]);
 
   useEffect(() => {
     if (!massaClient) return;
     if (lockTxID) {
-      const mintArgs: MintArgs = {
+      handleMintBridge({
         massaOperationID: lockTxID,
-      };
-      handleMintBridge(mintArgs);
+      });
     }
-  }, [lockTxID]);
+  }, [lockTxID, massaClient]);
 
   useEffect(() => {
     if (approveIsSuccess) {
@@ -168,11 +163,27 @@ export function Index() {
       setApprove(Status.Error);
       toast.error(Intl.t('index.approve.error.failed'));
     }
-  }, [approveIsSuccess, approveIsError]);
+  }, [
+    approveIsSuccess,
+    approveIsError,
+    amount,
+    decimals,
+    setApprove,
+    setBox,
+    _handleLockEVM,
+  ]);
+
+  const closeLoadingBox = useCallback(() => {
+    reset();
+    setAmount('');
+    // the lockTxID & burnTdID is not reset after mint/claim
+    setLockTxID('');
+    setBurnTxID('');
+  }, [reset]);
 
   useEffect(() => {
     if (box === Status.None) closeLoadingBox();
-  }, [box]);
+  }, [box, closeLoadingBox]);
 
   function handleToggleLayout() {
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
@@ -257,14 +268,6 @@ export function Index() {
         await handleLockBridge(lockArgs);
       }
     }
-  }
-
-  function closeLoadingBox() {
-    reset();
-    setAmount('');
-    // the lockTxID & burnTdID is not reset after mint/claim
-    setLockTxID('');
-    setBurnTxID('');
   }
 
   return (

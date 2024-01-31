@@ -58,7 +58,7 @@ export async function waitIncludedOperation(
   );
 }
 
-export async function checkForOperationStatus(
+async function checkForOperationStatus(
   client: Client,
   opId: string,
   onlyFinal = false,

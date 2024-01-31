@@ -2,7 +2,7 @@ import {
   ClaimArgs,
   checkBurnedOpForRedeem,
 } from '../../src/custom/bridge/handlers/checkBurnedOpForRedeem';
-import { Burned, opertationStates } from '../../src/utils/lambdaApi';
+import { Burned, operationStates } from '../../src/utils/lambdaApi';
 
 describe('checkBurnedOpForRedeem', () => {
   afterEach(() => {
@@ -10,7 +10,7 @@ describe('checkBurnedOpForRedeem', () => {
   });
 
   test('should show success of claim event', () => {
-    const mockoperationId: `0x${string}` =
+    const mockOperationId: `0x${string}` =
       '0x1234567890123456789012345678901234567890';
 
     const mockApiResponse: Burned[] = [
@@ -21,7 +21,7 @@ describe('checkBurnedOpForRedeem', () => {
         evmToken: '0x1234567890123456789012345678901234567890',
         massaToken: 'AS1234567890123456789012345678901234567890',
         recipient: '0xdef456',
-        state: opertationStates.finalizing,
+        state: operationStates.finalizing,
         error: null,
         emitter: '0xghi789',
         inputOpId: 'op123',
@@ -43,10 +43,10 @@ describe('checkBurnedOpForRedeem', () => {
         evmToken: '0x1234567890123456789012345678901234567890',
         massaToken: 'AS1234567890123456789012345678901234567890',
         recipient: '0xjkl012',
-        state: opertationStates.processing,
+        state: operationStates.processing,
         error: 'Insufficient funds',
         emitter: '0xmnopqr',
-        inputOpId: mockoperationId,
+        inputOpId: mockOperationId,
         signatures: [
           {
             signature: '0x1234567890123456789012345678901234567890',
@@ -62,7 +62,7 @@ describe('checkBurnedOpForRedeem', () => {
 
     const claimArgs: ClaimArgs = {
       burnedOpList: mockApiResponse,
-      operationId: mockoperationId,
+      operationId: mockOperationId,
     };
 
     const result = checkBurnedOpForRedeem(claimArgs);
@@ -76,7 +76,7 @@ describe('checkBurnedOpForRedeem', () => {
   });
 
   test('should fail because no collorlating op was found', () => {
-    const mockoperationId: `0x${string}` =
+    const mockOperationId: `0x${string}` =
       '0x1234567890123456789012345678901234567890';
 
     const mockApiResponse: Burned[] = [
@@ -87,7 +87,7 @@ describe('checkBurnedOpForRedeem', () => {
         massaToken: 'AS1234567890123456789012345678901234567890',
         evmChainId: 1,
         recipient: '0xdef456',
-        state: opertationStates.finalizing,
+        state: operationStates.finalizing,
         error: null,
         emitter: '0xghi789',
         inputOpId: 'op123',
@@ -109,7 +109,7 @@ describe('checkBurnedOpForRedeem', () => {
         evmToken: '0x1234567890123456789012345678901234567890',
         massaToken: 'AS1234567890123456789012345678901234567890',
         recipient: '0xjkl012',
-        state: opertationStates.error,
+        state: operationStates.error,
         error: 'Insufficient funds',
         emitter: '0xmnopqr',
         inputOpId: '0x1',
@@ -128,12 +128,12 @@ describe('checkBurnedOpForRedeem', () => {
 
     const claimArgs = {
       burnedOpList: mockApiResponse,
-      operationId: mockoperationId,
+      operationId: mockOperationId,
     };
 
     const result = checkBurnedOpForRedeem(claimArgs);
 
-    // jest evaluates empty arrays as truthy so we're not assesing this case here
+    // jest evaluates empty arrays as truthy so we're not assessing this case here
     expect(result).toHaveLength(0);
     expect(result).toStrictEqual([]);
   });
