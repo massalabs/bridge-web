@@ -3,19 +3,21 @@ import { useContractEvent } from 'wagmi';
 import { ClaimState } from './ClaimButton';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { Spinner } from '@/components';
-import { BridgeMode, config } from '@/const';
+import { config } from '@/const';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/store';
 
-interface PendingClaim {
+interface PendingClaimProps {
   onStateChange: (state: ClaimState, txHash?: `0x${string}` | null) => void;
-  mode: BridgeMode;
   inputOpId: string;
 }
 
-export function PendingClaim(args: PendingClaim) {
-  const { onStateChange, inputOpId, mode } = args;
+export function PendingClaim(props: PendingClaimProps) {
+  const { onStateChange, inputOpId } = props;
+  const { currentMode } = useBridgeModeStore();
+
   const stopListening = useContractEvent({
-    address: config[mode].evmBridgeContract,
+    address: config[currentMode].evmBridgeContract,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
     listener(logs) {
@@ -28,6 +30,7 @@ export function PendingClaim(args: PendingClaim) {
       }
     },
   });
+
   return (
     <div
       className="flex justify-between items-center

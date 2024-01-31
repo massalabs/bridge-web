@@ -7,7 +7,6 @@ import { InitClaim } from './InitClaim';
 import { PendingClaim } from './PendingClaim';
 import { RejectedClaim } from './RejectedClaim';
 import { SuccessClaim } from './SuccessClaim';
-import { useBridgeModeStore } from '../../store/store';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 export enum ClaimState {
@@ -35,15 +34,16 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
         if (txHash) {
           setTxHash(txHash);
         }
-        return setClaimState(ClaimState.SUCCESS);
+        setClaimState(ClaimState.SUCCESS);
+        break;
       case ClaimState.REJECTED:
-        return setClaimState(ClaimState.REJECTED);
+        setClaimState(ClaimState.REJECTED);
+        break;
       case ClaimState.ERROR:
-        return setClaimState(ClaimState.ERROR);
+        setClaimState(ClaimState.ERROR);
+        break;
     }
   }
-
-  const { currentMode } = useBridgeModeStore();
 
   // TODO: put this in a store (token store ?)
   const { data: symbol } = useContractRead({
@@ -61,7 +61,6 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
               <div className="flex w-full justify-center">
                 <PendingClaim
                   onStateChange={onStateChange}
-                  mode={currentMode}
                   inputOpId={operation.inputOpId}
                 />
               </div>
