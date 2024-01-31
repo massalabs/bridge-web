@@ -3,12 +3,12 @@ import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import { useOperationStore } from '@/store/store';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
   amount: string;
-  setBurnTxID: (state: string) => void;
   setRedeemSteps: (state: string) => void;
 }
 
@@ -31,10 +31,10 @@ export async function handleBurnRedeem(
 async function initiateBurn({
   recipient,
   amount,
-  setBurnTxID,
   setRedeemSteps,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
+  const { setBurnTxID } = useOperationStore.getState();
 
   setBurn(Status.Loading);
 

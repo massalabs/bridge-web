@@ -39,7 +39,7 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken, refreshBalances } = useTokenStore();
   const { isMainnet, currentMode } = useBridgeModeStore();
-  const { side, setSide } = useOperationStore();
+  const { side, setSide, burnTxID, setBurnTxID } = useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -68,7 +68,6 @@ export function Index() {
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [amount, setAmount] = useState<string | undefined>('');
   const [error, setError] = useState<{ amount: string } | null>(null);
-  const [burnTxID, setBurnTxID] = useState<string>('');
   const [lockTxID, setLockTxID] = useState<string>('');
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
@@ -179,7 +178,7 @@ export function Index() {
     // the lockTxID & burnTdID is not reset after mint/claim
     setLockTxID('');
     setBurnTxID('');
-  }, [reset]);
+  }, [reset, setAmount, setLockTxID, setBurnTxID]);
 
   useEffect(() => {
     if (box === Status.None) closeLoadingBox();
@@ -244,7 +243,6 @@ export function Index() {
         await handleBurnRedeem({
           recipient: evmAddress,
           amount,
-          setBurnTxID,
           setRedeemSteps,
         });
       }

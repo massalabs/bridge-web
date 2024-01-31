@@ -17,12 +17,10 @@ describe('handleBurnRedeem', () => {
     mockSetRedeemSteps = jest.fn().mockImplementation();
 
     const recipient = '0x1234567890123456789012345678901234567890';
-    const mocksetBurnTxID = jest.fn().mockImplementation();
 
     burnArgs = {
       recipient,
       amount,
-      setBurnTxID: mocksetBurnTxID,
       setRedeemSteps: mockSetRedeemSteps,
     };
   });
