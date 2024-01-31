@@ -74,6 +74,7 @@ const accountStore = (
       if (!get().networkObserver) {
         const networkObserver = currentProvider.listenNetworkChanges(
           (newNetwork: string) => {
+            get().refreshMassaClient();
             set({ connectedNetwork: newNetwork });
           },
         );
