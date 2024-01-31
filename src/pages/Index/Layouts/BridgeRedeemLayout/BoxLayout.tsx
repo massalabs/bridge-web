@@ -177,8 +177,8 @@ function MassaMiddle() {
   );
 }
 
-function EVMTokenOptions({ ...props }) {
-  const { layout } = props;
+function EVMTokenOptions() {
+  const { side } = useOperationStore.getState();
 
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
 
@@ -188,7 +188,7 @@ function EVMTokenOptions({ ...props }) {
     state.setSelectedToken,
   ]);
 
-  const IS_MASSA_TO_EVM = layout === SIDE.MASSA_TO_EVM;
+  const IS_MASSA_TO_EVM = side === SIDE.MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
     Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
@@ -213,8 +213,8 @@ function EVMTokenOptions({ ...props }) {
   );
 }
 
-function MassaTokenOptions({ ...props }) {
-  const { layout } = props;
+function MassaTokenOptions() {
+  const { side } = useOperationStore.getState();
 
   const [isFetching] = useAccountStore((state) => [state.isFetching]);
   const [tokens, setToken, token] = useTokenStore((state) => [
@@ -222,7 +222,7 @@ function MassaTokenOptions({ ...props }) {
     state.setSelectedToken,
     state.selectedToken,
   ]);
-  const IS_MASSA_TO_EVM = layout === SIDE.MASSA_TO_EVM;
+  const IS_MASSA_TO_EVM = side === SIDE.MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
     Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
