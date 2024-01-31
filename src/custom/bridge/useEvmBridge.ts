@@ -83,12 +83,12 @@ const useEvmBridge = () => {
     amount: string,
     recipient: `0x${string}`,
     token: `0x${string}`,
-    burnopId: string,
+    burnOpId: string,
     signatures: string[],
   ): Promise<boolean> {
     try {
       await redeem.writeAsync({
-        args: [amount, recipient, burnopId, token, signatures],
+        args: [amount, recipient, burnOpId, token, signatures],
       });
       return true;
     } catch (error) {
