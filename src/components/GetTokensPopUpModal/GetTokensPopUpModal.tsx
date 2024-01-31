@@ -75,19 +75,19 @@ export function GetTokensPopUpModal(props: GetTokensModalProps) {
       <PopupModalHeader>
         <h1 className="mas-title mb-4 text-f-primary">
           {Intl.t('get-tokens.title', {
-            token: massaToEvm ? 'Sepolia Testnet' : 'Massa Buildnet',
+            token: massaToEvm ? 'Massa Buildnet' : 'Sepolia Testnet',
           })}
         </h1>
       </PopupModalHeader>
       <PopupModalContent>
         {massaToEvm ? (
+          <MassaToEVMContent />
+        ) : (
           <div className="flex items-start justify-center gap-5 mt-5 mb-10">
             <TDAI />
             <WETH />
             <ETH />
           </div>
-        ) : (
-          <MassaToEVMContent />
         )}
       </PopupModalContent>
     </PopupModal>
