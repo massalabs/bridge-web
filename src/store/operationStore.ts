@@ -18,7 +18,7 @@ const operationStore = (
   setOpToRedeem: (operationsToRedeem: RedeemOperationToClaim[]) =>
     set({ opToRedeem: operationsToRedeem }),
 
-  side: SIDE.MASSA_TO_EVM,
+  side: SIDE.EVM_TO_MASSA,
   setSide(side: SIDE) {
     set({ side });
   },
