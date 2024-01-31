@@ -116,7 +116,8 @@ export function Claim({
         toast.error(Intl.t('index.loading-box.claim-error-1'));
         return;
       }
-
+      setClaim(Status.Loading);
+      setClaimStep(ClaimSteps.AwaitingSignature);
       setHasClickedClaimed(true);
       const evmRedeem = await _handleRedeemEVM(
         parseUnits(amount, decimals).toString(),
@@ -152,26 +153,27 @@ export function Claim({
     }
   }
 
+  const claimMessage =
+    burn === Status.Success && !isReadyToClaim ? (
+      <div>
+        {Intl.t('index.loading-box.claim-pending-1')}
+        <br />
+        {Intl.t('index.loading-box.claim-pending-2')}
+      </div>
+    ) : userHasRejected ? (
+      <div className="text-s-error">
+        {Intl.t('index.loading-box.rejected-by-user')}
+      </div>
+    ) : !hasClickedClaimed ? (
+      Intl.t('index.loading-box.claim-message', {
+        token: symbol,
+        network: selectedChain,
+      })
+    ) : null;
+
   return (
     <div className="flex flex-col gap-6 justify-center">
-      <div className="mas-body-2 text-center max-w-full">
-        {burn === Status.Success && !isReadyToClaim ? (
-          <div>
-            {Intl.t('index.loading-box.claim-pending-1')}
-            <br />
-            {Intl.t('index.loading-box.claim-pending-2')}
-          </div>
-        ) : userHasRejected ? (
-          <div className="text-s-error">
-            {Intl.t('index.loading-box.rejected-by-user')}
-          </div>
-        ) : !hasClickedClaimed ? (
-          Intl.t('index.loading-box.claim-message', {
-            token: symbol,
-            network: selectedChain,
-          })
-        ) : null}
-      </div>
+      <div className="mas-body-2 text-center max-w-full">{claimMessage}</div>
       {isReadyToClaim && !hasClickedClaimed ? (
         <Button
           onClick={() => {
