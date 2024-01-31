@@ -33,7 +33,8 @@ const MassaWallet = () => {
         }}
       />
     );
-  const renderWallet = () => {
+
+  function renderWallet() {
     switch (selectedProvider) {
       case SUPPORTED_MASSA_WALLETS.MASSASTATION:
         return <StationWallet />;
@@ -43,9 +44,9 @@ const MassaWallet = () => {
         // Should not happen
         return <>Error: no wallet selected</>;
     }
-  };
+  }
 
-  const renderSelectedWallet = () => {
+  function renderSelectedWallet() {
     switch (selectedProvider) {
       case SUPPORTED_MASSA_WALLETS.MASSASTATION:
         return (
@@ -62,7 +63,7 @@ const MassaWallet = () => {
           </>
         );
     }
-  };
+  }
 
   return (
     <>

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button, Dropdown, Theme, ThemeMode } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
@@ -25,10 +26,20 @@ export function Navbar(props: NavbarProps) {
   const { setOpen } = props;
 
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
-  const { accounts, isFetching, connectedAccount } = useAccountStore();
+  const {
+    accounts,
+    isFetching,
+    connectedAccount,
+    refreshMassaClient,
+    connectedNetwork,
+  } = useAccountStore();
   const { setTheme } = useConfigStore();
   const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
   const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
+
+  useEffect(() => {
+    refreshMassaClient();
+  }, [connectedNetwork]);
 
   const { isConnected: isConnectedEVM } = useAccount();
 

@@ -24,6 +24,7 @@ export function useWrongNetworkMASSA() {
   const { isMainnet } = useBridgeModeStore();
 
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+
   useEffect(() => {
     setWrongNetwork(!validateMassaNetwork(isMainnet, connectedNetwork));
   }, [isMainnet, connectedNetwork]);
