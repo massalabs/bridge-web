@@ -26,6 +26,7 @@ export function Navbar(props: NavbarProps) {
 
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
   const { accounts, isFetching, connectedAccount } = useAccountStore();
+
   const { setTheme } = useConfigStore();
   const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
   const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();

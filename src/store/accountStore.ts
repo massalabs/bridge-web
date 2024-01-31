@@ -29,6 +29,8 @@ export interface AccountStoreState {
 
   setConnectedAccount: (account?: IAccount) => void;
   setAvailableAccounts: (accounts: IAccount[]) => void;
+
+  refreshMassaClient: () => void;
 }
 
 const accountStore = (
@@ -72,6 +74,7 @@ const accountStore = (
       if (!get().networkObserver) {
         const networkObserver = currentProvider.listenNetworkChanges(
           (newNetwork: string) => {
+            get().refreshMassaClient();
             set({ connectedNetwork: newNetwork });
           },
         );
@@ -177,6 +180,19 @@ const accountStore = (
       // once current account is set, refresh balances
       useTokenStore.getState().refreshBalances();
     }
+  },
+
+  refreshMassaClient: async () => {
+    const provider = get().currentProvider;
+    if (!provider) return;
+
+    const connectedAccount = get().connectedAccount!;
+    set({
+      massaClient: await ClientFactory.fromWalletProvider(
+        provider,
+        connectedAccount,
+      ),
+    });
   },
 });
 
