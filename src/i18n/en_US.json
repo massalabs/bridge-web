@@ -27,7 +27,8 @@
     "rejected": "Claim rejected",
     "rejected-1": "You have rejected your ",
     "rejected-2": "please try again.",
-    "error": "Failed to redeem "
+    "error": "Failed to redeem",
+    "error-toast": "Redeem failed"
   },
   "index": {
     "top-banner": {

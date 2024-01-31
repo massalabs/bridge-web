@@ -33,6 +33,7 @@ export function InitClaim(args: ClaimButton) {
         toast.error(Intl.t('claim.rejected'));
         onStateChange(ClaimState.REJECTED);
       } else {
+        toast.error(Intl.t('claim.error-toast'));
         onStateChange(ClaimState.ERROR);
       }
     }

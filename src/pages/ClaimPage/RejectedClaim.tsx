@@ -1,10 +1,10 @@
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
-import { formatAmount } from '@/utils/parseAmount';
+import { toast, Button } from '@massalabs/react-ui-kit';
 import { ClaimState } from './ClaimButton';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
-import { CustomError, isRejectedByUser } from '@/utils/error';
-import { toast, Button } from '@massalabs/react-ui-kit';
 import Intl from '@/i18n/i18n';
+import { CustomError, isRejectedByUser } from '@/utils/error';
+import { RedeemOperationToClaim } from '@/utils/lambdaApi';
+import { formatAmount } from '@/utils/parseAmount';
 
 interface FailedClaimProps {
   operation: RedeemOperationToClaim;
@@ -19,7 +19,7 @@ export function RejectedClaim(args: FailedClaimProps) {
 
   const { handleRedeem } = useEvmBridge();
 
-  async function _handleRedeem(
+  async function claimToken(
     amount: string,
     recipient: `0x${string}`,
     token: `0x${string}`,
@@ -28,7 +28,6 @@ export function RejectedClaim(args: FailedClaimProps) {
   ) {
     try {
       onStateChange(ClaimState.PENDING);
-      throw new Error('test');
       await handleRedeem(amount, recipient, token, inputOpId, signatures);
     } catch (error) {
       const typedError = error as CustomError;
@@ -36,6 +35,7 @@ export function RejectedClaim(args: FailedClaimProps) {
         toast.error(Intl.t('claim.rejected'));
         onStateChange(ClaimState.REJECTED);
       } else {
+        toast.error(Intl.t('claim.error-toast'));
         onStateChange(ClaimState.ERROR);
       }
     }
@@ -57,7 +57,7 @@ export function RejectedClaim(args: FailedClaimProps) {
       <div className="w-fit">
         <Button
           onClick={() => {
-            _handleRedeem(
+            claimToken(
               op.amount,
               op.recipient,
               op.evmToken,
