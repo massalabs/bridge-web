@@ -26,6 +26,8 @@
     "rejected-1": "You have rejected your ",
     "rejected-2": "please try again.",
     "error": "Failed to claim",
+    "already-executed": "Claim already executed",
+    "already-executed-message": "Claim already executed, please wait for completion",
     "error-toast": "Claim failed"
   },
   "index": {
