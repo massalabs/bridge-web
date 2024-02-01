@@ -1,6 +1,6 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
-import { parseUnits } from 'viem';
+import { Log, parseUnits } from 'viem';
 import {
   useAccount,
   useWaitForTransaction,
@@ -39,7 +39,7 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken, refreshBalances } = useTokenStore();
   const { isMainnet, currentMode } = useBridgeModeStore();
-  const { side, setSide } = useOperationStore();
+  const { side, setSide, burnTxID, setBurnTxID } = useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -68,12 +68,11 @@ export function Index() {
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [amount, setAmount] = useState<string | undefined>('');
   const [error, setError] = useState<{ amount: string } | null>(null);
-  const [burnTxID, setBurnTxID] = useState<string>('');
   const [lockTxID, setLockTxID] = useState<string>('');
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
-  const [isRedeem, setIsRedeem] = useState<boolean>(false);
+  const [redeemLogs, setRedeemLogs] = useState<Log[]>([]);
 
   const { box, setBox, setClaim, setLock, setApprove, reset } =
     useGlobalStatusesStore();
@@ -98,23 +97,24 @@ export function Index() {
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
 
+  const stopListeningRedeemedEvent = useContractEvent({
+    address: config[currentMode].evmBridgeContract,
+    abi: bridgeVaultAbi,
+    eventName: 'Redeemed',
+    listener(logs) {
+      setRedeemLogs(logs);
+      stopListeningRedeemedEvent?.();
+    },
+  });
+
   useEffect(() => {
-    if (isRedeem) {
+    const event = redeemLogs.find((log: any) => log.args.burnOpId === burnTxID);
+    if (event && box === Status.Loading) {
       setBox(Status.Success);
       setClaim(Status.Success);
       refreshBalances();
     }
-  }, [isRedeem, setBox, setClaim, refreshBalances]);
-
-  const redeemEventHandler = useContractEvent({
-    address: config[currentMode].evmBridgeContract,
-    abi: bridgeVaultAbi,
-    eventName: 'Redeemed',
-    listener() {
-      setIsRedeem(true);
-      redeemEventHandler?.();
-    },
-  });
+  }, [redeemLogs, box, burnTxID, setBox, setClaim, refreshBalances]);
 
   useEffect(() => {
     setError({ amount: '' });
@@ -179,7 +179,7 @@ export function Index() {
     // the lockTxID & burnTdID is not reset after mint/claim
     setLockTxID('');
     setBurnTxID('');
-  }, [reset]);
+  }, [reset, setAmount, setLockTxID, setBurnTxID]);
 
   useEffect(() => {
     if (box === Status.None) closeLoadingBox();
@@ -244,7 +244,6 @@ export function Index() {
         await handleBurnRedeem({
           recipient: evmAddress,
           amount,
-          setBurnTxID,
           setRedeemSteps,
         });
       }
