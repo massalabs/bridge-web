@@ -6,6 +6,7 @@ import { FiRepeat } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 
 import { boxLayout } from './BoxLayout';
+import { FeesEstimation } from './FeesEstimation';
 import { GetTokensPopUpModal } from '@/components';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
@@ -179,13 +180,14 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
             {boxLayout().down.balance}
           </div>
         </div>
-        <div>
+        <div className="mb-5">
           <Button disabled={isButtonDisabled} onClick={(e) => handleSubmit(e)}>
             {massaToEvm
               ? Intl.t('index.button.redeem')
               : Intl.t('index.button.bridge')}
           </Button>
         </div>
+        <FeesEstimation amount={amount} />
       </div>
 
       {openTokensModal && (
