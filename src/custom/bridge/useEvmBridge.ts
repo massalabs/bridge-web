@@ -61,7 +61,7 @@ const useEvmBridge = () => {
   }, [selectedToken, _allowance?.data]);
 
   const approve = useContractWrite({
-    functionName: EVM_CONTRACT_ABI.ALLOWANCE as 'approve',
+    functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
     address: evmToken,
     abi: erc20ABI,
     args: [bridgeContractAddr, U256_MAX],
