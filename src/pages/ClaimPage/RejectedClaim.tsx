@@ -1,4 +1,4 @@
-import { Button, toast } from '@massalabs/react-ui-kit';
+import { toast, Button } from '@massalabs/react-ui-kit';
 import { ClaimState } from './ClaimButton';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
@@ -19,7 +19,7 @@ export function RejectedClaim(args: FailedClaimProps) {
 
   const { handleRedeem } = useEvmBridge();
 
-  async function _handleRedeem(
+  async function claimToken(
     amount: string,
     recipient: `0x${string}`,
     token: `0x${string}`,
@@ -35,11 +35,11 @@ export function RejectedClaim(args: FailedClaimProps) {
         toast.error(Intl.t('claim.rejected'));
         onStateChange(ClaimState.REJECTED);
       } else {
+        toast.error(Intl.t('claim.error-toast'));
         onStateChange(ClaimState.ERROR);
       }
     }
   }
-
   return (
     <div
       className="flex justify-between items-center
@@ -57,7 +57,7 @@ export function RejectedClaim(args: FailedClaimProps) {
       <div className="w-fit">
         <Button
           onClick={() => {
-            _handleRedeem(
+            claimToken(
               op.amount,
               op.recipient,
               op.evmToken,

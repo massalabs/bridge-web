@@ -42,6 +42,8 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
       case ClaimState.ERROR:
         setClaimState(ClaimState.ERROR);
         break;
+      case ClaimState.INIT:
+        return setClaimState(ClaimState.INIT);
     }
   }
 
@@ -88,10 +90,14 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
           case ClaimState.ERROR:
             return (
               <div>
-                <ErrorClaim />
+                <ErrorClaim
+                  operation={operation}
+                  onStateChange={onStateChange}
+                  symbol={symbol}
+                />
               </div>
             );
-          default:
+          case ClaimState.INIT:
             return (
               <div className="flex w-full justify-center">
                 <InitClaim
