@@ -7,8 +7,8 @@ import {
   mainnet,
   sepolia,
 } from '@wagmi/core';
-import { formatEther } from 'viem';
-import { useAccount } from 'wagmi';
+import { formatEther, parseUnits } from 'viem';
+import { useAccount, useToken } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EthSvgRed } from '@/assets/EthSvgRed';
 import { EVM_CONTRACT_ABI, U256_MAX, config } from '@/const';
@@ -34,70 +34,71 @@ export function FeesEstimation(props: FeesEstimationProps) {
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const evmToken = selectedToken?.evmToken as `0x${string}`;
+  const { data: tokenData } = useToken({ address: evmToken });
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
 
   const [feesETH, setFeesETH] = useState('');
 
   useEffect(() => {
-    if (feesETH === '') {
-      let gasPrice = 0n;
-      fetchFeeData({
-        chainId: isMainnet ? mainnet.id : sepolia.id,
+    let gasPrice = 0n;
+    fetchFeeData({
+      chainId: isMainnet ? mainnet.id : sepolia.id,
+    })
+      .then((feeData) => {
+        gasPrice = feeData.maxFeePerGas || 0n;
+        console.log('feeData', feeData);
+        console.log('gasPrice', gasPrice);
+        const publicClient = getConfig().getPublicClient();
+        if (!accountAddress || !massaAccount || !tokenData) {
+          return Promise.all([Promise.resolve(0n), Promise.resolve(0n)]);
+        }
+
+        const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
+
+        if (massaToEvm) {
+          // claim
+          return Promise.all([Promise.resolve(92261n), Promise.resolve(0n)]);
+        } else {
+          // approve and lock
+          const lockGasEstimationPromise = publicClient.estimateContractGas({
+            functionName: EVM_CONTRACT_ABI.LOCK,
+            address: bridgeContractAddr,
+            abi: bridgeVaultAbi,
+            args: [amountInBigInt, massaAccount.address(), evmToken],
+            account: accountAddress,
+          });
+
+          // TODO: only if approve is needed
+          const approveGasEstimationPromise = publicClient.estimateContractGas({
+            functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
+            address: evmToken,
+            abi: erc20ABI,
+            args: [bridgeContractAddr, U256_MAX],
+            account: accountAddress,
+          });
+
+          return Promise.all([
+            lockGasEstimationPromise,
+            approveGasEstimationPromise,
+          ]);
+        }
       })
-        .then((feeData) => {
-          gasPrice = feeData.gasPrice || 0n;
-          if (massaToEvm) {
-            // claim
-            return Promise.all([Promise.resolve(0n), Promise.resolve(0n)]);
-          } else {
-            // approve and lock
-            const publicClient = getConfig().getPublicClient();
-            if (!accountAddress || !massaAccount) {
-              return Promise.all([Promise.resolve(0n), Promise.resolve(0n)]);
-            }
-            // Estimate gas for the "LOCK" function
-            const lockGasEstimationPromise = publicClient.estimateContractGas({
-              functionName: EVM_CONTRACT_ABI.LOCK,
-              address: bridgeContractAddr,
-              abi: bridgeVaultAbi,
-              args: [amount || '0', massaAccount.address(), evmToken],
-              account: accountAddress,
-            });
-
-            // Estimate gas for the "APPROVE" function
-            // TODO: only if approve is needed
-            const approveGasEstimationPromise =
-              publicClient.estimateContractGas({
-                functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
-                address: evmToken,
-                abi: erc20ABI,
-                args: [bridgeContractAddr, U256_MAX],
-                account: accountAddress,
-              });
-
-            return Promise.all([
-              lockGasEstimationPromise,
-              approveGasEstimationPromise,
-            ]);
-          }
-        })
-        .then(([lockEstimatedGas, approveEstimatedGas]) => {
-          return lockEstimatedGas + approveEstimatedGas;
-        })
-        .then((estimatedGas) => {
-          setFeesETH(formatEther(estimatedGas * gasPrice));
-        });
-    }
+      .then(([firstEstimation, secondEstimation]) => {
+        return firstEstimation + secondEstimation;
+      })
+      .then((estimatedGas) => {
+        setFeesETH(formatEther(estimatedGas * gasPrice));
+      });
   }, [
     massaAccount,
     accountAddress,
     amount,
-    feesETH,
     massaToEvm,
     evmToken,
     setFeesETH,
     bridgeContractAddr,
     isMainnet,
+    tokenData,
   ]);
 
   if (!selectedToken) return null;
