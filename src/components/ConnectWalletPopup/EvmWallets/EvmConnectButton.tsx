@@ -1,13 +1,12 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
-import { useSwitchNetwork } from 'wagmi';
+import { mainnet, sepolia, useSwitchNetwork } from 'wagmi';
 
 import { MetaMaskSvg } from '@/assets';
 import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
-import { ETH_MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID } from '@/utils/const';
 import { formatBalance } from '@/utils/utils';
 
 export default function EvmConnectButton(): JSX.Element {
@@ -71,9 +70,7 @@ export default function EvmConnectButton(): JSX.Element {
                       variant="secondary"
                       customClass="h-14"
                       onClick={() =>
-                        switchNetwork?.(
-                          isMainnet ? ETH_MAINNET_CHAIN_ID : SEPOLIA_CHAIN_ID,
-                        )
+                        switchNetwork?.(isMainnet ? mainnet.id : sepolia.id)
                       }
                     >
                       {Intl.t('connect-wallet.connect-metamask.switch-network')}

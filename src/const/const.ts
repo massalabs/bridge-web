@@ -70,3 +70,10 @@ export enum SUPPORTED_MASSA_WALLETS {
   MASSASTATION = 'MASSASTATION',
   BEARBY = 'BEARBY',
 }
+
+export const EVM_CONTRACT_ABI = {
+  APPROVE: 'approve',
+  LOCK: 'lock',
+  ALLOWANCE: 'allowance',
+  REDEEM: 'redeem',
+};
