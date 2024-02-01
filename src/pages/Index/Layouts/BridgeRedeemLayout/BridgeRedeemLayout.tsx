@@ -77,6 +77,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
     setAmount(res);
   }
 
+  // Money component formats amount without decimals
   return (
     <>
       <div

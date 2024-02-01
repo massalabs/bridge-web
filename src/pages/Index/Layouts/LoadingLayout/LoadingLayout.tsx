@@ -1,5 +1,4 @@
 import { FiX } from 'react-icons/fi';
-
 import { BridgeLayout } from './BridgeLayout';
 import { LoadingState } from './LoadingState';
 import { RedeemLayout } from './RedeemLayout/RedeemLayout';
