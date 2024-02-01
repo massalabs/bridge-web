@@ -1,8 +1,8 @@
-import { Tooltip, Button, toast } from '@massalabs/react-ui-kit';
+import { Tooltip, Button } from '@massalabs/react-ui-kit';
 import { ClaimState } from './ClaimButton';
+import { claimTokens } from '../../utils/claimTokens';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import { CustomError, isRejectedByUser } from '@/utils/error';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -17,27 +17,15 @@ export function InitClaim(args: ClaimButton) {
   const { handleRedeem } = useEvmBridge();
   let { full, in2decimals } = formatAmount(op.amount);
 
-  async function _handleRedeem(
-    amount: string,
-    recipient: `0x${string}`,
-    token: `0x${string}`,
-    inputOpId: string,
-    signatures: string[],
-  ) {
-    try {
-      onStateChange(ClaimState.PENDING);
-      await handleRedeem(amount, recipient, token, inputOpId, signatures);
-    } catch (error) {
-      const typedError = error as CustomError;
-      if (isRejectedByUser(typedError)) {
-        toast.error(Intl.t('claim.rejected'));
-        onStateChange(ClaimState.REJECTED);
-      } else {
-        toast.error(Intl.t('claim.error-toast'));
-        onStateChange(ClaimState.ERROR);
-      }
-    }
-  }
+  const claimTokenArgs = {
+    amount: op.amount,
+    recipient: op.recipient,
+    token: op.evmToken,
+    inputOpId: op.inputOpId,
+    signatures: op.signatures,
+    changeClaimState: onStateChange,
+    redeemFunction: handleRedeem,
+  };
 
   return (
     <div
@@ -55,17 +43,7 @@ export function InitClaim(args: ClaimButton) {
         />
       </div>
       <div>
-        <Button
-          onClick={() =>
-            _handleRedeem(
-              op.amount,
-              op.recipient,
-              op.evmToken,
-              op.inputOpId,
-              op.signatures,
-            )
-          }
-        >
+        <Button onClick={() => claimTokens(claimTokenArgs)}>
           {Intl.t('claim.claim')} {symbol}
         </Button>
       </div>

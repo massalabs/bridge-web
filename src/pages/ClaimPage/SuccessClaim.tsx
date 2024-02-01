@@ -34,12 +34,13 @@ export function SuccessClaim(args: SuccessClaimProps) {
           px-10 py-14"
     >
       <div className="flex items-center">
-        {Intl.t('claim.success')}
-        <strong>
-          {' '}
-          {in2decimals} {symbol}{' '}
-        </strong>
-
+        <div>
+          {Intl.t('claim.success')}
+          <strong>
+            {' '}
+            {in2decimals} {symbol}{' '}
+          </strong>
+        </div>
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
           content={full + ' ' + symbol}
