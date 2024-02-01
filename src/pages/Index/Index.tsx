@@ -107,6 +107,11 @@ export function Index() {
     },
   });
 
+  // resets the page
+  useEffect(() => {
+    reset();
+  }, []);
+
   useEffect(() => {
     const event = redeemLogs.find((log: any) => log.args.burnOpId === burnTxID);
     if (event && box === Status.Loading) {
