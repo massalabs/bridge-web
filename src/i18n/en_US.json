@@ -177,6 +177,7 @@
       "success": "Bridge transfer successfully executed!",
       "loading": "Processing bridge transfer..."
     },
+    "warning-no-eth": "To claim tokens, you need to have {fees} ETH to pay for transaction fees.",
     "balance": {
       "error": "We couldn't fetch your balance! Please, try again!"
     }

@@ -6,6 +6,7 @@ import { FiRepeat } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 
 import { boxLayout } from './BoxLayout';
+import { WarningNoEth } from './WarningNoEth';
 import { GetTokensPopUpModal } from '@/components';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
@@ -174,10 +175,7 @@ export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
             </div>
             <div className="w-1/3">{boxLayout().down.token}</div>
           </div>
-          <div className="flex justify-between items-center">
-            <br />
-            {boxLayout().down.balance}
-          </div>
+          <WarningNoEth />
         </div>
         <div>
           <Button disabled={isButtonDisabled} onClick={(e) => handleSubmit(e)}>
