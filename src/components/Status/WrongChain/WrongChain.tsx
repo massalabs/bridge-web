@@ -17,47 +17,44 @@ export function WrongChain(props: WrongChainProps) {
 
   let network = '';
   let transKey = '';
-  if (currentProvider) {
+  if (blockchain === Blockchain.MASSA && currentProvider) {
+    // currentProvider is always defined when blockchain is MASSA
     const providerName = currentProvider.name();
-    if (blockchain === Blockchain.MASSA) {
-      if (isMainnet) {
-        network = 'Mainnet';
-      } else {
-        network = 'Buildnet';
-      }
-      if (providerName === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
-        transKey = 'index.tag.wrong-chain-massa-station-tooltip';
-      } else if (
-        blockchain === Blockchain.MASSA &&
-        providerName === SUPPORTED_MASSA_WALLETS.BEARBY
-      ) {
-        transKey = 'index.tag.wrong-chain-bearby-tooltip';
-      }
-    } else if (blockchain === Blockchain.ETHEREUM) {
-      transKey = 'connect-wallet.connect-metamask.invalid-network';
-      if (isMainnet) {
-        network = 'Mainnet';
-      } else {
-        network = 'Sepolia';
-      }
+    if (isMainnet) {
+      network = 'Mainnet';
+    } else {
+      network = 'Buildnet';
+    }
+    if (providerName === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
+      transKey = 'index.tag.wrong-chain-massa-station-tooltip';
+    } else if (
+      blockchain === Blockchain.MASSA &&
+      providerName === SUPPORTED_MASSA_WALLETS.BEARBY
+    ) {
+      transKey = 'index.tag.wrong-chain-bearby-tooltip';
+    }
+  } else if (blockchain === Blockchain.ETHEREUM) {
+    transKey = 'connect-wallet.connect-metamask.invalid-network';
+    if (isMainnet) {
+      network = 'Mainnet';
+    } else {
+      network = 'Sepolia';
     }
   }
 
   return (
     <Tag type={tagTypes.warning}>
       <div className="flex items-center">
-        {currentProvider && (
-          <Tooltip
-            className="w-fit p-0 hover:cursor-pointer"
-            customClass="p-0 mas-caption w-fit whitespace-nowrap"
-            content={Intl.t(transKey, { network })}
-          >
-            <div className="flex items-center">
-              <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
-              <FiHelpCircle className="text-s-warning" />
-            </div>
-          </Tooltip>
-        )}
+        <Tooltip
+          className="w-fit p-0 hover:cursor-pointer"
+          customClass="p-0 mas-caption w-fit whitespace-nowrap"
+          content={Intl.t(transKey, { network })}
+        >
+          <div className="flex items-center">
+            <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
+            <FiHelpCircle className="text-s-warning" />
+          </div>
+        </Tooltip>
       </div>
     </Tag>
   );
