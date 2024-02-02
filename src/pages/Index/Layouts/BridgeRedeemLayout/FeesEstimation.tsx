@@ -43,61 +43,67 @@ export function FeesEstimation(props: FeesEstimationProps) {
   const [feesETH, setFeesETH] = useState('-');
 
   useEffect(() => {
-    let gasPrice = 0n;
-    fetchFeeData({
-      chainId: isMainnet ? mainnet.id : sepolia.id,
-    })
-      .then((feeData) => {
-        gasPrice = feeData.maxFeePerGas || 0n;
-        const publicClient = getConfig().getPublicClient();
-        if (!accountAddress || !massaAccount || !tokenData) {
-          return [0n, 0n];
-        }
-
-        const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
-
-        if (massaToEvm) {
-          // claim
-          return [92261n, 0n];
-        } else {
-          // approve and lock
-          const lockGasEstimationPromise = publicClient.estimateContractGas({
-            functionName: EVM_CONTRACT_ABI.LOCK,
-            address: bridgeContractAddr,
-            abi: bridgeVaultAbi,
-            args: [amountInBigInt, massaAccount.address(), evmToken],
-            account: accountAddress,
-          });
-
-          let approveGasEstimationPromise;
-          if (allowance < amountInBigInt) {
-            approveGasEstimationPromise = publicClient.estimateContractGas({
-              functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
-              address: evmToken,
-              abi: erc20ABI,
-              args: [bridgeContractAddr, U256_MAX],
-              account: accountAddress,
-            });
-          } else {
-            approveGasEstimationPromise = 0n;
+    function updateEstimations() {
+      setFeesETH('-'); // reset fees while fetching new data to show to the user that we are fetching new data
+      let gasPrice = 0n;
+      fetchFeeData({
+        chainId: isMainnet ? mainnet.id : sepolia.id,
+      })
+        .then((feeData) => {
+          gasPrice = feeData.maxFeePerGas || 0n;
+          const publicClient = getConfig().getPublicClient();
+          if (!accountAddress || !massaAccount || !tokenData) {
+            return [0n, 0n];
           }
 
-          return Promise.all([
-            lockGasEstimationPromise,
-            approveGasEstimationPromise,
-          ]);
-        }
-      })
-      .then(([firstEstimation, secondEstimation]) => {
-        return firstEstimation + secondEstimation;
-      })
-      .then((estimatedGas) => {
-        if (estimatedGas === 0n) {
-          setFeesETH('-');
-          return;
-        }
-        setFeesETH(formatEther(estimatedGas * gasPrice));
-      });
+          const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
+
+          if (massaToEvm) {
+            // claim
+            return [92261n, 0n];
+          } else {
+            // approve and lock
+            const lockGasEstimationPromise = publicClient.estimateContractGas({
+              functionName: EVM_CONTRACT_ABI.LOCK,
+              address: bridgeContractAddr,
+              abi: bridgeVaultAbi,
+              args: [amountInBigInt, massaAccount.address(), evmToken],
+              account: accountAddress,
+            });
+
+            let approveGasEstimationPromise;
+            if (allowance < amountInBigInt) {
+              approveGasEstimationPromise = publicClient.estimateContractGas({
+                functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
+                address: evmToken,
+                abi: erc20ABI,
+                args: [bridgeContractAddr, U256_MAX],
+                account: accountAddress,
+              });
+            } else {
+              approveGasEstimationPromise = 0n;
+            }
+
+            return Promise.all([
+              lockGasEstimationPromise,
+              approveGasEstimationPromise,
+            ]);
+          }
+        })
+        .then(([firstEstimation, secondEstimation]) => {
+          return firstEstimation + secondEstimation;
+        })
+        .then((estimatedGas) => {
+          if (estimatedGas === 0n) {
+            setFeesETH('-');
+            return;
+          }
+          setFeesETH(formatEther(estimatedGas * gasPrice));
+        });
+    }
+    updateEstimations();
+    const id = setInterval(updateEstimations, 10_000);
+    return () => clearInterval(id);
   }, [
     massaAccount,
     accountAddress,
