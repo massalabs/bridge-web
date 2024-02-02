@@ -48,18 +48,16 @@ export function FeesEstimation(props: FeesEstimationProps) {
     })
       .then((feeData) => {
         gasPrice = feeData.maxFeePerGas || 0n;
-        console.log('feeData', feeData); // DEBUG
-        console.log('gasPrice', gasPrice); // DEBUG
         const publicClient = getConfig().getPublicClient();
         if (!accountAddress || !massaAccount || !tokenData) {
-          return Promise.all([Promise.resolve(0n), Promise.resolve(0n)]);
+          return [0n, 0n];
         }
 
         const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
 
         if (massaToEvm) {
           // claim
-          return Promise.all([Promise.resolve(92261n), Promise.resolve(0n)]);
+          return [92261n, 0n];
         } else {
           // approve and lock
           const lockGasEstimationPromise = publicClient.estimateContractGas({
@@ -80,7 +78,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
               account: accountAddress,
             });
           } else {
-            approveGasEstimationPromise = Promise.resolve(0n);
+            approveGasEstimationPromise = 0n;
           }
 
           return Promise.all([
