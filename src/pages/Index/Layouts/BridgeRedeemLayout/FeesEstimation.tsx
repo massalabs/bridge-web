@@ -13,6 +13,7 @@ import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EthSvgRed } from '@/assets/EthSvgRed';
 import { EVM_CONTRACT_ABI, U256_MAX, config } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -39,7 +40,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
   const { data: tokenData } = useToken({ address: evmToken });
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
 
-  const [feesETH, setFeesETH] = useState('');
+  const [feesETH, setFeesETH] = useState('-');
 
   useEffect(() => {
     let gasPrice = 0n;
@@ -91,6 +92,10 @@ export function FeesEstimation(props: FeesEstimationProps) {
         return firstEstimation + secondEstimation;
       })
       .then((estimatedGas) => {
+        if (estimatedGas === 0n) {
+          setFeesETH('-');
+          return;
+        }
         setFeesETH(formatEther(estimatedGas * gasPrice));
       });
   }, [
@@ -116,25 +121,25 @@ export function FeesEstimation(props: FeesEstimationProps) {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p>Bridge Rate</p>
+        <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
         <div className="flex items-center">
-          1 {symbolEVM} on{' '}
+          1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="mx-1">
             <EthSvgRed />
           </span>{' '}
-          = 1 {symbolMASSA} on{' '}
+          = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="ml-1">
             <MassaLogo size={20} />
           </span>
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <p>Massa fees</p>
+        <p>{Intl.t('index.fee-estimate.massa')}</p>
         {/* potential tooltip here */}
         <div className="flex items-center">{feesMAS} MAS</div>
       </div>
       <div className="flex items-center justify-between">
-        <p>EVM fees</p>
+        <p>{Intl.t('index.fee-estimate.ethereum')}</p>
         {/* potential tooltip here */}
         <div className="flex items-center">{feesETH} ETH</div>
       </div>
