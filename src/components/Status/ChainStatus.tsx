@@ -15,7 +15,7 @@ export function ChainStatus(props: ChainStatusProps) {
   const { blockchain } = props;
 
   const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
-  const { connectedAccount } = useAccountStore();
+  const { connectedAccount, currentProvider } = useAccountStore();
 
   const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
   const { isConnected: isConnectedEVM } = useAccount();
@@ -25,7 +25,7 @@ export function ChainStatus(props: ChainStatusProps) {
 
     return (
       <>
-        {isConnectMassa ? (
+        {isConnectMassa && !!currentProvider ? (
           wrongNetworkMassa ? (
             <WrongChain blockchain={blockchain} />
           ) : (
