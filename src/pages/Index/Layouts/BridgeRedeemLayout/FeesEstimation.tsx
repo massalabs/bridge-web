@@ -12,6 +12,7 @@ import { useAccount, useToken } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EthSvgRed } from '@/assets/EthSvgRed';
 import { EVM_CONTRACT_ABI, U256_MAX, config } from '@/const';
+import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -31,6 +32,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
   const { connectedAccount: massaAccount } = useAccountStore();
   const { side } = useOperationStore();
   const { currentMode, isMainnet } = useBridgeModeStore();
+  const { allowance } = useEvmBridge();
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const evmToken = selectedToken?.evmToken as `0x${string}`;
@@ -46,8 +48,8 @@ export function FeesEstimation(props: FeesEstimationProps) {
     })
       .then((feeData) => {
         gasPrice = feeData.maxFeePerGas || 0n;
-        console.log('feeData', feeData);
-        console.log('gasPrice', gasPrice);
+        console.log('feeData', feeData); // DEBUG
+        console.log('gasPrice', gasPrice); // DEBUG
         const publicClient = getConfig().getPublicClient();
         if (!accountAddress || !massaAccount || !tokenData) {
           return Promise.all([Promise.resolve(0n), Promise.resolve(0n)]);
@@ -68,14 +70,18 @@ export function FeesEstimation(props: FeesEstimationProps) {
             account: accountAddress,
           });
 
-          // TODO: only if approve is needed
-          const approveGasEstimationPromise = publicClient.estimateContractGas({
-            functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
-            address: evmToken,
-            abi: erc20ABI,
-            args: [bridgeContractAddr, U256_MAX],
-            account: accountAddress,
-          });
+          let approveGasEstimationPromise;
+          if (allowance < amountInBigInt) {
+            approveGasEstimationPromise = publicClient.estimateContractGas({
+              functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
+              address: evmToken,
+              abi: erc20ABI,
+              args: [bridgeContractAddr, U256_MAX],
+              account: accountAddress,
+            });
+          } else {
+            approveGasEstimationPromise = Promise.resolve(0n);
+          }
 
           return Promise.all([
             lockGasEstimationPromise,
@@ -99,6 +105,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
     bridgeContractAddr,
     isMainnet,
     tokenData,
+    allowance,
   ]);
 
   if (!selectedToken) return null;
