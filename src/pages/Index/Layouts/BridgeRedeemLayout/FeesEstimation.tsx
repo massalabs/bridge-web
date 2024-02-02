@@ -22,6 +22,8 @@ import {
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
+const VITE_CLAIM_GAS_COST = import.meta.env['VITE_CLAIM_GAS_COST'] || '92261';
+
 interface FeesEstimationProps {
   amount: string | undefined;
 }
@@ -60,7 +62,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
 
           if (massaToEvm) {
             // claim
-            return [92261n, 0n];
+            return [BigInt(VITE_CLAIM_GAS_COST), 0n];
           } else {
             // approve and lock
             const lockGasEstimationPromise = publicClient.estimateContractGas({
