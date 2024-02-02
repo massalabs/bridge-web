@@ -211,7 +211,7 @@
     "MASSASTATION": "MassaWallet",
     "BEARBY": "Bearby",
     "connected-cards": {
-      "wallet-balance": "balance: "
+      "wallet-balance": "Balance: "
     },
     "connect-massa": {
       "unsupported-net": "Switch to 'buildnet' in top-right corner of Station's homepage"

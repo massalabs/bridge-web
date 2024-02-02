@@ -276,7 +276,9 @@ function EVMBalance() {
 
   return (
     <div className="flex items-center gap-2 h-6">
-      <p className="mas-body2">Balance:</p>
+      <p className="mas-body2">
+        {Intl.t('connect-wallet.connected-cards.wallet-balance')}
+      </p>
       <div className="mas-body">
         {isFetching ? <FetchingLine /> : <TokenBalance amount={tokenBalance} />}
       </div>
@@ -291,7 +293,9 @@ function MassaBalance() {
 
   return (
     <div className="flex items-center gap-2 h-6">
-      <p className="mas-body2">Balance:</p>
+      <p className="mas-body2">
+        {Intl.t('connect-wallet.connected-cards.wallet-balance')}
+      </p>
       <div className="mas-body">
         {isFetching ? (
           <FetchingLine />
