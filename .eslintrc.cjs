@@ -6,9 +6,10 @@ module.exports = {
   ],
   plugins: ['html', '@tanstack/query', 'import'],
   rules: {
-    'no-console': ['off'],
-    '@typescript-eslint/no-non-null-assertion': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    'no-console': [
+      'warn',
+      { allow: ['log', 'clear', 'info', 'error', 'dir', 'trace', 'warn'] },
+    ],
     'import/order': [
       'error',
       {

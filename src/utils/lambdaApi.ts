@@ -58,14 +58,17 @@ export async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
   endPoint: string,
 ): Promise<Burned[]> {
-  const response: LambdaResponse = await axios.get(
-    config[mode].lambdaUrl + endPoint,
-    {
+  let response: LambdaResponse;
+  try {
+    response = await axios.get(config[mode].lambdaUrl + endPoint, {
       params: {
         evmAddress,
       },
-    },
-  );
+    });
+  } catch (error: any) {
+    console.warn('Error getting burned by evm address', error?.response?.data);
+    return [];
+  }
 
   return response.data.burned;
 }
