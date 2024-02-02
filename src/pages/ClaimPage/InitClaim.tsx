@@ -10,12 +10,14 @@ interface ClaimButton {
   operation: RedeemOperationToClaim;
   onStateChange: (state: ClaimState, txHash?: `0x${string}` | null) => void;
   symbol: string | undefined;
+  claimState: ClaimState;
 }
 
 export function InitClaim(args: ClaimButton) {
-  const { operation: op, symbol, onStateChange } = args;
+  const { operation: op, symbol, onStateChange, claimState } = args;
   const { handleRedeem } = useEvmBridge();
-  let { full, in2decimals } = formatAmount(op.amount);
+
+  const isClaimRejected = claimState === ClaimState.REJECTED;
 
   const claimTokenArgs = {
     amount: op.amount,
@@ -27,12 +29,49 @@ export function InitClaim(args: ClaimButton) {
     redeemFunction: handleRedeem,
   };
 
+  const displayContentArgs = {
+    claimState,
+    amount: op.amount,
+    symbol,
+  };
+
+  const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
+
   return (
     <div
-      className="flex justify-between items-center
+      className={`flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 
-          w-[520px] h-12 border border-tertiary rounded-2xl px-10 py-14"
+          ${boxSize} h-12 border border-tertiary rounded-2xl px-10 py-14`}
     >
+      <DisplayContent {...displayContentArgs} />
+      <div>
+        <Button onClick={() => claimTokens(claimTokenArgs)}>
+          {Intl.t('claim.claim')} {symbol}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function DisplayContent({ ...args }) {
+  const { claimState, amount, symbol } = args;
+  let { full, in2decimals } = formatAmount(amount);
+
+  const isClaimRejected = claimState === ClaimState.REJECTED;
+
+  if (isClaimRejected) {
+    return (
+      <div>
+        {Intl.t('claim.rejected-1')}
+        <strong>
+          {' '}
+          {in2decimals} {symbol}{' '}
+        </strong>
+        {Intl.t('claim.rejected-2')}
+      </div>
+    );
+  } else if (!isClaimRejected) {
+    return (
       <div className="flex items-center">
         <strong>
           {in2decimals} {symbol}{' '}
@@ -42,11 +81,6 @@ export function InitClaim(args: ClaimButton) {
           content={full + ' ' + symbol}
         />
       </div>
-      <div>
-        <Button onClick={() => claimTokens(claimTokenArgs)}>
-          {Intl.t('claim.claim')} {symbol}
-        </Button>
-      </div>
-    </div>
-  );
+    );
+  }
 }

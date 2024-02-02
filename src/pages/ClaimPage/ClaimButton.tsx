@@ -5,7 +5,6 @@ import { useContractRead, erc20ABI } from 'wagmi';
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { PendingClaim } from './PendingClaim';
-import { RejectedClaim } from './RejectedClaim';
 import { SuccessClaim } from './SuccessClaim';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
@@ -78,12 +77,14 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
               </div>
             );
           case ClaimState.REJECTED:
+          case ClaimState.INIT:
             return (
               <div className="flex w-full justify-center">
-                <RejectedClaim
+                <InitClaim
+                  onStateChange={onStateChange}
+                  claimState={claimState}
                   operation={operation}
                   symbol={symbol}
-                  onStateChange={onStateChange}
                 />
               </div>
             );
@@ -93,16 +94,6 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
                 <ErrorClaim
                   operation={operation}
                   onStateChange={onStateChange}
-                  symbol={symbol}
-                />
-              </div>
-            );
-          case ClaimState.INIT:
-            return (
-              <div className="flex w-full justify-center">
-                <InitClaim
-                  onStateChange={onStateChange}
-                  operation={operation}
                   symbol={symbol}
                 />
               </div>
