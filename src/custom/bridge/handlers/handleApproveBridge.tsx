@@ -8,7 +8,7 @@ import { CustomError, isRejectedByUser } from '@/utils/error';
 export async function handleApproveBridge(
   amount: string,
   decimals: number,
-  _handleApproveEVM: () => void,
+  _handleApproveEVM: () => Promise<void>,
   _allowanceEVM: bigint,
 ): Promise<boolean> {
   const { setApprove, setBox } = useGlobalStatusesStore.getState();
@@ -20,6 +20,7 @@ export async function handleApproveBridge(
       return false;
     }
     setApprove(Status.Success);
+    return true;
   } catch (error) {
     const typedError = error as CustomError;
     if (isRejectedByUser(typedError)) {
@@ -32,5 +33,4 @@ export async function handleApproveBridge(
     setBox(Status.Error);
     return false;
   }
-  return true;
 }

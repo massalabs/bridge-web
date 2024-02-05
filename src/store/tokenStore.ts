@@ -68,9 +68,9 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
       tokenList = await Promise.all(
         supportedTokens.map(async (tokenPair) => {
           const [name, symbol, decimals] = await Promise.all([
-            getMassaTokenName(tokenPair.massaToken, massaClient!),
-            getMassaTokenSymbol(tokenPair.massaToken, massaClient!),
-            getDecimals(tokenPair.massaToken, massaClient!),
+            getMassaTokenName(tokenPair.massaToken, massaClient),
+            getMassaTokenSymbol(tokenPair.massaToken, massaClient),
+            getDecimals(tokenPair.massaToken, massaClient),
           ]);
           return {
             ...tokenPair,
@@ -131,10 +131,10 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
           getAllowance(
             config[currentMode].massaBridgeContract,
             token.massaToken,
-            massaClient!,
+            massaClient,
             connectedAccount,
           ),
-          getBalance(token.massaToken, massaClient!, connectedAccount),
+          getBalance(token.massaToken, massaClient, connectedAccount),
         ]);
         token.allowance = accountAllowance;
         token.balance = accountBalance;

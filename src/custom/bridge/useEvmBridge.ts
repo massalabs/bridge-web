@@ -100,8 +100,6 @@ const useEvmBridge = () => {
     try {
       let { hash } = await approve.writeAsync();
       setHashApprove(hash);
-
-      return approve;
     } catch (error) {
       console.error(error);
       throw error;
