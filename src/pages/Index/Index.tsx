@@ -201,14 +201,13 @@ export function Index() {
     let _balance;
 
     if (massaToEvm) {
-      if (!selectedToken) {
-        return false;
-      }
       _amount = parseUnits(amount, decimals);
-      _balance = selectedToken.balance;
+      _balance = selectedToken?.balance || 0n;
+      console.log('mas token balance', _balance);
     } else {
       _amount = parseUnits(amount, decimals);
       _balance = _tokenBalanceEVM;
+      console.log('evm token balance', _balance);
     }
 
     if (_amount <= 0n) {
