@@ -13,15 +13,12 @@ export function MASBalance() {
 
   const { connectedAccount } = useAccountStore();
 
-  async function initBalance() {
-    if (!connectedAccount) return;
-    const balance = await fetchMASBalance(connectedAccount);
-    setBalance(balance);
-  }
-
   useEffect(() => {
-    initBalance();
-  }, [connectedAccount]);
+    if (!connectedAccount) return;
+    fetchMASBalance(connectedAccount).then((balance) => {
+      setBalance(balance);
+    });
+  }, [connectedAccount, setBalance]);
 
   return (
     <div className="mas-body">
