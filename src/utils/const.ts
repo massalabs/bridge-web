@@ -26,7 +26,7 @@ export enum SIDE {
 
 export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
 
-export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';
+export const INFURA_FAUCET_LINK = 'https://www.infura.io/faucet/sepolia';
 
 export const EVM_EXPLORER = {
   [BridgeMode.mainnet]: 'https://etherscan.io/',
