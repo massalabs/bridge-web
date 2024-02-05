@@ -9,7 +9,7 @@ import {
 } from 'wagmi';
 
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { config, EVM_CONTRACT_ABI, U256_MAX } from '@/const/const';
+import { config, U256_MAX } from '@/const/const';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -37,7 +37,7 @@ const useEvmBridge = () => {
   const _allowance = useContractRead({
     address: evmToken,
     abi: erc20ABI,
-    functionName: EVM_CONTRACT_ABI.ALLOWANCE as 'allowance',
+    functionName: 'allowance',
     args: [evmUserAddress, bridgeContractAddr],
     enabled: Boolean(accountAddress && evmToken),
     watch: true,
@@ -61,7 +61,7 @@ const useEvmBridge = () => {
   }, [selectedToken, _allowance?.data]);
 
   const approve = useContractWrite({
-    functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
+    functionName: 'approve',
     address: evmToken,
     abi: erc20ABI,
     args: [bridgeContractAddr, U256_MAX],
@@ -70,13 +70,13 @@ const useEvmBridge = () => {
   const lock = useContractWrite({
     abi: bridgeVaultAbi,
     address: bridgeContractAddr,
-    functionName: EVM_CONTRACT_ABI.LOCK,
+    functionName: 'lock',
   });
 
   const redeem = useContractWrite({
     abi: bridgeVaultAbi,
     address: bridgeContractAddr,
-    functionName: EVM_CONTRACT_ABI.REDEEM,
+    functionName: 'redeem',
   });
 
   async function handleRedeem(

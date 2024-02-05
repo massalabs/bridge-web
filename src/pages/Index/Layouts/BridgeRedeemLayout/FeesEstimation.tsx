@@ -11,7 +11,7 @@ import { formatEther, parseUnits } from 'viem';
 import { useAccount, useToken } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EthSvgRed } from '@/assets/EthSvgRed';
-import { EVM_CONTRACT_ABI, U256_MAX, config } from '@/const';
+import { U256_MAX, config } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import {
@@ -66,7 +66,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
           } else {
             // approve and lock
             const lockGasEstimationPromise = publicClient.estimateContractGas({
-              functionName: EVM_CONTRACT_ABI.LOCK,
+              functionName: 'lock',
               address: bridgeContractAddr,
               abi: bridgeVaultAbi,
               args: [amountInBigInt, massaAccount.address(), evmToken],
@@ -76,7 +76,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
             let approveGasEstimationPromise;
             if (allowance < amountInBigInt) {
               approveGasEstimationPromise = publicClient.estimateContractGas({
-                functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
+                functionName: 'approve',
                 address: evmToken,
                 abi: erc20ABI,
                 args: [bridgeContractAddr, U256_MAX],
