@@ -13,6 +13,7 @@ import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { EthSvgRed } from '@/assets/EthSvgRed';
 import { EVM_CONTRACT_ABI, U256_MAX, config } from '@/const';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -20,6 +21,8 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
+
+const VITE_CLAIM_GAS_COST = import.meta.env['VITE_CLAIM_GAS_COST'] || '92261';
 
 interface FeesEstimationProps {
   amount: string | undefined;
@@ -39,60 +42,70 @@ export function FeesEstimation(props: FeesEstimationProps) {
   const { data: tokenData } = useToken({ address: evmToken });
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
 
-  const [feesETH, setFeesETH] = useState('');
+  const [feesETH, setFeesETH] = useState('-');
 
   useEffect(() => {
-    let gasPrice = 0n;
-    fetchFeeData({
-      chainId: isMainnet ? mainnet.id : sepolia.id,
-    })
-      .then((feeData) => {
-        gasPrice = feeData.maxFeePerGas || 0n;
-        const publicClient = getConfig().getPublicClient();
-        if (!accountAddress || !massaAccount || !tokenData) {
-          return [0n, 0n];
-        }
-
-        const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
-
-        if (massaToEvm) {
-          // claim
-          return [92261n, 0n];
-        } else {
-          // approve and lock
-          const lockGasEstimationPromise = publicClient.estimateContractGas({
-            functionName: EVM_CONTRACT_ABI.LOCK,
-            address: bridgeContractAddr,
-            abi: bridgeVaultAbi,
-            args: [amountInBigInt, massaAccount.address(), evmToken],
-            account: accountAddress,
-          });
-
-          let approveGasEstimationPromise;
-          if (allowance < amountInBigInt) {
-            approveGasEstimationPromise = publicClient.estimateContractGas({
-              functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
-              address: evmToken,
-              abi: erc20ABI,
-              args: [bridgeContractAddr, U256_MAX],
-              account: accountAddress,
-            });
-          } else {
-            approveGasEstimationPromise = 0n;
+    function updateEstimations() {
+      setFeesETH('-'); // reset fees while fetching new data to show to the user that we are fetching new data
+      let gasPrice = 0n;
+      fetchFeeData({
+        chainId: isMainnet ? mainnet.id : sepolia.id,
+      })
+        .then((feeData) => {
+          gasPrice = feeData.maxFeePerGas || 0n;
+          const publicClient = getConfig().getPublicClient();
+          if (!accountAddress || !massaAccount || !tokenData) {
+            return [0n, 0n];
           }
 
-          return Promise.all([
-            lockGasEstimationPromise,
-            approveGasEstimationPromise,
-          ]);
-        }
-      })
-      .then(([firstEstimation, secondEstimation]) => {
-        return firstEstimation + secondEstimation;
-      })
-      .then((estimatedGas) => {
-        setFeesETH(formatEther(estimatedGas * gasPrice));
-      });
+          const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
+
+          if (massaToEvm) {
+            // claim
+            return [BigInt(VITE_CLAIM_GAS_COST), 0n];
+          } else {
+            // approve and lock
+            const lockGasEstimationPromise = publicClient.estimateContractGas({
+              functionName: EVM_CONTRACT_ABI.LOCK,
+              address: bridgeContractAddr,
+              abi: bridgeVaultAbi,
+              args: [amountInBigInt, massaAccount.address(), evmToken],
+              account: accountAddress,
+            });
+
+            let approveGasEstimationPromise;
+            if (allowance < amountInBigInt) {
+              approveGasEstimationPromise = publicClient.estimateContractGas({
+                functionName: EVM_CONTRACT_ABI.APPROVE as 'approve',
+                address: evmToken,
+                abi: erc20ABI,
+                args: [bridgeContractAddr, U256_MAX],
+                account: accountAddress,
+              });
+            } else {
+              approveGasEstimationPromise = 0n;
+            }
+
+            return Promise.all([
+              lockGasEstimationPromise,
+              approveGasEstimationPromise,
+            ]);
+          }
+        })
+        .then(([firstEstimation, secondEstimation]) => {
+          return firstEstimation + secondEstimation;
+        })
+        .then((estimatedGas) => {
+          if (estimatedGas === 0n) {
+            setFeesETH('-');
+            return;
+          }
+          setFeesETH(formatEther(estimatedGas * gasPrice));
+        });
+    }
+    updateEstimations();
+    const id = setInterval(updateEstimations, 10_000);
+    return () => clearInterval(id);
   }, [
     massaAccount,
     accountAddress,
@@ -116,25 +129,25 @@ export function FeesEstimation(props: FeesEstimationProps) {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p>Bridge Rate</p>
+        <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
         <div className="flex items-center">
-          1 {symbolEVM} on{' '}
+          1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="mx-1">
             <EthSvgRed />
           </span>{' '}
-          = 1 {symbolMASSA} on{' '}
+          = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="ml-1">
             <MassaLogo size={20} />
           </span>
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <p>Massa fees</p>
+        <p>{Intl.t('index.fee-estimate.massa')}</p>
         {/* potential tooltip here */}
         <div className="flex items-center">{feesMAS} MAS</div>
       </div>
       <div className="flex items-center justify-between">
-        <p>EVM fees</p>
+        <p>{Intl.t('index.fee-estimate.ethereum')}</p>
         {/* potential tooltip here */}
         <div className="flex items-center">{feesETH} ETH</div>
       </div>
