@@ -1,14 +1,17 @@
-const { VITE_BRIDGE_OFF, VITE_REDEEM_OFF, VITE_SC_DEPLOY, VITE_NO_BRIDGE } =
-  import.meta.env;
+const {
+  VITE_BRIDGE_OFF,
+  VITE_REDEEM_OFF,
+  VITE_SC_DEPLOY,
+  VITE_NO_BRIDGE,
+  VITE_IS_MAIN,
+} = import.meta.env;
 
-export const BRIDGE_OFF =
-  VITE_BRIDGE_OFF === 'false' ? false : Boolean(VITE_BRIDGE_OFF) || false;
+const isMainBranch = VITE_IS_MAIN === 'true';
 
-export const REDEEM_OFF =
-  VITE_REDEEM_OFF === 'false' ? false : Boolean(VITE_REDEEM_OFF) || false;
+export const BRIDGE_OFF = isMainBranch && VITE_BRIDGE_OFF === 'true';
 
-export const SC_DEPLOY =
-  VITE_SC_DEPLOY === 'false' ? false : Boolean(VITE_SC_DEPLOY) || false;
+export const REDEEM_OFF = isMainBranch && VITE_REDEEM_OFF === 'true';
 
-export const NO_BRIDGE =
-  VITE_NO_BRIDGE === 'false' ? false : Boolean(VITE_NO_BRIDGE) || false;
+export const SC_DEPLOY = isMainBranch && VITE_SC_DEPLOY === 'true';
+
+export const NO_BRIDGE = isMainBranch && VITE_NO_BRIDGE === 'true';
