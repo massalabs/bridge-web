@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './LoadingLayout';
+import { ShowLinkToExplorers } from './ShowOperationId';
 import { Blockchain, METAMASK } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
@@ -9,12 +10,13 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { SIDE } from '@/utils/const';
+import { EVM_EXPLORER, SIDE } from '@/utils/const';
 import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
-  const { onClose } = props;
-  const { side } = useOperationStore();
+  const { amount, onClose } = props;
+  const { side, claimTxID } = useOperationStore();
+  const { currentMode, isMainnet } = useBridgeModeStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const { selectedToken: token } = useTokenStore();
@@ -26,6 +28,8 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const { in2decimals } = formatAmountToDisplay(amount, token);
 
+  const { chain } = useNetwork();
+
   const massaChainAndNetwork = `${Blockchain.MASSA} ${
     isMainnet ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET
   }`;
@@ -33,6 +37,13 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const evmChainAndNetwork = `${chain.name} ${
     isMainnet ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET
   }`;
+
+  const operationId = massaToEvm ? claimTxID : null;
+
+  // claim === success, show link to explorer
+  const explorerUrl = massaToEvm
+    ? EVM_EXPLORER[currentMode] + 'tx/' + operationId
+    : `https://explorer.massa.net/operation/${operationId}`;
 
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
@@ -81,6 +92,12 @@ export function SuccessLayout(props: LoadingBoxProps) {
             <u>{Intl.t('index.loading-box.link-to-instructions')}</u>
           </Link>
         </div>
+      )}
+      {operationId && (
+        <ShowLinkToExplorers
+          operationId={operationId}
+          explorerUrl={explorerUrl}
+        />
       )}
     </div>
   );

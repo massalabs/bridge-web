@@ -1,10 +1,17 @@
 import { LoadingState } from './LoadingState';
-import { ShowOperationId } from './ShowOperationId';
+import { ShowLinkToExplorers } from './ShowOperationId';
 import Intl from '@/i18n/i18n';
 import { useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import { useBridgeModeStore } from '@/store/store';
+import { EVM_EXPLORER } from '@/utils/const';
 
 export function BridgeLayout() {
   const { approve, lock, mint } = useGlobalStatusesStore();
+  const { currentMode } = useBridgeModeStore();
+
+  // Bridge side exporer url to etherscan or testnet/etherscan
+  // Will always be present as we can access links on both modes
+  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + operationId;
 
   return (
     <div className="flex flex-col gap-6">

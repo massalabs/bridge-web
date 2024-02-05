@@ -1,4 +1,4 @@
-import { ShowOperationId } from './ShowOperationId';
+import { ShowLinkToExplorers } from './ShowOperationId';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
@@ -24,7 +24,7 @@ export function WarningLayout() {
           support.bridge@massa.net
         </a>
       </u>
-      <ShowOperationId />
+      <ShowLinkToExplorers explorerUrl="foo" />
     </div>
   );
 }
