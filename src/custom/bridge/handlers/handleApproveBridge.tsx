@@ -2,34 +2,35 @@ import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 
 import Intl from '../../../i18n/i18n';
-import { LoadingState } from '@/const';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export async function handleApproveBridge(
-  setLoading: (state: LoadingState) => void,
   amount: string,
   decimals: number,
-  _handleApproveEVM: any,
+  _handleApproveEVM: () => Promise<void>,
   _allowanceEVM: bigint,
 ): Promise<boolean> {
+  const { setApprove, setBox } = useGlobalStatusesStore.getState();
   try {
-    setLoading({ approve: 'loading' });
+    setApprove(Status.Loading);
     let _amount = parseUnits(amount, decimals);
     if (_allowanceEVM < _amount) {
       await _handleApproveEVM();
       return false;
     }
-    setLoading({ approve: 'success' });
+    setApprove(Status.Success);
+    return true;
   } catch (error) {
     const typedError = error as CustomError;
     if (isRejectedByUser(typedError)) {
-      toast.error(Intl.t(`index.approve.error.rejected`));
+      toast.error(Intl.t('index.approve.error.rejected'));
     } else {
       // error comes from increaseAllowanceFunction
-      toast.error(Intl.t(`index.approve.error.allowance-error`));
+      toast.error(Intl.t('index.approve.error.allowance-error'));
     }
-    setLoading({ approve: 'error', box: 'error' });
+    setApprove(Status.Error);
+    setBox(Status.Error);
     return false;
   }
-  return true;
 }

@@ -6,7 +6,6 @@ export function useResource<T>(resource: string): UseQueryResult<T, undefined> {
     queryKey: ['', resource],
     queryFn: async () => {
       const { data } = await axios.get<T, AxiosResponse<T>>(resource);
-
       return data;
     },
   });

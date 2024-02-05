@@ -1,271 +1,198 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Client, ClientFactory } from '@massalabs/massa-web3';
+import { IAccount, IProvider } from '@massalabs/wallet-provider';
+import { useTokenStore } from './tokenStore';
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
+import { handleBearbyAccountChange } from '@/store/helpers/massaProviders';
 import {
-  Client,
-  ClientFactory,
-  DefaultProviderUrls,
-  ProviderType,
-  PublicApiClient,
-} from '@massalabs/massa-web3';
-import {
-  providers,
-  IAccount,
-  IAccountBalanceResponse,
-  IProvider,
-} from '@massalabs/wallet-provider';
-
-import { MASSA_STATION } from '@/const';
-import { getSupportedTokensList } from '@/custom/bridge/bridge';
-import {
-  getAllowance,
-  getMassaTokenSymbol,
-  getDecimals,
-  getMassaTokenName,
-  getBalance,
-} from '@/custom/token/token';
-import { BRIDGE_ACCOUNT_ADDRESS, BRIDGE_TOKEN } from '@/utils/const';
-import { _getFromStorage, _setInStorage } from '@/utils/storage';
-
-export interface IToken {
-  name: string;
-  allowance: bigint;
-  decimals: number;
-  symbol: string;
-  massaToken: string;
-  evmToken: string;
-  chainId: number;
-  balance: bigint;
-}
+  LAST_USED_ACCOUNT,
+  _getFromStorage,
+  _setInStorage,
+} from '@/utils/storage';
 
 export interface AccountStoreState {
-  connectedAccount: IAccount | null;
-  massaClient: Client | null;
+  connectedAccount?: IAccount;
+  massaClient?: Client;
   accounts: IAccount[];
-  token: IToken | null;
-  tokens: IToken[];
+  currentProvider?: IProvider;
+  providers: IProvider[];
   isFetching: boolean;
-  balance: IAccountBalanceResponse;
-  isStationInstalled: boolean;
-  providersFetched: IProvider[];
+  accountObserver?: {
+    unsubscribe: () => void;
+  };
+  networkObserver?: {
+    unsubscribe: () => void;
+  };
+  connectedNetwork?: string;
+
+  setCurrentProvider: (provider?: IProvider) => void;
+  setProviders: (providers: IProvider[]) => void;
 
   setConnectedAccount: (account?: IAccount) => void;
-  setToken: (token: IToken | null) => void;
+  setAvailableAccounts: (accounts: IAccount[]) => void;
 
-  setAvailableAccounts: (accounts: any) => void;
-  setAvailableTokens: (tokens: any) => void;
-  setStationInstalled: (isStationInstalled: boolean) => void;
-  startRefetch: () => void;
-
-  loadAccounts: (providerList: IProvider[]) => void;
-  getAccounts: () => void;
-  getTokens: () => void;
+  refreshMassaClient: () => void;
 }
 
-let massaClient: Client | null = null;
-
-async function initMassaClient(): Promise<Client> {
-  const clientConfig = {
-    retryStrategyOn: true,
-    providers: [
-      { url: DefaultProviderUrls.BUILDNET, type: ProviderType.PUBLIC },
-    ],
-    periodOffset: 9,
-  };
-
-  const publicApi = new PublicApiClient(clientConfig);
-  const status = await publicApi.getNodeStatus();
-
-  return ClientFactory.createDefaultClient(
-    DefaultProviderUrls.BUILDNET,
-    BigInt(status.chain_id),
-  );
-}
-
-const accountStore = (set: any, get: any) => ({
+const accountStore = (
+  set: (params: Partial<AccountStoreState>) => void,
+  get: () => AccountStoreState,
+) => ({
   accounts: [],
-  tokens: [],
-  token: null,
-  massaClient: null,
-  connectedAccount: null,
+  connectedAccount: undefined,
+  accountObserver: undefined,
+  networkObserver: undefined,
+  massaClient: undefined,
+  currentProvider: undefined,
+  providers: [],
   isFetching: false,
-  balance: {
-    finalBalance: '',
-    candidateBalance: '',
-  },
-  isStationInstalled: false,
-  providersFetched: [],
 
-  setAvailableAccounts: (accounts: IAccount) => {
-    set({ accounts: accounts });
-  },
-
-  setAvailableTokens: (tokens: IToken) => {
-    set({ tokens: tokens });
-  },
-
-  setStationInstalled: (isStationInstalled: boolean) => {
-    set({ isStationInstalled: isStationInstalled });
-  },
-
-  startRefetch: async () => {
-    set({ providersFetched: await providers() });
-
-    setInterval(async () => {
-      set({ providersFetched: await providers() });
-    }, 5000);
-  },
-
-  getTokens: async () => {
-    set({ isFetching: true });
-
-    if (massaClient === null) {
-      massaClient = await initMassaClient();
-    }
-
-    const connectedAccount = get().connectedAccount;
-
-    const storedToken = _getFromStorage(BRIDGE_TOKEN)
-      ? JSON.parse(_getFromStorage(BRIDGE_TOKEN))
-      : undefined;
-
-    if (massaClient && connectedAccount) {
-      const supportedTokens = await getSupportedTokensList(massaClient);
-
-      const tokens: IToken[] = await Promise.all(
-        supportedTokens.map(async (tokenPair) => {
-          const [name, symbol, decimals, allowance, balance] =
-            await Promise.all([
-              getMassaTokenName(tokenPair.massaToken, massaClient!),
-              getMassaTokenSymbol(tokenPair.massaToken, massaClient!),
-              getDecimals(tokenPair.massaToken, massaClient!),
-              getAllowance(
-                tokenPair.massaToken,
-                massaClient!,
-                connectedAccount,
-              ),
-              getBalance(tokenPair.massaToken, massaClient!, connectedAccount),
-            ]);
-          return {
-            ...tokenPair,
-            name,
-            symbol,
-            decimals,
-            allowance,
-            balance,
-          };
-        }),
-      );
-
-      const selectedToken = tokens.find(
-        (token: IToken) => token.name === storedToken?.name,
-      );
-      const token = tokens.length ? selectedToken || tokens[0] : null;
-
-      set({ tokens, isFetching: false });
-      get().setToken(token);
-    }
-  },
-
-  loadAccounts: async (providerList: IProvider[]) => {
-    const massaStationWallet = providerList.find(
-      (provider: IProvider) => provider.name() === MASSA_STATION,
-    );
-
-    if (massaStationWallet) {
-      set({ isStationInstalled: true });
-    } else {
-      set({ isStationInstalled: false });
-      return;
-    }
-
-    const fetchedAccounts = await massaStationWallet?.accounts();
-    const storedAccount = _getFromStorage(BRIDGE_ACCOUNT_ADDRESS);
-
-    if (fetchedAccounts && fetchedAccounts.length > 0) {
-      const selectedAccount =
-        fetchedAccounts.find((fa) => fa.address() === storedAccount) ||
-        fetchedAccounts[0];
-      const firstAccountBalance = await selectedAccount.balance();
-      const client = await ClientFactory.fromWalletProvider(
-        providerList[0],
-        selectedAccount,
-      );
-      const previousConnectedAccount: IAccount = get().connectedAccount;
-
-      if (
-        !previousConnectedAccount ||
-        previousConnectedAccount?.name !== selectedAccount?.name
-      ) {
-        set({
-          massaClient: client,
-          accounts: fetchedAccounts,
-          connectedAccount: selectedAccount,
-          balance: firstAccountBalance,
-        });
-      }
-    } else {
-      set({
-        massaClient: null,
-        accounts: [],
-        connectedAccount: null,
-        balance: {
-          finalBalance: '',
-          candidateBalance: '',
-        },
-        isFetching: false,
-      });
-    }
-  },
-
-  getAccounts: async () => {
-    set({ isFetching: true });
-
+  setCurrentProvider: (currentProvider?: IProvider) => {
     try {
-      const providerList = await providers();
+      set({ isFetching: true });
 
-      if (providerList.length === 0) {
-        set({ isFetching: false, isStationInstalled: false });
+      const previousProvider = get().currentProvider;
+
+      if (previousProvider?.name() !== currentProvider?.name()) {
+        get().accountObserver?.unsubscribe();
+        get().networkObserver?.unsubscribe();
+        set({ accountObserver: undefined, networkObserver: undefined });
+      }
+      if (!currentProvider) {
+        set({ currentProvider, connectedAccount: undefined, accounts: [] });
         return;
       }
-      await get().loadAccounts(providerList);
-    } catch (error) {
-      console.error(error);
 
-      set({ isFetching: false, isStationInstalled: false });
+      let lastUsedAccount = '';
+      const storedAccount = _getFromStorage(LAST_USED_ACCOUNT);
+      if (storedAccount) {
+        const { provider, address } = JSON.parse(storedAccount);
+        if (provider === currentProvider?.name()) {
+          lastUsedAccount = address;
+        }
+      }
+
+      if (!get().networkObserver) {
+        const networkObserver = currentProvider.listenNetworkChanges(
+          (newNetwork: string) => {
+            get().refreshMassaClient();
+            set({ connectedNetwork: newNetwork });
+          },
+        );
+        set({ networkObserver });
+      }
+
+      if (currentProvider?.name() === SUPPORTED_MASSA_WALLETS.BEARBY) {
+        currentProvider
+          .connect()
+          .then(() => {
+            // get current network
+            currentProvider
+              .getNetwork()
+              .then((network) => {
+                set({ connectedNetwork: network });
+              })
+              .catch((error) => {
+                console.warn('error getting network from bearby', error);
+              });
+            // subscribe to network events
+            const observer = currentProvider.listenAccountChanges(
+              (newAddress: string) => {
+                handleBearbyAccountChange(newAddress);
+              },
+            );
+            set({ currentProvider, accountObserver: observer });
+
+            // get connected account
+            currentProvider
+              .accounts()
+              .then((accounts) => {
+                // bearby expose only 1 account
+                get().setConnectedAccount(accounts[0]);
+                get().setAvailableAccounts(accounts);
+              })
+              .catch((error) => {
+                console.warn('error getting accounts from bearby', error);
+              });
+          })
+          .catch((error) => {
+            console.warn('error connecting to bearby', error);
+          });
+        return;
+      }
+
+      set({ currentProvider });
+
+      currentProvider
+        .accounts()
+        .then((accounts) => {
+          get().setAvailableAccounts(accounts);
+
+          const selectedAccount =
+            accounts.find((account) => account.address() === lastUsedAccount) ||
+            accounts[0];
+          get().setConnectedAccount(selectedAccount);
+        })
+        .catch((error) => {
+          console.warn('error getting accounts from provider', error);
+        });
+    } finally {
+      set({ isFetching: false });
     }
-    set({ isFetching: false });
   },
 
-  setConnectedAccount: async (connectedAccount?: IAccount) => {
-    if (!connectedAccount) {
-      const defaultBalance = { finalBalance: '0', candidateBalance: '0' };
+  setProviders: (providers: IProvider[]) => {
+    set({ providers });
+
+    // if current provider is not in the new list of providers, unset it
+    if (!providers.some((p) => p.name() === get().currentProvider?.name())) {
       set({
-        connectedAccount,
         massaClient: undefined,
-        balance: defaultBalance,
+        currentProvider: undefined,
+        connectedAccount: undefined,
+        accounts: [],
       });
-      return;
     }
-
-    const providerList = await providers();
-
-    if (!providerList.length) {
-      set({ connectedAccount: undefined, massaClient: undefined });
-      return;
-    }
-    const balance = await connectedAccount.balance();
-    const massaClient = await ClientFactory.fromWalletProvider(
-      // if we want to support multiple providers like bearby, we need to pass the selected one here
-      providerList[0],
-      connectedAccount,
-    );
-
-    _setInStorage(BRIDGE_ACCOUNT_ADDRESS, connectedAccount.address());
-    set({ connectedAccount, massaClient, balance });
   },
 
-  setToken: (token: IToken | null) => {
-    set({ token });
-    _setInStorage(BRIDGE_TOKEN, JSON.stringify(token));
+  setAvailableAccounts: (accounts: IAccount[]) => {
+    set({ accounts });
+  },
+
+  // set the connected account, and update the massa client
+  setConnectedAccount: async (connectedAccount?: IAccount) => {
+    set({ connectedAccount });
+    if (connectedAccount) {
+      const provider = get().currentProvider!;
+      _setInStorage(
+        LAST_USED_ACCOUNT,
+        JSON.stringify({
+          provider: provider?.name(),
+          address: connectedAccount.address(),
+        }),
+      );
+      // update the massa client with the new account
+      set({
+        massaClient: await ClientFactory.fromWalletProvider(
+          provider,
+          connectedAccount,
+        ),
+      });
+      // once current account is set, refresh balances
+      useTokenStore.getState().refreshBalances();
+    }
+  },
+
+  refreshMassaClient: async () => {
+    const provider = get().currentProvider;
+    if (!provider) return;
+
+    const connectedAccount = get().connectedAccount!;
+    set({
+      massaClient: await ClientFactory.fromWalletProvider(
+        provider,
+        connectedAccount,
+      ),
+    });
   },
 });
 

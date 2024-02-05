@@ -5,5 +5,5 @@ export default {
     './src/**/*.{js,ts,jsx,tsx}',
     './node_modules/@massalabs/react-ui-kit/src/**/*.{js,ts,jsx,tsx}',
   ],
-  presets: [require('@massalabs/react-ui-kit/presets/massa-bridge-preset.js')],
+  presets: [require('./src/themes/massa-bridge-preset.js')],
 };

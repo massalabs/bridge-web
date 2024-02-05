@@ -8,8 +8,6 @@ import {
 import { IAccount } from '@massalabs/wallet-provider';
 import { bytesToU256 } from '@massalabs/web3-utils';
 
-import { CONTRACT_ADDRESS } from '@/const';
-
 export async function readSC(
   client: IClient,
   targetFunction: string,
@@ -41,16 +39,17 @@ export async function getMassaTokenSymbol(
 }
 
 export async function getAllowance(
-  targetAddress: string,
+  spender: string,
+  tokenAddress: string,
   client: IClient,
   account: IAccount,
 ): Promise<bigint> {
   const args = new Args()
     .addString(account.address())
-    .addString(CONTRACT_ADDRESS)
+    .addString(spender)
     .serialize();
 
-  const allowance = await readSC(client, 'allowance', targetAddress, args);
+  const allowance = await readSC(client, 'allowance', tokenAddress, args);
 
   return bytesToU256(allowance);
 }

@@ -2,7 +2,7 @@ name: Test
 
 on:
   push:
-    branches: [main]
+    branches: [main, integration]
   pull_request:
 
 jobs:
@@ -20,4 +20,3 @@ jobs:
         run: npm run build
       - name: Run unit tests
         run: npm run unit
-      

@@ -1,2 +1,2 @@
 export * from './AccountModel';
-export * from './NetworkModel';
+export * from './Mode';

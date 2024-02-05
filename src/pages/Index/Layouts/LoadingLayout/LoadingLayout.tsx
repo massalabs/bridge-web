@@ -1,19 +1,16 @@
 import { FiX } from 'react-icons/fi';
-
 import { BridgeLayout } from './BridgeLayout';
-import { GlobalErrorLayout } from './GlobalErrorLayout';
-import { loadingState } from './LoadingState';
+import { LoadingState } from './LoadingState';
 import { RedeemLayout } from './RedeemLayout/RedeemLayout';
 import { SuccessLayout } from './SuccessLayout';
 import { WarningLayout } from './WarningLayout';
-import { LoadingState } from '@/const';
 import Intl from '@/i18n/i18n';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import { useOperationStore } from '@/store/store';
+import { SIDE } from '@/utils/const';
 
 export interface LoadingBoxProps {
   onClose: () => void;
-  loading: LoadingState;
-  setLoading: (loading: LoadingState) => void;
-  massaToEvm: boolean;
   amount: string;
   redeemSteps: string;
   operationId: string;
@@ -21,22 +18,23 @@ export interface LoadingBoxProps {
 }
 
 export function LoadingLayout(props: LoadingBoxProps) {
-  const { onClose, loading, massaToEvm } = props;
+  const { onClose } = props;
+  const { side } = useOperationStore();
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
-  const IS_BOX_SUCCESS = loading.box === 'success';
-  const IS_BOX_WARNING = loading.box === 'warning';
-  const IS_BOX_ERROR = loading.box === 'error';
-  const IS_GLOBAL_ERROR = loading.error !== 'none';
+  const { box } = useGlobalStatusesStore();
 
-  const displaySubtitle =
-    !IS_BOX_SUCCESS && !IS_GLOBAL_ERROR && !IS_BOX_WARNING && !IS_BOX_ERROR;
+  const IS_BOX_SUCCESS = box === Status.Success;
+  const IS_BOX_WARNING = box === Status.Warning;
+  const IS_BOX_ERROR = box === Status.Error;
 
-  const isNotProcessing =
-    IS_BOX_SUCCESS || IS_GLOBAL_ERROR || IS_BOX_WARNING || IS_BOX_ERROR;
+  const displaySubtitle = !IS_BOX_SUCCESS && !IS_BOX_WARNING && !IS_BOX_ERROR;
+
+  const isNotProcessing = IS_BOX_SUCCESS || IS_BOX_WARNING || IS_BOX_ERROR;
 
   function getLoadingBoxHeader() {
     if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
-    else if (IS_GLOBAL_ERROR || IS_BOX_ERROR) {
+    else if (IS_BOX_ERROR) {
       return massaToEvm
         ? Intl.t('index.loading-box.title-redeem-error')
         : Intl.t('index.loading-box.title-bridge-error');
@@ -63,8 +61,6 @@ export function LoadingLayout(props: LoadingBoxProps) {
 
   function getLoadingBoxContent() {
     switch (true) {
-      case IS_GLOBAL_ERROR:
-        return <GlobalErrorLayout />;
       case IS_BOX_SUCCESS:
         return <SuccessLayout {...props} />;
       case IS_BOX_WARNING:
@@ -78,7 +74,7 @@ export function LoadingLayout(props: LoadingBoxProps) {
 
   return (
     <div
-      className="p-10 max-w-3/12 w-3/12 min-h-96 border border-tertiary rounded-2xl
+      className="p-10 max-w-3/12 w-4/12 min-h-96 border border-tertiary rounded-2xl
               bg-secondary/50 text-f-primary"
     >
       {/* TODO: refactor to make exit component */}
@@ -95,7 +91,9 @@ export function LoadingLayout(props: LoadingBoxProps) {
         </div>
       ) : null}
       <div className="flex flex-col items-center justify-start mb-10">
-        <div className="mb-4">{loadingState(loading.box, 'lg')}</div>
+        <div className="mb-4">
+          <LoadingState state={box} size="lg" />
+        </div>
         <p className="mas-subtitle pt-6">{getLoadingBoxHeader()}</p>
         {displaySubtitle && (
           <p className="text-xs pb-6">{Intl.t('index.loading-box.subtitle')}</p>

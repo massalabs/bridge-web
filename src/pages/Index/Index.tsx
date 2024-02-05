@@ -1,67 +1,45 @@
-import { useState, SyntheticEvent, useEffect } from 'react';
-
+import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
-import { providers } from '@massalabs/wallet-provider';
-import { parseUnits } from 'viem';
+import { Log, parseUnits } from 'viem';
 import {
   useAccount,
-  useNetwork,
   useWaitForTransaction,
   useToken,
   useContractEvent,
 } from 'wagmi';
-
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
+import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import {
-  LayoutType,
-  LoadingState,
-  MASSA_STATION,
-  EVM_BRIDGE_ADDRESS,
-} from '@/const';
+import { config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleLockBridge } from '@/custom/bridge/handlers/handleLockBridge';
+import {
+  LockBridgeParams,
+  handleLockBridge,
+} from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useNetworkStore } from '@/store/store';
-import { EVM_TO_MASSA, MASSA_TO_EVM } from '@/utils/const';
+import { Status } from '@/store/globalStatusesStore';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useGlobalStatusesStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store/store';
+import { SIDE } from '@/utils/const';
 
 export function Index() {
-  const [
-    getAccounts,
-    getTokens,
-    massaClient,
-    connectedAccount,
-    token,
-    isFetching,
-    setStationInstalled,
-    isStationInstalled,
-    startRefetch,
-    providersFetched,
-    loadAccounts,
-  ] = useAccountStore((state) => [
-    state.getAccounts,
-    state.getTokens,
-    state.massaClient,
-    state.connectedAccount,
-    state.token,
-    state.isFetching,
-    state.setStationInstalled,
-    state.isStationInstalled,
-    state.startRefetch,
-    state.providersFetched,
-    state.loadAccounts,
-  ]);
-
-  const [currentNetwork] = useNetworkStore((state) => [state.currentNetwork]);
-
-  const { chain, chains } = useNetwork();
+  const { massaClient, connectedAccount, isFetching } = useAccountStore();
+  const { selectedToken, refreshBalances } = useTokenStore();
+  const { isMainnet, currentMode } = useBridgeModeStore();
+  const { side, setSide, burnTxID, setBurnTxID } = useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -69,7 +47,6 @@ export function Index() {
   const {
     handleApprove: _handleApproveEVM,
     handleLock: _handleLockEVM,
-    handleRedeem: _handleRedeemEVM,
     allowance: _allowanceEVM,
     tokenBalance: _tokenBalanceEVM,
     hashLock: _hashLockEVM,
@@ -85,118 +62,96 @@ export function Index() {
   const { isSuccess: approveIsSuccess, isError: approveIsError } =
     useWaitForTransaction({ hash: _hashApproveEVM });
 
-  const evmToken = token?.evmToken as `0x${string}`;
+  const evmToken = selectedToken?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [amount, setAmount] = useState<string | undefined>('');
-  const [layout, setLayout] = useState<LayoutType | undefined>(EVM_TO_MASSA);
   const [error, setError] = useState<{ amount: string } | null>(null);
-  const [burnTxID, setBurnTxID] = useState<string>('');
   const [lockTxID, setLockTxID] = useState<string>('');
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
-  const [isRedeem, setIsRedeem] = useState<boolean>(false);
-  const [loading, _setLoading] = useState<LoadingState>({
-    box: 'none',
-    approve: 'none',
-    burn: 'none',
-    claim: 'none',
-    lock: 'none',
-    mint: 'none',
-    error: 'none',
-  });
+  const [redeemLogs, setRedeemLogs] = useState<Log[]>([]);
+
+  const { box, setBox, setClaim, setLock, setApprove, reset } =
+    useGlobalStatusesStore();
+
   const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
-  const SEPOLIA_CHAIN_ID = chains
-    .filter((c: { network: string }) => c.network === 'sepolia')
-    .at(0)?.id;
+  useNetworkCheck(setWrongNetwork);
 
-  const IS_MASSA_TO_EVM = layout === MASSA_TO_EVM;
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
-  const IS_EVM_SEPOLIA_CHAIN = chain?.id === SEPOLIA_CHAIN_ID;
+  const isLoading = box !== Status.None;
+  const isBlurred = isLoading ? 'blur-md' : '';
+  const operationId = massaToEvm ? burnTxID : lockTxID;
 
-  const IS_NOT_BUILDNET = currentNetwork
-    ? currentNetwork !== 'buildnet'
-    : false;
-
-  const isLoading = loading.box !== 'none' ? true : false;
-  const isBlurred = loading.box !== 'none' ? 'blur-md' : '';
-  const operationId = IS_MASSA_TO_EVM ? burnTxID : lockTxID;
-  let isButtonDisabled =
+  const isButtonDisabled =
     isFetching ||
-    !isStationInstalled ||
+    !connectedAccount ||
     !isEvmWalletConnected ||
-    !IS_EVM_SEPOLIA_CHAIN ||
-    IS_NOT_BUILDNET ||
-    (BRIDGE_OFF && !IS_MASSA_TO_EVM) ||
-    (REDEEM_OFF && IS_MASSA_TO_EVM);
+    wrongNetwork ||
+    isMainnet ||
+    (BRIDGE_OFF && !massaToEvm) ||
+    (REDEEM_OFF && massaToEvm);
 
-  useEffect(() => {
-    if (isRedeem) {
-      setLoading({ box: 'success', claim: 'success' });
-      getTokens();
-    }
-  }, [isRedeem]);
-
-  const redeemEventHandler = useContractEvent({
-    address: EVM_BRIDGE_ADDRESS,
+  const stopListeningRedeemedEvent = useContractEvent({
+    address: config[currentMode].evmBridgeContract,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
-    listener() {
-      setIsRedeem(true);
-      redeemEventHandler?.();
+    listener(logs) {
+      setRedeemLogs(logs);
+      stopListeningRedeemedEvent?.();
     },
   });
 
   useEffect(() => {
-    setError({ amount: '' });
-    setDecimals(tokenData?.decimals || 18);
-  }, [amount, layout, token?.name, tokenData?.decimals]);
+    const event = redeemLogs.find((log: any) => log.args.burnOpId === burnTxID);
+    if (event && box === Status.Loading) {
+      setBox(Status.Success);
+      setClaim(Status.Success);
+      refreshBalances();
+    }
+  }, [redeemLogs, box, burnTxID, setBox, setClaim, refreshBalances]);
 
   useEffect(() => {
-    if ((!IS_EVM_SEPOLIA_CHAIN && isEvmWalletConnected) || IS_NOT_BUILDNET) {
-      toast.error(Intl.t('connect-wallet.wrong-chain'));
-      return;
-    }
-  }, [chain, currentNetwork]);
+    setError({ amount: '' });
+    setDecimals(tokenData?.decimals || 18);
+  }, [amount, side, selectedToken?.name, tokenData?.decimals]);
 
   useEffect(() => {
     setAmount('');
-  }, [layout, token?.name]);
+  }, [side, selectedToken?.name]);
 
   useEffect(() => {
     if (lockIsSuccess) {
-      setLoading({ lock: 'success' });
+      setLock(Status.Success);
       let data = lockData;
       if (!data) return;
       setLockTxID(data.transactionHash);
     }
     if (lockIsError) {
-      setLoading({ box: 'error', lock: 'error' });
+      setBox(Status.Error);
+      setLock(Status.Error);
     }
-  }, [lockIsSuccess, lockIsError]);
+  }, [lockIsSuccess, lockIsError, lockData, setLock, setBox]);
 
   useEffect(() => {
     if (!massaClient) return;
     if (lockTxID) {
-      const mintArgs = {
-        massaClient,
+      handleMintBridge({
         massaOperationID: lockTxID,
-        setLoading,
-        getTokens,
-      };
-      handleMintBridge(mintArgs);
+      });
     }
-  }, [lockTxID]);
+  }, [lockTxID, massaClient]);
 
   useEffect(() => {
     if (approveIsSuccess) {
-      setLoading({ approve: 'success' });
+      setApprove(Status.Success);
       if (!amount) return;
-      const lockArgs = {
-        setLoading,
+      const lockArgs: LockBridgeParams = {
         amount,
         _handleLockEVM,
         decimals,
@@ -204,47 +159,34 @@ export function Index() {
       handleLockBridge(lockArgs);
     }
     if (approveIsError) {
-      setLoading({ box: 'error', approve: 'error' });
+      setBox(Status.Error);
+      setApprove(Status.Error);
       toast.error(Intl.t('index.approve.error.failed'));
     }
-  }, [approveIsSuccess, approveIsError]);
+  }, [
+    approveIsSuccess,
+    approveIsError,
+    amount,
+    decimals,
+    setApprove,
+    setBox,
+    _handleLockEVM,
+  ]);
+
+  const closeLoadingBox = useCallback(() => {
+    reset();
+    setAmount('');
+    // the lockTxID & burnTdID is not reset after mint/claim
+    setLockTxID('');
+    setBurnTxID('');
+  }, [reset, setAmount, setLockTxID, setBurnTxID]);
 
   useEffect(() => {
-    if (providersFetched.length > 0) {
-      loadAccounts(providersFetched);
-
-      providersFetched.some((provider: { name: () => string }) => {
-        provider.name() === MASSA_STATION && setStationInstalled(true);
-      });
-    } else {
-      setStationInstalled(false);
-    }
-  }, [providersFetched]);
-
-  useEffect(() => {
-    getAccounts();
-    getProviderList();
-    startRefetch();
-  }, []);
-
-  useEffect(() => {
-    getTokens();
-  }, [connectedAccount]);
-
-  useEffect(() => {
-    if (loading.box === 'none') closeLoadingBox();
-  }, [loading.box]);
-
-  async function getProviderList() {
-    const providerList = await providers();
-    const massaStationWallet = providerList.some(
-      (provider: { name: () => string }) => provider.name() === MASSA_STATION,
-    );
-    setStationInstalled(!!massaStationWallet);
-  }
+    if (box === Status.None) closeLoadingBox();
+  }, [box, closeLoadingBox]);
 
   function handleToggleLayout() {
-    setLayout(IS_MASSA_TO_EVM ? EVM_TO_MASSA : MASSA_TO_EVM);
+    setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
 
   function validate() {
@@ -258,12 +200,9 @@ export function Index() {
     let _amount;
     let _balance;
 
-    if (IS_MASSA_TO_EVM) {
-      if (!token) {
-        return false;
-      }
+    if (massaToEvm) {
       _amount = parseUnits(amount, decimals);
-      _balance = token.balance;
+      _balance = selectedToken?.balance || 0n;
     } else {
       _amount = parseUnits(amount, decimals);
       _balance = _tokenBalanceEVM;
@@ -286,46 +225,33 @@ export function Index() {
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate()) return;
-    setLoading({
-      box: 'loading',
-    });
+    setBox(Status.Loading);
 
-    if (IS_MASSA_TO_EVM) {
-      if (!massaClient || !token || !amount) {
+    if (!amount) {
+      // for typescript type inference
+      // if amount is undefined, validate() should return false
+      return;
+    }
+
+    if (massaToEvm) {
+      if (!massaClient) {
         return;
       }
-      const approved = await handleApproveRedeem(
-        massaClient,
-        setLoading,
-        token,
-        amount,
-        decimals,
-      );
+      const approved = await handleApproveRedeem(amount);
 
       if (approved) {
-        if (!token || !evmAddress || !amount) {
+        if (!evmAddress) {
           return;
         }
 
-        const burnArgs = {
-          client: massaClient,
-          token,
-          evmAddress,
+        await handleBurnRedeem({
+          recipient: evmAddress,
           amount,
-          decimals,
-          setBurnTxID,
-          setLoading,
           setRedeemSteps,
-        };
-
-        await handleBurnRedeem(burnArgs);
+        });
       }
     } else {
-      if (!amount) {
-        return;
-      }
       const approved = await handleApproveBridge(
-        setLoading,
         amount,
         decimals,
         _handleApproveEVM,
@@ -334,7 +260,6 @@ export function Index() {
 
       if (approved) {
         const lockArgs = {
-          setLoading,
           amount,
           _handleLockEVM,
           decimals,
@@ -344,37 +269,12 @@ export function Index() {
     }
   }
 
-  function setLoading(state: LoadingState) {
-    _setLoading((prevState) => {
-      return { ...prevState, ...state };
-    });
-  }
-
-  function closeLoadingBox() {
-    setLoading({
-      box: 'none',
-      approve: 'none',
-      burn: 'none',
-      claim: 'none',
-      lock: 'none',
-      mint: 'none',
-      error: 'none',
-    });
-    setAmount('');
-    // the lockTxID & burnTdID is not reset after mint/claim
-    setLockTxID('');
-    setBurnTxID('');
-  }
-
   return (
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
       {/* If loading -> show loading layout else show home page*/}
       {isLoading ? (
         <LoadingLayout
           onClose={closeLoadingBox}
-          loading={loading}
-          setLoading={setLoading}
-          massaToEvm={IS_MASSA_TO_EVM}
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
           operationId={operationId}
@@ -383,9 +283,7 @@ export function Index() {
       ) : (
         <BridgeRedeemLayout
           isBlurred={isBlurred}
-          IS_MASSA_TO_EVM={IS_MASSA_TO_EVM}
           isButtonDisabled={isButtonDisabled}
-          layout={layout}
           amount={amount}
           error={error}
           decimals={decimals}
@@ -395,8 +293,9 @@ export function Index() {
           handleToggleLayout={handleToggleLayout}
         />
       )}
+
       <TokensFAQ />
-      {/* {!isLoading && <TokensFAQ />} */}
+      {!isLoading && <ClaimTokensPopup />}
     </div>
   );
 }

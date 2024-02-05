@@ -3,10 +3,11 @@ import { useEffect } from 'react';
 import { Toast } from '@massalabs/react-ui-kit';
 import { Outlet, useNavigate } from 'react-router-dom';
 
+import { BridgeMode } from '@/const';
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
-import { useLocalStorage } from '@/custom/useLocalStorage';
-import { LayoutBridge } from '@/layouts/LayoutBridge/LayoutBridge';
-import { useConfigStore } from '@/store/store';
+import { MainLayout } from '@/layouts/LayoutBridge/MainLayout';
+import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
+import { useBridgeModeStore, useConfigStore } from '@/store/store';
 
 export interface IOutletContextType {
   themeIcon: JSX.Element;
@@ -18,40 +19,29 @@ export interface IOutletContextType {
 export function Base() {
   const navigate = useNavigate();
 
-  // Hooks
-  const [theme, setThemeStorage] = useLocalStorage<string>(
-    'bridge-theme',
-    'theme-dark',
-  );
-
-  // Store
-  const setThemeStore = useConfigStore((s) => s.setTheme);
-
-  // Functions
-  function handleSetTheme() {
-    let toggledTheme = theme === 'theme-dark' ? 'theme-light' : 'theme-dark';
-
-    setThemeStorage(toggledTheme);
-    setThemeStore(toggledTheme);
-  }
+  const { theme } = useConfigStore();
+  const { currentMode } = useBridgeModeStore();
 
   useEffect(() => {
     if (SC_DEPLOY) {
-      navigate(`/sc-deploy`);
+      navigate('/sc-deploy');
     } else if (NO_BRIDGE) {
-      navigate(`/unavailable`);
+      navigate('/unavailable');
     } else {
-      navigate(`/index`);
+      navigate('/index');
     }
   }, [navigate]);
 
-  // Template
+  const themeClassName =
+    theme.replace('theme-', '') +
+    (currentMode === BridgeMode.mainnet ? '' : '-testnet');
+
   return (
-    <div className={theme}>
-      <LayoutBridge onSetTheme={handleSetTheme} storedTheme={theme}>
+    <div data-theme={themeClassName}>
+      <MainLayout>
         <Outlet />
-        <Toast />
-      </LayoutBridge>
+        <Toast storageKey={BRIDGE_THEME_STORAGE_KEY} />
+      </MainLayout>
     </div>
   );
 }

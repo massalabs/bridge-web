@@ -2,11 +2,7 @@
   "general": {
     "click-here": "Click here",
     "select-this-account": "Select this account",
-    "loading": "loading...",
-    "massa": "Massa Buildnet",
-    "sepolia": "Sepolia",
-    "download": "Download",
-    "instructions": "Instructions"
+    "loading": "loading..."
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -18,6 +14,21 @@
   },
   "desktop": {
     "title": "Massa bridge is only available on desktop"
+  },
+  "claim": {
+    "no-claim": "There are no active claims for address {address}",
+    "claim": "Claim",
+    "pending": "Pending",
+    "success": "You have successfully claimed:",
+    "popup-title": "Claim tokens",
+    "popup-description": "Simply proceed to claim tokens on {chain} to finalize redeem transfer from earlier.",
+    "rejected": "Claim rejected",
+    "rejected-1": "You have rejected your ",
+    "rejected-2": "please try again.",
+    "error": "Failed to claim",
+    "already-executed": "Claim already executed",
+    "already-executed-message": "Claim already executed, please wait for completion",
+    "error-toast": "Claim failed"
   },
   "index": {
     "top-banner": {
@@ -37,9 +48,9 @@
     "tag": {
       "not-connected": "Not connected",
       "connected": "Connected",
-      "not-installed": "Not installed",
-      "no-accounts": "No accounts",
-      "wrong-chain": "Unsupported network"
+      "wrong-chain": "Unsupported network",
+      "wrong-chain-massa-station-tooltip": "Switch to {network} in top-right corner of Station's homepage",
+      "wrong-chain-bearby-tooltip": "Switch to {network} in top-left corner of Bearby's extension"
     },
     "faq": {
       "get-tokens": {
@@ -81,12 +92,14 @@
       "included-pending": "Burn (included pending)",
       "burned-final": "Burn (final)",
       "burn-rejected": "Burn (rejected)",
+      "rejected-by-user": "You have rejected the transaction, please try again by clicking below.",
       "inconsistent-not-found": "Burn (inconsistent or not found)",
       "claim-step": "Claim {state}",
-      "claim-step-none": "",
       "claim-step-retrieving-info": "(retrieving info...)",
       "claim-step-awaiting-signature": "(awaiting signature...)",
       "claim-step-claiming": "(claiming...)",
+      "claim-step-rejected": "(rejected by user)",
+      "claim-step-error": "(unknown error)",
       "burned": "Burn was successfull",
       "bridged": "You have successfully bridged:",
       "claim-pending-1": "We are waiting for information to initiate claim.",
@@ -95,7 +108,7 @@
       "claim-message": " One last step remains to finalize the redeem. To receive {token} on {network} you must sign a transaction.",
       "redeemed": "You have successfully redeemed:",
       "from-to": "from {from} to {to}.",
-      "check": "Check the balance in your {name} wallet.",
+      "check": "Go to your {name} wallet to check the token balance.",
       "add-tokens-message": "You might need to add the token manually to see its balance.",
       "instructions": "Instructions",
       "warning-description": "Transfer delay due to high traffic.",
@@ -104,7 +117,8 @@
       "warning-contact": "If not received, contact us at:",
       "success": "Success!",
       "error-something": "Something went wrong!",
-      "error-drop": "Please, drop us a message at:"
+      "error-drop": "Please, drop us a message at:",
+      "link-to-instructions": "Instructions"
     },
     "input": {
       "placeholder": {
@@ -151,9 +165,7 @@
       "error": {
         "rejected": "Claim rejected by user",
         "timeout": "Claim timeout out.",
-        "unknown": "Unknown error, Try again.",
-        "api-url": "There was an error accessing requested ressource. Contact team for more information.",
-        "api-empty": "Error accessing requested ressource. Try again."
+        "unknown": "Unknown error, Try again."
       }
     },
     "bridge": {
@@ -166,54 +178,59 @@
       "success": "Bridge transfer successfully executed!",
       "loading": "Processing bridge transfer..."
     },
+    "warning-no-eth": "To claim tokens, you need to have {fees} ETH to pay for transaction fees.",
     "balance": {
       "error": "We couldn't fetch your balance! Please, try again!"
+    },
+    "fee-estimate": {
+      "bridge-rate": "Bridge rate",
+      "massa": "Transaction fees on Massa est.",
+      "ethereum": "Transaction fees on Ethereum est.",
+      "on": "on"
     }
   },
   "unexpected-error": {
     "title": "Ops!",
-    "description": "An unexpected error has occurred",
-    "link": "Instructions",
-    "no-wallet": "No wallet is associated with your Massa Account. Please create one and try again!"
+    "description": "An unexpected error has occurred"
   },
   "connect-wallet": {
-    "download-massa": "Download Massa Wallet",
-    "create-wallet": "Create a Massa Wallet",
     "title": "Connect wallets",
     "connected": "Connected wallets",
-    "description": "Connect your wallets to start bridging tokens. One EVM wallet and one Massa wallet are required.",
+    "description": "Connect wallets for {network1} and {network2}, to bridge tokens.",
     "button": "Connect",
     "card-destination": {
-      "from": "Sepolia wallet",
-      "to": "Massa wallet"
+      "from": "Ethereum wallet",
+      "to": "Massa wallet",
+      "non-massa-wallet": "Switch accounts directly within your wallet.",
+      "switch": "switch wallet",
+      "select-wallet": "Select wallet",
+      "your-wallet": "Your wallet",
+      "bearby-not-installed": "Bearby extension is either turned off or not installed. Make sure the extension is on and refresh the page.",
+      "get-bearby": "Get Bearby here",
+      "massa-station-not-detected": "Massa Station desktop app is not detected. Make sure the app is opened, or click below to install it.",
+      "get-massa-station": "Get Massa Station",
+      "massa-wallet-not-detected": "Massa Wallet is not detected. Make sure the plugin is installed, or click below to install it.",
+      "get-massa-wallet": "Get Massa Wallet",
+      "massa-wallet-no-account": "No wallet accounts found in Massa Wallet.",
+      "massa-wallet-create-account": "Create an account",
+      "not-detected": "wallet is not detected."
     },
+    "MASSASTATION": "MassaWallet",
+    "BEARBY": "Bearby",
     "connected-cards": {
-      "wallet-balance": "balance: "
+      "wallet-balance": "Balance: "
     },
     "connect-massa": {
       "unsupported-net": "Switch to 'buildnet' in top-right corner of Station's homepage"
     },
-    "wrong-chain": "There's unsupported chain selected. Please, switch it!",
+    "wrong-evm-chain": "Invalid EVM network. Please, switch it from your wallet settings.",
+    "wrong-massa-chain": "Invalid MASSA network. Please, switch it from your wallet settings.",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
-      "title": "Metamask",
-      "invalid-network": "Current network is not supported. Please, switch to Sepolia testnet.",
+      "invalid-network": "Current network is not supported. Please, switch to {network}.",
       "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
       "install-metamask": "Install Metamask"
-    },
-    "station-connect-error": {
-      "error-station": "Unable to detect Massa Station and Massa Wallet. Run the app or download it.",
-      "error-wallet": "Create a wallet at the  ",
-      "add-wallet": "following link.",
-      "error-account": "No wallet accounts found in Massa Wallet. ",
-      "add-account": "Create an account"
-    },
-    "ressource-sidepanel": {
-      "add-sepolia": "If you want to add Sepolia on your Metamask",
-      "add-massa": "If you want to create Massa Wallet",
-      "download-massa-station": "Download Massa Station and create Massa Wallet",
-      "create-massa-station": "Launch your Massa Station and create a Massa Wallet"
     }
   },
   "get-tokens": {
