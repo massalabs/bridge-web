@@ -1,8 +1,13 @@
 export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
 export const METAMASK = 'Metamask';
+
 export enum Blockchain {
   ETHEREUM = 'Ethereum',
+  EVM_MAINNET = 'Mainnet',
+  EVM_TESTNET = 'Testnet',
   MASSA = 'Massa',
+  MASSA_BUILDNET = 'Buildnet',
+  MASSA_MAINNET = 'Mainnet',
 }
 
 // SMART CONTRACTS ADDRESSES

@@ -2,9 +2,7 @@
   "general": {
     "click-here": "Click here",
     "select-this-account": "Select this account",
-    "loading": "loading...",
-    "massa": "Massa Buildnet",
-    "sepolia": "Sepolia"
+    "loading": "loading..."
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -108,7 +106,7 @@
       "claim-message": " One last step remains to finalize the redeem. To receive {token} on {network} you must sign a transaction.",
       "redeemed": "You have successfully redeemed:",
       "from-to": "from {from} to {to}.",
-      "check": "Check the balance in your {name} wallet.",
+      "check": "Go to your {name} wallet to check the token balance.",
       "add-tokens-message": "You might need to add the token manually to see its balance.",
       "instructions": "Instructions",
       "warning-description": "Transfer delay due to high traffic.",
@@ -117,7 +115,8 @@
       "warning-contact": "If not received, contact us at:",
       "success": "Success!",
       "error-something": "Something went wrong!",
-      "error-drop": "Please, drop us a message at:"
+      "error-drop": "Please, drop us a message at:",
+      "link-to-instructions": "Instructions"
     },
     "input": {
       "placeholder": {
@@ -184,8 +183,7 @@
   },
   "unexpected-error": {
     "title": "Ops!",
-    "description": "An unexpected error has occurred",
-    "link": "Instructions"
+    "description": "An unexpected error has occurred"
   },
   "connect-wallet": {
     "title": "Connect wallets",

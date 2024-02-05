@@ -1,4 +1,6 @@
 import currency from 'currency.js';
+import { parseUnits } from 'viem';
+import { IToken } from '@/store/tokenStore';
 
 export interface IFormatted {
   in2decimals: string;
@@ -39,4 +41,25 @@ export function formatAmount(
 
 function padWithZeros(input: string, length: number): string {
   return input.padStart(length, '0');
+}
+
+export function formatAmountToDisplay(
+  amount: string,
+  token: IToken | undefined,
+): {
+  full: string;
+  in2decimals: string;
+} {
+  if (!token || !amount) {
+    return {
+      full: '0',
+      in2decimals: '0',
+    };
+  }
+  // parsing to Bigint to get correct amount
+  const amt = parseUnits(amount, token.decimals);
+  // formating it to string for display
+  const { in2decimals, full } = formatAmount(amt.toString(), token.decimals);
+
+  return { in2decimals, full };
 }
