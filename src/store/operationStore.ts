@@ -30,6 +30,7 @@ const operationStore = (
   setCurrentTxID(currentTxID: string) {
     set({ currentTxID: currentTxID });
   },
+
 });
 
 export default operationStore;

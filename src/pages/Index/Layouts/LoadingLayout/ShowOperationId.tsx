@@ -2,20 +2,18 @@ import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 
 import { useBridgeModeStore, useOperationStore } from '../../../../store/store';
-import { EVM_EXPLORER, SIDE } from '../../../../utils/const';
+import { SIDE } from '../../../../utils/const';
 import Intl from '@/i18n/i18n';
 import { maskAddress } from '@/utils/massaFormat';
 
-export function ShowOperationId() {
-  const { currentMode, isMainnet } = useBridgeModeStore();
+interface ShowOperationIdProps {
+  explorerUrl: string;
+}
+
+export function ShowLinkToExplorers(props: ShowOperationIdProps) {
+  const { explorerUrl } = props;
   const { side, currentTxID } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
-
-  const smartExplorerUrl = massaToEvm
-    ? isMainnet
-      ? `https://explorer.massa.net/operation/${currentTxID}`
-      : undefined
-    : EVM_EXPLORER[currentMode] + 'tx/' + currentTxID;
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -37,11 +35,9 @@ export function ShowOperationId() {
           />
         </div>
         <div>
-          {smartExplorerUrl ? (
-            <Button
-              variant="icon"
-              onClick={() => openInNewTab(smartExplorerUrl)}
-            >
+          {/* TBD if this is necessary */}
+          {operationId && explorerUrl ? (
+            <Button variant="icon" onClick={() => openInNewTab(explorerUrl)}>
               <FiExternalLink size={18} />
             </Button>
           ) : null}

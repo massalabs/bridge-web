@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { Claim } from './ClaimRedeem';
 import { LoadingBoxProps } from '../LoadingLayout';
 import { LoadingState } from '../LoadingState';
-import { ShowOperationId } from '../ShowOperationId';
+import { ShowLinkToExplorers } from '../ShowOperationId';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import { useBridgeModeStore } from '@/store/store';
 
 export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { redeemSteps, amount, decimals } = props;
@@ -13,6 +14,7 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { burn, approve, claim } = useGlobalStatusesStore();
 
   const [claimStep, setClaimStep] = useState(ClaimSteps.None);
+
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessful = burn === Status.Success;
@@ -22,6 +24,11 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
     amount,
     decimals,
   };
+
+  const { isMainnet } = useBridgeModeStore();
+
+  // This link is only rendered on Mainnet mode
+  const explorerUrl = `https://explorer.massa.net/operation/${operationId}`;
 
   return (
     <>
@@ -43,7 +50,9 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <Claim {...claimArgs} />}
-        <ShowOperationId />
+        {isMainnet && (
+          <ShowLinkToExplorers {...props} explorerUrl={explorerUrl} />
+        )}
       </div>
     </>
   );

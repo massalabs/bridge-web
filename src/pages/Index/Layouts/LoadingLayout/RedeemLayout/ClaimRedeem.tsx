@@ -121,7 +121,6 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
         currentTxID,
         signatures,
       );
-
       if (evmRedeem) {
         setClaimStep(ClaimSteps.Claiming);
       }
