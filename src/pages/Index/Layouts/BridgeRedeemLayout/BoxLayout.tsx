@@ -32,16 +32,12 @@ interface Layout {
   balance: ReactNode;
 }
 
-export interface IIcons {
-  [key: string]: object;
-}
-
 const iconsNetworks = {
   MASSASTATION: <MassaLogo size={40} />,
   ETHEREUM: <BsDiamondHalf size={40} />,
 };
 
-const iconsTokens: IIcons = {
+const iconsTokens = {
   [SIDE.MASSA_TO_EVM]: {
     tDAI: <EthSvg />,
     WETH: <EthSvg />,
@@ -179,20 +175,15 @@ function MassaMiddle() {
 
 function EVMTokenOptions() {
   const { side } = useOperationStore.getState();
-
-  const [isFetching] = useAccountStore((state) => [state.isFetching]);
-
-  const [token, tokens, setToken] = useTokenStore((state) => [
-    state.selectedToken,
-    state.tokens,
-    state.setSelectedToken,
-  ]);
+  const { isFetching } = useAccountStore();
+  const { selectedToken, tokens, setSelectedToken } = useTokenStore();
 
   const IS_MASSA_TO_EVM = side === SIDE.MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
-      '0',
+    Object.keys(tokens).find(
+      (_, idx) => tokens[idx].name === selectedToken?.name,
+    ) || '0',
   );
 
   return (
@@ -206,7 +197,7 @@ function EVMTokenOptions() {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           icon: iconsTokens[SIDE.EVM_TO_MASSA][token.symbol],
-          onClick: () => setToken(token),
+          onClick: () => setSelectedToken(token),
         };
       })}
     />
@@ -215,18 +206,15 @@ function EVMTokenOptions() {
 
 function MassaTokenOptions() {
   const { side } = useOperationStore.getState();
+  const { isFetching } = useAccountStore();
+  const { tokens, setSelectedToken, selectedToken } = useTokenStore();
 
-  const [isFetching] = useAccountStore((state) => [state.isFetching]);
-  const [tokens, setToken, token] = useTokenStore((state) => [
-    state.tokens,
-    state.setSelectedToken,
-    state.selectedToken,
-  ]);
   const IS_MASSA_TO_EVM = side === SIDE.MASSA_TO_EVM;
 
   const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find((_, idx) => tokens[idx].name === token?.name) ||
-      '0',
+    Object.keys(tokens).find(
+      (_, idx) => tokens[idx].name === selectedToken?.name,
+    ) || '0',
   );
 
   return (
@@ -240,7 +228,7 @@ function MassaTokenOptions() {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           icon: iconsTokens[SIDE.MASSA_TO_EVM][token.symbol],
-          onClick: () => setToken(token),
+          onClick: () => setSelectedToken(token),
         };
       })}
     />

@@ -201,11 +201,8 @@ export function Index() {
     let _balance;
 
     if (massaToEvm) {
-      if (!selectedToken) {
-        return false;
-      }
       _amount = parseUnits(amount, decimals);
-      _balance = selectedToken.balance;
+      _balance = selectedToken?.balance || 0n;
     } else {
       _amount = parseUnits(amount, decimals);
       _balance = _tokenBalanceEVM;
@@ -230,14 +227,20 @@ export function Index() {
     if (!validate()) return;
     setBox(Status.Loading);
 
+    if (!amount) {
+      // for typescript type inference
+      // if amount is undefined, validate() should return false
+      return;
+    }
+
     if (massaToEvm) {
-      if (!massaClient || !selectedToken || !amount) {
+      if (!massaClient) {
         return;
       }
       const approved = await handleApproveRedeem(amount);
 
       if (approved) {
-        if (!selectedToken || !evmAddress || !amount) {
+        if (!evmAddress) {
           return;
         }
 
@@ -248,9 +251,6 @@ export function Index() {
         });
       }
     } else {
-      if (!amount) {
-        return;
-      }
       const approved = await handleApproveBridge(
         amount,
         decimals,
