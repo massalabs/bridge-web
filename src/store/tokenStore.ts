@@ -97,7 +97,11 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     set({ tokens: tokenList });
     get().refreshBalances();
 
-    get().setSelectedToken(selectedToken);
+    if (selectedToken) {
+      get().setSelectedToken(selectedToken);
+    } else {
+      get().setSelectedToken(tokenList[0]);
+    }
   },
 
   setSelectedToken: (selectedToken?: IToken) => {
