@@ -14,6 +14,7 @@ export enum ClaimState {
   SUCCESS = 'success',
   ERROR = 'error',
   REJECTED = 'rejected',
+  ALREADY_EXECUTED = 'already-executed',
 }
 
 interface ClaimOperationContainerProps {
@@ -25,24 +26,9 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 
   function onStateChange(state: ClaimState, txHash?: `0x${string}` | null) {
-    switch (state) {
-      case ClaimState.PENDING:
-        setClaimState(ClaimState.PENDING);
-        break;
-      case ClaimState.SUCCESS:
-        if (txHash) {
-          setTxHash(txHash);
-        }
-        setClaimState(ClaimState.SUCCESS);
-        break;
-      case ClaimState.REJECTED:
-        setClaimState(ClaimState.REJECTED);
-        break;
-      case ClaimState.ERROR:
-        setClaimState(ClaimState.ERROR);
-        break;
-      case ClaimState.INIT:
-        return setClaimState(ClaimState.INIT);
+    setClaimState(state);
+    if (state === ClaimState.SUCCESS && txHash) {
+      setTxHash(txHash);
     }
   }
 
@@ -89,11 +75,13 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
               </div>
             );
           case ClaimState.ERROR:
+          case ClaimState.ALREADY_EXECUTED:
             return (
               <div>
                 <ErrorClaim
                   operation={operation}
                   onStateChange={onStateChange}
+                  claimState={claimState}
                   symbol={symbol}
                 />
               </div>

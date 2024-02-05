@@ -25,7 +25,7 @@ export function PendingClaim(props: PendingClaimProps) {
         (log) => (log as any).args.burnOpId === inputOpId,
       );
       if (event) {
-        onStateChange(ClaimState.SUCCESS, event.transactionHash);
+        onStateChange(ClaimState.INIT, event.transactionHash);
         stopListening?.();
       }
     },

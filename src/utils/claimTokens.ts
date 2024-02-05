@@ -1,7 +1,11 @@
 import { toast } from '@massalabs/react-ui-kit';
 import { ClaimState } from '../pages/ClaimPage/ClaimButton';
 import Intl from '@/i18n/i18n';
-import { CustomError, isRejectedByUser } from '@/utils/error';
+import {
+  CustomError,
+  isOperationAlreadyExecutedError,
+  isRejectedByUser,
+} from '@/utils/error';
 
 interface ClaimTokensProps {
   amount: string;
@@ -25,20 +29,23 @@ export async function claimTokens({
   token,
   inputOpId,
   signatures,
-  changeClaimState: callback,
+  changeClaimState,
   redeemFunction,
 }: ClaimTokensProps) {
   try {
-    callback(ClaimState.PENDING);
+    changeClaimState(ClaimState.PENDING);
     await redeemFunction(amount, recipient, token, inputOpId, signatures);
   } catch (error) {
     const typedError = error as CustomError;
     if (isRejectedByUser(typedError)) {
       toast.error(Intl.t('claim.rejected'));
-      callback(ClaimState.REJECTED);
+      changeClaimState(ClaimState.REJECTED);
+    } else if (isOperationAlreadyExecutedError(typedError)) {
+      toast.error(Intl.t('claim.already-executed'));
+      changeClaimState(ClaimState.ALREADY_EXECUTED);
     } else {
       toast.error(Intl.t('claim.error-toast'));
-      callback(ClaimState.ERROR);
+      changeClaimState(ClaimState.ERROR);
     }
   }
 }
