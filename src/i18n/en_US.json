@@ -179,6 +179,12 @@
     "warning-no-eth": "To claim tokens, you need to have {fees} ETH to pay for transaction fees.",
     "balance": {
       "error": "We couldn't fetch your balance! Please, try again!"
+    },
+    "fee-estimate": {
+      "bridge-rate": "Bridge rate",
+      "massa": "Transaction fees on Massa est.",
+      "ethereum": "Transaction fees on Ethereum est.",
+      "on": "on"
     }
   },
   "unexpected-error": {

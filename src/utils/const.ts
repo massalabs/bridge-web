@@ -28,10 +28,6 @@ export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
 
 export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';
 
-// Networks
-export const SEPOLIA_CHAIN_ID = 11155111;
-export const ETH_MAINNET_CHAIN_ID = 1;
-
 export const EVM_EXPLORER = {
   [BridgeMode.mainnet]: 'https://etherscan.io/',
   [BridgeMode.testnet]: 'https://sepolia.etherscan.io/',

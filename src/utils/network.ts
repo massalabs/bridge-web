@@ -2,7 +2,7 @@ import {
   MAINNET as web3Mainnet,
   BUILDNET as web3Buildnet,
 } from '@massalabs/massa-web3';
-import { ETH_MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID } from './const';
+import { mainnet, sepolia } from 'wagmi';
 
 export const MassaNetworks = {
   mainnet: web3Mainnet.toLowerCase(),
@@ -15,9 +15,9 @@ export function validateEvmNetwork(
   evmChainId?: number,
 ): boolean {
   if (isMainnet) {
-    return evmChainId === ETH_MAINNET_CHAIN_ID;
+    return evmChainId === mainnet.id;
   } else {
-    return evmChainId === SEPOLIA_CHAIN_ID;
+    return evmChainId === sepolia.id;
   }
 }
 
