@@ -10,19 +10,18 @@ const jestConfig: JestConfigWithTsJest = {
     '^@/(.*)$': '<rootDir>/src/$1', // so that jest can resolve @/components/xxx
     '.+\\.(css|styl|less|sass|scss)$': 'jest-css-modules-transform',
   },
-  // to fix "SyntaxError: Unexpected token 'export'"":
-  transformIgnorePatterns: ['node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'],
+  transformIgnorePatterns: [],
   transform: {
-    // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
-    // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
-    '^.+\\.tsx?$': [
+    '^.+\\.[jt]sx?$': [
       'ts-jest',
       {
+        tsconfig: 'tsconfig.test.json',
         useESM: true,
+        isolatedModules: true,
       },
     ],
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], // see file jest.setup.ts
+  setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'], // see file jest.setup.ts
 };
 
 export default jestConfig;

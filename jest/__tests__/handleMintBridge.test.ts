@@ -1,123 +1,129 @@
-import { handleMintBridge } from '../../src/custom/bridge/handlers/handleMintBridge';
-import { Client } from '../__ mocks __/mocks';
+import {
+  MintArgs,
+  handleMintBridge,
+} from '../../src/custom/bridge/handlers/handleMintBridge';
+import { Status } from '../../src/store/globalStatusesStore';
+import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
+import { smartContractsMock } from '../__ mocks __/mocks';
 
 describe('handleMintBridge', () => {
+  let mintArgs: MintArgs;
+
+  beforeEach(() => {
+    const lockTxID = 'mockLockTxId';
+
+    mintArgs = {
+      massaOperationID: lockTxID,
+    };
+  });
+
+  const successEvents = [
+    {
+      context: {
+        slot: {
+          period: 669983,
+          thread: 29,
+        },
+        block: 'BvD',
+        read_only: false,
+        call_stack: ['AUd6uaiR', 'ASkA'],
+        index_in_slot: 1,
+        origin_operation_id: 'YnYa',
+        is_final: true,
+        is_error: false,
+      },
+      data: JSON.stringify({
+        eventName: 'TOKEN_MINTED',
+        evmRecipient: 'm9',
+        massaToken: 'AS12mytBMNz',
+        chainId: '11155111',
+        txId: 'mockLockTxId',
+        evmToken: '985291424',
+      }),
+    },
+  ];
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test('should show success of mint event', async () => {
-    const lockTxID = 'mockLockTxId';
-    const client: any = new Client();
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockGetTokens = jest.fn().mockImplementation();
-
-    const mintArgs = {
-      massaClient: client,
-      massaOperationID: lockTxID,
-      setLoading: mockSetLoading,
-      getTokens: mockGetTokens,
-    };
+    smartContractsMock.getFilteredScOutputEvents.mockResolvedValueOnce(
+      successEvents,
+    );
 
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'success',
-      mint: 'success',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Success,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Success,
+    );
     expect(result).toBeTruthy();
   });
 
   test('should show error screen if no events were found on Smart Contract during mint', async () => {
-    const client: any = new Client();
-    const mockGetFilteredScOutputEvent = jest.fn().mockRejectedValueOnce([]);
-    client.setMockGetFilteredScOutputEvent(mockGetFilteredScOutputEvent);
-
-    const lockTxID = 'mockLockTxId';
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockGetTokens = jest.fn().mockImplementation();
-
-    const mintArgs = {
-      massaClient: client,
-      massaOperationID: lockTxID,
-      setLoading: mockSetLoading,
-      getTokens: mockGetTokens,
-    };
+    smartContractsMock.getFilteredScOutputEvents.mockRejectedValueOnce([]);
 
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      error: 'error',
-      mint: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });
 
   test('should show error if there is a problem during mint', async () => {
-    const client: any = new Client();
-    const mockGetFilteredScOutputEvent = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('error'));
-    client.setMockGetFilteredScOutputEvent(mockGetFilteredScOutputEvent);
-
-    const lockTxID = 'mockLockTxId';
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockGetTokens = jest.fn().mockImplementation();
-
-    const mintArgs = {
-      massaClient: client,
-      massaOperationID: lockTxID,
-      setLoading: mockSetLoading,
-      getTokens: mockGetTokens,
-    };
+    smartContractsMock.getFilteredScOutputEvents.mockRejectedValueOnce([]);
 
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      error: 'error',
-      mint: 'error',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Error,
+    );
 
     expect(result).toBeFalsy();
   });
 
   test('should show timeout screen if the mint is loo long', async () => {
-    const client: any = new Client();
-    const mockGetFilteredScOutputEvent = jest.fn().mockRejectedValueOnce(
+    smartContractsMock.getFilteredScOutputEvents.mockRejectedValueOnce(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       new Error('timeout', { cause: { error: 'timeout' } }),
     );
 
-    client.setMockGetFilteredScOutputEvent(mockGetFilteredScOutputEvent);
-
-    const lockTxID = 'mockLOckTxId';
-
-    const mockSetLoading = jest.fn().mockImplementation();
-    const mockGetTokens = jest.fn().mockImplementation();
-    // We cannot mock correctly waitForMIntEvent, so we mock a timeout here
-
-    const mintArgs = {
-      massaClient: client,
-      massaOperationID: lockTxID,
-      setLoading: mockSetLoading,
-      getTokens: mockGetTokens,
-    };
-
     const result = await handleMintBridge(mintArgs);
 
-    expect(mockSetLoading).toHaveBeenNthCalledWith(1, { mint: 'loading' });
-    expect(mockSetLoading).toHaveBeenNthCalledWith(2, {
-      box: 'warning',
-      mint: 'warning',
-    });
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      1,
+      Status.Loading,
+    );
+    expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
+      2,
+      Status.Warning,
+    );
+    expect(globalStatusesStoreStateMock.setBox).toHaveBeenNthCalledWith(
+      1,
+      Status.Warning,
+    );
 
     expect(result).toBeFalsy();
   });

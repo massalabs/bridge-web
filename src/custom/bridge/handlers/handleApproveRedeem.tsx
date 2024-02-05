@@ -1,52 +1,46 @@
-import { Client } from '@massalabs/massa-web3';
 import { toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
-
 import { U256_MAX } from '../../../const/const';
-import { LoadingState } from '../../../const/types/types';
 import Intl from '../../../i18n/i18n';
-import { IToken } from '../../../store/accountStore';
+import { useTokenStore } from '../../../store/tokenStore';
 import { increaseAllowance } from '../bridge';
-import { CustomError, isRejectedByUser } from '@/utils/error';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import {
+  CustomError,
+  isInsufficientBalanceError,
+  isRejectedByUser,
+} from '@/utils/error';
 
-export async function handleApproveRedeem(
-  client: Client,
-  setLoading: (state: LoadingState) => void,
-  token: IToken,
-  amount: string,
-  decimals: number,
-) {
+export async function handleApproveRedeem(amount: string) {
+  const { setApprove, setBox } = useGlobalStatusesStore.getState();
   try {
-    setLoading({
-      approve: 'loading',
-    });
+    const { selectedToken } = useTokenStore.getState();
+    setApprove(Status.Loading);
 
-    let _amount = parseUnits(amount, decimals);
-
-    if (token.allowance < _amount) {
-      await increaseAllowance(client, token.massaToken, U256_MAX);
+    const _amount = parseUnits(amount, selectedToken!.decimals);
+    if (selectedToken!.allowance < _amount) {
+      await increaseAllowance(U256_MAX);
     }
 
-    setLoading({
-      approve: 'success',
-    });
+    setApprove(Status.Success);
   } catch (error) {
     const typedError = error as CustomError;
     const isErrorTimeout =
       typedError.cause && typedError.cause.error === 'timeout';
-    if (isRejectedByUser(typedError)) {
-      toast.error(Intl.t(`index.approve.error.rejected`));
+    if (isInsufficientBalanceError(error as Error)) {
+      toast.error(Intl.t('index.approve.error.insufficient-funds'));
+    } else if (isRejectedByUser(typedError)) {
+      toast.error(Intl.t('index.approve.error.rejected'));
     } else if (isErrorTimeout) {
       // if there is timeout during waitIncludedOperation
-      toast.error(Intl.t(`index.approve.error.timeout`));
+      toast.error(Intl.t('index.approve.error.timeout'));
     } else {
       // error during allowance increase
-      toast.error(Intl.t(`index.approve.error.allowance-error`));
+      toast.error(Intl.t('index.approve.error.allowance-error'));
     }
-    setLoading({
-      box: 'error',
-      approve: 'error',
-    });
+
+    setBox(Status.Error);
+    setApprove(Status.Error);
     return false;
   }
   return true;

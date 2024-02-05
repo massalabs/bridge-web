@@ -14,6 +14,7 @@ import { useConfigStore } from '@/store/store';
 export function EvmWalletContext({ children }: PropsWithChildren<unknown>) {
   const [theme] = useConfigStore((state) => [state.theme]);
   const rainbowkitTheme = theme === 'theme-dark' ? darkTheme : lightTheme;
+
   return (
     <WagmiConfig config={config}>
       <RainbowKitProvider

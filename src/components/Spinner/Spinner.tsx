@@ -4,7 +4,7 @@ interface ISpinnerProps {
 }
 
 export function Spinner(props: ISpinnerProps) {
-  const { customClass, size = 'sm' } = props;
+  const { customClass = '', size = 'sm' } = props;
 
   const isSmall = size === 'sm';
   const isMedium = size === 'md';

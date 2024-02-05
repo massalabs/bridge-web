@@ -8,8 +8,9 @@ import {
 
 import { WETH, ETH, TDAI } from './Tokens';
 import { GradientCard } from '@/components';
-import { LayoutType } from '@/const';
 import Intl from '@/i18n/i18n';
+import { useOperationStore } from '@/store/store';
+import { SIDE } from '@/utils/const';
 
 export interface IErrorsMap {
   [key: string]: string;
@@ -22,7 +23,6 @@ export const ErrorsMap: IErrorsMap = {
 
 interface GetTokensModalProps {
   setOpenModal: (open: boolean) => void;
-  layout: LayoutType | undefined;
 }
 
 export function handleErrorMessage(error: string) {
@@ -41,20 +41,18 @@ function MassaToEVMContent() {
   return (
     <div className="flex items-start justify-center gap-5 mt-5 mb-10">
       <GradientCard customClass="w-72 h-80">
-        <Tag
-          type="error"
-          content={Intl.t(`get-tokens.tag.MAS`)}
-          customClass="m-5"
-        />
+        <Tag type="error" customClass="m-5">
+          {Intl.t('get-tokens.tag.MAS')}
+        </Tag>
         <p className="mas-menu-default text-center m-5">
-          {Intl.t(`get-tokens.card.MAS-description`)}
+          {Intl.t('get-tokens.card.MAS-description')}
         </p>
         <a
           href="https://discord.gg/FS2NVAum"
           target="_blank"
           className="mas-menu-underline mb-4 cursor-pointer"
         >
-          {Intl.t(`get-tokens.card.link`)}
+          {Intl.t('get-tokens.card.link')}
         </a>
       </GradientCard>
     </div>
@@ -62,7 +60,10 @@ function MassaToEVMContent() {
 }
 
 export function GetTokensPopUpModal(props: GetTokensModalProps) {
-  const { setOpenModal, layout } = props;
+  const { setOpenModal } = props;
+
+  const { side } = useOperationStore();
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   return (
     <PopupModal
@@ -74,20 +75,19 @@ export function GetTokensPopUpModal(props: GetTokensModalProps) {
       <PopupModalHeader>
         <h1 className="mas-title mb-4 text-f-primary">
           {Intl.t('get-tokens.title', {
-            token:
-              layout === 'evmToMassa' ? 'Sepolia Testnet' : 'Massa Buildnet',
+            token: massaToEvm ? 'Massa Buildnet' : 'Sepolia Testnet',
           })}
         </h1>
       </PopupModalHeader>
       <PopupModalContent>
-        {layout === 'evmToMassa' ? (
+        {massaToEvm ? (
+          <MassaToEVMContent />
+        ) : (
           <div className="flex items-start justify-center gap-5 mt-5 mb-10">
             <TDAI />
             <WETH />
             <ETH />
           </div>
-        ) : (
-          <MassaToEVMContent />
         )}
       </PopupModalContent>
     </PopupModal>

@@ -7,7 +7,7 @@ export enum FAQcategories {
   getEthOnSep = 'getEthOnSep',
   getWethAndtDai = 'getWethAndtDai',
   getMasOnMassa = 'getMasOnMassa',
-  addToMassa = 'addToMassaWellet',
+  addToMassa = 'addToMassaWallet',
   addToMetamask = 'addToMetamask',
 }
 
