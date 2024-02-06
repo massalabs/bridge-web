@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly VITE_SC_DEPLOY: string;
   readonly VITE_NO_BRIDGE: string;
   readonly VITE_INFURA_API_KEY: string;
+  readonly VITE_ALCHEMY_API_KEY: string;
 }
 
 interface ImportMeta {
