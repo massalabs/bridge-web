@@ -16,25 +16,20 @@ import { Status } from '@/store/globalStatusesStore';
 import {
   useBridgeModeStore,
   useGlobalStatusesStore,
+  useOperationStore,
   useTokenStore,
 } from '@/store/store';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 interface ClaimProps {
   setClaimStep: (claimStep: ClaimSteps) => void;
-  operationId: string;
   amount: string;
   decimals: number;
 }
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
 
-export function Claim({
-  setClaimStep,
-  operationId,
-  amount,
-  decimals,
-}: ClaimProps) {
+export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
   const { address: evmAddress } = useAccount();
 
   const { selectedToken } = useTokenStore();
@@ -42,6 +37,7 @@ export function Claim({
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { chain } = useNetwork();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
+  const { currentTxID } = useOperationStore();
 
   const symbol = selectedToken?.symbol as string;
   const selectedChain = chain?.name as string;
@@ -79,10 +75,9 @@ export function Claim({
 
       const claimArgs = {
         burnedOpList,
-        operationId,
+        currentTxID,
       };
 
-      // Returns signatures sorted by relayerId
       const signatures = checkBurnedOpForRedeem(claimArgs);
 
       if (signatures.length > 0) {
@@ -123,7 +118,7 @@ export function Claim({
         parseUnits(amount, decimals).toString(),
         evmAddress,
         selectedToken.evmToken as `0x${string}`,
-        operationId,
+        currentTxID,
         signatures,
       );
 

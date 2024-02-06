@@ -62,7 +62,7 @@ describe('checkBurnedOpForRedeem', () => {
 
     const claimArgs: ClaimArgs = {
       burnedOpList: mockApiResponse,
-      operationId: mockOperationId,
+      currentTxID: mockOperationId,
     };
 
     const result = checkBurnedOpForRedeem(claimArgs);
@@ -128,7 +128,7 @@ describe('checkBurnedOpForRedeem', () => {
 
     const claimArgs = {
       burnedOpList: mockApiResponse,
-      operationId: mockOperationId,
+      currentTxID: mockOperationId,
     };
 
     const result = checkBurnedOpForRedeem(claimArgs);

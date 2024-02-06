@@ -8,8 +8,8 @@ export interface OperationStoreState {
   side: SIDE;
   setSide(side: SIDE): void;
 
-  burnTxID: string;
-  setBurnTxID(txID: string): void;
+  currentTxID: string;
+  setCurrentTxID(currentTxID: string): void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,9 +26,9 @@ const operationStore = (
     set({ side });
   },
 
-  burnTxID: '',
-  setBurnTxID(txID: string) {
-    set({ burnTxID: txID });
+  currentTxID: '',
+  setCurrentTxID(currentTxID: string) {
+    set({ currentTxID: currentTxID });
   },
 });
 

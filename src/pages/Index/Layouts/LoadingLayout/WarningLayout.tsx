@@ -1,11 +1,9 @@
-import { LoadingBoxProps } from './LoadingLayout';
 import { ShowOperationId } from './ShowOperationId';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
-export function WarningLayout(props: LoadingBoxProps) {
-  const { operationId } = props;
+export function WarningLayout() {
   const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
@@ -26,7 +24,7 @@ export function WarningLayout(props: LoadingBoxProps) {
           support.bridge@massa.net
         </a>
       </u>
-      <ShowOperationId operationId={operationId} />
+      <ShowOperationId />
     </div>
   );
 }

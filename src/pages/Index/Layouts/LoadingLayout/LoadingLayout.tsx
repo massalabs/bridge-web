@@ -13,7 +13,6 @@ export interface LoadingBoxProps {
   onClose: () => void;
   amount: string;
   redeemSteps: string;
-  operationId: string;
   decimals: number;
 }
 
@@ -64,11 +63,11 @@ export function LoadingLayout(props: LoadingBoxProps) {
       case IS_BOX_SUCCESS:
         return <SuccessLayout {...props} />;
       case IS_BOX_WARNING:
-        return <WarningLayout {...props} />;
+        return <WarningLayout />;
       case massaToEvm:
         return <RedeemLayout {...props} />;
       default:
-        return <BridgeLayout {...props} />;
+        return <BridgeLayout />;
     }
   }
 
