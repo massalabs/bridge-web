@@ -24,7 +24,7 @@ export function WarningLayout() {
           support.bridge@massa.net
         </a>
       </u>
-      <ShowLinkToExplorers  explorerUrl="foo" />
+      <ShowLinkToExplorers explorerUrl="foo" />
     </div>
   );
 }

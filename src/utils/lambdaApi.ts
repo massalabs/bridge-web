@@ -59,6 +59,7 @@ export async function getBurnedByEvmAddress(
   endPoint: string,
 ): Promise<Burned[]> {
   let response: LambdaResponse;
+  if (!evmAddress) return [];
   try {
     response = await axios.get(config[mode].lambdaUrl + endPoint, {
       params: {
