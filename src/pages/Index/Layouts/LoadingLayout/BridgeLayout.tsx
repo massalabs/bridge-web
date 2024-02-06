@@ -1,10 +1,9 @@
-import { LoadingBoxProps } from './LoadingLayout';
 import { LoadingState } from './LoadingState';
 import { ShowOperationId } from './ShowOperationId';
 import Intl from '@/i18n/i18n';
 import { useGlobalStatusesStore } from '@/store/globalStatusesStore';
 
-export function BridgeLayout(props: LoadingBoxProps) {
+export function BridgeLayout() {
   const { approve, lock, mint } = useGlobalStatusesStore();
 
   return (
@@ -21,7 +20,7 @@ export function BridgeLayout(props: LoadingBoxProps) {
         <p className="mas-body-2">{Intl.t('index.loading-box.mint')}</p>
         <LoadingState state={mint} />
       </div>
-      <ShowOperationId {...props} />
+      <ShowOperationId />
     </div>
   );
 }

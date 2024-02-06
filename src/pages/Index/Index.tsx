@@ -39,7 +39,7 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken, refreshBalances } = useTokenStore();
   const { isMainnet, currentMode } = useBridgeModeStore();
-  const { side, setSide, burnTxID, setBurnTxID } = useOperationStore();
+  const { side, setSide, currentTxID, setCurrentTxID } = useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
@@ -68,7 +68,8 @@ export function Index() {
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [amount, setAmount] = useState<string | undefined>('');
   const [error, setError] = useState<{ amount: string } | null>(null);
-  const [lockTxID, setLockTxID] = useState<string>('');
+  // TDODO: change
+  // const [lockTxID, setLockTxID] = useState<string>('');
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
@@ -86,7 +87,6 @@ export function Index() {
 
   const isLoading = box !== Status.None;
   const isBlurred = isLoading ? 'blur-md' : '';
-  const operationId = massaToEvm ? burnTxID : lockTxID;
 
   const isButtonDisabled =
     isFetching ||
@@ -108,13 +108,20 @@ export function Index() {
   });
 
   useEffect(() => {
-    const event = redeemLogs.find((log: any) => log.args.burnOpId === burnTxID);
+    if (!redeemLogs.length) return;
+    const event = redeemLogs.find(
+      (log: any) => log.args.burnOpId === currentTxID,
+    );
+    console.log(
+      'looking for redeemed logs from of redeem event with currentTxID:',
+      currentTxID,
+    );
     if (event && box === Status.Loading) {
       setBox(Status.Success);
       setClaim(Status.Success);
       refreshBalances();
     }
-  }, [redeemLogs, box, burnTxID, setBox, setClaim, refreshBalances]);
+  }, [redeemLogs, box, currentTxID, setBox, setClaim, refreshBalances]);
 
   useEffect(() => {
     setError({ amount: '' });
@@ -130,22 +137,17 @@ export function Index() {
       setLock(Status.Success);
       let data = lockData;
       if (!data) return;
-      setLockTxID(data.transactionHash);
+      // Set lock id
+      setCurrentTxID(data.transactionHash);
+      if (!massaClient) return;
+      console.log('currentTxID of bridge lock', currentTxID);
+      handleMintBridge();
     }
     if (lockIsError) {
       setBox(Status.Error);
       setLock(Status.Error);
     }
   }, [lockIsSuccess, lockIsError, lockData, setLock, setBox]);
-
-  useEffect(() => {
-    if (!massaClient) return;
-    if (lockTxID) {
-      handleMintBridge({
-        massaOperationID: lockTxID,
-      });
-    }
-  }, [lockTxID, massaClient]);
 
   useEffect(() => {
     if (approveIsSuccess) {
@@ -176,10 +178,9 @@ export function Index() {
   const closeLoadingBox = useCallback(() => {
     reset();
     setAmount('');
-    // the lockTxID & burnTdID is not reset after mint/claim
-    setLockTxID('');
-    setBurnTxID('');
-  }, [reset, setAmount, setLockTxID, setBurnTxID]);
+    // Reset currentTxID
+    setCurrentTxID('');
+  }, [reset, setAmount, setCurrentTxID]);
 
   useEffect(() => {
     if (box === Status.None) closeLoadingBox();
@@ -277,7 +278,6 @@ export function Index() {
           onClose={closeLoadingBox}
           amount={amount ?? '0'}
           redeemSteps={redeemSteps}
-          operationId={operationId}
           decimals={decimals}
         />
       ) : (

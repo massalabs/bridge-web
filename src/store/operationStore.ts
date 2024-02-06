@@ -8,6 +8,9 @@ export interface OperationStoreState {
   side: SIDE;
   setSide(side: SIDE): void;
 
+  currentTxID: string;
+  setCurrentTxID(currentTxID: string): void;
+
   burnTxID: string;
   setBurnTxID(txID: string): void;
 }
@@ -29,6 +32,11 @@ const operationStore = (
   burnTxID: '',
   setBurnTxID(txID: string) {
     set({ burnTxID: txID });
+  },
+
+  currentTxID: '',
+  setCurrentTxID(currentTxID: string) {
+    set({ currentTxID: currentTxID });
   },
 });
 

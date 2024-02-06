@@ -1,22 +1,10 @@
-import {
-  MintArgs,
-  handleMintBridge,
-} from '../../src/custom/bridge/handlers/handleMintBridge';
+import { handleMintBridge } from '../../src/custom/bridge/handlers/handleMintBridge';
 import { Status } from '../../src/store/globalStatusesStore';
+import { useOperationStore } from '../../src/store/store';
 import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
 import { smartContractsMock } from '../__ mocks __/mocks';
 
 describe('handleMintBridge', () => {
-  let mintArgs: MintArgs;
-
-  beforeEach(() => {
-    const lockTxID = 'mockLockTxId';
-
-    mintArgs = {
-      massaOperationID: lockTxID,
-    };
-  });
-
   const successEvents = [
     {
       context: {
@@ -52,7 +40,11 @@ describe('handleMintBridge', () => {
       successEvents,
     );
 
-    const result = await handleMintBridge(mintArgs);
+    const { setCurrentTxID } = useOperationStore.getState();
+
+    setCurrentTxID('mockLockTxId');
+
+    const result = await handleMintBridge();
 
     expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
       1,
@@ -72,7 +64,7 @@ describe('handleMintBridge', () => {
   test('should show error screen if no events were found on Smart Contract during mint', async () => {
     smartContractsMock.getFilteredScOutputEvents.mockRejectedValueOnce([]);
 
-    const result = await handleMintBridge(mintArgs);
+    const result = await handleMintBridge();
 
     expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
       1,
@@ -89,7 +81,7 @@ describe('handleMintBridge', () => {
   test('should show error if there is a problem during mint', async () => {
     smartContractsMock.getFilteredScOutputEvents.mockRejectedValueOnce([]);
 
-    const result = await handleMintBridge(mintArgs);
+    const result = await handleMintBridge();
 
     expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
       1,
@@ -110,7 +102,7 @@ describe('handleMintBridge', () => {
       new Error('timeout', { cause: { error: 'timeout' } }),
     );
 
-    const result = await handleMintBridge(mintArgs);
+    const result = await handleMintBridge();
 
     expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(
       1,

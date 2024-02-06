@@ -1,4 +1,4 @@
-import { useTokenStore } from '../../../store/store';
+import { useOperationStore, useTokenStore } from '../../../store/store';
 import { waitForMintEvent } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 
@@ -9,17 +9,14 @@ interface ICustomError extends Error {
   };
 }
 
-export interface MintArgs {
-  massaOperationID: string;
-}
-
-export async function handleMintBridge(args: MintArgs): Promise<boolean> {
-  const { massaOperationID } = args;
+export async function handleMintBridge(): Promise<boolean> {
   const { setBox, setMint } = useGlobalStatusesStore.getState();
 
+  const { currentTxID } = useOperationStore.getState();
   try {
     setMint(Status.Loading);
-    const success = await waitForMintEvent(massaOperationID);
+    console.log('waiting for mint event for currentTxID', currentTxID);
+    const success = await waitForMintEvent(currentTxID);
     if (success) {
       setBox(Status.Success);
       setMint(Status.Success);
