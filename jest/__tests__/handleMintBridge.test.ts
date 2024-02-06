@@ -40,10 +40,6 @@ describe('handleMintBridge', () => {
       successEvents,
     );
 
-    const { setCurrentTxID } = useOperationStore.getState();
-
-    setCurrentTxID('mockLockTxId');
-
     const result = await handleMintBridge();
 
     expect(globalStatusesStoreStateMock.setMint).toHaveBeenNthCalledWith(

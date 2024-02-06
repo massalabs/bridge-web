@@ -8,8 +8,10 @@ global.jest = jest;
 
 import { initAccountStoreMock } from './__ mocks __/accountStore';
 import { initGlobalStatusesStoreMock } from './__ mocks __/globalStatusesStore';
+import { initOperationStoreMock } from './__ mocks __/operationStore';
 import { initTokenStoreMock } from './__ mocks __/tokensStore';
 
 initTokenStoreMock();
 initAccountStoreMock();
 initGlobalStatusesStoreMock();
+initOperationStoreMock();
