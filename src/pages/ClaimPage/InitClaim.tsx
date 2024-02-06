@@ -78,7 +78,7 @@ function DisplayContent({ ...args }) {
         </strong>
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
-          content={full + ' ' + symbol}
+          body={full + ' ' + symbol}
         />
       </div>
     );

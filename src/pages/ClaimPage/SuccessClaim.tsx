@@ -43,7 +43,7 @@ export function SuccessClaim(args: SuccessClaimProps) {
         </div>
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
-          content={full + ' ' + symbol}
+          body={full + ' ' + symbol}
         />
       </div>
       <div className="flex gap-4 items-center">
