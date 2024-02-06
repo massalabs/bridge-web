@@ -42,11 +42,6 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
   const symbol = selectedToken?.symbol as string;
   const selectedChain = chain?.name as string;
 
-  useEffect(() => {
-    currentTxID &&
-      console.log('showing currentTxId before claim signature:', currentTxID);
-  }, [currentTxID]);
-
   const [isReadyToClaim, setIsReadyToClaim] = useState(false);
   const [signatures, setSignatures] = useState<string[]>([]);
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);

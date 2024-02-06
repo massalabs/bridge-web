@@ -15,7 +15,7 @@ export async function handleMintBridge(): Promise<boolean> {
   const { currentTxID } = useOperationStore.getState();
   try {
     setMint(Status.Loading);
-    console.log('waiting for mint event for currentTxID', currentTxID);
+
     const success = await waitForMintEvent(currentTxID);
     if (success) {
       setBox(Status.Success);

@@ -41,11 +41,9 @@ async function initiateBurn({
   setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
 
   const burnOpId = await forwardBurn(recipient, amount);
-  console.log('handleBurnReddem: setting currentTxID to burnOpId:', burnOpId);
   setCurrentTxID(burnOpId);
 
   setRedeemSteps(Intl.t('index.loading-box.included-pending'));
-  console.log('waiting for burn to be included');
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);

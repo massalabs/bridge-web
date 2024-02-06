@@ -68,8 +68,7 @@ export function Index() {
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [amount, setAmount] = useState<string | undefined>('');
   const [error, setError] = useState<{ amount: string } | null>(null);
-  // TDODO: change
-  // const [lockTxID, setLockTxID] = useState<string>('');
+
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
@@ -112,10 +111,6 @@ export function Index() {
     const event = redeemLogs.find(
       (log: any) => log.args.burnOpId === currentTxID,
     );
-    console.log(
-      'looking for redeemed logs from of redeem event with currentTxID:',
-      currentTxID,
-    );
     if (event && box === Status.Loading) {
       setBox(Status.Success);
       setClaim(Status.Success);
@@ -140,7 +135,6 @@ export function Index() {
       // Set lock id
       setCurrentTxID(data.transactionHash);
       if (!massaClient) return;
-      console.log('currentTxID of bridge lock', currentTxID);
       handleMintBridge();
     }
     if (lockIsError) {

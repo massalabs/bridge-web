@@ -10,9 +10,6 @@ export interface OperationStoreState {
 
   currentTxID: string;
   setCurrentTxID(currentTxID: string): void;
-
-  burnTxID: string;
-  setBurnTxID(txID: string): void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,11 +24,6 @@ const operationStore = (
   side: SIDE.EVM_TO_MASSA,
   setSide(side: SIDE) {
     set({ side });
-  },
-
-  burnTxID: '',
-  setBurnTxID(txID: string) {
-    set({ burnTxID: txID });
   },
 
   currentTxID: '',

@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 
@@ -11,10 +10,6 @@ export function ShowOperationId() {
   const { currentMode, isMainnet } = useBridgeModeStore();
   const { side, currentTxID } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
-
-  useEffect(() => {
-    currentTxID && console.log('showing currentTxId:', currentTxID);
-  }, [currentTxID]);
 
   const smartExplorerUrl = massaToEvm
     ? isMainnet
