@@ -112,7 +112,8 @@ export function Index() {
       (log: any) => log.args.burnOpId === currentTxID,
     );
     if (event && box === Status.Loading) {
-      setClaimTxID(event.transactionHash);
+      if (!event.transactionHash) return;
+      setCurrentTxID(event.transactionHash as string);
       setBox(Status.Success);
       setClaim(Status.Success);
       refreshBalances();
