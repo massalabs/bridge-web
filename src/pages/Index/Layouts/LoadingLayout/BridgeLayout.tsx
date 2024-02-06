@@ -1,5 +1,5 @@
 import { LoadingState } from './LoadingState';
-import { ShowLinkToExplorers } from './ShowOperationId';
+import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
 import { useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
@@ -10,8 +10,7 @@ export function BridgeLayout() {
   const { currentMode } = useBridgeModeStore();
   const { currentTxID } = useOperationStore();
 
-  // Bridge side exporer url to etherscan or testnet/etherscan
-  // Will always be present as we can access links on both modes
+  // Bridge linkToExplorer will render in both modes
   const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + currentTxID;
 
   return (

@@ -1,4 +1,4 @@
-import { ShowLinkToExplorers } from './ShowOperationId';
+import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
@@ -24,6 +24,7 @@ export function WarningLayout() {
           support.bridge@massa.net
         </a>
       </u>
+      {/* Link will be updated at a later stage because this component needs to be changed  */}
       <ShowLinkToExplorers explorerUrl="foo" />
     </div>
   );

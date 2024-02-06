@@ -62,6 +62,7 @@ export async function getBurnedByEvmAddress(
   const { currentMode } = useBridgeModeStore.getState();
 
   let response: LambdaResponse;
+  if (!evmAddress) return [];
   try {
     response = await axios.get(config[currentMode].lambdaUrl + lambdaEndpoint, {
       params: {

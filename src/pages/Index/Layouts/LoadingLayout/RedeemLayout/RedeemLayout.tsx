@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { Claim } from './ClaimRedeem';
 import { LoadingBoxProps } from '../LoadingLayout';
 import { LoadingState } from '../LoadingState';
-import { ShowLinkToExplorers } from '../ShowOperationId';
+import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
+import { MASSA_EXPLORER_URL } from '@/utils/const';
 
 export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { redeemSteps } = props;
@@ -28,8 +29,8 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
 
   const { isMainnet } = useBridgeModeStore();
 
-  // This link is only rendered on Mainnet mode
-  const explorerUrl = `https://explorer.massa.net/operation/${currentTxID}`;
+  // Redeem linkToExplorer only rendered in Mainnet mode
+  const explorerUrl = MASSA_EXPLORER_URL + currentTxID;
 
   return (
     <>

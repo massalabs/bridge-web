@@ -27,9 +27,9 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   const { selectedToken, refreshBalances } = useTokenStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
-  const { currentTxID: burnOpId, amount } = useOperationStore();
+  const { currentTxID: burnOpId, amount, setCurrentTxID } = useOperationStore();
 
-  const { write, error, isSuccess } = useClaim();
+  const { write, error, isSuccess, hash } = useClaim();
 
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
@@ -74,8 +74,9 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   useEffect(() => {
     if (isSuccess) {
-      setBox(Status.Success);
+      setCurrentTxID(hash);
       setClaim(Status.Success);
+      setBox(Status.Success);
       refreshBalances();
     }
     if (error) {
