@@ -15,7 +15,7 @@ import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { amount, onClose } = props;
-  const { side, claimTxID } = useOperationStore();
+  const { side, currentTxID } = useOperationStore();
   const { currentMode, isMainnet } = useBridgeModeStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
@@ -38,12 +38,10 @@ export function SuccessLayout(props: LoadingBoxProps) {
     isMainnet ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET
   }`;
 
-  const operationId = massaToEvm ? claimTxID : null;
-
   // claim === success, show link to explorer
   const explorerUrl = massaToEvm
-    ? EVM_EXPLORER[currentMode] + 'tx/' + operationId
-    : `https://explorer.massa.net/operation/${operationId}`;
+    ? EVM_EXPLORER[currentMode] + 'tx/' + currentTxID
+    : `https://explorer.massa.net/operation/${currentTxID}`;
 
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
@@ -93,12 +91,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
           </Link>
         </div>
       )}
-      {operationId && (
-        <ShowLinkToExplorers
-          operationId={operationId}
-          explorerUrl={explorerUrl}
-        />
-      )}
+      {currentTxID && <ShowLinkToExplorers explorerUrl={explorerUrl} />}
     </div>
   );
 }

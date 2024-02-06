@@ -6,12 +6,14 @@ import { LoadingState } from '../LoadingState';
 import { ShowLinkToExplorers } from '../ShowOperationId';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useBridgeModeStore } from '@/store/store';
+import { useBridgeModeStore, useOperationStore } from '@/store/store';
 
 export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { redeemSteps } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
+
+  const { currentTxID } = useOperationStore();
 
   const [claimStep, setClaimStep] = useState(ClaimSteps.None);
 
@@ -27,7 +29,7 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { isMainnet } = useBridgeModeStore();
 
   // This link is only rendered on Mainnet mode
-  const explorerUrl = `https://explorer.massa.net/operation/${operationId}`;
+  const explorerUrl = `https://explorer.massa.net/operation/${currentTxID}`;
 
   return (
     <>
@@ -49,9 +51,7 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <Claim {...claimArgs} />}
-        {isMainnet && (
-          <ShowLinkToExplorers {...props} explorerUrl={explorerUrl} />
-        )}
+        {isMainnet && <ShowLinkToExplorers explorerUrl={explorerUrl} />}
       </div>
     </>
   );
