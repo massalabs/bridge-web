@@ -10,7 +10,7 @@ export const { chains, publicClient } = configureChains(
     publicProvider(),
     infuraProvider({ apiKey: import.meta.env['VITE_INFURA_API_KEY'] }),
   ],
-  { batch: { multicall: true } },
+  { batch: { multicall: true }, retryCount: 50 },
 );
 
 export const connectors = connectorsForWallets([
