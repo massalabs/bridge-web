@@ -1,28 +1,13 @@
 import { useEffect, useState } from 'react';
 import { MassaLogo } from '@massalabs/react-ui-kit';
-import {
-  erc20ABI,
-  fetchFeeData,
-  getConfig,
-  mainnet,
-  sepolia,
-} from '@wagmi/core';
 import { formatEther, parseUnits } from 'viem';
-import { useAccount, useToken } from 'wagmi';
-import bridgeVaultAbi from '@/abi/bridgeAbi.json';
+import { useToken } from 'wagmi';
 import { EthSvgRed } from '@/assets/EthSvgRed';
-import { U256_MAX, config } from '@/const';
+import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
-import {
-  useAccountStore,
-  useBridgeModeStore,
-  useOperationStore,
-  useTokenStore,
-} from '@/store/store';
+import { useOperationStore, useTokenStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
-
-const VITE_CLAIM_GAS_COST = import.meta.env['VITE_CLAIM_GAS_COST'] || '92261';
 
 interface FeesEstimationProps {
   amount: string | undefined;
@@ -30,93 +15,51 @@ interface FeesEstimationProps {
 
 export function FeesEstimation(props: FeesEstimationProps) {
   const { amount } = props;
-  const { selectedToken } = useTokenStore();
-  const { address: accountAddress } = useAccount();
-  const { connectedAccount: massaAccount } = useAccountStore();
   const { side } = useOperationStore();
-  const { currentMode, isMainnet } = useBridgeModeStore();
-  const { allowance } = useEvmBridge();
-
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const { selectedToken } = useTokenStore();
   const evmToken = selectedToken?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
-  const bridgeContractAddr = config[currentMode].evmBridgeContract;
+  const { allowance } = useEvmBridge();
 
   const [feesETH, setFeesETH] = useState('-');
 
+  const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
+    useFeeEstimation();
+
   useEffect(() => {
-    function updateEstimations() {
-      setFeesETH('-'); // reset fees while fetching new data to show to the user that we are fetching new data
-      let gasPrice = 0n;
-      fetchFeeData({
-        chainId: isMainnet ? mainnet.id : sepolia.id,
-      })
-        .then((feeData) => {
-          gasPrice = feeData.maxFeePerGas || 0n;
-          const publicClient = getConfig().getPublicClient();
-          if (!accountAddress || !massaAccount || !tokenData) {
-            return [0n, 0n];
-          }
+    const setFeesETHWithCheck = (fees: bigint) => {
+      if (fees === 0n) {
+        setFeesETH('-');
+      } else {
+        setFeesETH(formatEther(fees));
+      }
+    };
 
-          const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
-
-          if (massaToEvm) {
-            // claim
-            return [BigInt(VITE_CLAIM_GAS_COST), 0n];
-          } else {
-            // approve and lock
-            const lockGasEstimationPromise = publicClient.estimateContractGas({
-              functionName: 'lock',
-              address: bridgeContractAddr,
-              abi: bridgeVaultAbi,
-              args: [amountInBigInt, massaAccount.address(), evmToken],
-              account: accountAddress,
-            });
-
-            let approveGasEstimationPromise;
-            if (allowance < amountInBigInt) {
-              approveGasEstimationPromise = publicClient.estimateContractGas({
-                functionName: 'approve',
-                address: evmToken,
-                abi: erc20ABI,
-                args: [bridgeContractAddr, U256_MAX],
-                account: accountAddress,
-              });
-            } else {
-              approveGasEstimationPromise = 0n;
-            }
-
-            return Promise.all([
-              lockGasEstimationPromise,
-              approveGasEstimationPromise,
-            ]);
-          }
-        })
-        .then(([firstEstimation, secondEstimation]) => {
-          return firstEstimation + secondEstimation;
-        })
-        .then((estimatedGas) => {
-          if (estimatedGas === 0n) {
-            setFeesETH('-');
-            return;
-          }
-          setFeesETH(formatEther(estimatedGas * gasPrice));
-        });
+    if (massaToEvm) {
+      setFeesETHWithCheck(estimateClaimFees());
+    } else {
+      if (!amount || !tokenData) {
+        return;
+      }
+      const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
+      Promise.all([
+        allowance < amountInBigInt
+          ? estimateApproveFees()
+          : Promise.resolve(0n),
+        estimateLockFees(amount),
+      ]).then(([approveFees, lockFees]) => {
+        setFeesETHWithCheck(approveFees + lockFees);
+      });
     }
-    updateEstimations();
-    const id = setInterval(updateEstimations, 10_000);
-    return () => clearInterval(id);
   }, [
-    massaAccount,
-    accountAddress,
-    amount,
     massaToEvm,
-    evmToken,
-    setFeesETH,
-    bridgeContractAddr,
-    isMainnet,
+    amount,
     tokenData,
     allowance,
+    estimateApproveFees,
+    estimateLockFees,
+    estimateClaimFees,
   ]);
 
   if (!selectedToken) return null;

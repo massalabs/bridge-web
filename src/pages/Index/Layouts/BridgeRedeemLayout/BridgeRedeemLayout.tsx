@@ -32,7 +32,7 @@ interface BridgeRedeemArgs {
   handleToggleLayout: () => void;
 }
 
-export function BridgeRedeemLayout({ ...args }: BridgeRedeemArgs) {
+export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
   const {
     isBlurred,
     isButtonDisabled,

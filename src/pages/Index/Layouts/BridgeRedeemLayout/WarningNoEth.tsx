@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { fetchBalance } from '@wagmi/core';
 import { FiAlertTriangle } from 'react-icons/fi';
+import { formatEther } from 'viem';
 import { useAccount } from 'wagmi';
+import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
@@ -9,8 +11,9 @@ import { SIDE } from '@/utils/const';
 export function WarningNoEth() {
   const { side } = useOperationStore();
   const { address } = useAccount();
+  const { estimateClaimFees } = useFeeEstimation();
 
-  const [ethBalance, setEthBalance] = useState<bigint>(0n);
+  const [ethBalance, setEthBalance] = useState<bigint>();
 
   useEffect(() => {
     if (!address) return;
@@ -23,7 +26,8 @@ export function WarningNoEth() {
 
   if (side === SIDE.EVM_TO_MASSA || ethBalance !== 0n) return null;
 
-  const fees = ''; // TODO: get fees from somewhere
+  const estimatedFees = estimateClaimFees();
+  const fees = estimatedFees > 0n ? formatEther(estimatedFees) : '';
 
   return (
     <div className="flex items-center gap-2">
