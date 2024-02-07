@@ -9,12 +9,13 @@ import {
 } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
+import { useEvmApprove } from '../../custom/bridge/useEvmApprove';
+import { CustomError, isRejectedByUser } from '../../utils/error';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import { config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
-import { handleApproveBridge } from '@/custom/bridge/handlers/handleApproveBridge';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import {
@@ -45,12 +46,10 @@ export function Index() {
     useAccount();
 
   const {
-    handleApprove: _handleApproveEVM,
     handleLock: _handleLockEVM,
     allowance: _allowanceEVM,
     tokenBalance: _tokenBalanceEVM,
     hashLock: _hashLockEVM,
-    hashApprove: _hashApproveEVM,
   } = useEvmBridge();
 
   const {
@@ -58,9 +57,6 @@ export function Index() {
     isSuccess: lockIsSuccess,
     isError: lockIsError,
   } = useWaitForTransaction({ hash: _hashLockEVM });
-
-  const { isSuccess: approveIsSuccess, isError: approveIsError } =
-    useWaitForTransaction({ hash: _hashApproveEVM });
 
   const evmToken = selectedToken?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
@@ -105,6 +101,12 @@ export function Index() {
       stopListeningRedeemedEvent?.();
     },
   });
+
+  const {
+    isSuccess: approveIsSuccess,
+    isError: approveIsError,
+    write: writeEvmApprove,
+  } = useEvmApprove();
 
   useEffect(() => {
     if (!redeemLogs.length) return;
@@ -246,21 +248,35 @@ export function Index() {
         });
       }
     } else {
-      const approved = await handleApproveBridge(
-        amount,
-        decimals,
-        _handleApproveEVM,
-        _allowanceEVM,
-      );
+      setApprove(Status.Loading);
 
-      if (approved) {
-        const lockArgs = {
-          amount,
-          _handleLockEVM,
-          decimals,
-        };
-        await handleLockBridge(lockArgs);
+      let _amount = parseUnits(amount, decimals);
+      const needApproval = _allowanceEVM < _amount;
+
+      if (needApproval) {
+        try {
+          writeEvmApprove?.();
+        } catch (error) {
+          if (isRejectedByUser(error as CustomError)) {
+            toast.error(Intl.t('index.approve.error.rejected'));
+          } else {
+            // error comes from increaseAllowanceFunction
+            toast.error(Intl.t('index.approve.error.allowance-error'));
+          }
+          setApprove(Status.Error);
+          setBox(Status.Error);
+        }
+        return;
       }
+      setApprove(Status.Success);
+
+      const lockArgs = {
+        amount,
+        _handleLockEVM,
+        decimals,
+      };
+
+      await handleLockBridge(lockArgs);
     }
   }
 
