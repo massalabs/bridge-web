@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo } from '@massalabs/react-ui-kit';
 import { formatEther, parseUnits } from 'viem';
 import { useToken } from 'wagmi';
 import { EthSvgRed } from '@/assets/EthSvgRed';
+import { forwardBurnFees, increaseAllowanceFee } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
@@ -23,6 +25,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
   const { allowance } = useEvmBridge();
 
   const [feesETH, setFeesETH] = useState('-');
+  const [feesMAS, setFeesMAS] = useState('-');
 
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
     useFeeEstimation();
@@ -37,9 +40,21 @@ export function FeesEstimation(props: FeesEstimationProps) {
     };
 
     if (massaToEvm) {
+      if (!selectedToken || !tokenData) {
+        setFeesMAS('-');
+        return;
+      }
+      const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
+      let storageFeesMAS = forwardBurnFees.coins;
+      if (selectedToken.allowance < amountInBigInt) {
+        storageFeesMAS += increaseAllowanceFee.coins;
+      }
+      setFeesMAS(toMAS(storageFeesMAS).toString());
       setFeesETHWithCheck(estimateClaimFees());
     } else {
-      if (!amount || !tokenData) {
+      setFeesMAS('0');
+      if (!tokenData) {
+        setFeesETH('-');
         return;
       }
       const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
@@ -47,7 +62,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
         allowance < amountInBigInt
           ? estimateApproveFees()
           : Promise.resolve(0n),
-        estimateLockFees(amount),
+        estimateLockFees(amount || '0'),
       ]).then(([approveFees, lockFees]) => {
         setFeesETHWithCheck(approveFees + lockFees);
       });
@@ -60,14 +75,13 @@ export function FeesEstimation(props: FeesEstimationProps) {
     estimateApproveFees,
     estimateLockFees,
     estimateClaimFees,
+    selectedToken,
   ]);
 
   if (!selectedToken) return null;
 
   const symbolEVM = selectedToken.symbol;
   const symbolMASSA = symbolEVM + '.e';
-
-  const feesMAS = '0';
 
   return (
     <div>
