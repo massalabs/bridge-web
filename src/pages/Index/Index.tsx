@@ -1,5 +1,4 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
-import { toast } from '@massalabs/react-ui-kit';
 import { Log, parseUnits } from 'viem';
 import { useAccount, useToken, useContractEvent } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
@@ -11,8 +10,11 @@ import { config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleLockError } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
+import {
+  handleEvmApproveError,
+  handleLockError,
+} from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import { useLock } from '@/custom/bridge/useLock';
@@ -27,7 +29,6 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
@@ -88,6 +89,7 @@ export function Index() {
   const {
     isSuccess: approveIsSuccess,
     isError: approveIsError,
+    error: approveError,
     write: writeEvmApprove,
   } = useEvmApprove();
 
@@ -96,6 +98,7 @@ export function Index() {
     isError: lockIsError,
     write: writeLock,
     data: lockData,
+    error: lockError,
   } = useLock();
 
   useEffect(() => {
@@ -129,6 +132,7 @@ export function Index() {
       handleMintBridge();
     }
     if (lockIsError) {
+      handleLockError(lockError!);
       setBox(Status.Error);
       setLock(Status.Error);
     }
@@ -142,27 +146,17 @@ export function Index() {
     setCurrentTxID,
   ]);
 
-  const processLock = useCallback(() => {
-    try {
-      setLock(Status.Loading);
-      writeLock?.();
-    } catch (error) {
-      handleLockError(error);
-      setLock(Status.Error);
-      setBox(Status.Error);
-    }
-  }, [writeLock, setLock, setBox]);
-
   useEffect(() => {
     if (approveIsSuccess) {
       setApprove(Status.Success);
       if (!amount) return;
-      processLock();
+      setLock(Status.Loading);
+      writeLock?.();
     }
     if (approveIsError) {
+      handleEvmApproveError(approveError!);
       setBox(Status.Error);
       setApprove(Status.Error);
-      toast.error(Intl.t('index.approve.error.failed'));
     }
   }, [
     approveIsSuccess,
@@ -172,7 +166,7 @@ export function Index() {
     setApprove,
     setLock,
     setBox,
-    processLock,
+    writeLock,
   ]);
 
   const closeLoadingBox = useCallback(() => {
@@ -256,22 +250,12 @@ export function Index() {
       const needApproval = _allowanceEVM < _amount;
 
       if (needApproval) {
-        try {
-          writeEvmApprove?.();
-        } catch (error) {
-          if (isRejectedByUser(error as CustomError)) {
-            toast.error(Intl.t('index.approve.error.rejected'));
-          } else {
-            // error comes from increaseAllowanceFunction
-            toast.error(Intl.t('index.approve.error.allowance-error'));
-          }
-          setApprove(Status.Error);
-          setBox(Status.Error);
-        }
+        writeEvmApprove?.();
         return;
       }
       setApprove(Status.Success);
-      processLock();
+      setLock(Status.Loading);
+      writeLock?.();
     }
   }
 

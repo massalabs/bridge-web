@@ -28,11 +28,11 @@ export const regexWarn = new RegExp(WARNING_MESSAGE, 'i');
 export const regexParam = new RegExp(PARAMETER_ERROR, 'i');
 export const regexOperation = new RegExp(CONTRACT_REJECTED, 'i');
 
-export function isRejectedByUser(error: CustomError): boolean {
+export function isRejectedByUser(error: Error): boolean {
   return regexErr.test(error.toString()) || regexWarn.test(error.toString());
 }
 
-export function isParameterError(error: CustomError): boolean {
+export function isParameterError(error: Error): boolean {
   return regexParam.test(error.toString());
 }
 
