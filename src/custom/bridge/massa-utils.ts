@@ -34,12 +34,13 @@ export async function waitIncludedOperation(
   onlyFinal = false,
 ): Promise<void> {
   const { massaClient } = useAccountStore.getState();
+  if (!massaClient) throw new Error('Massa client not found');
 
   const start = Date.now();
   let counterMs = 0;
   while (counterMs < WAIT_STATUS_TIMEOUT) {
     const opStatus = await checkForOperationStatus(
-      massaClient!,
+      massaClient,
       opId,
       onlyFinal,
     );
@@ -51,7 +52,7 @@ export async function waitIncludedOperation(
     await delay(STATUS_POLL_INTERVAL_MS);
     counterMs = Date.now() - start;
   }
-  const status = await getOperationStatus(massaClient!, opId);
+  const status = await getOperationStatus(massaClient, opId);
   throw new Error(
     `Fail to wait operation finality for ${opId}: Timeout reached. status: ${status}`,
     { cause: { error: 'timeout', details: opId } },
@@ -96,9 +97,10 @@ export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
 
   const { massaClient } = useAccountStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
+  if (!massaClient) throw new Error('Massa client not found');
 
   while (counterMs < WAIT_STATUS_TIMEOUT) {
-    const events = await massaClient!
+    const events = await massaClient
       .smartContracts()
       .getFilteredScOutputEvents({
         emitter_address: config[currentMode].massaBridgeContract,
@@ -113,7 +115,7 @@ export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
     if (mintEvent) {
       try {
         await checkForOperationStatus(
-          massaClient!,
+          massaClient,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           mintEvent.context.origin_operation_id!,
         );

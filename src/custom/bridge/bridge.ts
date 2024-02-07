@@ -21,8 +21,11 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
   const { selectedToken } = useTokenStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
 
-  const opId = await massaClient!.smartContracts().callSmartContract({
-    targetAddress: selectedToken!.massaToken,
+  if (!massaClient) throw new Error('Massa client not found');
+  if (!selectedToken) throw new Error('Token not selected');
+
+  const opId = await massaClient.smartContracts().callSmartContract({
+    targetAddress: selectedToken.massaToken,
     functionName: 'increaseAllowance',
     parameter: new Args()
       .addString(config[currentMode].massaBridgeContract)
@@ -44,17 +47,20 @@ export async function forwardBurn(
   const { selectedToken } = useTokenStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
 
-  const amt = parseUnits(amount, selectedToken!.decimals);
+  if (!massaClient) throw new Error('Massa client not found');
+  if (!selectedToken) throw new Error('Token not selected');
+
+  const amt = parseUnits(amount, selectedToken.decimals);
 
   const tokenPair = new TokenPair(
-    selectedToken!.massaToken,
-    selectedToken!.evmToken,
-    selectedToken!.chainId,
+    selectedToken.massaToken,
+    selectedToken.evmToken,
+    selectedToken.chainId,
   );
 
   const request = new ForwardingRequest(amt, recipient, tokenPair);
 
-  const opId = await massaClient!.smartContracts().callSmartContract({
+  const opId = await massaClient.smartContracts().callSmartContract({
     targetAddress: config[currentMode].massaBridgeContract,
     functionName: 'forwardBurn',
     parameter: new Args().addSerializable(request).serialize(),

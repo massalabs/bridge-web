@@ -162,7 +162,9 @@ const accountStore = (
   setConnectedAccount: async (connectedAccount?: IAccount) => {
     set({ connectedAccount });
     if (connectedAccount) {
-      const provider = get().currentProvider!;
+      const currentProvider = get().currentProvider;
+      if (!currentProvider) throw new Error('No provider found');
+      const provider = currentProvider;
       _setInStorage(
         LAST_USED_ACCOUNT,
         JSON.stringify({
@@ -186,7 +188,8 @@ const accountStore = (
     const provider = get().currentProvider;
     if (!provider) return;
 
-    const connectedAccount = get().connectedAccount!;
+    const connectedAccount = get().connectedAccount;
+    if (!connectedAccount) throw new Error('No connected account found');
     set({
       massaClient: await ClientFactory.fromWalletProvider(
         provider,

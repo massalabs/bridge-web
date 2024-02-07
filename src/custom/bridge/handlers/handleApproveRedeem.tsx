@@ -17,8 +17,10 @@ export async function handleApproveRedeem(amount: string) {
     const { selectedToken } = useTokenStore.getState();
     setApprove(Status.Loading);
 
-    const _amount = parseUnits(amount, selectedToken!.decimals);
-    if (selectedToken!.allowance < _amount) {
+    if (!selectedToken) throw new Error('Token not selected');
+
+    const _amount = parseUnits(amount, selectedToken.decimals);
+    if (selectedToken.allowance < _amount) {
       await increaseAllowance(U256_MAX);
     }
 

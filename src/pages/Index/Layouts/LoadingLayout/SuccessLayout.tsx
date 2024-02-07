@@ -23,12 +23,13 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const { isMainnet } = useBridgeModeStore();
   const { chain } = useNetwork();
+  if (!chain || !token) throw new Error('Chain or token not found');
 
   const massaChainAndNetwork = `${Blockchain.MASSA} ${
     isMainnet ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET
   }`;
 
-  const evmChainAndNetwork = `${chain!.name} ${
+  const evmChainAndNetwork = `${chain.name} ${
     isMainnet ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET
   }`;
 
@@ -42,7 +43,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
-          {in2decimals} {token?.symbol}
+          {in2decimals} {token.symbol}
         </div>
         <div>
           {Intl.t('index.loading-box.from-to', {

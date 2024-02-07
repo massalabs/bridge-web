@@ -15,21 +15,19 @@ export function Claim() {
 
   const { address: evmAddress } = useAccount();
 
+  if (!evmAddress) throw new Error('EVM address not found');
+
   const { currentMode } = useBridgeModeStore();
 
   useEffect(() => {
-    getApiInfo();
-  }, [evmAddress, currentMode]);
-
-  async function getApiInfo() {
     if (!evmAddress) return;
 
-    const pendingOperations = await checkIfUserHasTokensToClaim(
-      currentMode,
-      evmAddress,
+    checkIfUserHasTokensToClaim(currentMode, evmAddress).then(
+      (pendingOperations) => {
+        setOpToRedeem(pendingOperations);
+      },
     );
-    setOpToRedeem(pendingOperations);
-  }
+  }, [evmAddress, currentMode, setOpToRedeem]);
 
   const burnListIsNotEmpty = opToRedeem.length;
 
@@ -48,7 +46,7 @@ export function Claim() {
         })
       ) : (
         <p className="mas-menu-active text-info text-2xl">
-          {Intl.t('claim.no-claim', { address: evmAddress! })}
+          {Intl.t('claim.no-claim', { address: evmAddress })}
         </p>
       )}
     </div>
