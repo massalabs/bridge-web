@@ -39,12 +39,12 @@ export function useLock() {
     enabled: Boolean(amount && connectedAccount && selectedToken),
   });
 
-  const { write, data } = useContractWrite(writeConfig);
+  const { write, data, error, isError } = useContractWrite(writeConfig);
 
-  const { isSuccess, isError } = useWaitForTransaction({
+  const { isSuccess } = useWaitForTransaction({
     hash: data?.hash,
     timeout: 30000,
   });
 
-  return { data, isSuccess, isError, write };
+  return { data, isSuccess, isError, error, write };
 }

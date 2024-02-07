@@ -23,12 +23,12 @@ export function useEvmApprove() {
     enabled: Boolean(selectedToken),
   });
 
-  const { data, write } = useContractWrite(writeConfig);
+  const { data, write, error, isError } = useContractWrite(writeConfig);
 
-  const { isSuccess, isError } = useWaitForTransaction({
+  const { isSuccess } = useWaitForTransaction({
     hash: data?.hash,
     timeout: 30000,
   });
 
-  return { isSuccess, isError, write };
+  return { isSuccess, isError, error, write };
 }
