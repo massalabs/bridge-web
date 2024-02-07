@@ -7,7 +7,7 @@ import Intl from '@/i18n/i18n';
 
 const ConnectEvmWallet = () => {
   const { isConnected } = useAccount();
-  const isMetamaskInstalled = window.ethereum?.isConnected();
+  const isMetamaskInstalled = window.ethereum?.isMetaMask;
 
   return (
     <>
