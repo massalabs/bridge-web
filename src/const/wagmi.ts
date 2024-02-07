@@ -1,5 +1,11 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
-import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
+import {
+  injectedWallet,
+  ledgerWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { configureChains, createConfig, sepolia, mainnet } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -15,14 +21,19 @@ export const { chains, publicClient } = configureChains(
   { batch: { multicall: true }, retryCount: 50 },
 );
 
+const projectId = 'massa-bridge';
 export const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
     wallets: [
       metaMaskWallet({
-        projectId: 'massa-bridge',
-        chains: chains,
+        projectId,
+        chains,
       }),
+      injectedWallet({ chains }),
+      rainbowWallet({ projectId, chains }),
+      walletConnectWallet({ projectId, chains }),
+      ledgerWallet({ projectId, chains }),
     ],
   },
 ]);
