@@ -12,7 +12,7 @@ export function StationSelectAccount() {
     ],
   );
 
-  const selectedAccountKey: number = accounts.findIndex(
+  const selectedAccountKey: number = (accounts || []).findIndex(
     (account) => account.name() === connectedAccount?.name(),
   );
 
@@ -23,7 +23,7 @@ export function StationSelectAccount() {
   return (
     <Dropdown
       select={selectedAccountKey}
-      options={accounts.map((account: IAccount) => {
+      options={(accounts || []).map((account: IAccount) => {
         return {
           item: account.name(),
           onClick: () => onAccountChange(account),

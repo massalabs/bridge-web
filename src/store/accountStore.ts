@@ -28,8 +28,6 @@ export interface AccountStoreState {
   setProviders: (providers: IProvider[]) => void;
 
   setConnectedAccount: (account?: IAccount) => void;
-  setAvailableAccounts: (accounts: IAccount[]) => void;
-
   refreshMassaClient: () => void;
 }
 
@@ -108,7 +106,7 @@ const accountStore = (
               .then((accounts) => {
                 // bearby expose only 1 account
                 get().setConnectedAccount(accounts[0]);
-                get().setAvailableAccounts(accounts);
+                set({ accounts });
               })
               .catch((error) => {
                 console.warn('error getting accounts from bearby', error);
@@ -125,7 +123,7 @@ const accountStore = (
       currentProvider
         .accounts()
         .then((accounts) => {
-          get().setAvailableAccounts(accounts);
+          set({ accounts });
 
           const selectedAccount =
             accounts.find((account) => account.address() === lastUsedAccount) ||
@@ -152,10 +150,6 @@ const accountStore = (
         accounts: [],
       });
     }
-  },
-
-  setAvailableAccounts: (accounts: IAccount[]) => {
-    set({ accounts });
   },
 
   // set the connected account, and update the massa client
