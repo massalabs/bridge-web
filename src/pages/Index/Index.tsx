@@ -1,16 +1,9 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { Log, parseUnits } from 'viem';
-import {
-  useAccount,
-  useWaitForTransaction,
-  useToken,
-  useContractEvent,
-} from 'wagmi';
+import { useAccount, useToken, useContractEvent } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
-import { useEvmApprove } from '../../custom/bridge/useEvmApprove';
-import { CustomError, isRejectedByUser } from '../../utils/error';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
@@ -18,12 +11,11 @@ import { config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import {
-  LockBridgeParams,
-  handleLockBridge,
-} from '@/custom/bridge/handlers/handleLockBridge';
+import { handleLockError } from '@/custom/bridge/handlers/handleLockBridge';
 import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
+import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { useLock } from '@/custom/bridge/useLock';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
@@ -35,34 +27,25 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
+import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken, refreshBalances } = useTokenStore();
   const { isMainnet, currentMode } = useBridgeModeStore();
-  const { side, setSide, currentTxID, setCurrentTxID } = useOperationStore();
+  const { side, setSide, currentTxID, setCurrentTxID, amount, setAmount } =
+    useOperationStore();
 
   const { isConnected: isEvmWalletConnected, address: evmAddress } =
     useAccount();
 
-  const {
-    handleLock: _handleLockEVM,
-    allowance: _allowanceEVM,
-    tokenBalance: _tokenBalanceEVM,
-    hashLock: _hashLockEVM,
-  } = useEvmBridge();
-
-  const {
-    data: lockData,
-    isSuccess: lockIsSuccess,
-    isError: lockIsError,
-  } = useWaitForTransaction({ hash: _hashLockEVM });
+  const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
+    useEvmBridge();
 
   const evmToken = selectedToken?.evmToken as `0x${string}`;
   const { data: tokenData } = useToken({ address: evmToken });
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
-  const [amount, setAmount] = useState<string | undefined>('');
   const [error, setError] = useState<{ amount: string } | null>(null);
 
   const [redeemSteps, setRedeemSteps] = useState<string>(
@@ -108,6 +91,13 @@ export function Index() {
     write: writeEvmApprove,
   } = useEvmApprove();
 
+  const {
+    isSuccess: lockIsSuccess,
+    isError: lockIsError,
+    write: writeLock,
+    data: lockData,
+  } = useLock();
+
   useEffect(() => {
     if (!redeemLogs.length) return;
     const event = redeemLogs.find(
@@ -126,16 +116,15 @@ export function Index() {
   }, [amount, side, selectedToken?.name, tokenData?.decimals]);
 
   useEffect(() => {
-    setAmount('');
-  }, [side, selectedToken?.name]);
+    setAmount();
+  }, [side, selectedToken?.name, setAmount]);
 
   useEffect(() => {
     if (lockIsSuccess) {
       setLock(Status.Success);
-      let data = lockData;
-      if (!data) return;
+      if (!lockData) return;
       // Set lock id
-      setCurrentTxID(data.transactionHash);
+      setCurrentTxID(lockData.hash);
       if (!massaClient) return;
       handleMintBridge();
     }
@@ -143,18 +132,32 @@ export function Index() {
       setBox(Status.Error);
       setLock(Status.Error);
     }
-  }, [lockIsSuccess, lockIsError, lockData, setLock, setBox]);
+  }, [
+    lockIsSuccess,
+    lockIsError,
+    lockData,
+    massaClient,
+    setLock,
+    setBox,
+    setCurrentTxID,
+  ]);
+
+  const processLock = useCallback(() => {
+    try {
+      setLock(Status.Loading);
+      writeLock?.();
+    } catch (error) {
+      handleLockError(error);
+      setLock(Status.Error);
+      setBox(Status.Error);
+    }
+  }, [writeLock, setLock, setBox]);
 
   useEffect(() => {
     if (approveIsSuccess) {
       setApprove(Status.Success);
       if (!amount) return;
-      const lockArgs: LockBridgeParams = {
-        amount,
-        _handleLockEVM,
-        decimals,
-      };
-      handleLockBridge(lockArgs);
+      processLock();
     }
     if (approveIsError) {
       setBox(Status.Error);
@@ -167,15 +170,16 @@ export function Index() {
     amount,
     decimals,
     setApprove,
+    setLock,
     setBox,
-    _handleLockEVM,
+    processLock,
   ]);
 
   const closeLoadingBox = useCallback(() => {
     reset();
-    setAmount('');
+    setAmount();
     // Reset currentTxID
-    setCurrentTxID('');
+    setCurrentTxID();
   }, [reset, setAmount, setCurrentTxID]);
 
   useEffect(() => {
@@ -194,14 +198,12 @@ export function Index() {
       return false;
     }
 
-    let _amount;
+    const _amount = parseUnits(amount, decimals);
     let _balance;
 
     if (massaToEvm) {
-      _amount = parseUnits(amount, decimals);
       _balance = selectedToken?.balance || 0n;
     } else {
-      _amount = parseUnits(amount, decimals);
       _balance = _tokenBalanceEVM;
     }
 
@@ -269,14 +271,7 @@ export function Index() {
         return;
       }
       setApprove(Status.Success);
-
-      const lockArgs = {
-        amount,
-        _handleLockEVM,
-        decimals,
-      };
-
-      await handleLockBridge(lockArgs);
+      processLock();
     }
   }
 

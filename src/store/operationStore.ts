@@ -3,13 +3,16 @@ import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 export interface OperationStoreState {
   opToRedeem: RedeemOperationToClaim[];
-  setOpToRedeem: (operationsToRedeem: RedeemOperationToClaim[]) => void;
+  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => void;
 
   side: SIDE;
   setSide(side: SIDE): void;
 
-  currentTxID: string;
-  setCurrentTxID(currentTxID: string): void;
+  currentTxID?: string;
+  setCurrentTxID(currentTxID?: string): void;
+
+  amount?: string;
+  setAmount(amount?: string): void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,17 +21,21 @@ const operationStore = (
   _get: () => OperationStoreState,
 ) => ({
   opToRedeem: [],
-  setOpToRedeem: (operationsToRedeem: RedeemOperationToClaim[]) =>
-    set({ opToRedeem: operationsToRedeem }),
+  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => set({ opToRedeem }),
 
   side: SIDE.EVM_TO_MASSA,
   setSide(side: SIDE) {
     set({ side });
   },
 
-  currentTxID: '',
-  setCurrentTxID(currentTxID: string) {
-    set({ currentTxID: currentTxID });
+  currentTxID: undefined,
+  setCurrentTxID(currentTxID?: string) {
+    set({ currentTxID });
+  },
+
+  amount: undefined,
+  setAmount(amount?: string) {
+    set({ amount });
   },
 });
 
