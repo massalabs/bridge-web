@@ -8,15 +8,10 @@ import {
 } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
-import {
-  useAccountStore,
-  useBridgeModeStore,
-  useTokenStore,
-} from '@/store/store';
+import { useBridgeModeStore, useTokenStore } from '@/store/store';
 
 const useEvmBridge = () => {
   const { address: accountAddress } = useAccount();
-  const { connectedAccount: massaAccount } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
 
@@ -43,7 +38,6 @@ const useEvmBridge = () => {
 
   const [tokenBalance, setTokenBalance] = useState<bigint>(0n);
   const [allowance, setAllowance] = useState<bigint>(0n);
-  const [hashLock, setHashLock] = useState<`0x${string}`>();
 
   useEffect(() => {
     if (!selectedToken) return;
@@ -56,12 +50,6 @@ const useEvmBridge = () => {
 
     setAllowance(_allowance.data || 0n);
   }, [selectedToken, _allowance?.data]);
-
-  const lock = useContractWrite({
-    abi: bridgeVaultAbi,
-    address: bridgeContractAddr,
-    functionName: 'lock',
-  });
 
   const redeem = useContractWrite({
     abi: bridgeVaultAbi,
@@ -86,25 +74,10 @@ const useEvmBridge = () => {
     }
   }
 
-  async function handleLock(amount: bigint) {
-    try {
-      let { hash } = await lock.writeAsync({
-        args: [amount.toString(), massaAccount?.address(), evmToken],
-      });
-      setHashLock(hash);
-      return lock;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
   return {
     tokenBalance,
     allowance,
-    handleLock,
     handleRedeem,
-    hashLock,
   };
 };
 

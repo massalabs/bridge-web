@@ -65,7 +65,7 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
   }, [burn, isReadyToClaim]);
 
   async function _handleClaimRedeem(): Promise<boolean> {
-    if (!evmAddress) return false;
+    if (!evmAddress || !currentTxID) return false;
     try {
       const burnedOpList = await getBurnedByEvmAddress(
         currentMode,
@@ -104,7 +104,7 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
   }
 
   async function _handleRedeem() {
-    if (!evmAddress || !selectedToken) return;
+    if (!evmAddress || !selectedToken || !currentTxID) return;
     setUserHasRejected(false);
     try {
       if (hasClickedClaimed) {

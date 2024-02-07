@@ -13,6 +13,11 @@ export async function handleMintBridge(): Promise<boolean> {
   const { setBox, setMint } = useGlobalStatusesStore.getState();
 
   const { currentTxID } = useOperationStore.getState();
+
+  if (!currentTxID) {
+    return false;
+  }
+
   try {
     setMint(Status.Loading);
 

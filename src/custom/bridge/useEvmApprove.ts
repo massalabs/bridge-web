@@ -20,12 +20,14 @@ export function useEvmApprove() {
     abi: erc20ABI,
     functionName: 'approve',
     args: [bridgeContractAddr, U256_MAX],
+    enabled: Boolean(selectedToken),
   });
 
   const { data, write } = useContractWrite(writeConfig);
 
   const { isSuccess, isError } = useWaitForTransaction({
     hash: data?.hash,
+    timeout: 30000,
   });
 
   return { isSuccess, isError, write };
