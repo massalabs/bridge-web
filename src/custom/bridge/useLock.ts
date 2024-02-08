@@ -24,20 +24,21 @@ export function useLock() {
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
-  const { config: writeConfig } = usePrepareContractWrite({
-    abi: bridgeVaultAbi,
-    address: bridgeContractAddr,
-    functionName: 'lock',
-    args: [
-      parseUnits(
-        debouncedAmount || '0',
-        selectedToken?.decimals || 18,
-      ).toString(),
-      connectedAccount?.address(),
-      evmToken,
-    ],
-    enabled: Boolean(amount && connectedAccount && selectedToken),
-  });
+  const { config: writeConfig, isSuccess: isPrepared } =
+    usePrepareContractWrite({
+      abi: bridgeVaultAbi,
+      address: bridgeContractAddr,
+      functionName: 'lock',
+      args: [
+        parseUnits(
+          debouncedAmount || '0',
+          selectedToken?.decimals || 18,
+        ).toString(),
+        connectedAccount?.address(),
+        evmToken,
+      ],
+      enabled: Boolean(amount && connectedAccount && selectedToken),
+    });
 
   const { write, data, error, isError } = useContractWrite(writeConfig);
 
@@ -46,5 +47,5 @@ export function useLock() {
     timeout: 30000,
   });
 
-  return { data, isSuccess, isError, error, write };
+  return { data, isPrepared, isSuccess, isError, error, write };
 }
