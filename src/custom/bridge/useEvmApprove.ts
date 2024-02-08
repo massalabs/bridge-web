@@ -15,13 +15,14 @@ export function useEvmApprove() {
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
-  const { config: writeConfig } = usePrepareContractWrite({
-    address: evmToken,
-    abi: erc20ABI,
-    functionName: 'approve',
-    args: [bridgeContractAddr, U256_MAX],
-    enabled: Boolean(selectedToken),
-  });
+  const { config: writeConfig, isSuccess: isPrepared } =
+    usePrepareContractWrite({
+      address: evmToken,
+      abi: erc20ABI,
+      functionName: 'approve',
+      args: [bridgeContractAddr, U256_MAX],
+      enabled: Boolean(selectedToken),
+    });
 
   const { data, write, error, isError } = useContractWrite(writeConfig);
 
@@ -30,5 +31,5 @@ export function useEvmApprove() {
     timeout: 30000,
   });
 
-  return { isSuccess, isError, error, write };
+  return { isPrepared, isSuccess, isError, error, write };
 }

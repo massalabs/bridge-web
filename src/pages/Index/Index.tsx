@@ -37,8 +37,7 @@ export function Index() {
   const { side, setSide, currentTxID, setCurrentTxID, amount, setAmount } =
     useOperationStore();
 
-  const { isConnected: isEvmWalletConnected, address: evmAddress } =
-    useAccount();
+  const { address: evmAddress } = useAccount();
 
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmBridge();
@@ -62,15 +61,33 @@ export function Index() {
 
   useNetworkCheck(setWrongNetwork);
 
+  const {
+    isPrepared: approveIsPrepared,
+    isSuccess: approveIsSuccess,
+    isError: approveIsError,
+    error: approveError,
+    write: writeEvmApprove,
+  } = useEvmApprove();
+
+  const {
+    isPrepared: lockIsPrepared,
+    isSuccess: lockIsSuccess,
+    isError: lockIsError,
+    write: writeLock,
+    data: lockData,
+    error: lockError,
+  } = useLock();
+
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const isLoading = box !== Status.None;
   const isBlurred = isLoading ? 'blur-md' : '';
 
   const isButtonDisabled =
+    !approveIsPrepared ||
+    !lockIsPrepared ||
     isFetching ||
     !connectedAccount ||
-    !isEvmWalletConnected ||
     wrongNetwork ||
     isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
@@ -85,21 +102,6 @@ export function Index() {
       stopListeningRedeemedEvent?.();
     },
   });
-
-  const {
-    isSuccess: approveIsSuccess,
-    isError: approveIsError,
-    error: approveError,
-    write: writeEvmApprove,
-  } = useEvmApprove();
-
-  const {
-    isSuccess: lockIsSuccess,
-    isError: lockIsError,
-    write: writeLock,
-    data: lockData,
-    error: lockError,
-  } = useLock();
 
   useEffect(() => {
     if (!redeemLogs.length) return;
