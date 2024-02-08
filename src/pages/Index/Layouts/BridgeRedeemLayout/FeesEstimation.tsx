@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
-import { MassaLogo } from '@massalabs/react-ui-kit';
+import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
+import { FiInfo } from 'react-icons/fi';
 import { formatEther, parseUnits } from 'viem';
 import { useToken } from 'wagmi';
 import { EthSvgRed } from '@/assets/EthSvgRed';
@@ -84,7 +85,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
   const symbolMASSA = symbolEVM + '.e';
 
   return (
-    <div>
+    <div className="mas-body2">
       <div className="flex items-center justify-between">
         <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
         <div className="flex items-center">
@@ -99,8 +100,14 @@ export function FeesEstimation(props: FeesEstimationProps) {
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <p>{Intl.t('index.fee-estimate.massa')}</p>
-        {/* potential tooltip here */}
+        <div className="flex items-center">
+          <p>{Intl.t('index.fee-estimate.massa')}</p>
+          <Tooltip
+            body={Intl.t('index.fee-estimate.tooltip-massa', { fees: feesMAS })}
+          >
+            <FiInfo size={18} />
+          </Tooltip>
+        </div>
         <div className="flex items-center">{feesMAS} MAS</div>
       </div>
       <div className="flex items-center justify-between">
