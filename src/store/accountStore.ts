@@ -12,7 +12,7 @@ import {
 export interface AccountStoreState {
   connectedAccount?: IAccount;
   massaClient?: Client;
-  accounts: IAccount[];
+  accounts?: IAccount[];
   currentProvider?: IProvider;
   providers: IProvider[];
   isFetching: boolean;
@@ -35,7 +35,7 @@ const accountStore = (
   set: (params: Partial<AccountStoreState>) => void,
   get: () => AccountStoreState,
 ) => ({
-  accounts: [],
+  accounts: undefined,
   connectedAccount: undefined,
   accountObserver: undefined,
   networkObserver: undefined,
@@ -56,7 +56,11 @@ const accountStore = (
         set({ accountObserver: undefined, networkObserver: undefined });
       }
       if (!currentProvider) {
-        set({ currentProvider, connectedAccount: undefined, accounts: [] });
+        set({
+          currentProvider,
+          connectedAccount: undefined,
+          accounts: undefined,
+        });
         return;
       }
 
@@ -147,7 +151,7 @@ const accountStore = (
         massaClient: undefined,
         currentProvider: undefined,
         connectedAccount: undefined,
-        accounts: [],
+        accounts: undefined,
       });
     }
   },

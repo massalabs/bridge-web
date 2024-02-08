@@ -111,7 +111,7 @@ function MassaHeader() {
   const { isFetching, accounts, currentProvider } = useAccountStore();
   const { isMainnet } = useBridgeModeStore();
 
-  const hasNoAccounts = !accounts.length;
+  const hasNoAccounts = !accounts?.length;
 
   const isConnected = !isFetching && currentProvider && !hasNoAccounts;
 
