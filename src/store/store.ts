@@ -1,3 +1,4 @@
+import { ProvidersListener } from '@massalabs/wallet-provider';
 import { create } from 'zustand';
 import accountStore, { AccountStoreState } from './accountStore';
 import configStore, {
@@ -65,9 +66,9 @@ async function initAccountStore() {
     }
   }
 
-  setInterval(async () => {
-    updateProviders();
-  }, 1000);
+  new ProvidersListener().subscribe((providers) => {
+    useAccountStore.getState().setProviders(providers);
+  });
 }
 
 async function initTokenStore() {
