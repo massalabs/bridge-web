@@ -43,6 +43,7 @@ const accountStore = (
   currentProvider: undefined,
   providers: [],
   isFetching: false,
+  connectedNetwork: undefined,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
     try {

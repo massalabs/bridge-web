@@ -39,64 +39,58 @@ export default function StationWallet() {
 
   const { wrongNetwork } = useWrongNetworkMASSA();
 
-  const renderError = () => {
-    if (stationIsOn === false) {
-      return (
-        <WalletError
-          description={Intl.t(
-            'connect-wallet.card-destination.massa-station-not-detected',
-          )}
-          link={MASSA_STATION_INSTALL}
-          linkLabel={Intl.t(
-            'connect-wallet.card-destination.get-massa-station',
-          )}
-        />
-      );
-    }
+  if (stationIsOn === false) {
+    return (
+      <WalletError
+        description={Intl.t(
+          'connect-wallet.card-destination.massa-station-not-detected',
+        )}
+        link={MASSA_STATION_INSTALL}
+        linkLabel={Intl.t('connect-wallet.card-destination.get-massa-station')}
+      />
+    );
+  }
 
-    if (massaWalletIsOn === false) {
-      return (
-        <WalletError
-          description={Intl.t(
-            'connect-wallet.card-destination.massa-wallet-not-detected',
-          )}
-          link={MASSA_STATION_STORE}
-          linkLabel={Intl.t('connect-wallet.card-destination.get-massa-wallet')}
-        />
-      );
-    }
+  if (massaWalletIsOn === false) {
+    return (
+      <WalletError
+        description={Intl.t(
+          'connect-wallet.card-destination.massa-wallet-not-detected',
+        )}
+        link={MASSA_STATION_STORE}
+        linkLabel={Intl.t('connect-wallet.card-destination.get-massa-wallet')}
+      />
+    );
+  }
 
-    if (wrongNetwork) {
-      return (
-        <Button
-          variant="secondary"
-          customClass="h-14"
-          onClick={() => window.open(MASSA_STATION_URL)}
-        >
-          {Intl.t('connect-wallet.connect-metamask.switch-network')}
-        </Button>
-      );
-    }
+  if (wrongNetwork) {
+    return (
+      <Button
+        variant="secondary"
+        customClass="h-14"
+        onClick={() => window.open(MASSA_STATION_URL)}
+      >
+        {Intl.t('connect-wallet.connect-metamask.switch-network')}
+      </Button>
+    );
+  }
 
-    if (accounts !== undefined && !accounts.length) {
-      return (
-        <WalletError
-          description={Intl.t(
-            'connect-wallet.card-destination.massa-wallet-no-account',
-          )}
-          link={MASSA_WALLET_CREATE_ACCOUNT}
-          linkLabel={Intl.t(
-            'connect-wallet.card-destination.massa-wallet-create-account',
-          )}
-        />
-      );
-    }
+  if (accounts !== undefined && !accounts.length) {
+    return (
+      <WalletError
+        description={Intl.t(
+          'connect-wallet.card-destination.massa-wallet-no-account',
+        )}
+        link={MASSA_WALLET_CREATE_ACCOUNT}
+        linkLabel={Intl.t(
+          'connect-wallet.card-destination.massa-wallet-create-account',
+        )}
+      />
+    );
+  }
 
+  if (accounts === undefined) {
     return <div className="h-14 bg-secondary rounded-lg animate-pulse"></div>;
-  };
-
-  if (!stationIsOn || !massaWalletIsOn || !accounts?.length || wrongNetwork) {
-    return renderError();
   }
 
   return (
