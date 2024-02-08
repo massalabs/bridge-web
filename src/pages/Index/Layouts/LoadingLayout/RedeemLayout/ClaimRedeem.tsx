@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
@@ -47,24 +47,12 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
   const [userHasRejected, setUserHasRejected] = useState(false);
 
-  // Polls every 3 seconds to see if conditions are met to show claim
+  const setLoadingToError = useCallback(() => {
+    setClaim(Status.Error);
+    setBox(Status.Error);
+  }, [setClaim, setBox]);
 
-  // TODO: determine if we need a timeout here
-  useEffect(() => {
-    setClaim(Status.Loading);
-    if (burn === Status.Success && !isReadyToClaim) {
-      setClaimStep(ClaimSteps.RetrievingInfo);
-      const timer = setInterval(() => {
-        _handleClaimRedeem();
-      }, 3000);
-      return () => clearInterval(timer);
-    }
-    if (isReadyToClaim) {
-      setClaimStep(ClaimSteps.AwaitingSignature);
-    }
-  }, [burn, isReadyToClaim]);
-
-  async function _handleClaimRedeem(): Promise<boolean> {
+  const handleClaimRedeem = useCallback(async (): Promise<boolean> => {
     if (!evmAddress || !currentTxID) return false;
     try {
       const burnedOpList = await getBurnedByEvmAddress(
@@ -87,21 +75,29 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
       }
       return true;
     } catch (error: any) {
-      handleGetAPiErrors(error);
+      console.error('Error fetching claim api', error.toString());
+      toast.error(Intl.t('index.claim.error.unknown'));
+      setLoadingToError();
       return false;
     }
-  }
+  }, [currentMode, evmAddress, currentTxID, setClaimStep, setLoadingToError]);
 
-  function handleGetAPiErrors(error: any) {
-    console.error('Error fetching claim api', error.toString());
-    toast.error(Intl.t('index.claim.error.unknown'));
-    setLoadingToError();
-  }
+  // Polls every 3 seconds to see if conditions are met to show claim
 
-  function setLoadingToError() {
-    setClaim(Status.Error);
-    setBox(Status.Error);
-  }
+  // TODO: determine if we need a timeout here
+  useEffect(() => {
+    setClaim(Status.Loading);
+    if (burn === Status.Success && !isReadyToClaim) {
+      setClaimStep(ClaimSteps.RetrievingInfo);
+      const timer = setInterval(() => {
+        handleClaimRedeem();
+      }, 3000);
+      return () => clearInterval(timer);
+    }
+    if (isReadyToClaim) {
+      setClaimStep(ClaimSteps.AwaitingSignature);
+    }
+  }, [burn, isReadyToClaim, handleClaimRedeem, setClaim, setClaimStep]);
 
   async function _handleRedeem() {
     if (!evmAddress || !selectedToken || !currentTxID) return;
