@@ -33,7 +33,7 @@ export function Navbar(props: NavbarProps) {
 
   const { isConnected: isConnectedEVM } = useAccount();
 
-  const hasAccounts = accounts?.length > 0;
+  const hasAccounts = (accounts || []).length > 0;
   const showPingAnimation =
     !isConnectedEVM ||
     wrongNetworkEVM ||

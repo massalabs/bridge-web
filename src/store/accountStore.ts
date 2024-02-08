@@ -12,7 +12,7 @@ import {
 export interface AccountStoreState {
   connectedAccount?: IAccount;
   massaClient?: Client;
-  accounts: IAccount[];
+  accounts?: IAccount[];
   currentProvider?: IProvider;
   providers: IProvider[];
   isFetching: boolean;
@@ -28,8 +28,6 @@ export interface AccountStoreState {
   setProviders: (providers: IProvider[]) => void;
 
   setConnectedAccount: (account?: IAccount) => void;
-  setAvailableAccounts: (accounts: IAccount[]) => void;
-
   refreshMassaClient: () => void;
 }
 
@@ -37,7 +35,7 @@ const accountStore = (
   set: (params: Partial<AccountStoreState>) => void,
   get: () => AccountStoreState,
 ) => ({
-  accounts: [],
+  accounts: undefined,
   connectedAccount: undefined,
   accountObserver: undefined,
   networkObserver: undefined,
@@ -45,6 +43,7 @@ const accountStore = (
   currentProvider: undefined,
   providers: [],
   isFetching: false,
+  connectedNetwork: undefined,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
     try {
@@ -58,7 +57,11 @@ const accountStore = (
         set({ accountObserver: undefined, networkObserver: undefined });
       }
       if (!currentProvider) {
-        set({ currentProvider, connectedAccount: undefined, accounts: [] });
+        set({
+          currentProvider,
+          connectedAccount: undefined,
+          accounts: undefined,
+        });
         return;
       }
 
@@ -108,7 +111,7 @@ const accountStore = (
               .then((accounts) => {
                 // bearby expose only 1 account
                 get().setConnectedAccount(accounts[0]);
-                get().setAvailableAccounts(accounts);
+                set({ accounts });
               })
               .catch((error) => {
                 console.warn('error getting accounts from bearby', error);
@@ -125,7 +128,7 @@ const accountStore = (
       currentProvider
         .accounts()
         .then((accounts) => {
-          get().setAvailableAccounts(accounts);
+          set({ accounts });
 
           const selectedAccount =
             accounts.find((account) => account.address() === lastUsedAccount) ||
@@ -149,13 +152,9 @@ const accountStore = (
         massaClient: undefined,
         currentProvider: undefined,
         connectedAccount: undefined,
-        accounts: [],
+        accounts: undefined,
       });
     }
-  },
-
-  setAvailableAccounts: (accounts: IAccount[]) => {
-    set({ accounts });
   },
 
   // set the connected account, and update the massa client
