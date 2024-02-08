@@ -1,11 +1,10 @@
 import { useState } from 'react';
 
-import { useContractRead, erc20ABI } from 'wagmi';
-
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { PendingClaim } from './PendingClaim';
 import { SuccessClaim } from './SuccessClaim';
+import { useTokenStore } from '@/store/tokenStore';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 export enum ClaimState {
@@ -22,6 +21,7 @@ interface ClaimOperationContainerProps {
 }
 
 export function ClaimButton({ operation }: ClaimOperationContainerProps) {
+  const { selectedToken } = useTokenStore();
   const [claimState, setClaimState] = useState(ClaimState.INIT);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
 
@@ -32,12 +32,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
     }
   }
 
-  // TODO: put this in a store (token store ?)
-  const { data: symbol } = useContractRead({
-    address: operation.evmToken,
-    abi: erc20ABI,
-    functionName: 'symbol',
-  });
+  const symbol = selectedToken?.symbolEVM;
 
   return (
     <>

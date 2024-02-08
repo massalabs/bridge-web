@@ -39,7 +39,7 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const { currentTxID } = useOperationStore();
 
-  const symbol = selectedToken?.symbol as string;
+  const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
 
   const [isReadyToClaim, setIsReadyToClaim] = useState(false);

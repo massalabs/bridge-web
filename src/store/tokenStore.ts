@@ -9,6 +9,7 @@ import {
   MAINNET,
 } from '@massalabs/massa-web3';
 import { create } from 'zustand';
+import { getEVMSymbol, getMASSASymbol } from './helpers/tokenSymbol';
 import { useAccountStore, useBridgeModeStore } from './store';
 import { config } from '../const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
@@ -27,13 +28,14 @@ import {
 
 export interface IToken {
   name: string;
-  allowance: bigint;
+  allowance: bigint; // MASSA token allowance
   decimals: number;
   symbol: string;
+  symbolEVM: string;
   massaToken: string;
   evmToken: string;
   chainId: number;
-  balance: bigint;
+  balance: bigint; // MASSA token balance
 }
 
 export interface TokenStoreState {
@@ -75,7 +77,8 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
           return {
             ...tokenPair,
             name,
-            symbol,
+            symbol: getMASSASymbol(symbol),
+            symbolEVM: getEVMSymbol(symbol),
             decimals,
             allowance: BigInt(0),
             balance: BigInt(0),
