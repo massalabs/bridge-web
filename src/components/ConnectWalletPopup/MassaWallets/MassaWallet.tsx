@@ -74,9 +74,7 @@ const MassaWallet = () => {
           {selectedProvider === SUPPORTED_MASSA_WALLETS.BEARBY && (
             <Tooltip
               customClass="mas-caption w-fit whitespace-nowrap"
-              content={Intl.t(
-                'connect-wallet.card-destination.non-massa-wallet',
-              )}
+              body={Intl.t('connect-wallet.card-destination.non-massa-wallet')}
             />
           )}
         </div>

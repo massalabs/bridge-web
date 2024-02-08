@@ -71,7 +71,7 @@ function TokenBalance(props: TokenBalanceProps) {
       {in2decimals}
       <Tooltip
         customClass="mas-caption w-fit whitespace-nowrap"
-        content={full + ' ' + token?.symbol ?? ''}
+        body={full + ' ' + token?.symbol ?? ''}
       />
     </div>
   );
