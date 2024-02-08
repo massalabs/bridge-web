@@ -102,11 +102,15 @@ export function FeesEstimation(props: FeesEstimationProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <p>{Intl.t('index.fee-estimate.massa')}</p>
-          <Tooltip
-            body={Intl.t('index.fee-estimate.tooltip-massa', { fees: feesMAS })}
-          >
-            <FiInfo size={18} />
-          </Tooltip>
+          {feesMAS !== '0' && (
+            <Tooltip
+              body={Intl.t('index.fee-estimate.tooltip-massa', {
+                fees: feesMAS,
+              })}
+            >
+              <FiInfo size={18} />
+            </Tooltip>
+          )}
         </div>
         <div className="flex items-center">{feesMAS} MAS</div>
       </div>
