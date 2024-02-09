@@ -10,7 +10,7 @@ import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -193,7 +193,7 @@ function TokenBalance(props: { layoutSide: SIDE }) {
   const { isFetching } = useAccountStore();
 
   const { selectedToken } = useTokenStore();
-  const { tokenBalance: tokenBalanceEvm } = useEvmBridge();
+  const { tokenBalance: tokenBalanceEvm } = useEvmToken();
 
   const decimals = selectedToken?.decimals || 18;
 

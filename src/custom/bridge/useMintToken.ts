@@ -30,7 +30,7 @@ export function useMintToken({ tokenAddress }: useMintTokenProps) {
       args: [address],
       value: BigInt(0),
     });
-  }, [address, tokenAddress]);
+  }, [address, tokenAddress, writeContract]);
 
   const { isSuccess, isLoading } = useWaitForTransactionReceipt({
     hash,

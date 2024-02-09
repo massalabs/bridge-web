@@ -14,7 +14,7 @@ import {
   handleLockError,
 } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useLock } from '@/custom/bridge/useLock';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import Intl from '@/i18n/i18n';
@@ -38,7 +38,7 @@ export function Index() {
   const { address: evmAddress } = useAccount();
 
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
-    useEvmBridge();
+    useEvmToken();
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [error, setError] = useState<{ amount: string } | null>(null);

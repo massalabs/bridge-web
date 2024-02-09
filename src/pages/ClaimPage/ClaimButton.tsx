@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
-import { PendingClaim } from './PendingClaim';
 import { SuccessClaim } from './SuccessClaim';
 import { useTokenStore } from '@/store/tokenStore';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
@@ -32,12 +31,6 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
     <>
       {(() => {
         switch (claimState) {
-          case ClaimState.PENDING:
-            return (
-              <div className="flex w-full justify-center">
-                <PendingClaim />
-              </div>
-            );
           case ClaimState.SUCCESS:
             return (
               <div className="flex w-full justify-center">
@@ -49,6 +42,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
               </div>
             );
           case ClaimState.REJECTED:
+          case ClaimState.PENDING:
           case ClaimState.INIT:
             return (
               <div className="flex w-full justify-center">

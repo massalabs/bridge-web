@@ -9,7 +9,6 @@ import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
 import {
-  useBridgeModeStore,
   useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
@@ -27,7 +26,6 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   const { address: evmAddress, chain } = useAccount();
 
   const { selectedToken, refreshBalances } = useTokenStore();
-  const { currentMode } = useBridgeModeStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const { currentTxID: burnOpId, amount } = useOperationStore();
 
@@ -57,7 +55,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
       toast.error(Intl.t('index.claim.error.unknown'));
       setLoadingToError();
     }
-  }, [currentMode, evmAddress, burnOpId, setClaimStep, setLoadingToError]);
+  }, [evmAddress, burnOpId, setClaimStep, setLoadingToError]);
 
   const isReadyToClaim = !!signatures.length;
   // Polls every 3 seconds to see if conditions are met to show claim
@@ -91,7 +89,16 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
         setClaimStep(ClaimSteps.Error);
       }
     }
-  }, [error, isSuccess]);
+  }, [
+    error,
+    isSuccess,
+    setBox,
+    refreshBalances,
+    setClaim,
+    setHasClickedClaimed,
+    setClaimStep,
+    setLoadingToError,
+  ]);
 
   async function _handleRedeem() {
     if (!amount || !evmAddress || !selectedToken || !burnOpId) return;

@@ -12,20 +12,23 @@ export function useClaim() {
 
   const { data: hash, writeContract, error } = useWriteContract();
 
-  const write = useCallback((operation: RedeemOperationToClaim) => {
-    writeContract({
-      abi: bridgeVaultAbi,
-      address: bridgeContractAddr,
-      functionName: 'redeem',
-      args: [
-        operation.amount,
-        operation.recipient,
-        operation.inputOpId,
-        operation.evmToken,
-        operation.signatures,
-      ],
-    });
-  }, []);
+  const write = useCallback(
+    (operation: RedeemOperationToClaim) => {
+      writeContract({
+        abi: bridgeVaultAbi,
+        address: bridgeContractAddr,
+        functionName: 'redeem',
+        args: [
+          operation.amount,
+          operation.recipient,
+          operation.inputOpId,
+          operation.evmToken,
+          operation.signatures,
+        ],
+      });
+    },
+    [writeContract, bridgeContractAddr],
+  );
 
   const { isSuccess } = useWaitForTransactionReceipt({
     hash,
