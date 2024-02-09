@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
-
 import { useAccount } from 'wagmi';
-
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore, useOperationStore } from '@/store/store';
+import { useOperationStore } from '@/store/store';
 import {
   RedeemOperationToClaim,
   checkIfUserHasTokensToClaim,
@@ -17,17 +15,13 @@ export function Claim() {
 
   if (!evmAddress) throw new Error('EVM address not found');
 
-  const { currentMode } = useBridgeModeStore();
-
   useEffect(() => {
     if (!evmAddress) return;
 
-    checkIfUserHasTokensToClaim(currentMode, evmAddress).then(
-      (pendingOperations) => {
-        setOpToRedeem(pendingOperations);
-      },
-    );
-  }, [evmAddress, currentMode, setOpToRedeem]);
+    checkIfUserHasTokensToClaim(evmAddress).then((pendingOperations) => {
+      setOpToRedeem(pendingOperations);
+    });
+  }, [evmAddress, setOpToRedeem]);
 
   const burnListIsNotEmpty = opToRedeem.length;
 

@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
-
 import { Button } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
@@ -19,7 +17,7 @@ export function ClaimTokensPopup() {
 
   useEffect(() => {
     if (!evmAddress) return;
-    checkIfUserHasTokensToClaim(currentMode, evmAddress).then(
+    checkIfUserHasTokensToClaim(evmAddress).then(
       (pendingOperations) => {
         setOpToRedeem(pendingOperations);
       },

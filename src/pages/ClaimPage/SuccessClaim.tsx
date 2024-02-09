@@ -10,8 +10,8 @@ import { formatAmount } from '@/utils/parseAmount';
 
 interface SuccessClaimProps {
   operation: RedeemOperationToClaim;
-  txHash: `0x${string}` | null;
-  symbol: string | undefined;
+  txHash?: `0x${string}`;
+  symbol?: string;
 }
 
 export function SuccessClaim(args: SuccessClaimProps) {
@@ -22,7 +22,7 @@ export function SuccessClaim(args: SuccessClaimProps) {
     window.open(url, '_blank', 'noreferrer');
   };
 
-  const [currentMode] = useBridgeModeStore((state) => [state.currentMode]);
+  const { currentMode } = useBridgeModeStore();
 
   const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + txHash;
 
