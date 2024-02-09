@@ -3,8 +3,7 @@
 // and keep the symbol as is for the MASSA blockchain
 
 export function getMASSASymbol(symbol: string) {
-  // add the suffix '.e' to the symbol only if it's not already there
-  return symbol.endsWith('.e') ? symbol : `${symbol}.e`;
+  return symbol;
 }
 
 export function getEVMSymbol(symbol: string) {
