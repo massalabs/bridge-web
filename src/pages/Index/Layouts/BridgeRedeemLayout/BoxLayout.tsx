@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
-import { useAccount, useFeeData } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
@@ -20,7 +20,6 @@ import {
 } from '@/store/store';
 import { IToken } from '@/store/tokenStore';
 import { SIDE } from '@/utils/const';
-import { formatStandard } from '@/utils/massaFormat';
 import { MassaNetworks } from '@/utils/network';
 import { formatAmount } from '@/utils/parseAmount';
 import { capitalize } from '@/utils/utils';
@@ -29,7 +28,6 @@ interface Layout {
   header: ReactNode;
   wallet: ReactNode;
   token: ReactNode;
-  fees: ReactNode;
   balance: ReactNode;
 }
 
@@ -191,28 +189,6 @@ function TokenOptions(props: TokenOptionsProps) {
   );
 }
 
-function EVMFees() {
-  const { data, isLoading } = useFeeData();
-
-  return (
-    <div className="flex items-center gap-2">
-      <p className="mas-body2">Total EVM fees:</p>
-      <div className="mas-body">
-        {isLoading ? <FetchingLine /> : data?.formatted.maxFeePerGas}
-      </div>
-    </div>
-  );
-}
-
-function MassaFees() {
-  return (
-    <div className="flex items-center gap-2">
-      <p className="mas-body2">Total fees:</p>
-      <p className="mas-body">{formatStandard(Number(0))}</p>
-    </div>
-  );
-}
-
 function TokenBalance(props: { layoutSide: SIDE }) {
   const { isFetching } = useAccountStore();
 
@@ -272,14 +248,12 @@ export function boxLayout(): BoxLayoutResult {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
         token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
-        fees: null,
         balance: <TokenBalance layoutSide={SIDE.MASSA_TO_EVM} />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
         token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
-        fees: <MassaFees />,
         balance: null,
       },
     },
@@ -288,14 +262,12 @@ export function boxLayout(): BoxLayoutResult {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
         token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
-        fees: null,
         balance: <TokenBalance layoutSide={SIDE.EVM_TO_MASSA} />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
         token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
-        fees: <EVMFees />,
         balance: null,
       },
     },
