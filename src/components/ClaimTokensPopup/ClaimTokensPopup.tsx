@@ -17,11 +17,9 @@ export function ClaimTokensPopup() {
 
   useEffect(() => {
     if (!evmAddress) return;
-    checkIfUserHasTokensToClaim(evmAddress).then(
-      (pendingOperations) => {
-        setOpToRedeem(pendingOperations);
-      },
-    );
+    checkIfUserHasTokensToClaim(evmAddress).then((pendingOperations) => {
+      setOpToRedeem(pendingOperations);
+    });
   }, [evmAddress, currentMode, setOpToRedeem]);
 
   const evmChainName = evmConnectedChain?.name;

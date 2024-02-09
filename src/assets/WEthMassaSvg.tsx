@@ -45,7 +45,7 @@ export function WEthMassaSvg() {
         fill="black"
       />
       <rect x="24" width="20" height="20" rx="10" fill="#FF0000" />
-      <g clip-path="url(#clip0_4859_30379)">
+      <g clipPath="url(#clip0_4859_30379)">
         <path
           d="M33.9989 3.75L33.917 4.03486V12.3001L33.9989 12.3837L37.7477 10.1159L33.9989 3.75Z"
           fill="#FF9595"

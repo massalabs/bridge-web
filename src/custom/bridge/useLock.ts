@@ -40,6 +40,7 @@ export function useLock() {
     connectedAccount,
     evmToken,
     bridgeContractAddr,
+    writeContract,
   ]);
 
   const { isSuccess } = useWaitForTransactionReceipt({

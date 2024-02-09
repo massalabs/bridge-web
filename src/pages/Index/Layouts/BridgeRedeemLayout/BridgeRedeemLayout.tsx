@@ -9,7 +9,7 @@ import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';
 import { GetTokensPopUpModal } from '@/components';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -41,7 +41,8 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
     handleToggleLayout,
   } = args;
 
-  const { tokenBalance: _tokenBalanceEVM } = useEvmBridge();
+  const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
+    useEvmToken();
   const { isConnected: isEvmWalletConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
   const { side, amount } = useOperationStore();
@@ -53,7 +54,7 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   function handlePercent(percent: number) {
-    if (!token) return;
+    if (!token || !isBalanceFetched) return;
 
     if (
       (massaToEvm && token.balance <= 0) ||
