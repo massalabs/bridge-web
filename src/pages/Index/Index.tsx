@@ -141,7 +141,7 @@ export function Index() {
       setApprove(Status.Success);
       if (!amount) return;
       setLock(Status.Loading);
-      writeLock?.();
+      writeLock();
     }
     if (approveError) {
       handleEvmApproveError(approveError);
@@ -206,14 +206,8 @@ export function Index() {
   // TODO: refactor this
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || !amount) return;
     setBox(Status.Loading);
-
-    if (!amount) {
-      // for typescript type inference
-      // if amount is undefined, validate() should return false
-      return;
-    }
 
     if (massaToEvm) {
       if (!massaClient) {
