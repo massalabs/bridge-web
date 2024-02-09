@@ -186,7 +186,8 @@
       "bridge-rate": "Bridge rate",
       "massa": "Transaction fees on Massa est.",
       "ethereum": "Transaction fees on Ethereum est.",
-      "on": "on"
+      "on": "on",
+      "tooltip-massa": "Massa blockchain charges {fees} MAS to pay for the storage on the ledger."
     }
   },
   "unexpected-error": {
