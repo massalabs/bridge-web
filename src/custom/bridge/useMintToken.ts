@@ -1,8 +1,7 @@
 import {
-  usePrepareContractWrite,
-  useContractWrite,
   useAccount,
-  useWaitForTransaction,
+  useWaitForTransactionReceipt,
+  useWriteContract,
 } from 'wagmi';
 
 interface useMintTokenProps {
@@ -12,26 +11,29 @@ interface useMintTokenProps {
 export function useMintToken({ tokenAddress }: useMintTokenProps) {
   const { address } = useAccount();
 
-  const prepareContractWrite = usePrepareContractWrite({
-    address: tokenAddress as `0x${string}`,
-    abi: [
-      {
-        inputs: [{ internalType: 'address', name: 'to', type: 'address' }],
-        name: 'create',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function',
-      },
-    ],
-    functionName: 'create',
-    args: [address],
-    value: BigInt(0),
-  });
-  const contractWrite = useContractWrite(prepareContractWrite.config);
+  const { data: hash, writeContract, error } = useWriteContract();
 
-  const waitForTransaction = useWaitForTransaction({
-    hash: contractWrite.data?.hash,
+  const write = () => {
+    writeContract({
+      address: tokenAddress as `0x${string}`,
+      abi: [
+        {
+          inputs: [{ internalType: 'address', name: 'to', type: 'address' }],
+          name: 'create',
+          outputs: [],
+          stateMutability: 'nonpayable',
+          type: 'function',
+        },
+      ],
+      functionName: 'create',
+      args: [address],
+      value: BigInt(0),
+    });
+  };
+
+  const { isSuccess, isLoading } = useWaitForTransactionReceipt({
+    hash,
   });
 
-  return { contractWrite, waitForTransaction, prepareContractWrite };
+  return { isSuccess, isLoading, error, write };
 }

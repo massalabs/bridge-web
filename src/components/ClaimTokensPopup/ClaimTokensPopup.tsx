@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { Button } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
@@ -11,7 +11,7 @@ import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
 export function ClaimTokensPopup() {
   const { opToRedeem, setOpToRedeem } = useOperationStore();
 
-  const { address: evmAddress } = useAccount();
+  const { address: evmAddress, chain: evmConnectedChain } = useAccount();
 
   const { currentMode } = useBridgeModeStore();
 
@@ -29,8 +29,6 @@ export function ClaimTokensPopup() {
     );
     setOpToRedeem(pendingOperations);
   }
-
-  const { chain: evmConnectedChain } = useNetwork();
 
   const evmChainName = evmConnectedChain?.name;
 

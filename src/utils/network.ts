@@ -2,7 +2,7 @@ import {
   MAINNET as web3Mainnet,
   BUILDNET as web3Buildnet,
 } from '@massalabs/massa-web3';
-import { mainnet, sepolia } from 'wagmi';
+import { mainnet, sepolia } from 'wagmi/chains';
 
 export const MassaNetworks = {
   mainnet: web3Mainnet.toLowerCase(),

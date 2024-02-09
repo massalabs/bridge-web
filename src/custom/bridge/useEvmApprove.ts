@@ -1,10 +1,6 @@
 import { U256_MAX } from '@massalabs/massa-web3';
-import {
-  erc20ABI,
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
+import { erc20Abi } from 'viem';
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { config } from '@/const/const';
 import { useBridgeModeStore, useTokenStore } from '@/store/store';
 
@@ -15,21 +11,20 @@ export function useEvmApprove() {
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
-  const { config: writeConfig, isSuccess: isPrepared } =
-    usePrepareContractWrite({
+  const { data: hash, writeContract, error } = useWriteContract();
+
+  const write = () => {
+    writeContract({
       address: evmToken,
-      abi: erc20ABI,
+      abi: erc20Abi,
       functionName: 'approve',
       args: [bridgeContractAddr, U256_MAX],
-      enabled: Boolean(selectedToken),
     });
+  };
 
-  const { data, write, error, isError } = useContractWrite(writeConfig);
-
-  const { isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
-    timeout: 30000,
+  const { isSuccess } = useWaitForTransactionReceipt({
+    hash,
   });
 
-  return { isPrepared, isSuccess, isError, error, write };
+  return { isSuccess, error, write };
 }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { erc20Abi } from 'viem';
 import {
-  useContractWrite,
-  useContractRead,
   useAccount,
   useBalance,
-  erc20ABI,
+  useReadContract,
+  useWriteContract,
 } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
@@ -24,16 +24,13 @@ const useEvmBridge = () => {
   const balanceData = useBalance({
     token: evmToken,
     address: accountAddress,
-    watch: true,
   });
 
-  const _allowance = useContractRead({
+  const _allowance = useReadContract({
     address: evmToken,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: 'allowance',
     args: [evmUserAddress, bridgeContractAddr],
-    enabled: Boolean(accountAddress && evmToken),
-    watch: true,
   });
 
   const [tokenBalance, setTokenBalance] = useState<bigint>(0n);
@@ -51,11 +48,7 @@ const useEvmBridge = () => {
     setAllowance(_allowance.data || 0n);
   }, [selectedToken, _allowance?.data]);
 
-  const redeem = useContractWrite({
-    abi: bridgeVaultAbi,
-    address: bridgeContractAddr,
-    functionName: 'redeem',
-  });
+  const { writeContract } = useWriteContract();
 
   async function handleRedeem(
     amount: string,
@@ -65,7 +58,10 @@ const useEvmBridge = () => {
     signatures: string[],
   ): Promise<boolean> {
     try {
-      await redeem.writeAsync({
+      writeContract({
+        abi: bridgeVaultAbi,
+        address: bridgeContractAddr,
+        functionName: 'redeem',
         args: [amount, recipient, burnOpId, token, signatures],
       });
       return true;

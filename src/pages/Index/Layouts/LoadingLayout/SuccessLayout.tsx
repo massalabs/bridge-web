@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './LoadingLayout';
 import { Blockchain, METAMASK } from '@/const';
 import { faqURL } from '@/const/faq';
@@ -13,17 +13,19 @@ import { SIDE } from '@/utils/const';
 import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
-  const { amount, onClose } = props;
+  const { onClose } = props;
   const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const { selectedToken: token } = useTokenStore();
-
-  const { in2decimals } = formatAmountToDisplay(amount, token);
+  const { amount } = useOperationStore();
 
   const { isMainnet } = useBridgeModeStore();
-  const { chain } = useNetwork();
-  if (!chain || !token) throw new Error('Chain or token not found');
+  const { chain } = useAccount();
+  if (!chain || !token || !amount)
+    throw new Error('Chain, token or amount not found');
+
+  const { in2decimals } = formatAmountToDisplay(amount, token);
 
   const massaChainAndNetwork = `${Blockchain.MASSA} ${
     isMainnet ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET

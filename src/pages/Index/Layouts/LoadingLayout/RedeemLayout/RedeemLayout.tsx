@@ -8,7 +8,7 @@ import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 
 export function RedeemLayout({ ...props }: LoadingBoxProps) {
-  const { redeemSteps, amount, decimals } = props;
+  const { redeemSteps } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
 
@@ -19,8 +19,6 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
 
   const claimArgs = {
     setClaimStep,
-    amount,
-    decimals,
   };
 
   return (

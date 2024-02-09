@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import { ClaimSteps } from './RedeemLayout';
 import {
@@ -23,21 +23,18 @@ import { CustomError, isRejectedByUser } from '@/utils/error';
 
 interface ClaimProps {
   setClaimStep: (claimStep: ClaimSteps) => void;
-  amount: string;
-  decimals: number;
 }
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
 
-export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
-  const { address: evmAddress } = useAccount();
+export function Claim({ setClaimStep }: ClaimProps) {
+  const { address: evmAddress, chain } = useAccount();
 
   const { selectedToken } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
   const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
-  const { chain } = useNetwork();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
-  const { currentTxID } = useOperationStore();
+  const { currentTxID, amount } = useOperationStore();
 
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
@@ -100,7 +97,7 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
   }, [burn, isReadyToClaim, handleClaimRedeem, setClaim, setClaimStep]);
 
   async function _handleRedeem() {
-    if (!evmAddress || !selectedToken || !currentTxID) return;
+    if (!amount || !evmAddress || !selectedToken || !currentTxID) return;
     setUserHasRejected(false);
     try {
       if (hasClickedClaimed) {
@@ -111,7 +108,7 @@ export function Claim({ setClaimStep, amount, decimals }: ClaimProps) {
       setClaimStep(ClaimSteps.AwaitingSignature);
       setHasClickedClaimed(true);
       const evmRedeem = await _handleRedeemEVM(
-        parseUnits(amount, decimals).toString(),
+        parseUnits(amount, selectedToken.decimals).toString(),
         evmAddress,
         selectedToken.evmToken as `0x${string}`,
         currentTxID,
