@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
-import { formatEther, parseUnits } from 'viem';
-import { useToken } from 'wagmi';
+import { erc20Abi, formatEther, parseUnits } from 'viem';
+import { useReadContracts } from 'wagmi';
 import { EthSvgRed } from '@/assets/EthSvgRed';
 import { forwardBurnFees, increaseAllowanceFee } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
@@ -22,7 +22,17 @@ export function FeesEstimation(props: FeesEstimationProps) {
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const { selectedToken } = useTokenStore();
   const evmToken = selectedToken?.evmToken as `0x${string}`;
-  const { data: tokenData } = useToken({ address: evmToken });
+
+  const { data: tokenData } = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: evmToken,
+        abi: erc20Abi,
+        functionName: 'decimals',
+      },
+    ],
+  });
   const { allowance } = useEvmBridge();
 
   const [feesETH, setFeesETH] = useState('-');
@@ -45,7 +55,7 @@ export function FeesEstimation(props: FeesEstimationProps) {
         setFeesMAS('-');
         return;
       }
-      const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
+      const amountInBigInt = parseUnits(amount || '0', tokenData?.[0]);
       let storageFeesMAS = forwardBurnFees.coins;
       if (selectedToken.allowance < amountInBigInt) {
         storageFeesMAS += increaseAllowanceFee.coins;
@@ -58,12 +68,12 @@ export function FeesEstimation(props: FeesEstimationProps) {
         setFeesETH('-');
         return;
       }
-      const amountInBigInt = parseUnits(amount || '0', tokenData.decimals);
+      const amountInBigInt = parseUnits(amount || '0', tokenData?.[0]);
       Promise.all([
         allowance < amountInBigInt
           ? estimateApproveFees()
           : Promise.resolve(0n),
-        estimateLockFees(amount || '0'),
+        estimateLockFees(),
       ]).then(([approveFees, lockFees]) => {
         setFeesETHWithCheck(approveFees + lockFees);
       });

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
-import { useNetwork } from 'wagmi';
 
+import { useAccount } from 'wagmi';
 import { validateEvmNetwork, validateMassaNetwork } from '../../utils/network';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -10,7 +10,7 @@ export function useNetworkCheck(
   setWrongNetwork: (value: boolean) => void,
 ): void {
   const { connectedNetwork } = useAccountStore();
-  const { chain: evmConnectedChain } = useNetwork();
+  const { chain: evmConnectedChain } = useAccount();
   const [isMainnet, currentMode] = useBridgeModeStore((state) => [
     state.isMainnet,
     state.currentMode,

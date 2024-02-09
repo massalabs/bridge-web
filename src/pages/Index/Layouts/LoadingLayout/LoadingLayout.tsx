@@ -11,9 +11,7 @@ import { SIDE } from '@/utils/const';
 
 export interface LoadingBoxProps {
   onClose: () => void;
-  amount: string;
   redeemSteps: string;
-  decimals: number;
 }
 
 export function LoadingLayout(props: LoadingBoxProps) {

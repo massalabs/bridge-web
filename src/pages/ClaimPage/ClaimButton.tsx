@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { PendingClaim } from './PendingClaim';
@@ -21,9 +20,13 @@ interface ClaimOperationContainerProps {
 }
 
 export function ClaimButton({ operation }: ClaimOperationContainerProps) {
-  const { selectedToken } = useTokenStore();
+  const { tokens } = useTokenStore();
   const [claimState, setClaimState] = useState(ClaimState.INIT);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
+
+  const symbol = tokens.find(
+    (t) => t.evmToken === operation.evmToken,
+  )?.symbolEVM;
 
   function onStateChange(state: ClaimState, txHash?: `0x${string}` | null) {
     setClaimState(state);
@@ -31,8 +34,6 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
       setTxHash(txHash);
     }
   }
-
-  const symbol = selectedToken?.symbolEVM;
 
   return (
     <>

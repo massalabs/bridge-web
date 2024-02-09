@@ -1,24 +1,24 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { PropsWithChildren } from 'react';
-
 import {
   RainbowKitProvider,
   darkTheme,
   lightTheme,
 } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
-
-import { chains, config } from '@/const/wagmi';
-import { useConfigStore } from '@/store/store';
+import { sepolia, mainnet } from 'viem/chains';
+import { WagmiProvider } from 'wagmi';
+import { config } from '../const/wagmi';
+import { useBridgeModeStore, useConfigStore } from '@/store/store';
 
 export function EvmWalletContext({ children }: PropsWithChildren<unknown>) {
-  const [theme] = useConfigStore((state) => [state.theme]);
+  const { theme } = useConfigStore();
+  const { isMainnet } = useBridgeModeStore();
   const rainbowkitTheme = theme === 'theme-dark' ? darkTheme : lightTheme;
 
   return (
-    <WagmiConfig config={config}>
+    <WagmiProvider config={config}>
       <RainbowKitProvider
-        chains={chains}
+        initialChain={isMainnet ? mainnet : sepolia}
         theme={rainbowkitTheme({
           accentColor: '#3271A5',
           accentColorForeground: 'white',
@@ -29,6 +29,6 @@ export function EvmWalletContext({ children }: PropsWithChildren<unknown>) {
       >
         {children}
       </RainbowKitProvider>
-    </WagmiConfig>
+    </WagmiProvider>
   );
 }

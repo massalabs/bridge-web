@@ -1,10 +1,7 @@
+import { useCallback } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseUnits } from 'viem';
-import {
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
 import {
@@ -24,28 +21,30 @@ export function useLock() {
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
-  const { config: writeConfig, isSuccess: isPrepared } =
-    usePrepareContractWrite({
-      abi: bridgeVaultAbi,
+  const { data: hash, writeContract, error } = useWriteContract();
+
+  const write = useCallback(() => {
+    const _amount = parseUnits(
+      debouncedAmount || '0',
+      selectedToken?.decimals || 18,
+    );
+    writeContract({
       address: bridgeContractAddr,
+      abi: bridgeVaultAbi,
       functionName: 'lock',
-      args: [
-        parseUnits(
-          debouncedAmount || '0',
-          selectedToken?.decimals || 18,
-        ).toString(),
-        connectedAccount?.address(),
-        evmToken,
-      ],
-      enabled: Boolean(amount && connectedAccount && selectedToken),
+      args: [_amount.toString(), connectedAccount?.address(), evmToken],
     });
+  }, [
+    debouncedAmount,
+    selectedToken,
+    connectedAccount,
+    evmToken,
+    bridgeContractAddr,
+  ]);
 
-  const { write, data, error, isError } = useContractWrite(writeConfig);
-
-  const { isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
-    timeout: 30000,
+  const { isSuccess } = useWaitForTransactionReceipt({
+    hash,
   });
 
-  return { data, isPrepared, isSuccess, isError, error, write };
+  return { isSuccess, error, write, hash };
 }

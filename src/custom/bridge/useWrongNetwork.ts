@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { validateEvmNetwork, validateMassaNetwork } from '@/utils/network';
 
 export function useWrongNetworkEVM() {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { isMainnet } = useBridgeModeStore();
 
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);

@@ -1,6 +1,6 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { Log, parseUnits } from 'viem';
-import { useAccount, useToken, useContractEvent } from 'wagmi';
+import { useAccount, useWatchContractEvent } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
@@ -42,9 +42,6 @@ export function Index() {
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmBridge();
 
-  const evmToken = selectedToken?.evmToken as `0x${string}`;
-  const { data: tokenData } = useToken({ address: evmToken });
-
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [error, setError] = useState<{ amount: string } | null>(null);
 
@@ -56,25 +53,20 @@ export function Index() {
   const { box, setBox, setClaim, setLock, setApprove, reset } =
     useGlobalStatusesStore();
 
-  const [decimals, setDecimals] = useState<number>(tokenData?.decimals || 18);
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
   useNetworkCheck(setWrongNetwork);
 
   const {
-    isPrepared: approveIsPrepared,
     isSuccess: approveIsSuccess,
-    isError: approveIsError,
     error: approveError,
     write: writeEvmApprove,
   } = useEvmApprove();
 
   const {
-    isPrepared: lockIsPrepared,
     isSuccess: lockIsSuccess,
-    isError: lockIsError,
     write: writeLock,
-    data: lockData,
+    hash: lockHash,
     error: lockError,
   } = useLock();
 
@@ -84,8 +76,6 @@ export function Index() {
   const isBlurred = isLoading ? 'blur-md' : '';
 
   const isButtonDisabled =
-    !approveIsPrepared ||
-    !lockIsPrepared ||
     isFetching ||
     !connectedAccount ||
     wrongNetwork ||
@@ -93,13 +83,12 @@ export function Index() {
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
 
-  const stopListeningRedeemedEvent = useContractEvent({
+  useWatchContractEvent({
     address: config[currentMode].evmBridgeContract,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
-    listener(logs) {
+    onLogs(logs: Log[]) {
       setRedeemLogs(logs);
-      stopListeningRedeemedEvent?.();
     },
   });
 
@@ -117,8 +106,7 @@ export function Index() {
 
   useEffect(() => {
     setError({ amount: '' });
-    setDecimals(tokenData?.decimals || 18);
-  }, [amount, side, selectedToken?.name, tokenData?.decimals]);
+  }, [amount, side, selectedToken?.name]);
 
   useEffect(() => {
     setAmount();
@@ -127,21 +115,21 @@ export function Index() {
   useEffect(() => {
     if (lockIsSuccess) {
       setLock(Status.Success);
-      if (!lockData) return;
+      if (!lockHash) return;
       // Set lock id
-      setCurrentTxID(lockData.hash);
+      setCurrentTxID(lockHash);
       if (!massaClient) return;
       handleMintBridge();
     }
-    if (lockIsError) {
-      handleLockError(lockError!);
+    if (lockError) {
+      handleLockError(lockError);
       setBox(Status.Error);
       setLock(Status.Error);
     }
   }, [
     lockIsSuccess,
-    lockIsError,
-    lockData,
+    lockError,
+    lockHash,
     massaClient,
     setLock,
     setBox,
@@ -155,16 +143,15 @@ export function Index() {
       setLock(Status.Loading);
       writeLock?.();
     }
-    if (approveIsError) {
-      handleEvmApproveError(approveError!);
+    if (approveError) {
+      handleEvmApproveError(approveError);
       setBox(Status.Error);
       setApprove(Status.Error);
     }
   }, [
     approveIsSuccess,
-    approveIsError,
+    approveError,
     amount,
-    decimals,
     setApprove,
     setLock,
     setBox,
@@ -189,12 +176,12 @@ export function Index() {
   function validate() {
     setError(null);
 
-    if (!amount) {
+    if (!amount || !selectedToken) {
       setError({ amount: Intl.t('index.approve.error.invalid-amount') });
       return false;
     }
 
-    const _amount = parseUnits(amount, decimals);
+    const _amount = parseUnits(amount, selectedToken.decimals);
     let _balance;
 
     if (massaToEvm) {
@@ -246,9 +233,11 @@ export function Index() {
         });
       }
     } else {
+      if (!selectedToken) {
+        return;
+      }
       setApprove(Status.Loading);
-
-      let _amount = parseUnits(amount, decimals);
+      let _amount = parseUnits(amount, selectedToken.decimals);
       const needApproval = _allowanceEVM < _amount;
 
       if (needApproval) {
@@ -265,19 +254,12 @@ export function Index() {
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
       {/* If loading -> show loading layout else show home page*/}
       {isLoading ? (
-        <LoadingLayout
-          onClose={closeLoadingBox}
-          amount={amount ?? '0'}
-          redeemSteps={redeemSteps}
-          decimals={decimals}
-        />
+        <LoadingLayout onClose={closeLoadingBox} redeemSteps={redeemSteps} />
       ) : (
         <BridgeRedeemLayout
           isBlurred={isBlurred}
           isButtonDisabled={isButtonDisabled}
-          amount={amount}
           error={error}
-          decimals={decimals}
           setAmount={setAmount}
           setError={setError}
           handleSubmit={handleSubmit}

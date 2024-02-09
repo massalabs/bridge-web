@@ -23,8 +23,6 @@ import { formatAmount } from '@/utils/parseAmount';
 interface BridgeRedeemArgs {
   isBlurred: string;
   isButtonDisabled: boolean;
-  amount: string | undefined;
-  decimals: number;
   error: any;
   setAmount: (state: string) => void;
   setError: (state: { amount: string } | null) => void;
@@ -36,8 +34,6 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
   const {
     isBlurred,
     isButtonDisabled,
-    amount,
-    decimals,
     error,
     setAmount,
     setError,
@@ -48,9 +44,9 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
   const { tokenBalance: _tokenBalanceEVM } = useEvmBridge();
   const { isConnected: isEvmWalletConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
-  const { side } = useOperationStore();
-  const [isFetching] = useAccountStore((state) => [state.isFetching]);
-  const [token] = useTokenStore((state) => [state.selectedToken]);
+  const { side, amount } = useOperationStore();
+  const { isFetching } = useAccountStore();
+  const { selectedToken: token } = useTokenStore();
 
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
 
@@ -68,12 +64,12 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
     }
 
     const amount = massaToEvm
-      ? formatAmount(token?.balance.toString(), decimals, '').full
-      : formatAmount(_tokenBalanceEVM.toString(), decimals, '').full;
+      ? formatAmount(token?.balance.toString(), token.decimals, '').full
+      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '').full;
 
     const x = new Big(amount);
     const y = new Big(percent);
-    const res = x.times(y).round(decimals).toFixed();
+    const res = x.times(y).round(token.decimals).toFixed();
 
     setAmount(res);
   }
@@ -98,7 +94,7 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
                 onValueChange={(o) => setAmount(o.value)}
                 placeholder={Intl.t('index.input.placeholder.amount')}
                 suffix=""
-                decimalScale={decimals}
+                decimalScale={token?.decimals}
                 error={error?.amount}
               />
               <div className="flex flex-row-reverse">
@@ -170,7 +166,7 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
                 value={amount}
                 onValueChange={(o) => setAmount(o.value)}
                 suffix=""
-                decimalScale={decimals}
+                decimalScale={token?.decimals}
                 error=""
                 disable={true}
               />
