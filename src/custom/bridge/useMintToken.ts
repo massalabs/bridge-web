@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -13,7 +14,7 @@ export function useMintToken({ tokenAddress }: useMintTokenProps) {
 
   const { data: hash, writeContract, error } = useWriteContract();
 
-  const write = () => {
+  const write = useCallback(() => {
     writeContract({
       address: tokenAddress as `0x${string}`,
       abi: [
@@ -29,7 +30,7 @@ export function useMintToken({ tokenAddress }: useMintTokenProps) {
       args: [address],
       value: BigInt(0),
     });
-  };
+  }, [address, tokenAddress]);
 
   const { isSuccess, isLoading } = useWaitForTransactionReceipt({
     hash,

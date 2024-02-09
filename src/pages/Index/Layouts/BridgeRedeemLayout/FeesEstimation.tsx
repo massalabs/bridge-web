@@ -2,32 +2,20 @@ import { useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
-import { erc20Abi, formatEther, parseUnits } from 'viem';
-import { useReadContracts } from 'wagmi';
-import { EthSvg } from '@/assets/EthSvg';
+import { formatEther, parseUnits } from 'viem';
 import { forwardBurnFees, increaseAllowanceFee } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
 import Intl from '@/i18n/i18n';
 import { useOperationStore, useTokenStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
+import { EthSvg } from '../../../../assets/EthSvg';
 
 export function FeesEstimation() {
   const { side, amount } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const { selectedToken } = useTokenStore();
-  const evmToken = selectedToken?.evmToken as `0x${string}`;
 
-  const { data: tokenData } = useReadContracts({
-    allowFailure: false,
-    contracts: [
-      {
-        address: evmToken,
-        abi: erc20Abi,
-        functionName: 'decimals',
-      },
-    ],
-  });
   const { allowance } = useEvmBridge();
 
   const [feesETH, setFeesETH] = useState('-');
@@ -46,11 +34,11 @@ export function FeesEstimation() {
     };
 
     if (massaToEvm) {
-      if (!selectedToken || !tokenData) {
+      if (!selectedToken) {
         setFeesMAS('-');
         return;
       }
-      const amountInBigInt = parseUnits(amount || '0', tokenData?.[0]);
+      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
       let storageFeesMAS = forwardBurnFees.coins;
       if (selectedToken.allowance < amountInBigInt) {
         storageFeesMAS += increaseAllowanceFee.coins;
@@ -59,11 +47,11 @@ export function FeesEstimation() {
       setFeesETHWithCheck(estimateClaimFees());
     } else {
       setFeesMAS('0');
-      if (!tokenData) {
+      if (!selectedToken) {
         setFeesETH('-');
         return;
       }
-      const amountInBigInt = parseUnits(amount || '0', tokenData?.[0]);
+      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
       Promise.all([
         allowance < amountInBigInt
           ? estimateApproveFees()
@@ -76,7 +64,6 @@ export function FeesEstimation() {
   }, [
     massaToEvm,
     amount,
-    tokenData,
     allowance,
     estimateApproveFees,
     estimateLockFees,

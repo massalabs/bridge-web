@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-import { BridgeMode, config } from '../const';
+import { config } from '../const';
+import { useBridgeModeStore } from '../store/store';
 
 export interface Locked {
   amount: string;
@@ -53,14 +54,16 @@ export interface RedeemOperationToClaim {
   evmToken: `0x${string}`;
 }
 
+const lambdaEndpoint = 'bridge-getHistory-prod';
+
 export async function getBurnedByEvmAddress(
-  mode: BridgeMode,
   evmAddress: `0x${string}`,
-  endPoint: string,
 ): Promise<Burned[]> {
+  const { currentMode } = useBridgeModeStore.getState();
+
   let response: LambdaResponse;
   try {
-    response = await axios.get(config[mode].lambdaUrl + endPoint, {
+    response = await axios.get(config[currentMode].lambdaUrl + lambdaEndpoint, {
       params: {
         evmAddress,
       },
@@ -73,8 +76,6 @@ export async function getBurnedByEvmAddress(
   return response.data.burned;
 }
 
-export const endPoint = 'bridge-getHistory-prod';
-
 export enum operationStates {
   new = 'new',
   processing = 'processing',
@@ -84,44 +85,32 @@ export enum operationStates {
 }
 
 // returns all processing operations with a burn operation id
-export function filterByOpId(
-  BurnedOpList: Burned[],
-  operationId: string,
-): Burned | undefined {
-  return BurnedOpList.find(
+export async function findClaimable(
+  userEvmAddress: `0x${string}`,
+  burnOpId: string,
+): Promise<Burned | undefined> {
+  const burnedOpList = await getBurnedByEvmAddress(userEvmAddress);
+
+  return burnedOpList.find(
     (item) =>
       item.outputTxId === null &&
       item.state === operationStates.processing &&
-      item.inputOpId === operationId,
+      item.inputOpId === burnOpId,
   );
 }
 
-export function getOperationsToClaim(
-  operationsArray: Burned[],
-): RedeemOperationToClaim[] {
-  return operationsArray.map((opToClaim) => ({
-    recipient: opToClaim.recipient,
-    amount: opToClaim.amount,
-    inputOpId: opToClaim.inputOpId,
-    signatures: sortSignatures(opToClaim.signatures),
-    evmToken: opToClaim.evmToken,
-  }));
-}
-
 export function sortSignatures(signatures: Signatures[]): string[] {
-  const sortedSignatures = signatures.sort((a, b) => a.relayerId - b.relayerId);
-
-  const signaturesInOrder = sortedSignatures.map((signature: Signatures) => {
-    return signature.signature;
-  });
-  return signaturesInOrder;
+  return signatures
+    .sort((a, b) => a.relayerId - b.relayerId)
+    .map((signature: Signatures) => {
+      return signature.signature;
+    });
 }
 
 export async function checkIfUserHasTokensToClaim(
-  mode: BridgeMode,
   evmAddress: `0x${string}`,
 ): Promise<RedeemOperationToClaim[]> {
-  const burnedOpList = await getBurnedByEvmAddress(mode, evmAddress, endPoint);
+  const burnedOpList = await getBurnedByEvmAddress(evmAddress);
 
   return burnedOpList
     .filter(

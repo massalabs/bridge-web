@@ -1,33 +1,25 @@
+import { useEffect } from 'react';
 import { Tooltip, Button } from '@massalabs/react-ui-kit';
 import { ClaimState } from './ClaimButton';
-import { claimTokens } from '../../utils/claimTokens';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
+import { useClaim } from '../../custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface ClaimButton {
   operation: RedeemOperationToClaim;
-  onStateChange: (state: ClaimState, txHash?: `0x${string}` | null) => void;
-  symbol: string | undefined;
+  setClaimState: (state: ClaimState) => void;
   claimState: ClaimState;
+  setHash: (hash: `0x${string}`) => void;
+  symbol?: string;
 }
 
 export function InitClaim(args: ClaimButton) {
-  const { operation: op, symbol, onStateChange, claimState } = args;
-  const { handleRedeem } = useEvmBridge();
+  const { operation: op, symbol, setClaimState, claimState, setHash } = args;
+  const { write, error, isSuccess, hash } = useClaim();
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
-
-  const claimTokenArgs = {
-    amount: op.amount,
-    recipient: op.recipient,
-    token: op.evmToken,
-    inputOpId: op.inputOpId,
-    signatures: op.signatures,
-    changeClaimState: onStateChange,
-    redeemFunction: handleRedeem,
-  };
 
   const displayContentArgs = {
     claimState,
@@ -37,6 +29,22 @@ export function InitClaim(args: ClaimButton) {
 
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
+  useEffect(() => {
+    if (isSuccess && hash) {
+      setClaimState(ClaimState.SUCCESS);
+      setHash(hash);
+    }
+    if (error) {
+      const state = handleEvmClaimError(error);
+      setClaimState(state);
+    }
+  }, [error, isSuccess, hash]);
+
+  function handleClaim() {
+    setClaimState(ClaimState.PENDING);
+    write(op);
+  }
+
   return (
     <div
       className={`flex justify-between items-center
@@ -45,7 +53,7 @@ export function InitClaim(args: ClaimButton) {
     >
       <DisplayContent {...displayContentArgs} />
       <div>
-        <Button onClick={() => claimTokens(claimTokenArgs)}>
+        <Button onClick={() => handleClaim()}>
           {Intl.t('claim.claim')} {symbol}
         </Button>
       </div>

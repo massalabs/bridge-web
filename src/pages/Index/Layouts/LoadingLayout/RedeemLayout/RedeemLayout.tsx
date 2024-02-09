@@ -18,6 +18,7 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const isBurnSuccessful = burn === Status.Success;
 
   const claimArgs = {
+    claimStep,
     setClaimStep,
   };
 
