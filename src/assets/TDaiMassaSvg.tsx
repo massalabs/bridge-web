@@ -8,7 +8,7 @@ export function TDaiMassaSvg() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_4939_4553)">
+      <g clipPath="url(#clip0_4939_4553)">
         <path
           d="M20 4C31.0467 4 40 12.9551 40 24C40 35.0467 31.0467 44 20 44C8.95509 44 0 35.0458 0 24C0 12.9551 8.95509 4 20 4Z"
           fill="#F5AC37"
@@ -19,7 +19,7 @@ export function TDaiMassaSvg() {
         />
       </g>
       <rect x="24" width="20" height="20" rx="10" fill="#FF0000" />
-      <g clip-path="url(#clip1_4939_4553)">
+      <g clipPath="url(#clip1_4939_4553)">
         <path
           d="M33.9989 3.75L33.917 4.03486V12.3001L33.9989 12.3837L37.7477 10.1159L33.9989 3.75Z"
           fill="white"

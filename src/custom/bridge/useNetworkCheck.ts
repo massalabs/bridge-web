@@ -53,5 +53,15 @@ export function useNetworkCheck(
     }
 
     setWrongNetwork(!massaOk || !evmOk);
-  }, [evmConnectedChain, currentMode, connectedNetwork]);
+  }, [
+    evmConnectedChain,
+    currentMode,
+    connectedNetwork,
+    isMainnet,
+    setWrongNetwork,
+    toastIdEvm,
+    toastIdMassa,
+    setToastIdEvm,
+    setToastIdMassa,
+  ]);
 }

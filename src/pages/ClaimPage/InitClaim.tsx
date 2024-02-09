@@ -3,6 +3,7 @@ import { Tooltip, Button } from '@massalabs/react-ui-kit';
 import { ClaimState } from './ClaimButton';
 import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../custom/bridge/useClaim';
+import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
@@ -20,6 +21,7 @@ export function InitClaim(args: ClaimButton) {
   const { write, error, isSuccess, hash } = useClaim();
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
+  const isPending = claimState === ClaimState.PENDING;
 
   const displayContentArgs = {
     claimState,
@@ -38,14 +40,16 @@ export function InitClaim(args: ClaimButton) {
       const state = handleEvmClaimError(error);
       setClaimState(state);
     }
-  }, [error, isSuccess, hash]);
+  }, [error, isSuccess, hash, setHash, setClaimState]);
 
   function handleClaim() {
     setClaimState(ClaimState.PENDING);
     write(op);
   }
 
-  return (
+  return isPending ? (
+    <PendingClaim />
+  ) : (
     <div
       className={`flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 
@@ -57,6 +61,20 @@ export function InitClaim(args: ClaimButton) {
           {Intl.t('claim.claim')} {symbol}
         </Button>
       </div>
+    </div>
+  );
+}
+
+function PendingClaim() {
+  return (
+    <div
+      className="flex justify-between items-center
+          bg-secondary/50 backdrop-blur-lg text-f-primary 
+          w-[520px] h-12 border border-tertiary 
+          mas-menu-active rounded-2xl px-10 py-14 text-menu-active"
+    >
+      <p>{Intl.t('claim.pending')}</p>
+      <Spinner size="md" />
     </div>
   );
 }

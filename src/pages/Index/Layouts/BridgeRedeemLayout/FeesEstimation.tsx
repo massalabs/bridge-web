@@ -3,20 +3,20 @@ import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 import { formatEther, parseUnits } from 'viem';
+import { EthSvg } from '../../../../assets/EthSvg';
 import { forwardBurnFees, increaseAllowanceFee } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import { useOperationStore, useTokenStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { EthSvg } from '../../../../assets/EthSvg';
 
 export function FeesEstimation() {
   const { side, amount } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const { selectedToken } = useTokenStore();
 
-  const { allowance } = useEvmBridge();
+  const { allowance } = useEvmToken();
 
   const [feesETH, setFeesETH] = useState('-');
   const [feesMAS, setFeesMAS] = useState('-');
