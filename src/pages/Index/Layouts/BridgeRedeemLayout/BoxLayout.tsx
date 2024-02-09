@@ -4,7 +4,7 @@ import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
 import { useAccount, useFeeData } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
-import { EthSvg } from '@/assets/EthSvg';
+import { EthSvgRed } from '@/assets/EthSvgRed';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
@@ -39,8 +39,8 @@ const iconsNetworks = {
 
 const iconsTokens = {
   [SIDE.MASSA_TO_EVM]: {
-    tDAI: <EthSvg />,
-    WETH: <EthSvg />,
+    tDAI: <EthSvgRed />,
+    WETH: <EthSvgRed />,
   },
   [SIDE.EVM_TO_MASSA]: {
     tDAI: <TDaiSvg />,
