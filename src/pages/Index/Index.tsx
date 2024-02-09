@@ -109,7 +109,7 @@ export function Index() {
   }, [amount, side, selectedToken?.name]);
 
   useEffect(() => {
-    setAmount();
+    setAmount('');
   }, [side, selectedToken?.name, setAmount]);
 
   useEffect(() => {
