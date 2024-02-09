@@ -43,7 +43,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
-          {in2decimals} {token.symbol}
+          {in2decimals} {massaToEvm ? token.symbol : token.symbolEVM}
         </div>
         <div>
           {Intl.t('index.loading-box.from-to', {

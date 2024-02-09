@@ -80,8 +80,8 @@ export function FeesEstimation(props: FeesEstimationProps) {
 
   if (!selectedToken) return null;
 
-  const symbolEVM = selectedToken.symbol;
-  const symbolMASSA = symbolEVM + '.e';
+  const symbolEVM = selectedToken.symbolEVM;
+  const symbolMASSA = selectedToken.symbol;
 
   return (
     <div>

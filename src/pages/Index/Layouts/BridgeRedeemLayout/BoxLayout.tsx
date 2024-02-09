@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
-import { useAccount, useFeeData, useToken } from 'wagmi';
+import { useAccount, useFeeData } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { EthSvg } from '@/assets/EthSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
@@ -47,35 +47,6 @@ const iconsTokens = {
     WETH: <WEthSvg />,
   },
 };
-
-interface TokenBalanceProps {
-  amount?: bigint;
-}
-
-function TokenBalance(props: TokenBalanceProps) {
-  let { amount } = props;
-
-  const [token] = useTokenStore((state) => [state.selectedToken]);
-
-  const evmToken = token?.evmToken as `0x${string}`;
-  const { data } = useToken({ address: evmToken });
-  const decimals = data?.decimals || 18;
-
-  let { in2decimals, full } = formatAmount(
-    amount ? amount.toString() : '0',
-    decimals,
-  );
-
-  return (
-    <div className="flex items-center">
-      {in2decimals}
-      <Tooltip
-        customClass="mas-caption w-fit whitespace-nowrap"
-        body={full + ' ' + token?.symbol ?? ''}
-      />
-    </div>
-  );
-}
 
 function EVMHeader() {
   const { isConnected } = useAccount();
@@ -173,61 +144,39 @@ function MassaMiddle() {
   );
 }
 
-function EVMTokenOptions() {
-  const { side } = useOperationStore.getState();
-  const { isFetching } = useAccountStore();
-  const { selectedToken, tokens, setSelectedToken } = useTokenStore();
-
-  const IS_MASSA_TO_EVM = side === SIDE.MASSA_TO_EVM;
-
-  const selectedMassaTokenKey: number = parseInt(
-    Object.keys(tokens).find(
-      (_, idx) => tokens[idx].name === selectedToken?.name,
-    ) || '0',
-  );
-
-  return (
-    <Dropdown
-      select={selectedMassaTokenKey}
-      readOnly={IS_MASSA_TO_EVM || isFetching}
-      size="xs"
-      options={tokens.map((token: IToken) => {
-        return {
-          item: token.symbol,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          icon: iconsTokens[SIDE.EVM_TO_MASSA][token.symbol],
-          onClick: () => setSelectedToken(token),
-        };
-      })}
-    />
-  );
-}
-
-function MassaTokenOptions() {
+function TokenOptions(props: { layoutSide: SIDE }) {
   const { side } = useOperationStore.getState();
   const { isFetching } = useAccountStore();
   const { tokens, setSelectedToken, selectedToken } = useTokenStore();
 
-  const IS_MASSA_TO_EVM = side === SIDE.MASSA_TO_EVM;
-
   const selectedMassaTokenKey: number = parseInt(
     Object.keys(tokens).find(
       (_, idx) => tokens[idx].name === selectedToken?.name,
     ) || '0',
   );
 
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  let readOnlyDropdown;
+  if (props.layoutSide === SIDE.MASSA_TO_EVM) {
+    readOnlyDropdown = !massaToEvm || isFetching;
+  } else {
+    readOnlyDropdown = massaToEvm || isFetching;
+  }
+
   return (
     <Dropdown
       select={selectedMassaTokenKey}
-      readOnly={!IS_MASSA_TO_EVM || isFetching}
+      readOnly={readOnlyDropdown}
       size="xs"
       options={tokens.map((token: IToken) => {
         return {
-          item: token.symbol,
+          item:
+            props.layoutSide === SIDE.MASSA_TO_EVM
+              ? token.symbol
+              : token.symbolEVM,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          icon: iconsTokens[SIDE.MASSA_TO_EVM][token.symbol],
+          icon: iconsTokens[side][token.symbolEVM],
           onClick: () => setSelectedToken(token),
         };
       })}
@@ -257,27 +206,28 @@ function MassaFees() {
   );
 }
 
-function EVMBalance() {
-  const [isFetching] = useAccountStore((state) => [state.isFetching]);
+function TokenBalance(props: { layoutSide: SIDE }) {
+  const { isFetching } = useAccountStore();
 
-  const { tokenBalance } = useEvmBridge();
+  const { selectedToken } = useTokenStore();
+  const { tokenBalance: tokenBalanceEvm } = useEvmBridge();
 
-  return (
-    <div className="flex items-center gap-2 h-6">
-      <p className="mas-body2">
-        {Intl.t('connect-wallet.connected-cards.wallet-balance')}
-      </p>
-      <div className="mas-body">
-        {isFetching ? <FetchingLine /> : <TokenBalance amount={tokenBalance} />}
-      </div>
-    </div>
+  const decimals = selectedToken?.decimals || 18;
+
+  let amount;
+  let symbol;
+  if (props.layoutSide === SIDE.MASSA_TO_EVM) {
+    amount = selectedToken?.balance;
+    symbol = selectedToken?.symbol;
+  } else {
+    amount = tokenBalanceEvm;
+    symbol = selectedToken?.symbolEVM;
+  }
+
+  let { in2decimals, full } = formatAmount(
+    amount ? amount.toString() : '0',
+    decimals,
   );
-}
-
-function MassaBalance() {
-  const [isFetching] = useAccountStore((state) => [state.isFetching]);
-
-  const [token] = useTokenStore((state) => [state.selectedToken]);
 
   return (
     <div className="flex items-center gap-2 h-6">
@@ -288,7 +238,13 @@ function MassaBalance() {
         {isFetching ? (
           <FetchingLine />
         ) : (
-          <TokenBalance amount={token?.balance} />
+          <div className="flex items-center">
+            {in2decimals}
+            <Tooltip
+              customClass="mas-caption w-fit whitespace-nowrap"
+              body={full + ' ' + symbol ?? ''}
+            />
+          </div>
         )}
       </div>
     </div>
@@ -308,14 +264,14 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <MassaTokenOptions />,
+        token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
         fees: null,
-        balance: <MassaBalance />,
+        balance: <TokenBalance layoutSide={SIDE.MASSA_TO_EVM} />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <EVMTokenOptions />,
+        token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
         fees: <MassaFees />,
         balance: null,
       },
@@ -324,14 +280,14 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <EVMTokenOptions />,
+        token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
         fees: null,
-        balance: <EVMBalance />,
+        balance: <TokenBalance layoutSide={SIDE.EVM_TO_MASSA} />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <MassaTokenOptions />,
+        token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
         fees: <EVMFees />,
         balance: null,
       },
