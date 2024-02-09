@@ -20,20 +20,13 @@ interface ClaimOperationContainerProps {
 }
 
 export function ClaimButton({ operation }: ClaimOperationContainerProps) {
-  const { tokens } = useTokenStore();
   const [claimState, setClaimState] = useState(ClaimState.INIT);
-  const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
+  const { tokens } = useTokenStore();
 
   const symbol = tokens.find(
     (t) => t.evmToken === operation.evmToken,
   )?.symbolEVM;
-
-  function onStateChange(state: ClaimState, txHash?: `0x${string}` | null) {
-    setClaimState(state);
-    if (state === ClaimState.SUCCESS && txHash) {
-      setTxHash(txHash);
-    }
-  }
 
   return (
     <>
@@ -42,10 +35,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
           case ClaimState.PENDING:
             return (
               <div className="flex w-full justify-center">
-                <PendingClaim
-                  onStateChange={onStateChange}
-                  inputOpId={operation.inputOpId}
-                />
+                <PendingClaim />
               </div>
             );
           case ClaimState.SUCCESS:
@@ -63,7 +53,8 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
             return (
               <div className="flex w-full justify-center">
                 <InitClaim
-                  onStateChange={onStateChange}
+                  setClaimState={setClaimState}
+                  setHash={setTxHash}
                   claimState={claimState}
                   operation={operation}
                   symbol={symbol}
@@ -76,7 +67,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
               <div>
                 <ErrorClaim
                   operation={operation}
-                  onStateChange={onStateChange}
+                  setClaimState={setClaimState}
                   claimState={claimState}
                   symbol={symbol}
                 />

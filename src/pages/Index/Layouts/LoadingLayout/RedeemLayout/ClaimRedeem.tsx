@@ -1,16 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-
 import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-
 import { ClaimSteps } from './RedeemLayout';
-import {
-  endPoint,
-  getBurnedByEvmAddress,
-} from '../../../../../utils/lambdaApi';
-import { checkBurnedOpForRedeem } from '@/custom/bridge/handlers/checkBurnedOpForRedeem';
-import useEvmBridge from '@/custom/bridge/useEvmBridge';
+import { ClaimState } from '../../../../ClaimPage/ClaimButton';
+import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
+import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
 import {
@@ -19,66 +14,52 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { CustomError, isRejectedByUser } from '@/utils/error';
+import { findClaimable, sortSignatures } from '@/utils/lambdaApi';
 
 interface ClaimProps {
+  claimStep: ClaimSteps;
   setClaimStep: (claimStep: ClaimSteps) => void;
 }
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
 
-export function Claim({ setClaimStep }: ClaimProps) {
+export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   const { address: evmAddress, chain } = useAccount();
 
-  const { selectedToken } = useTokenStore();
+  const { selectedToken, refreshBalances } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
-  const { handleRedeem: _handleRedeemEVM } = useEvmBridge();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
-  const { currentTxID, amount } = useOperationStore();
+  const { currentTxID: burnOpId, amount } = useOperationStore();
+
+  const { write, error, isSuccess } = useClaim();
 
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
 
-  const [isReadyToClaim, setIsReadyToClaim] = useState(false);
   const [signatures, setSignatures] = useState<string[]>([]);
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
-  const [userHasRejected, setUserHasRejected] = useState(false);
 
   const setLoadingToError = useCallback(() => {
     setClaim(Status.Error);
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
-  const handleClaimRedeem = useCallback(async (): Promise<boolean> => {
-    if (!evmAddress || !currentTxID) return false;
+  const handleClaimRedeem = useCallback(async (): Promise<void> => {
+    if (!evmAddress || !burnOpId) return;
     try {
-      const burnedOpList = await getBurnedByEvmAddress(
-        currentMode,
-        evmAddress,
-        endPoint,
-      );
-
-      const claimArgs = {
-        burnedOpList,
-        currentTxID,
-      };
-
-      const signatures = checkBurnedOpForRedeem(claimArgs);
-
-      if (signatures.length > 0) {
+      const operationToRedeem = await findClaimable(evmAddress, burnOpId);
+      if (operationToRedeem) {
+        setSignatures(sortSignatures(operationToRedeem.signatures));
         setClaimStep(ClaimSteps.AwaitingSignature);
-        setSignatures(signatures);
-        setIsReadyToClaim(true);
       }
-      return true;
     } catch (error: any) {
       console.error('Error fetching claim api', error.toString());
       toast.error(Intl.t('index.claim.error.unknown'));
       setLoadingToError();
-      return false;
     }
-  }, [currentMode, evmAddress, currentTxID, setClaimStep, setLoadingToError]);
+  }, [currentMode, evmAddress, burnOpId, setClaimStep, setLoadingToError]);
 
+  const isReadyToClaim = !!signatures.length;
   // Polls every 3 seconds to see if conditions are met to show claim
 
   // TODO: determine if we need a timeout here
@@ -91,54 +72,45 @@ export function Claim({ setClaimStep }: ClaimProps) {
       }, 3000);
       return () => clearInterval(timer);
     }
-    if (isReadyToClaim) {
-      setClaimStep(ClaimSteps.AwaitingSignature);
-    }
   }, [burn, isReadyToClaim, handleClaimRedeem, setClaim, setClaimStep]);
 
+  useEffect(() => {
+    if (isSuccess) {
+      setBox(Status.Success);
+      setClaim(Status.Success);
+      refreshBalances();
+    }
+    if (error) {
+      const state = handleEvmClaimBoxError(error);
+      if (state === ClaimState.REJECTED) {
+        setClaim(Status.Error);
+        setHasClickedClaimed(false);
+        setClaimStep(ClaimSteps.Reject);
+      } else {
+        setLoadingToError();
+        setClaimStep(ClaimSteps.Error);
+      }
+    }
+  }, [error, isSuccess]);
+
   async function _handleRedeem() {
-    if (!amount || !evmAddress || !selectedToken || !currentTxID) return;
-    setUserHasRejected(false);
-    try {
-      if (hasClickedClaimed) {
-        toast.error(Intl.t('index.loading-box.claim-error-1'));
-        return;
-      }
-      setClaim(Status.Loading);
-      setClaimStep(ClaimSteps.AwaitingSignature);
-      setHasClickedClaimed(true);
-      const evmRedeem = await _handleRedeemEVM(
-        parseUnits(amount, selectedToken.decimals).toString(),
-        evmAddress,
-        selectedToken.evmToken as `0x${string}`,
-        currentTxID,
-        signatures,
-      );
+    if (!amount || !evmAddress || !selectedToken || !burnOpId) return;
 
-      if (evmRedeem) {
-        setClaimStep(ClaimSteps.Claiming);
-      }
-    } catch (error) {
-      handleClaimError(error);
+    if (hasClickedClaimed) {
+      toast.error(Intl.t('index.loading-box.claim-error-1'));
+      return;
     }
-  }
+    setClaim(Status.Loading);
+    setHasClickedClaimed(true);
+    write({
+      amount: parseUnits(amount, selectedToken.decimals).toString(),
+      evmToken: selectedToken.evmToken as `0x${string}`,
+      inputOpId: burnOpId,
+      signatures,
+      recipient: evmAddress,
+    });
 
-  // handlesEvmRedeemErrors
-  function handleClaimError(error: undefined | unknown) {
-    const typedError = error as CustomError;
-
-    if (isRejectedByUser(typedError)) {
-      toast.error(Intl.t('index.claim.error.rejected'));
-      setClaim(Status.Error);
-      setHasClickedClaimed(false);
-      setClaimStep(ClaimSteps.Reject);
-      setUserHasRejected(true);
-    } else {
-      toast.error(Intl.t('index.claim.error.unknown'));
-      setLoadingToError();
-      setClaimStep(ClaimSteps.Error);
-      console.error(error);
-    }
+    setClaimStep(ClaimSteps.Claiming);
   }
 
   const claimMessage =
@@ -148,7 +120,7 @@ export function Claim({ setClaimStep }: ClaimProps) {
         <br />
         {Intl.t('index.loading-box.claim-pending-2')}
       </div>
-    ) : userHasRejected ? (
+    ) : claimStep === ClaimSteps.Reject ? (
       <div className="text-s-error">
         {Intl.t('index.loading-box.rejected-by-user')}
       </div>

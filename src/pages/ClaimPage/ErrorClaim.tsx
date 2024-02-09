@@ -7,13 +7,13 @@ import { formatAmount } from '@/utils/parseAmount';
 
 interface ErrorClaimArgs {
   operation: RedeemOperationToClaim;
-  onStateChange: (state: ClaimState, txHash?: `0x${string}` | null) => void;
+  setClaimState: (state: ClaimState) => void;
   symbol: string | undefined;
   claimState: ClaimState;
 }
 
 export function ErrorClaim(args: ErrorClaimArgs) {
-  const { operation: op, symbol, onStateChange, claimState } = args;
+  const { operation: op, symbol, setClaimState, claimState } = args;
   let { in2decimals } = formatAmount(op.amount);
 
   const isAlreadyExecuted = claimState === ClaimState.ALREADY_EXECUTED;
@@ -42,7 +42,7 @@ export function ErrorClaim(args: ErrorClaimArgs) {
             variant="icon"
             customClass="text-s-warning"
             onClick={() => {
-              onStateChange(ClaimState.INIT);
+              setClaimState(ClaimState.INIT);
             }}
           >
             <FiRefreshCcw />

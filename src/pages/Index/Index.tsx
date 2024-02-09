@@ -1,12 +1,10 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
-import { Log, parseUnits } from 'viem';
-import { useAccount, useWatchContractEvent } from 'wagmi';
+import { parseUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
-import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
-import { config } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
@@ -32,9 +30,9 @@ import { SIDE } from '@/utils/const';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
-  const { selectedToken, refreshBalances } = useTokenStore();
-  const { isMainnet, currentMode } = useBridgeModeStore();
-  const { side, setSide, currentTxID, setCurrentTxID, amount, setAmount } =
+  const { selectedToken } = useTokenStore();
+  const { isMainnet } = useBridgeModeStore();
+  const { side, setSide, setCurrentTxID, amount, setAmount } =
     useOperationStore();
 
   const { address: evmAddress } = useAccount();
@@ -48,10 +46,8 @@ export function Index() {
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
-  const [redeemLogs, setRedeemLogs] = useState<Log[]>([]);
 
-  const { box, setBox, setClaim, setLock, setApprove, reset } =
-    useGlobalStatusesStore();
+  const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
 
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
@@ -82,27 +78,6 @@ export function Index() {
     isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
-
-  useWatchContractEvent({
-    address: config[currentMode].evmBridgeContract,
-    abi: bridgeVaultAbi,
-    eventName: 'Redeemed',
-    onLogs(logs: Log[]) {
-      setRedeemLogs(logs);
-    },
-  });
-
-  useEffect(() => {
-    if (!redeemLogs.length) return;
-    const event = redeemLogs.find(
-      (log: any) => log.args.burnOpId === currentTxID,
-    );
-    if (event && box === Status.Loading) {
-      setBox(Status.Success);
-      setClaim(Status.Success);
-      refreshBalances();
-    }
-  }, [redeemLogs, box, currentTxID, setBox, setClaim, refreshBalances]);
 
   useEffect(() => {
     setError({ amount: '' });
