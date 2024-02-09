@@ -1,5 +1,4 @@
-import { useContractEvent } from 'wagmi';
-
+import { useWatchContractEvent } from 'wagmi';
 import { ClaimState } from './ClaimButton';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { Spinner } from '@/components';
@@ -16,17 +15,16 @@ export function PendingClaim(props: PendingClaimProps) {
   const { onStateChange, inputOpId } = props;
   const { currentMode } = useBridgeModeStore();
 
-  const stopListening = useContractEvent({
+  useWatchContractEvent({
     address: config[currentMode].evmBridgeContract,
     abi: bridgeVaultAbi,
     eventName: 'Redeemed',
-    listener(logs) {
+    onLogs(logs) {
       const event = logs.find(
         (log) => (log as any).args.burnOpId === inputOpId,
       );
       if (event) {
         onStateChange(ClaimState.SUCCESS, event.transactionHash);
-        stopListening?.();
       }
     },
   });
