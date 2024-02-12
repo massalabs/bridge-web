@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
-import { formatEther, parseUnits } from 'viem';
+import { parseUnits } from 'viem';
 import { EthSvg } from '../../../../assets/EthSvg';
 import { forwardBurnFees, increaseAllowanceFee } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
@@ -10,6 +10,7 @@ import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import { useOperationStore, useTokenStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
+import { formatAmount } from '@/utils/parseAmount';
 
 export function FeesEstimation() {
   const { side, amount } = useOperationStore();
@@ -29,7 +30,7 @@ export function FeesEstimation() {
       if (fees === 0n) {
         setFeesETH('-');
       } else {
-        setFeesETH(formatEther(fees));
+        setFeesETH(formatAmount(fees.toString()).full);
       }
     };
 

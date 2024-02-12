@@ -58,7 +58,7 @@ export function formatAmountToDisplay(
   }
   // parsing to Bigint to get correct amount
   const amt = parseUnits(amount, token.decimals);
-  // formating it to string for display
+  // formatting it to string for display
   const { in2decimals, full } = formatAmount(amt.toString(), token.decimals);
 
   return { in2decimals, full };
