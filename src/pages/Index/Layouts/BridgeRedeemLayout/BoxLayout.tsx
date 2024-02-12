@@ -190,15 +190,13 @@ function TokenOptions(props: TokenOptionsProps) {
 }
 
 function TokenBalance(props: { layoutSide: SIDE }) {
-  const { isFetching } = useAccountStore();
-
   const { selectedToken } = useTokenStore();
-  const { tokenBalance: tokenBalanceEvm } = useEvmToken();
+  const { tokenBalance: tokenBalanceEvm, isFetched } = useEvmToken();
 
   const decimals = selectedToken?.decimals || 18;
 
-  let amount;
-  let symbol;
+  let amount: bigint | undefined;
+  let symbol: string | undefined;
   if (props.layoutSide === SIDE.MASSA_TO_EVM) {
     amount = selectedToken?.balance;
     symbol = selectedToken?.symbol;
@@ -218,7 +216,7 @@ function TokenBalance(props: { layoutSide: SIDE }) {
         {Intl.t('connect-wallet.connected-cards.wallet-balance')}
       </p>
       <div className="mas-body">
-        {isFetching ? (
+        {!isFetched || amount === undefined ? (
           <FetchingLine />
         ) : (
           <div className="flex items-center">
