@@ -9,8 +9,17 @@ export const initOperationStoreMock = () => {
     .mockImplementation(
       (): OperationStoreState =>
         ({
-          currentTxID: 'mockLockTxId',
-          setCurrentTxID: jest.fn(),
+          lockTxId: 'mockLockTxId',
+          setLockTxId: jest.fn(),
+
+          mintTxId: 'mockMintTxId',
+          setMintTxId: jest.fn(),
+
+          burnTxId: 'mockBurnTxId',
+          setBurnTxId: jest.fn(),
+
+          claimTxId: 'mockClaimTxId',
+          setClaimTxId: jest.fn(),
         } as any as OperationStoreState),
     );
 };

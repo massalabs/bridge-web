@@ -27,7 +27,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   const { selectedToken, refreshBalances } = useTokenStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
-  const { currentTxID: burnOpId, amount, setCurrentTxID } = useOperationStore();
+  const { burnTxId, amount, setClaimTxId } = useOperationStore();
 
   const { write, error, isSuccess, hash } = useClaim();
 
@@ -43,9 +43,9 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   }, [setClaim, setBox]);
 
   const handleClaimRedeem = useCallback(async (): Promise<void> => {
-    if (!evmAddress || !burnOpId) return;
+    if (!evmAddress || !burnTxId) return;
     try {
-      const operationToRedeem = await findClaimable(evmAddress, burnOpId);
+      const operationToRedeem = await findClaimable(evmAddress, burnTxId);
       if (operationToRedeem) {
         setSignatures(sortSignatures(operationToRedeem.signatures));
         setClaimStep(ClaimSteps.AwaitingSignature);
@@ -55,7 +55,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
       toast.error(Intl.t('index.claim.error.unknown'));
       setLoadingToError();
     }
-  }, [evmAddress, burnOpId, setClaimStep, setLoadingToError]);
+  }, [evmAddress, burnTxId, setClaimStep, setLoadingToError]);
 
   const isReadyToClaim = !!signatures.length;
   // Polls every 3 seconds to see if conditions are met to show claim
@@ -74,7 +74,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   useEffect(() => {
     if (isSuccess) {
-      setCurrentTxID(hash);
+      setClaimTxId(hash);
       setClaim(Status.Success);
       setBox(Status.Success);
       refreshBalances();
@@ -102,7 +102,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   ]);
 
   async function _handleRedeem() {
-    if (!amount || !evmAddress || !selectedToken || !burnOpId) return;
+    if (!amount || !evmAddress || !selectedToken || !burnTxId) return;
 
     if (hasClickedClaimed) {
       toast.error(Intl.t('index.loading-box.claim-error-1'));
@@ -113,7 +113,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     write({
       amount: parseUnits(amount, selectedToken.decimals).toString(),
       evmToken: selectedToken.evmToken as `0x${string}`,
-      inputOpId: burnOpId,
+      inputOpId: burnTxId,
       signatures,
       recipient: evmAddress,
     });

@@ -38,14 +38,14 @@ async function initiateBurn({
   setRedeemSteps,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
-  const { setCurrentTxID } = useOperationStore.getState();
+  const { setBurnTxId } = useOperationStore.getState();
 
   setBurn(Status.Loading);
 
   setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
 
   const burnOpId = await forwardBurn(recipient, amount);
-  setCurrentTxID(burnOpId);
+  setBurnTxId(burnOpId);
 
   setRedeemSteps(Intl.t('index.loading-box.included-pending'));
   await waitIncludedOperation(burnOpId);

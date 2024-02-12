@@ -12,16 +12,16 @@ interface ICustomError extends Error {
 export async function handleMintBridge(): Promise<boolean> {
   const { setBox, setMint } = useGlobalStatusesStore.getState();
 
-  const { currentTxID } = useOperationStore.getState();
+  const { lockTxId } = useOperationStore.getState();
 
-  if (!currentTxID) {
+  if (!lockTxId) {
     return false;
   }
 
   try {
     setMint(Status.Loading);
 
-    const success = await waitForMintEvent(currentTxID);
+    const success = await waitForMintEvent(lockTxId);
     if (success) {
       setBox(Status.Success);
       setMint(Status.Success);

@@ -7,6 +7,8 @@ export function WarningLayout() {
   const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
+  const currentTxID = undefined;
+
   return (
     <div className="text-center">
       <p>{Intl.t('index.loading-box.warning-description')}</p>
@@ -25,7 +27,7 @@ export function WarningLayout() {
         </a>
       </u>
       {/* Link will be updated at a later stage because this component needs to be changed  */}
-      <ShowLinkToExplorers explorerUrl="foo" />
+      <ShowLinkToExplorers explorerUrl="foo" currentTxID={currentTxID} />
     </div>
   );
 }

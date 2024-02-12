@@ -101,7 +101,7 @@ export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
 
   const { massaClient } = useAccountStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
-  const { setCurrentTxID } = useOperationStore.getState();
+  const { setMintTxId } = useOperationStore.getState();
   if (!massaClient) throw new Error('Massa client not found');
 
   while (counterMs < WAIT_STATUS_TIMEOUT) {
@@ -125,7 +125,7 @@ export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
           mintEvent.context.origin_operation_id!,
         );
         if (mintEvent.context.origin_operation_id)
-          setCurrentTxID(mintEvent.context.origin_operation_id);
+          setMintTxId(mintEvent.context.origin_operation_id);
       } catch (err) {
         console.error(err);
         return false;

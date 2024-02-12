@@ -15,7 +15,7 @@ import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { side, currentTxID, amount } = useOperationStore();
+  const { side, mintTxId, claimTxId, amount } = useOperationStore();
   const { currentMode, isMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
@@ -39,11 +39,13 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   // claim && bridge success need to show respective show link to explorer
   const explorerUrl = massaToEvm
-    ? EVM_EXPLORER[currentMode] + 'tx/' + currentTxID
-    : MASSA_EXPLORER_URL + currentTxID;
+    ? EVM_EXPLORER[currentMode] + 'tx/' + claimTxId
+    : MASSA_EXPLORER_URL + mintTxId;
 
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
+
+  const currentTxID = massaToEvm ? claimTxId : mintTxId;
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">
@@ -90,7 +92,10 @@ export function SuccessLayout(props: LoadingBoxProps) {
       )}
       {/* show on mainnet or only show when redeeming on testnet mode*/}
       {isMainnet || massaToEvm ? (
-        <ShowLinkToExplorers explorerUrl={explorerUrl} />
+        <ShowLinkToExplorers
+          explorerUrl={explorerUrl}
+          currentTxID={currentTxID}
+        />
       ) : null}
     </div>
   );

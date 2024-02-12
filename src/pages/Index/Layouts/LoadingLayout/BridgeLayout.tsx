@@ -8,10 +8,10 @@ import { EVM_EXPLORER } from '@/utils/const';
 export function BridgeLayout() {
   const { approve, lock, mint } = useGlobalStatusesStore();
   const { currentMode } = useBridgeModeStore();
-  const { currentTxID } = useOperationStore();
+  const { lockTxId } = useOperationStore();
 
   // Bridge linkToExplorer will render in both modes
-  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + currentTxID;
+  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + lockTxId;
 
   return (
     <div className="flex flex-col gap-6">
@@ -27,7 +27,7 @@ export function BridgeLayout() {
         <p className="mas-body-2">{Intl.t('index.loading-box.mint')}</p>
         <LoadingState state={mint} />
       </div>
-      <ShowLinkToExplorers explorerUrl={explorerUrl} />
+      <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={lockTxId} />
     </div>
   );
 }

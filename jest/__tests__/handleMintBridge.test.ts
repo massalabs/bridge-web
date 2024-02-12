@@ -1,6 +1,5 @@
 import { handleMintBridge } from '../../src/custom/bridge/handlers/handleMintBridge';
 import { Status } from '../../src/store/globalStatusesStore';
-import { useOperationStore } from '../../src/store/store';
 import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
 import { smartContractsMock } from '../__ mocks __/mocks';
 
