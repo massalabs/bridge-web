@@ -12,13 +12,8 @@ import Intl from '@/i18n/i18n';
 import { useOperationStore, useTokenStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
-interface FeesEstimationProps {
-  amount: string | undefined;
-}
-
-export function FeesEstimation(props: FeesEstimationProps) {
-  const { amount } = props;
-  const { side } = useOperationStore();
+export function FeesEstimation() {
+  const { side, amount } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const { selectedToken } = useTokenStore();
   const evmToken = selectedToken?.evmToken as `0x${string}`;

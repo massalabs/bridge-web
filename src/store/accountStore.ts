@@ -188,7 +188,7 @@ const accountStore = (
     if (!provider) return;
 
     const connectedAccount = get().connectedAccount;
-    if (!connectedAccount) throw new Error('No connected account found');
+    if (!connectedAccount) return;
     set({
       massaClient: await ClientFactory.fromWalletProvider(
         provider,
