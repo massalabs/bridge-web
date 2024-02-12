@@ -182,7 +182,7 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
               : Intl.t('index.button.bridge')}
           </Button>
         </div>
-        <FeesEstimation amount={amount} />
+        <FeesEstimation />
       </div>
 
       {openTokensModal && (
