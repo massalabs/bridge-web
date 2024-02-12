@@ -22,8 +22,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const { isMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
-  if (!chain || !token || !amount)
-    throw new Error('Chain, token or amount not found');
+  if (!chain || !token || !amount) return null;
 
   const { in2decimals } = formatAmountToDisplay(amount, token);
 
