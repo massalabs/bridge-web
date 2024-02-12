@@ -1,35 +1,37 @@
-/* eslint-disable max-len */
 export function EthSvg() {
   return (
     <svg
       width="20px"
       height="20px"
-      viewBox="0 0 32 32"
+      viewBox="0 0 48 48"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      fill="#000000"
     >
-      <g id="SVGRepo_bgCarrier" strokeWidth="0" />
-      <g
-        id="SVGRepo_tracerCarrier"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+      <circle cx="24" cy="24" r="24" fill="#EBEFF0" />
+      <path
+        d="M23.9972 8L23.7787 8.74274V30.2935L23.9972 30.5116L33.994 24.5985L23.9972 8Z"
+        fill="#343434"
       />
-      <g id="SVGRepo_iconCarrier">
-        <g fill="none" fillRule="evenodd">
-          <circle cx="16" cy="16" r="16" fill="#ff2424" />
-          <g fill="#FFF" fillRule="nonzero">
-            <path fillOpacity=".602" d="M16.498 4v8.87l7.497 3.35z" />
-            <path d="M16.498 4L9 16.22l7.498-3.35z" />
-            <path fillOpacity=".602" d="M16.498 21.968v6.027L24 17.616z" />
-            <path d="M16.498 27.995v-6.028L9 17.616z" />
-            <path
-              fillOpacity=".2"
-              d="M16.498 20.573l7.497-4.353-7.497-3.348z"
-            />
-            <path fillOpacity=".602" d="M9 16.22l7.498 4.353v-7.701z" />
-          </g>
-        </g>
-      </g>
+      <path
+        d="M23.9971 8L14 24.5985L23.9971 30.5116V20.0515V8Z"
+        fill="#8C8C8C"
+      />
+      <path
+        d="M23.9971 32.4055L23.8739 32.5558V40.2325L23.9971 40.5923L34 26.4955L23.9971 32.4055Z"
+        fill="#3C3C3B"
+      />
+      <path
+        d="M23.9971 40.5923V32.4055L14 26.4955L23.9971 40.5923Z"
+        fill="#8C8C8C"
+      />
+      <path
+        d="M23.9972 30.5115L33.994 24.5984L23.9972 20.0514V30.5115Z"
+        fill="#141414"
+      />
+      <path
+        d="M14 24.5984L23.9971 30.5115V20.0514L14 24.5984Z"
+        fill="#393939"
+      />
     </svg>
   );
 }

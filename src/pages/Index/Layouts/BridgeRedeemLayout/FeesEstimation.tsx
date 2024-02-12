@@ -4,7 +4,7 @@ import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 import { erc20Abi, formatEther, parseUnits } from 'viem';
 import { useReadContracts } from 'wagmi';
-import { EthSvgRed } from '@/assets/EthSvgRed';
+import { EthSvg } from '@/assets/EthSvg';
 import { forwardBurnFees, increaseAllowanceFee } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmBridge from '@/custom/bridge/useEvmBridge';
@@ -96,7 +96,7 @@ export function FeesEstimation() {
         <div className="flex items-center">
           1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="mx-1">
-            <EthSvgRed />
+            <EthSvg />
           </span>{' '}
           = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="ml-1">
