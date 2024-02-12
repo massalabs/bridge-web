@@ -1,10 +1,10 @@
 import { FiAlertTriangle } from 'react-icons/fi';
-import { formatEther } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
+import { formatAmount } from '@/utils/parseAmount';
 
 export function WarningNoEth() {
   const { side } = useOperationStore();
@@ -20,7 +20,8 @@ export function WarningNoEth() {
   if (side === SIDE.EVM_TO_MASSA || data?.value !== 0n) return null;
 
   const estimatedFees = estimateClaimFees();
-  const fees = estimatedFees > 0n ? formatEther(estimatedFees) : '';
+  const fees =
+    estimatedFees > 0n ? formatAmount(estimatedFees.toString()).full : '';
 
   return (
     <div className="flex items-center gap-2">

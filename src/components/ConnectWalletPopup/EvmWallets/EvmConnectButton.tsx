@@ -8,7 +8,6 @@ import { MetaMaskSvg } from '@/assets';
 import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
-import { formatBalance } from '@/utils/utils';
 
 export default function EvmConnectButton(): JSX.Element {
   const { wrongNetwork } = useWrongNetworkEVM();
@@ -95,11 +94,8 @@ export default function EvmConnectButton(): JSX.Element {
                     </Button>
                   </div>
                   <div className="mas-body">
-                    {account.displayBalance
-                      ? `${Intl.t(
-                          'connect-wallet.connected-cards.wallet-balance',
-                        )} ${formatBalance(account.balanceFormatted)} ETH`
-                      : ''}
+                    {Intl.t('connect-wallet.connected-cards.wallet-balance')}{' '}
+                    {account.displayBalance}
                   </div>
                 </>
               );
