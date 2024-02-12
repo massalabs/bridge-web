@@ -1,13 +1,15 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
-import { useSwitchChain } from 'wagmi';
+import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 
 import { MetaMaskSvg } from '@/assets';
 import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
+import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
+import { formatAmount } from '@/utils/parseAmount';
 
 export default function EvmConnectButton(): JSX.Element {
   const { wrongNetwork } = useWrongNetworkEVM();
@@ -15,29 +17,21 @@ export default function EvmConnectButton(): JSX.Element {
   const { isMainnet } = useBridgeModeStore();
   const { switchChain } = useSwitchChain();
 
+  const { address } = useAccount();
+
+  const { data: balanceData } = useBalance({
+    address,
+  });
+
   return (
     <ConnectButton.Custom>
-      {({
-        account,
-        chain,
-        openAccountModal,
-        openConnectModal,
-        authenticationStatus,
-        mounted,
-      }) => {
-        // Note: If your app doesn't use authentication, you
-        // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== 'loading';
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus || authenticationStatus === 'authenticated');
+      {({ account, chain, openAccountModal, openConnectModal, mounted }) => {
+        const connected = mounted && account && chain;
 
         return (
           <div
             className="flex flex-col gap-4"
-            {...(!ready && {
+            {...(!mounted && {
               'aria-hidden': true,
             })}
           >
@@ -93,9 +87,18 @@ export default function EvmConnectButton(): JSX.Element {
                       {account.displayName}
                     </Button>
                   </div>
-                  <div className="mas-body">
-                    {Intl.t('connect-wallet.connected-cards.wallet-balance')}{' '}
-                    {account.displayBalance}
+                  <div className="flex gap-2 mas-body">
+                    {Intl.t('connect-wallet.connected-cards.wallet-balance')}
+                    {balanceData ? (
+                      `${
+                        formatAmount(
+                          balanceData.value.toString(),
+                          balanceData.decimals,
+                        ).full
+                      } ${balanceData.symbol}`
+                    ) : (
+                      <FetchingLine />
+                    )}
                   </div>
                 </>
               );

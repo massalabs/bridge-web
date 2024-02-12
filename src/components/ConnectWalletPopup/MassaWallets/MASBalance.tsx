@@ -6,6 +6,7 @@ import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { fetchMASBalance } from '@/bridge';
 import { massaToken } from '@/const';
 import Intl from '@/i18n/i18n';
+import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -27,9 +28,15 @@ export function MASBalance() {
   ).full;
 
   return (
-    <div className="mas-body">
+    <div className="flex gap-2 mas-body">
       {Intl.t('connect-wallet.connected-cards.wallet-balance')}
-      {formattedBalance} {massaToken}
+      {balance === undefined ? (
+        <FetchingLine />
+      ) : (
+        <>
+          {formattedBalance} {massaToken}
+        </>
+      )}
     </div>
   );
 }

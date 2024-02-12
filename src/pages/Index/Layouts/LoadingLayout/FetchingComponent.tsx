@@ -11,10 +11,10 @@ export function FetchingRound() {
 
 export function FetchingLine() {
   return (
-    <div className={`shadow rounded-md w-24 pt-0.5`}>
+    <div className="shadow rounded-md w-24 pt-0.5">
       <div className="animate-pulse flex">
         <div className="flex-1 space-y-6 py-1">
-          <div className="h-2 bg-c-disabled-1 rounded"></div>
+          <div className="h-4 bg-c-disabled-1 rounded"></div>
         </div>
       </div>
     </div>
