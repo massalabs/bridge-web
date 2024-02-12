@@ -1,20 +1,3 @@
-export function formatBalance(
-  balanceFormatted: string | undefined,
-): string | undefined {
-  try {
-    if (!balanceFormatted) {
-      return undefined;
-    }
-    const balance: number = parseFloat(balanceFormatted);
-
-    const formattedBalance: string = balance.toFixed(7);
-
-    return formattedBalance;
-  } catch (error) {
-    return 'Invalid input: ' + balanceFormatted;
-  }
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function safeJsonParse(str: string): any {
   try {
