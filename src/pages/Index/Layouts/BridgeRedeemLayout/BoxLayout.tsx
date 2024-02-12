@@ -2,10 +2,11 @@ import { ReactNode } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
-import { useAccount, useFeeData } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
-import { EthSvg } from '@/assets/EthSvg';
+import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
+import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
@@ -19,7 +20,6 @@ import {
 } from '@/store/store';
 import { IToken } from '@/store/tokenStore';
 import { SIDE } from '@/utils/const';
-import { formatStandard } from '@/utils/massaFormat';
 import { MassaNetworks } from '@/utils/network';
 import { formatAmount } from '@/utils/parseAmount';
 import { capitalize } from '@/utils/utils';
@@ -28,24 +28,12 @@ interface Layout {
   header: ReactNode;
   wallet: ReactNode;
   token: ReactNode;
-  fees: ReactNode;
   balance: ReactNode;
 }
 
 const iconsNetworks = {
   MASSASTATION: <MassaLogo size={40} />,
   ETHEREUM: <BsDiamondHalf size={40} />,
-};
-
-const iconsTokens = {
-  [SIDE.MASSA_TO_EVM]: {
-    tDAI: <EthSvg />,
-    WETH: <EthSvg />,
-  },
-  [SIDE.EVM_TO_MASSA]: {
-    tDAI: <TDaiSvg />,
-    WETH: <WEthSvg />,
-  },
 };
 
 function EVMHeader() {
@@ -144,7 +132,12 @@ function MassaMiddle() {
   );
 }
 
-function TokenOptions(props: { layoutSide: SIDE }) {
+interface TokenOptionsProps {
+  layoutSide: SIDE;
+}
+
+function TokenOptions(props: TokenOptionsProps) {
+  const { layoutSide } = props;
   const { side } = useOperationStore.getState();
   const { isFetching } = useAccountStore();
   const { tokens, setSelectedToken, selectedToken } = useTokenStore();
@@ -157,52 +150,42 @@ function TokenOptions(props: { layoutSide: SIDE }) {
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   let readOnlyDropdown;
-  if (props.layoutSide === SIDE.MASSA_TO_EVM) {
+  if (layoutSide === SIDE.MASSA_TO_EVM) {
     readOnlyDropdown = !massaToEvm || isFetching;
   } else {
     readOnlyDropdown = massaToEvm || isFetching;
+  }
+
+  function getIcon(token: IToken): JSX.Element {
+    if (layoutSide === SIDE.MASSA_TO_EVM) {
+      const icons = {
+        tDAI: <TDaiMassaSvg />,
+        WETH: <WEthMassaSvg />,
+      };
+      return icons[token.symbol as 'tDAI' | 'WETH'];
+    } else {
+      const icons = {
+        tDAI: <TDaiSvg />,
+        WETH: <WEthSvg />,
+      };
+      return icons[token.symbolEVM as 'tDAI' | 'WETH'];
+    }
   }
 
   return (
     <Dropdown
       select={selectedMassaTokenKey}
       readOnly={readOnlyDropdown}
-      size="xs"
+      size="md"
       options={tokens.map((token: IToken) => {
         return {
           item:
-            props.layoutSide === SIDE.MASSA_TO_EVM
-              ? token.symbol
-              : token.symbolEVM,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          icon: iconsTokens[side][token.symbolEVM],
+            layoutSide === SIDE.MASSA_TO_EVM ? token.symbol : token.symbolEVM,
+          icon: getIcon(token),
           onClick: () => setSelectedToken(token),
         };
       })}
     />
-  );
-}
-
-function EVMFees() {
-  const { data, isLoading } = useFeeData();
-
-  return (
-    <div className="flex items-center gap-2">
-      <p className="mas-body2">Total EVM fees:</p>
-      <div className="mas-body">
-        {isLoading ? <FetchingLine /> : data?.formatted.maxFeePerGas}
-      </div>
-    </div>
-  );
-}
-
-function MassaFees() {
-  return (
-    <div className="flex items-center gap-2">
-      <p className="mas-body2">Total Massa fees:</p>
-      <p className="mas-body">{formatStandard(Number(0))}</p>
-    </div>
   );
 }
 
@@ -265,14 +248,12 @@ export function boxLayout(): BoxLayoutResult {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
         token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
-        fees: null,
         balance: <TokenBalance layoutSide={SIDE.MASSA_TO_EVM} />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
         token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
-        fees: <MassaFees />,
         balance: null,
       },
     },
@@ -281,14 +262,12 @@ export function boxLayout(): BoxLayoutResult {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
         token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
-        fees: null,
         balance: <TokenBalance layoutSide={SIDE.EVM_TO_MASSA} />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
         token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
-        fees: <EVMFees />,
         balance: null,
       },
     },

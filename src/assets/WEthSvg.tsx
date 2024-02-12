@@ -2,8 +2,8 @@
 export function WEthSvg() {
   return (
     <svg
-      width="20px"
-      height="20px"
+      width="44px"
+      height="44px"
       viewBox="0 0 64 64"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"

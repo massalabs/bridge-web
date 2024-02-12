@@ -18,17 +18,13 @@ export function ClaimTokensPopup() {
   const renderButton = !!opToRedeem?.length;
 
   useEffect(() => {
-    getApiInfo();
-  }, [evmAddress, currentMode]);
-
-  async function getApiInfo() {
     if (!evmAddress) return;
-    const pendingOperations = await checkIfUserHasTokensToClaim(
-      currentMode,
-      evmAddress,
+    checkIfUserHasTokensToClaim(currentMode, evmAddress).then(
+      (pendingOperations) => {
+        setOpToRedeem(pendingOperations);
+      },
     );
-    setOpToRedeem(pendingOperations);
-  }
+  }, [evmAddress, currentMode, setOpToRedeem]);
 
   const evmChainName = evmConnectedChain?.name;
 
@@ -36,7 +32,7 @@ export function ClaimTokensPopup() {
     if (!evmChainName) return null;
     return (
       <div
-        className="flex flex-col gap-4 h-fit w-72 absolute top-32 right-12
+        className="flex flex-col gap-4 h-fit w-72 absolute top-48 right-12
         border border-tertiary 
         bg-secondary/50 backdrop-blur-lg text-f-primary rounded-2xl p-10"
       >
