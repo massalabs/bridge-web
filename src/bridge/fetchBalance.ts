@@ -10,7 +10,7 @@ export async function fetchMASBalance(
     return account.balance();
   } catch (error) {
     console.error('Error while retrieving balance: ', error);
-    toast.error(Intl.t(`index.balance.error`));
+    toast.error(Intl.t('index.balance.error'));
     return { finalBalance: '0', candidateBalance: '0' };
   }
 }
