@@ -1,13 +1,13 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
-import { formatUnits } from 'viem';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 
 import { MetaMaskSvg } from '@/assets';
 import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
+import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -87,14 +87,18 @@ export default function EvmConnectButton(): JSX.Element {
                       {account.displayName}
                     </Button>
                   </div>
-                  <div className="mas-body">
-                    {balanceData
-                      ? `${Intl.t(
-                          'connect-wallet.connected-cards.wallet-balance',
-                        )} ${formatAmount(
-                          balanceData.value.toString(), balanceData.decimals,
-                        ).full} ${balanceData.symbol}`
-                      : ''}
+                  <div className="flex gap-2 mas-body">
+                    {Intl.t('connect-wallet.connected-cards.wallet-balance')}
+                    {balanceData ? (
+                      `${
+                        formatAmount(
+                          balanceData.value.toString(),
+                          balanceData.decimals,
+                        ).full
+                      } ${balanceData.symbol}`
+                    ) : (
+                      <FetchingLine />
+                    )}
                   </div>
                 </>
               );
