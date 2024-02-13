@@ -116,9 +116,7 @@ export async function checkIfUserHasTokensToClaim(
   return burnedOpList
     .filter(
       (item) =>
-        item.outputTxId === null &&
-        item.state === operationStates.processing &&
-        item.recipient === evmAddress,
+        item.outputTxId === null && item.state === operationStates.processing,
     )
     .map((opToClaim) => ({
       recipient: opToClaim.recipient,

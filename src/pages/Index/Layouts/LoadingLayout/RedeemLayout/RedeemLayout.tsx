@@ -28,11 +28,6 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessful = burn === Status.Success;
 
-  const claimArgs = {
-    claimStep,
-    setClaimStep,
-  };
-
   const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${burnTxId}${MASSA_EXPLO_EXTENSION}`;
   const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${burnTxId}`;
   const explorerUrl = isMainnet ? mainnetExplorerUrl : buildnetExplorerUrl;
@@ -56,7 +51,9 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
           </p>
           <LoadingState state={claim} />
         </div>
-        {isBurnSuccessful && <Claim {...claimArgs} />}
+        {isBurnSuccessful && (
+          <Claim claimStep={claimStep} setClaimStep={setClaimStep} />
+        )}
         <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
       </div>
     </>
