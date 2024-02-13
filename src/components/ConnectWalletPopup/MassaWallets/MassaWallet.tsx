@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MassaWallet as MassaWalletLogo,
   Tooltip,
@@ -20,6 +20,13 @@ const MassaWallet = () => {
   const [selectedProvider, setSelectedProvider] = useState<
     SUPPORTED_MASSA_WALLETS | undefined
   >(currentProvider?.name() as SUPPORTED_MASSA_WALLETS);
+
+  useEffect(() => {
+    const provider = providers.find((p) => p.name() === selectedProvider);
+    if (provider && !currentProvider) {
+      setCurrentProvider(provider);
+    }
+  }, [providers, selectedProvider, currentProvider, setCurrentProvider]);
 
   if (!selectedProvider || isFetching)
     return (
