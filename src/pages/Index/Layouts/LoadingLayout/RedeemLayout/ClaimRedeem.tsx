@@ -73,7 +73,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   }, [burn, isReadyToClaim, handleClaimRedeem, setClaim, setClaimStep]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && hash) {
       setClaimTxId(hash);
       setClaim(Status.Success);
       setBox(Status.Success);
@@ -99,6 +99,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     setHasClickedClaimed,
     setClaimStep,
     setLoadingToError,
+    hash,
   ]);
 
   async function _handleRedeem() {

@@ -7,7 +7,11 @@ import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
-import { MASSA_EXPLORER_URL } from '@/utils/const';
+import {
+  MASSA_EXPLO_URL,
+  MASSA_EXPLO_EXTENSION,
+  MASSA_EXPLORER_URL,
+} from '@/utils/const';
 
 export function RedeemLayout({ ...props }: LoadingBoxProps) {
   const { redeemSteps } = props;
@@ -18,6 +22,8 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
 
   const [claimStep, setClaimStep] = useState(ClaimSteps.None);
 
+  const { isMainnet } = useBridgeModeStore();
+
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessful = burn === Status.Success;
@@ -27,10 +33,9 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
     setClaimStep,
   };
 
-  const { isMainnet } = useBridgeModeStore();
-
-  // Redeem linkToExplorer only rendered in Mainnet mode
-  const explorerUrl = MASSA_EXPLORER_URL + burnTxId;
+  const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${burnTxId}${MASSA_EXPLO_EXTENSION}`;
+  const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${burnTxId}`;
+  const explorerUrl = isMainnet ? mainnetExplorerUrl : buildnetExplorerUrl;
 
   return (
     <>
@@ -52,12 +57,7 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <Claim {...claimArgs} />}
-        {isMainnet && (
-          <ShowLinkToExplorers
-            explorerUrl={explorerUrl}
-            currentTxID={burnTxId}
-          />
-        )}
+        <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
       </div>
     </>
   );

@@ -10,7 +10,13 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { EVM_EXPLORER, MASSA_EXPLORER_URL, SIDE } from '@/utils/const';
+import {
+  EVM_EXPLORER,
+  MASSA_EXPLORER_URL,
+  MASSA_EXPLO_EXTENSION,
+  MASSA_EXPLO_URL,
+  SIDE,
+} from '@/utils/const';
 import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
@@ -21,10 +27,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const { selectedToken: token } = useTokenStore();
-  const { amount } = useOperationStore();
 
-  const { isMainnet } = useBridgeModeStore();
-  const { chain } = useAccount();
   if (!chain || !token || !amount) return null;
 
   const { in2decimals } = formatAmountToDisplay(amount, token);
@@ -39,8 +42,10 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   // claim && bridge success need to show respective show link to explorer
   const explorerUrl = massaToEvm
-    ? EVM_EXPLORER[currentMode] + 'tx/' + claimTxId
-    : MASSA_EXPLORER_URL + mintTxId;
+    ? `${EVM_EXPLORER[currentMode]}tx/${claimTxId}`
+    : isMainnet
+    ? `${MASSA_EXPLORER_URL}${mintTxId}`
+    : `${MASSA_EXPLO_URL}${mintTxId}${MASSA_EXPLO_EXTENSION}`;
 
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
@@ -90,13 +95,10 @@ export function SuccessLayout(props: LoadingBoxProps) {
           </Link>
         </div>
       )}
-      {/* show on mainnet or only show when redeeming on testnet mode*/}
-      {isMainnet || massaToEvm ? (
-        <ShowLinkToExplorers
-          explorerUrl={explorerUrl}
-          currentTxID={currentTxID}
-        />
-      ) : null}
+      <ShowLinkToExplorers
+        explorerUrl={explorerUrl}
+        currentTxID={currentTxID}
+      />
     </div>
   );
 }

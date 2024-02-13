@@ -10,8 +10,7 @@ export function BridgeLayout() {
   const { currentMode } = useBridgeModeStore();
   const { lockTxId } = useOperationStore();
 
-  // Bridge linkToExplorer will render in both modes
-  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + lockTxId;
+  const explorerUrl = `${EVM_EXPLORER[currentMode]}tx/${lockTxId}`;
 
   return (
     <div className="flex flex-col gap-6">
