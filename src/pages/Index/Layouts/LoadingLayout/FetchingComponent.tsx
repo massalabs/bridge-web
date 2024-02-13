@@ -9,12 +9,19 @@ export function FetchingRound() {
   );
 }
 
-export function FetchingLine() {
+interface FetchingCircleProps {
+  height?: number;
+  width?: number;
+}
+
+export function FetchingLine(props: FetchingCircleProps) {
+  const { height = 2, width = 24 } = props;
+
   return (
-    <div className="shadow rounded-md w-24 pt-0.5">
-      <div className="animate-pulse flex">
+    <div className={`shadow animate-pulse rounded-md w-${width} pt-0.5`}>
+      <div className="flex">
         <div className="flex-1 space-y-6 py-1">
-          <div className="h-4 bg-c-disabled-1 rounded"></div>
+          <div className={`h-${height} bg-c-disabled-1 rounded`}></div>
         </div>
       </div>
     </div>
