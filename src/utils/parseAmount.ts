@@ -2,7 +2,7 @@ import currency from 'currency.js';
 import { parseUnits } from 'viem';
 import { IToken } from '@/store/tokenStore';
 
-export interface IFormatted {
+export interface FormattedAmount {
   amountFormattedPreview: string;
   amountFormattedFull: string;
 }
@@ -11,7 +11,7 @@ export function formatAmount(
   amount: string,
   decimals = 18,
   separator = ',',
-): IFormatted {
+): FormattedAmount {
   const decimal = '.';
 
   if (amount.length < decimals) {
@@ -96,7 +96,7 @@ export function roundDecimalPartToOneSignificantDigit(
 export function formatAmountToDisplay(
   amount: string,
   token: IToken | undefined,
-): IFormatted {
+): FormattedAmount {
   if (!token || !amount) {
     return {
       amountFormattedFull: '0',
