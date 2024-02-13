@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './LoadingLayout';
+import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 import { Blockchain, METAMASK } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
@@ -9,19 +10,24 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { SIDE } from '@/utils/const';
+import {
+  EVM_EXPLORER,
+  MASSA_EXPLORER_URL,
+  MASSA_EXPLO_EXTENSION,
+  MASSA_EXPLO_URL,
+  SIDE,
+} from '@/utils/const';
 import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { side } = useOperationStore();
+  const { side, mintTxId, claimTxId, amount } = useOperationStore();
+  const { currentMode, isMainnet } = useBridgeModeStore();
+  const { chain } = useAccount();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const { selectedToken: token } = useTokenStore();
-  const { amount } = useOperationStore();
 
-  const { isMainnet } = useBridgeModeStore();
-  const { chain } = useAccount();
   if (!chain || !token || !amount) return null;
 
   const { in2decimals } = formatAmountToDisplay(amount, token);
@@ -34,8 +40,17 @@ export function SuccessLayout(props: LoadingBoxProps) {
     isMainnet ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET
   }`;
 
+  // claim && bridge success need to show respective show link to explorer
+  const explorerUrl = massaToEvm
+    ? `${EVM_EXPLORER[currentMode]}tx/${claimTxId}`
+    : isMainnet
+    ? `${MASSA_EXPLORER_URL}${mintTxId}`
+    : `${MASSA_EXPLO_URL}${mintTxId}${MASSA_EXPLO_EXTENSION}`;
+
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
+
+  const currentTxID = massaToEvm ? claimTxId : mintTxId;
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">
@@ -53,7 +68,6 @@ export function SuccessLayout(props: LoadingBoxProps) {
           })}
         </div>
       </div>
-
       <hr
         className="h-0.5 border-t-0 bg-transparent bg-gradient-to-r 
         from-transparent via-tertiary to-transparent opacity-100"
@@ -63,13 +77,12 @@ export function SuccessLayout(props: LoadingBoxProps) {
           name: massaToEvm ? METAMASK : Blockchain.MASSA,
         })}
       </p>
-
       {!massaToEvm && (
         <div>
           <div className="mb-1">
             {Intl.t('index.loading-box.add-tokens-message')}
           </div>
-          {/* this maybe need to be changed for FAQ mainnet */}
+          {/* this may need to be changed for FAQ mainnet */}
           <Link
             onClick={onClose}
             to={{
@@ -82,6 +95,10 @@ export function SuccessLayout(props: LoadingBoxProps) {
           </Link>
         </div>
       )}
+      <ShowLinkToExplorers
+        explorerUrl={explorerUrl}
+        currentTxID={currentTxID}
+      />
     </div>
   );
 }

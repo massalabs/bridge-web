@@ -8,11 +8,22 @@ export interface OperationStoreState {
   side: SIDE;
   setSide(side: SIDE): void;
 
-  currentTxID?: string;
-  setCurrentTxID(currentTxID?: string): void;
+  lockTxId?: string;
+  setLockTxId(currentTxID?: string): void;
+
+  mintTxId?: string;
+  setMintTxId(currentTxID?: string): void;
+
+  burnTxId?: string;
+  setBurnTxId(currentTxID?: string): void;
+
+  claimTxId?: string;
+  setClaimTxId(currentTxID?: string): void;
 
   amount?: string;
   setAmount(amount?: string): void;
+
+  resetTxIDs: () => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,14 +39,39 @@ const operationStore = (
     set({ side });
   },
 
-  currentTxID: undefined,
-  setCurrentTxID(currentTxID?: string) {
-    set({ currentTxID });
+  lockTxId: undefined,
+  setLockTxId(lockTxId?: string) {
+    set({ lockTxId });
+  },
+
+  mintTxId: undefined,
+  setMintTxId(mintTxId?: string) {
+    set({ mintTxId });
+  },
+
+  burnTxId: undefined,
+  setBurnTxId(burnTxId?: string) {
+    set({ burnTxId });
+  },
+
+  claimTxId: undefined,
+  setClaimTxId(claimTxId?: string) {
+    set({ claimTxId });
   },
 
   amount: undefined,
   setAmount(amount?: string) {
     set({ amount });
+  },
+
+  resetTxIDs: () => {
+    set({
+      lockTxId: undefined,
+      mintTxId: undefined,
+      burnTxId: undefined,
+      claimTxId: undefined,
+      amount: undefined,
+    });
   },
 });
 
