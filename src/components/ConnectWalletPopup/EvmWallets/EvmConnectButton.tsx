@@ -94,7 +94,7 @@ export default function EvmConnectButton(): JSX.Element {
                         formatAmount(
                           balanceData.value.toString(),
                           balanceData.decimals,
-                        ).full
+                        ).amountFormattedFull
                       } ${balanceData.symbol}`
                     ) : (
                       <FetchingLine />

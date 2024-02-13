@@ -30,7 +30,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   if (!chain || !token || !amount) return null;
 
-  const { in2decimals } = formatAmountToDisplay(amount, token);
+  const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
 
   const massaChainAndNetwork = `${Blockchain.MASSA} ${
     isMainnet ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET
@@ -59,7 +59,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
-          {in2decimals} {massaToEvm ? token.symbol : token.symbolEVM}
+          {amountFormattedPreview} {massaToEvm ? token.symbol : token.symbolEVM}
         </div>
         <div>
           {Intl.t('index.loading-box.from-to', {

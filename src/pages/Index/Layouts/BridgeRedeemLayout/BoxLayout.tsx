@@ -205,7 +205,7 @@ function TokenBalance(props: { layoutSide: SIDE }) {
     symbol = selectedToken?.symbolEVM;
   }
 
-  let { in2decimals, full } = formatAmount(
+  let { amountFormattedPreview, amountFormattedFull } = formatAmount(
     amount ? amount.toString() : '0',
     decimals,
   );
@@ -220,10 +220,10 @@ function TokenBalance(props: { layoutSide: SIDE }) {
           <FetchingLine />
         ) : (
           <div className="flex items-center">
-            {in2decimals}
+            {amountFormattedPreview}
             <Tooltip
               customClass="mas-caption w-fit whitespace-nowrap"
-              body={full + ' ' + symbol ?? ''}
+              body={amountFormattedFull + ' ' + symbol ?? ''}
             />
           </div>
         )}

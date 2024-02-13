@@ -21,7 +21,9 @@ export function WarningNoEth() {
 
   const estimatedFees = estimateClaimFees();
   const fees =
-    estimatedFees > 0n ? formatAmount(estimatedFees.toString()).full : '';
+    estimatedFees > 0n
+      ? formatAmount(estimatedFees.toString()).amountFormattedFull
+      : '';
 
   return (
     <div className="flex items-center gap-2">
