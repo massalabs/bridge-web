@@ -16,7 +16,7 @@ interface SuccessClaimProps {
 
 export function SuccessClaim(args: SuccessClaimProps) {
   const { operation: op, txHash, symbol } = args;
-  let { full, in2decimals } = formatAmount(op.amount);
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -38,12 +38,12 @@ export function SuccessClaim(args: SuccessClaimProps) {
           {Intl.t('claim.success')}
           <strong>
             {' '}
-            {in2decimals} {symbol}{' '}
+            {amountFormattedPreview} {symbol}{' '}
           </strong>
         </div>
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
-          body={full + ' ' + symbol}
+          body={amountFormattedFull + ' ' + symbol}
         />
       </div>
       <div className="flex gap-4 items-center">

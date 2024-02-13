@@ -3,8 +3,8 @@ import { parseUnits } from 'viem';
 import { IToken } from '@/store/tokenStore';
 
 export interface IFormatted {
-  in2decimals: string;
-  full: string;
+  amountFormattedPreview: string;
+  amountFormattedFull: string;
 }
 
 export function formatAmount(
@@ -28,22 +28,25 @@ export function formatAmount(
     precision: 0,
   }).format();
 
-  let in2decimals: string;
+  let amountFormattedPreview: string;
   if (formattedIntegerPart === '0' && decimalPart.startsWith('00')) {
-    in2decimals = `${formattedIntegerPart}${decimal}${roundDecimalPartToOneSignificantDigit(
+    amountFormattedPreview = `${formattedIntegerPart}${decimal}${roundDecimalPartToOneSignificantDigit(
       decimalPart,
     )}`;
   } else {
-    in2decimals = currency(`${formattedIntegerPart}${decimal}${decimalPart}`, {
-      separator: separator,
-      decimal: decimal,
-      symbol: '',
-    }).format();
+    amountFormattedPreview = currency(
+      `${formattedIntegerPart}${decimal}${decimalPart}`,
+      {
+        separator: separator,
+        decimal: decimal,
+        symbol: '',
+      },
+    ).format();
   }
 
   return {
-    in2decimals,
-    full: `${formattedIntegerPart}${decimal}${decimalPart}`,
+    amountFormattedPreview,
+    amountFormattedFull: `${formattedIntegerPart}${decimal}${decimalPart}`,
   };
 }
 
@@ -93,20 +96,15 @@ export function roundDecimalPartToOneSignificantDigit(
 export function formatAmountToDisplay(
   amount: string,
   token: IToken | undefined,
-): {
-  full: string;
-  in2decimals: string;
-} {
+): IFormatted {
   if (!token || !amount) {
     return {
-      full: '0',
-      in2decimals: '0',
+      amountFormattedFull: '0',
+      amountFormattedPreview: '0',
     };
   }
   // parsing to Bigint to get correct amount
   const amt = parseUnits(amount, token.decimals);
   // formatting it to string for display
-  const { in2decimals, full } = formatAmount(amt.toString(), token.decimals);
-
-  return { in2decimals, full };
+  return formatAmount(amt.toString(), token.decimals);
 }

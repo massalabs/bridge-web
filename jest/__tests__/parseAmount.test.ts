@@ -7,48 +7,48 @@ describe('formatAmount', () => {
   test('formats an amount with default parameters', () => {
     const result = formatAmount('123456789012345678901');
     expect(result).toEqual({
-      in2decimals: '123.46',
-      full: '123.456789012345678901',
+      amountFormattedPreview: '123.46',
+      amountFormattedFull: '123.456789012345678901',
     });
   });
 
   test('formats an amount with less than the specified decimals', () => {
     const result = formatAmount('12345', 8);
     expect(result).toEqual({
-      in2decimals: '0.0001',
-      full: '0.00012345',
+      amountFormattedPreview: '0.0001',
+      amountFormattedFull: '0.00012345',
     });
   });
 
   test('formats an amount with custom separator', () => {
     const result = formatAmount('123456789012345678901', 9, "'");
     expect(result).toEqual({
-      in2decimals: "123'456'789'012.35",
-      full: "123'456'789'012.345678901",
+      amountFormattedPreview: "123'456'789'012.35",
+      amountFormattedFull: "123'456'789'012.345678901",
     });
   });
 
   test('adds padding zeroes when necessary', () => {
     const result = formatAmount('1', 18, ',');
     expect(result).toEqual({
-      in2decimals: '0.000000000000000001',
-      full: '0.000000000000000001',
+      amountFormattedPreview: '0.000000000000000001',
+      amountFormattedFull: '0.000000000000000001',
     });
   });
 
   test('handles amount with exact decimals length', () => {
     const result = formatAmount('1000000000000000000', 18);
     expect(result).toEqual({
-      in2decimals: '1.00',
-      full: '1.000000000000000000',
+      amountFormattedPreview: '1.00',
+      amountFormattedFull: '1.000000000000000000',
     });
   });
 
   test('formats an amount with less than the specified decimals and round up', () => {
     const result = formatAmount('69000', 9);
     expect(result).toEqual({
-      in2decimals: '0.00007',
-      full: '0.000069000',
+      amountFormattedPreview: '0.00007',
+      amountFormattedFull: '0.000069000',
     });
   });
 });

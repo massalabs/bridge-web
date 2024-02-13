@@ -81,7 +81,7 @@ function PendingClaim() {
 
 function DisplayContent({ ...args }) {
   const { claimState, amount, symbol } = args;
-  let { full, in2decimals } = formatAmount(amount);
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(amount);
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
 
@@ -91,7 +91,7 @@ function DisplayContent({ ...args }) {
         {Intl.t('claim.rejected-1')}
         <strong>
           {' '}
-          {in2decimals} {symbol}{' '}
+          {amountFormattedPreview} {symbol}{' '}
         </strong>
         {Intl.t('claim.rejected-2')}
       </div>
@@ -100,11 +100,11 @@ function DisplayContent({ ...args }) {
     return (
       <div className="flex items-center">
         <strong>
-          {in2decimals} {symbol}{' '}
+          {amountFormattedPreview} {symbol}{' '}
         </strong>
         <Tooltip
           customClass="mas-caption w-fit whitespace-nowrap"
-          body={full + ' ' + symbol}
+          body={amountFormattedFull + ' ' + symbol}
         />
       </div>
     );
