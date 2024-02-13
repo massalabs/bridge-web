@@ -4,7 +4,11 @@ import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
-import { CustomError, isRejectedByUser } from '@/utils/error';
+import {
+  CustomError,
+  isRejectedByUser,
+  isWalletTimeoutError,
+} from '@/utils/error';
 
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
@@ -59,6 +63,9 @@ function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t('index.burn.error.rejected'));
     setRedeemSteps(Intl.t('index.loading-box.burn-rejected'));
+  } else if (isWalletTimeoutError(typedError)) {
+    toast.error(Intl.t('index.burn.error.timeout'));
+    setRedeemSteps(Intl.t('index.loading-box.burn-signature-timeout'));
   } else if (isErrorTimeout) {
     toast.error(Intl.t('index.burn.error.timeout'));
   } else {

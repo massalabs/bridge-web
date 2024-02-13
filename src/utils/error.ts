@@ -29,7 +29,11 @@ export const regexParam = new RegExp(PARAMETER_ERROR, 'i');
 export const regexOperation = new RegExp(CONTRACT_REJECTED, 'i');
 
 export function isRejectedByUser(error: Error): boolean {
-  return regexErr.test(error.toString()) || regexWarn.test(error.toString());
+  return regexErr.test(error.toString());
+}
+
+export function isWalletTimeoutError(error: Error): boolean {
+  return regexWarn.test(error.toString());
 }
 
 export function isParameterError(error: Error): boolean {

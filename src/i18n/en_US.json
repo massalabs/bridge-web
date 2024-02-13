@@ -92,6 +92,7 @@
       "included-pending": "Burn (included pending)",
       "burned-final": "Burn (final)",
       "burn-rejected": "Burn (rejected)",
+      "burn-signature-timeout": "Burn (signature timeout)",
       "rejected-by-user": "You have rejected the transaction, please try again by clicking below.",
       "inconsistent-not-found": "Burn (inconsistent or not found)",
       "claim-step": "Claim {state}",
@@ -157,7 +158,7 @@
       "error": {
         "rejected": "Burn rejected by user",
         "wrong-allowance": "Allowance is too low. Try again.",
-        "timeout": "Burn timeout out.",
+        "timeout": "Burn signature timed out.",
         "unknown": "Unknown error, Try again."
       }
     },
