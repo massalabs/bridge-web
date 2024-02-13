@@ -1,4 +1,4 @@
-import { ClaimSteps, SIDE } from '@/utils/const';
+import { ClaimState, ClaimSteps, SIDE } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 interface CurrentRedeemOperation {
@@ -7,9 +7,19 @@ interface CurrentRedeemOperation {
   signatures: string[];
 }
 
+export interface RedeemOperation extends RedeemOperationToClaim {
+  status?: string;
+  claimStatus?: ClaimState;
+  outputTxId?: string;
+}
+
 export interface OperationStoreState {
-  opToRedeem: RedeemOperationToClaim[];
-  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => void;
+  opToRedeem: RedeemOperation[];
+  setOpToRedeem: (opToRedeem: RedeemOperation[]) => void;
+  updateOpToRedeem: (opToRedeem: RedeemOperation) => void;
+  updateOutputTx: (inputTx: string, outputTx: string) => void;
+  updateState: (inputTx: string, state: string) => void;
+  updateClaimStatus: (inputTx: string, claimStatus: ClaimState) => void;
 
   currentRedeemOperation?: CurrentRedeemOperation;
   setCurrentRedeemOperation: (op: CurrentRedeemOperation) => void;
@@ -36,13 +46,54 @@ export interface OperationStoreState {
   resetTxIDs: () => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const operationStore = (
   set: (params: Partial<OperationStoreState>) => void,
   get: () => OperationStoreState,
 ) => ({
   opToRedeem: [],
-  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => set({ opToRedeem }),
+  setOpToRedeem: (opToRedeem: RedeemOperation[]) => {
+    const operations = opToRedeem.map((op) => {
+      if (op.claimStatus === undefined) {
+        return { ...op, claimStatus: ClaimState.INIT };
+      }
+      return op;
+    });
+    set({ opToRedeem: operations });
+  },
+
+  updateOpToRedeem(opToRedeem: RedeemOperation) {
+    set({ opToRedeem: [...get().opToRedeem, opToRedeem] });
+  },
+
+  updateOutputTx(inputTx: string, outputTx: string) {
+    const updatedOps = get().opToRedeem.map((op) => {
+      if (op.inputOpId === inputTx) {
+        return { ...op, outputOpId: outputTx };
+      }
+      return op;
+    });
+    set({ opToRedeem: updatedOps });
+  },
+
+  updateState(inputTx: string, state: string) {
+    const updatedOps = get().opToRedeem.map((op) => {
+      if (op.inputOpId === inputTx) {
+        return { ...op, state };
+      }
+      return op;
+    });
+    set({ opToRedeem: updatedOps });
+  },
+
+  updateClaimStatus(inputTx: string, claimStatus: ClaimState) {
+    const updatedOps = get().opToRedeem.map((op) => {
+      if (op.inputOpId === inputTx) {
+        return { ...op, claimStatus };
+      }
+      return op;
+    });
+    set({ opToRedeem: updatedOps });
+  },
 
   currentRedeemOperation: undefined,
   setCurrentRedeemOperation(op: CurrentRedeemOperation) {

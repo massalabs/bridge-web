@@ -5,17 +5,16 @@ import { useBridgeModeStore } from '../../store/store';
 import { EVM_EXPLORER } from '../../utils/const';
 import { SuccessCheck } from '@/components';
 import Intl from '@/i18n/i18n';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
+import { RedeemOperation } from '@/store/operationStore';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface SuccessClaimProps {
-  operation: RedeemOperationToClaim;
-  txHash?: `0x${string}`;
+  operation: RedeemOperation;
   symbol?: string;
 }
 
-export function SuccessClaim(args: SuccessClaimProps) {
-  const { operation: op, txHash, symbol } = args;
+export function SuccessClaim(props: SuccessClaimProps) {
+  const { operation: op, symbol } = props;
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
 
   const openInNewTab = (url: string) => {
@@ -24,7 +23,7 @@ export function SuccessClaim(args: SuccessClaimProps) {
 
   const { currentMode } = useBridgeModeStore();
 
-  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + txHash;
+  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + op.outputTxId;
 
   return (
     <div
@@ -47,7 +46,7 @@ export function SuccessClaim(args: SuccessClaimProps) {
         />
       </div>
       <div className="flex gap-4 items-center">
-        {txHash && (
+        {op.outputTxId && (
           <Button variant="icon" onClick={() => openInNewTab(explorerUrl)}>
             <FiExternalLink size={18} />
           </Button>

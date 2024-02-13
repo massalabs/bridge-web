@@ -2,11 +2,9 @@ import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
+import { RedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
-import {
-  RedeemOperationToClaim,
-  checkIfUserHasTokensToClaim,
-} from '@/utils/lambdaApi';
+import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
 
 export function Claim() {
   const { opToRedeem, setOpToRedeem } = useOperationStore();
@@ -31,7 +29,7 @@ export function Claim() {
   return (
     <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
       {burnListIsNotEmpty ? (
-        opToRedeem.map((operation: RedeemOperationToClaim) => {
+        opToRedeem.map((operation: RedeemOperation) => {
           return (
             <div
               key={operation.inputOpId}

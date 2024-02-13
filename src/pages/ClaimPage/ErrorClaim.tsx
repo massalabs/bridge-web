@@ -1,22 +1,23 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { FiAlertCircle, FiRefreshCcw } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
+import { RedeemOperation } from '@/store/operationStore';
+import { useOperationStore } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface ErrorClaimProps {
-  operation: RedeemOperationToClaim;
-  setClaimState: (state: ClaimState) => void;
+  operation: RedeemOperation;
   symbol: string | undefined;
-  claimState: ClaimState;
 }
 
 export function ErrorClaim(props: ErrorClaimProps) {
-  const { operation: op, symbol, setClaimState, claimState } = props;
-  let { amountFormattedPreview } = formatAmount(op.amount);
+  const { operation, symbol } = props;
+  const { updateClaimStatus } = useOperationStore();
+  let { amountFormattedPreview } = formatAmount(operation.amount);
 
-  const isAlreadyExecuted = claimState === ClaimState.ALREADY_EXECUTED;
+  const isAlreadyExecuted =
+    operation.claimStatus === ClaimState.ALREADY_EXECUTED;
 
   return (
     <div
@@ -42,7 +43,7 @@ export function ErrorClaim(props: ErrorClaimProps) {
             variant="icon"
             customClass="text-s-warning"
             onClick={() => {
-              setClaimState(ClaimState.INIT);
+              updateClaimStatus(operation.inputOpId, ClaimState.INIT);
             }}
           >
             <FiRefreshCcw />

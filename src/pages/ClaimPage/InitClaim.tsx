@@ -4,47 +4,40 @@ import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransact
 import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
+import { RedeemOperation } from '@/store/operationStore';
+import { useOperationStore } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface ClaimButton {
-  operation: RedeemOperationToClaim;
-  setClaimState: (state: ClaimState) => void;
-  claimState: ClaimState;
-  setHash: (hash: `0x${string}`) => void;
+  operation: RedeemOperation;
   symbol?: string;
 }
 
-export function InitClaim(args: ClaimButton) {
-  const { operation: op, symbol, setClaimState, claimState, setHash } = args;
+export function InitClaim(props: ClaimButton) {
+  const { operation, symbol } = props;
   const { write, error, isSuccess, hash } = useClaim();
+  const { updateOutputTx, updateClaimStatus } = useOperationStore();
 
-  const isClaimRejected = claimState === ClaimState.REJECTED;
-  const isPending = claimState === ClaimState.PENDING;
-
-  const displayContentArgs = {
-    claimState,
-    amount: op.amount,
-    symbol,
-  };
+  const isClaimRejected = operation.claimStatus === ClaimState.REJECTED;
+  const isPending = operation.claimStatus === ClaimState.PENDING;
 
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
   useEffect(() => {
     if (isSuccess && hash) {
-      setClaimState(ClaimState.SUCCESS);
-      setHash(hash);
+      updateClaimStatus(operation.inputOpId, ClaimState.SUCCESS);
+      updateOutputTx(operation.inputOpId, hash);
     }
     if (error) {
       const state = handleEvmClaimError(error);
-      setClaimState(state);
+      updateClaimStatus(operation.inputOpId, state);
     }
-  }, [error, isSuccess, hash, setHash, setClaimState]);
+  }, [error, isSuccess, hash, updateClaimStatus, updateOutputTx, operation]);
 
   function handleClaim() {
-    setClaimState(ClaimState.PENDING);
-    write(op);
+    updateClaimStatus(operation.inputOpId, ClaimState.PENDING);
+    write(operation);
   }
 
   return isPending ? (
@@ -55,7 +48,11 @@ export function InitClaim(args: ClaimButton) {
           bg-secondary/50 backdrop-blur-lg text-f-primary 
           ${boxSize} h-12 border border-tertiary rounded-2xl px-10 py-14`}
     >
-      <DisplayContent {...displayContentArgs} />
+      <DisplayContent
+        claimState={operation.claimStatus}
+        amount={operation.amount}
+        symbol={symbol}
+      />
       <div>
         <Button onClick={() => handleClaim()}>
           {Intl.t('claim.claim')} {symbol}
