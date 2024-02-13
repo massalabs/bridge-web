@@ -32,7 +32,7 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet } = useBridgeModeStore();
-  const { side, setSide, setCurrentTxID, amount, setAmount } =
+  const { side, setSide, setLockTxId, amount, setAmount, resetTxIDs } =
     useOperationStore();
 
   const { address: evmAddress } = useAccount();
@@ -92,7 +92,7 @@ export function Index() {
       setLock(Status.Success);
       if (!lockHash) return;
       // Set lock id
-      setCurrentTxID(lockHash);
+      setLockTxId(lockHash);
       if (!massaClient) return;
       handleMintBridge();
     }
@@ -108,7 +108,7 @@ export function Index() {
     massaClient,
     setLock,
     setBox,
-    setCurrentTxID,
+    setLockTxId,
   ]);
 
   useEffect(() => {
@@ -136,9 +136,9 @@ export function Index() {
   const closeLoadingBox = useCallback(() => {
     reset();
     setAmount();
-    // Reset currentTxID
-    setCurrentTxID();
-  }, [reset, setAmount, setCurrentTxID]);
+    // Reset all transaction id's
+    resetTxIDs();
+  }, [reset, setAmount, resetTxIDs]);
 
   useEffect(() => {
     if (box === Status.None) closeLoadingBox();
