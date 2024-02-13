@@ -225,8 +225,7 @@
     "connect-massa": {
       "unsupported-net": "Switch to 'buildnet' in top-right corner of Station's homepage"
     },
-    "wrong-evm-chain": "Invalid EVM network. Please, switch it from your wallet settings.",
-    "wrong-massa-chain": "Invalid MASSA network. Please, switch it from your wallet settings.",
+    "wrong-chain": "Wrong wallet network. Please, switch to {network} in your {name} wallet settings.",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
       "invalid-network": "Current network is not supported. Please, switch to {network}.",
