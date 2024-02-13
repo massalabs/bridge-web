@@ -25,11 +25,17 @@ export function useNetworkCheck(
     ? Blockchain.EVM_MAINNET
     : Blockchain.EVM_TESTNET;
 
-  // state to prevent toast re-render
+  // state to dismiss toast
   const [toastIdEvm, setToastIdEvm] = useState<string>('');
   const [toastIdMassa, setToastIdMassa] = useState<string>('');
 
   useEffect(() => {
+    // if not wallet is detected, do not show toast
+    // useful when switching between wallets
+    if (!currentProvider) {
+      toast.dismiss(toastIdMassa);
+      return;
+    }
     // If wrong network is detected, show a toast
     // in toast, show opposite of current network
 
@@ -63,7 +69,9 @@ export function useNetworkCheck(
       setToastIdMassa(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
-            name: 'massa',
+            name: currentProvider
+              ? Intl.t(`connect-wallet.${currentProvider.name()}`)
+              : '',
             network: massaNetwork,
           }),
           {
