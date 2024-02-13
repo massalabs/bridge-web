@@ -14,7 +14,7 @@ interface ErrorClaimArgs {
 
 export function ErrorClaim(args: ErrorClaimArgs) {
   const { operation: op, symbol, setClaimState, claimState } = args;
-  let { in2decimals } = formatAmount(op.amount);
+  let { amountFormattedPreview } = formatAmount(op.amount);
 
   const isAlreadyExecuted = claimState === ClaimState.ALREADY_EXECUTED;
 
@@ -35,7 +35,7 @@ export function ErrorClaim(args: ErrorClaimArgs) {
             {Intl.t('claim.error')}
             <strong>
               {' '}
-              {in2decimals} {symbol}{' '}
+              {amountFormattedPreview} {symbol}{' '}
             </strong>
           </div>
           <Button

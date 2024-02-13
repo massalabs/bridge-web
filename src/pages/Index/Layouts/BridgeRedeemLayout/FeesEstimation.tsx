@@ -30,7 +30,7 @@ export function FeesEstimation() {
       if (fees === 0n) {
         setFeesETH('-');
       } else {
-        setFeesETH(formatAmount(fees.toString()).full);
+        setFeesETH(formatAmount(fees.toString()).amountFormattedFull);
       }
     };
 

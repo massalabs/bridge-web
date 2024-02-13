@@ -65,8 +65,10 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
     }
 
     const amount = massaToEvm
-      ? formatAmount(token?.balance.toString(), token.decimals, '').full
-      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '').full;
+      ? formatAmount(token?.balance.toString(), token.decimals, '')
+          .amountFormattedFull
+      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '')
+          .amountFormattedFull;
 
     const x = new Big(amount);
     const y = new Big(percent);
