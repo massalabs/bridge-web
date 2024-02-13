@@ -26,7 +26,7 @@ export function Claim() {
   const burnListIsNotEmpty = opToRedeem.length;
 
   return (
-    <div className="flex flex-col w-fit px-40 items-center justify-center h-[70vh] gap-6 overflow-scroll">
+    <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
       {burnListIsNotEmpty ? (
         opToRedeem.map((operation: RedeemOperationToClaim) => {
           return (
