@@ -3,14 +3,53 @@ import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 import { parseUnits } from 'viem';
+import { useAccount, useBalance } from 'wagmi';
 import { EthSvg } from '../../../../assets/EthSvg';
-import { forwardBurnFees, increaseAllowanceFee } from '@/const';
+import { FetchingLine } from '../LoadingLayout/FetchingComponent';
+import { forwardBurnFees, increaseAllowanceFee, massaToken } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import { useOperationStore, useTokenStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
+
+interface FeesEstimationProps {
+  amount?: string;
+  symbol?: string;
+}
+
+function EstimatedAmount(props: FeesEstimationProps) {
+  const { amount, symbol } = props;
+
+  const [fade, setFade] = useState(false);
+  const [amountCopy, setAmountCopy] = useState(amount);
+
+  useEffect(() => {
+    setFade(true);
+    const timeout = setTimeout(() => {
+      setFade(false);
+      setAmountCopy(amount);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [amount]);
+
+  return (
+    <div className="flex items-center">
+      {amount && symbol ? (
+        <span
+          className={`transition-opacity duration-500 ease-in-out ${
+            fade ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          {amountCopy} {symbol}
+        </span>
+      ) : (
+        <FetchingLine width={52} height={2} />
+      )}
+    </div>
+  );
+}
 
 export function FeesEstimation() {
   const { side, amount } = useOperationStore();
@@ -19,16 +58,22 @@ export function FeesEstimation() {
 
   const { allowance } = useEvmToken();
 
-  const [feesETH, setFeesETH] = useState('-');
-  const [feesMAS, setFeesMAS] = useState('-');
+  const [feesETH, setFeesETH] = useState<string>();
+  const [feesMAS, setFeesMAS] = useState<string>();
 
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
     useFeeEstimation();
 
+  const { address } = useAccount();
+
+  const { data: balanceData } = useBalance({
+    address,
+  });
+
   useEffect(() => {
     const setFeesETHWithCheck = (fees: bigint) => {
       if (fees === 0n) {
-        setFeesETH('-');
+        setFeesETH(undefined);
       } else {
         setFeesETH(formatAmount(fees.toString()).amountFormattedFull);
       }
@@ -36,7 +81,7 @@ export function FeesEstimation() {
 
     if (massaToEvm) {
       if (!selectedToken) {
-        setFeesMAS('-');
+        setFeesMAS(undefined);
         return;
       }
       const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
@@ -49,7 +94,7 @@ export function FeesEstimation() {
     } else {
       setFeesMAS('0');
       if (!selectedToken) {
-        setFeesETH('-');
+        setFeesETH(undefined);
         return;
       }
       const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
@@ -95,7 +140,7 @@ export function FeesEstimation() {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <p>{Intl.t('index.fee-estimate.massa')}</p>
-          {feesMAS !== '0' && (
+          {feesMAS && feesMAS !== '0' && (
             <Tooltip
               body={Intl.t('index.fee-estimate.tooltip-massa', {
                 fees: feesMAS,
@@ -105,12 +150,11 @@ export function FeesEstimation() {
             </Tooltip>
           )}
         </div>
-        <div className="flex items-center">{feesMAS} MAS</div>
+        <EstimatedAmount amount={feesMAS} symbol={massaToken} />
       </div>
       <div className="flex items-center justify-between">
         <p>{Intl.t('index.fee-estimate.ethereum')}</p>
-        {/* potential tooltip here */}
-        <div className="flex items-center">{feesETH} ETH</div>
+        <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
       </div>
     </div>
   );
