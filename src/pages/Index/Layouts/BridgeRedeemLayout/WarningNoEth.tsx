@@ -15,7 +15,7 @@ export function WarningNoEth() {
     address,
   });
 
-  if (!address) return null;
+  if (!address || !data) return null;
 
   if (side === SIDE.EVM_TO_MASSA || data?.value !== 0n) return null;
 
@@ -29,7 +29,7 @@ export function WarningNoEth() {
     <div className="flex items-center gap-2">
       <FiAlertTriangle className="text-s-warning" size={24} />
       <p className="mas-body2 text-s-warning">
-        {Intl.t('index.warning-no-eth', { fees })}
+        {Intl.t('index.warning-no-eth', { fees, symbol: data.symbol })}
       </p>
     </div>
   );
