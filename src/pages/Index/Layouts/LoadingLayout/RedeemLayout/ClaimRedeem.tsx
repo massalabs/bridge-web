@@ -15,25 +15,26 @@ import {
 } from '@/store/store';
 import { findClaimable, sortSignatures } from '@/utils/lambdaApi';
 
-interface ClaimProps {
-  claimStep: ClaimSteps;
-  setClaimStep: (claimStep: ClaimSteps) => void;
-}
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
 
-export function Claim({ claimStep, setClaimStep }: ClaimProps) {
+export function Claim() {
   const { address: evmAddress, chain } = useAccount();
   const { selectedToken, refreshBalances } = useTokenStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
-  const { burnTxId, amount, setClaimTxId } = useOperationStore();
+  const {
+    burnTxId,
+    amount,
+    setClaimTxId,
+    currentRedeemOperation,
+    updateCurrentRedeemOperation,
+  } = useOperationStore();
 
   const { write, error, isSuccess, hash } = useClaim();
 
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
 
-  const [signatures, setSignatures] = useState<string[]>([]);
   const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
 
   const setLoadingToError = useCallback(() => {
@@ -43,10 +44,11 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   async function launchClaim() {
     setClaim(Status.Loading);
-    if (!signatures.length) {
-      setClaimStep(ClaimSteps.RetrievingInfo);
-      const result = await handleClaimRedeem();
-      return result;
+    if (!currentRedeemOperation?.signatures.length) {
+      updateCurrentRedeemOperation({
+        claimStep: ClaimSteps.RetrievingInfo,
+      });
+      return await handleClaimRedeem();
     }
     return false;
   }
@@ -60,10 +62,11 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
       }
     };
     launchClaimWithRetry();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // [] to render only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // maybe no need for a useEffect here
   useEffect(() => {
     if (isSuccess && hash) {
       setClaimTxId(hash);
@@ -76,20 +79,25 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
       if (state === ClaimState.REJECTED) {
         setClaim(Status.Error);
         setHasClickedClaimed(false);
-        setClaimStep(ClaimSteps.Reject);
+        updateCurrentRedeemOperation({
+          claimStep: ClaimSteps.Reject,
+        });
       } else {
         setLoadingToError();
-        setClaimStep(ClaimSteps.Error);
+        updateCurrentRedeemOperation({
+          claimStep: ClaimSteps.Error,
+        });
       }
     }
   }, [
     error,
     isSuccess,
     hash,
-    setClaim,
     setBox,
-    setClaimStep,
     refreshBalances,
+    setClaim,
+    setHasClickedClaimed,
+    updateCurrentRedeemOperation,
     setLoadingToError,
     setClaimTxId,
   ]);
@@ -99,9 +107,13 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     try {
       const operationToRedeem = await findClaimable(evmAddress, burnTxId);
       if (operationToRedeem) {
-        setSignatures(sortSignatures(operationToRedeem.signatures));
-        setClaimStep(ClaimSteps.AwaitingSignature);
-        return true;
+        const signatures = sortSignatures(operationToRedeem.signatures);
+        updateCurrentRedeemOperation({
+          signatures: signatures,
+        });
+        updateCurrentRedeemOperation({
+          claimStep: ClaimSteps.AwaitingSignature,
+        });
       }
     } catch (error: any) {
       console.error('Error fetching claim api', error.toString());
@@ -111,29 +123,33 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     return false;
   }
 
-  async function _handleRedeem() {
-    if (!amount || !evmAddress || !selectedToken || !burnTxId) return;
+  async function handleRedeem() {
+    if (!amount || !evmAddress || !selectedToken || !burnTxId || !currentRedeemOperation || 
+      currentRedeemOperation.signatures.length === 0) return;
 
     if (hasClickedClaimed) {
       toast.error(Intl.t('index.loading-box.claim-error-1'));
       return;
     }
+
     setClaim(Status.Loading);
     setHasClickedClaimed(true);
     write({
       amount: parseUnits(amount, selectedToken.decimals).toString(),
       evmToken: selectedToken.evmToken as `0x${string}`,
       inputOpId: burnTxId,
-      signatures,
+      signatures: currentRedeemOperation.signatures,
       recipient: evmAddress,
     });
 
-    setClaimStep(ClaimSteps.Claiming);
+    updateCurrentRedeemOperation({
+      claimStep: ClaimSteps.Claiming,
+    });
   }
 
-  const isClaimPending = burn === Status.Success && !signatures.length;
+  const isClaimPending = burn === Status.Success && !currentRedeemOperation?.signatures.length;
 
-  const isClaimRejected = claimStep === ClaimSteps.Reject;
+  const isClaimRejected = currentRedeemOperation?.claimStep === ClaimSteps.Reject;
 
   const claimMessage = isClaimPending ? (
     <div>
@@ -152,7 +168,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     })
   ) : null;
 
-  const isReadyToClaim = signatures.length && !hasClickedClaimed;
+  const isReadyToClaim = currentRedeemOperation?.signatures.length && !hasClickedClaimed;
 
   return (
     <div className="flex flex-col gap-6 justify-center">
@@ -160,7 +176,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
       {isReadyToClaim ? (
         <Button
           onClick={() => {
-            _handleRedeem();
+            handleRedeem();
           }}
         >
           {Intl.t('index.loading-box.claim')} {symbol}

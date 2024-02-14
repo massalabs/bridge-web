@@ -101,7 +101,7 @@
       "claim-step-claiming": "(claiming...)",
       "claim-step-rejected": "(rejected by user)",
       "claim-step-error": "(unknown error)",
-      "burned": "Burn was successfull",
+      "burned": "Burn was successful",
       "bridged": "You have successfully bridged:",
       "claim-pending-1": "We are waiting for information to initiate claim.",
       "claim-pending-2": "Please stand by or come back to sign later.",

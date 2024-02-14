@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Claim } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { LoadingBoxProps } from '../PendingOperationLayout';
@@ -13,15 +11,11 @@ import {
   MASSA_EXPLORER_URL,
 } from '@/utils/const';
 
-export function RedeemLayout({ ...props }: LoadingBoxProps) {
+export function RedeemLayout(props: LoadingBoxProps) {
   const { redeemSteps } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
-
-  const { burnTxId } = useOperationStore();
-
-  const [claimStep, setClaimStep] = useState(ClaimSteps.None);
-
+  const { burnTxId, currentRedeemOperation } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
 
   // wait for burn success --> then check additional conditions
@@ -46,14 +40,14 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
         <div className="flex justify-between">
           <p className="mas-body-2">
             {Intl.t('index.loading-box.claim-step', {
-              state: getClaimStepTranslation(claimStep),
+              state: getClaimStepTranslation(
+                currentRedeemOperation?.claimStep || ClaimSteps.None,
+              ),
             })}
           </p>
           <LoadingState state={claim} />
         </div>
-        {isBurnSuccessful && (
-          <Claim claimStep={claimStep} setClaimStep={setClaimStep} />
-        )}
+        {isBurnSuccessful && <Claim />}
         <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
       </div>
     </>

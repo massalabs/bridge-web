@@ -1,9 +1,20 @@
+import { ClaimSteps } from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/RedeemLayout';
 import { SIDE } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
+
+interface CurrentRedeemOperation {
+  claimStep: ClaimSteps;
+  inputOpId: string;
+  signatures: string[];
+}
 
 export interface OperationStoreState {
   opToRedeem: RedeemOperationToClaim[];
   setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => void;
+
+  currentRedeemOperation?: CurrentRedeemOperation;
+  setCurrentRedeemOperation: (op: CurrentRedeemOperation) => void;
+  updateCurrentRedeemOperation: (op: Partial<CurrentRedeemOperation>) => void;
 
   side: SIDE;
   setSide(side: SIDE): void;
@@ -29,10 +40,21 @@ export interface OperationStoreState {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const operationStore = (
   set: (params: Partial<OperationStoreState>) => void,
-  _get: () => OperationStoreState,
+  get: () => OperationStoreState,
 ) => ({
   opToRedeem: [],
   setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => set({ opToRedeem }),
+
+  currentRedeemOperation: undefined,
+  setCurrentRedeemOperation(op: CurrentRedeemOperation) {
+    set({ currentRedeemOperation: op });
+  },
+  updateCurrentRedeemOperation(op: Partial<CurrentRedeemOperation>) {
+    const currentOp = get().currentRedeemOperation;
+    if (currentOp) {
+      set({ currentRedeemOperation: { ...currentOp, ...op } });
+    }
+  },
 
   side: SIDE.EVM_TO_MASSA,
   setSide(side: SIDE) {

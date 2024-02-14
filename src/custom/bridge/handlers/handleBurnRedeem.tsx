@@ -2,6 +2,7 @@ import { toast } from '@massalabs/react-ui-kit';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
+import { ClaimSteps } from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/RedeemLayout';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
 import {
@@ -38,7 +39,8 @@ async function initiateBurn({
   setRedeemSteps,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
-  const { setBurnTxId } = useOperationStore.getState();
+  const { setBurnTxId, setCurrentRedeemOperation } =
+    useOperationStore.getState();
 
   setBurn(Status.Loading);
 
@@ -46,6 +48,11 @@ async function initiateBurn({
 
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
+  setCurrentRedeemOperation({
+    inputOpId: burnOpId,
+    claimStep: ClaimSteps.None,
+    signatures: [],
+  });
 
   setRedeemSteps(Intl.t('index.loading-box.included-pending'));
   await waitIncludedOperation(burnOpId);

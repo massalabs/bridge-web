@@ -10,7 +10,7 @@ export interface Locked {
   massaToken: `AS${string}`;
   inputTxId: `0x${string}`;
   recipient: string;
-  state: string;
+  state: operationStates;
   error: {
     msg: string;
     code: number;
@@ -27,7 +27,7 @@ export interface Burned {
   massaToken: `AS${string}`;
   evmChainId: number;
   recipient: `0x${string}`;
-  state: string;
+  state: operationStates;
   error: null | string;
   emitter: string;
   inputOpId: string;
