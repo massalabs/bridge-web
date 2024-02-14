@@ -44,15 +44,11 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   }, [setClaim, setBox]);
 
   const handleClaimRedeem = useCallback(async (): Promise<boolean> => {
-    console.log('evm address', evmAddress);
-    console.log('burn tx id', burnTxId);
     if (!evmAddress || !burnTxId) return false;
     try {
       const operationToRedeem = await findClaimable(evmAddress, burnTxId);
       if (operationToRedeem) {
-        console.log('found operation to redeem', operationToRedeem);
         setSignatures(sortSignatures(operationToRedeem.signatures));
-        console.log('found signatures', operationToRedeem.signatures);
         setIsReadyToClaim(true);
         setClaimStep(ClaimSteps.AwaitingSignature);
         return true;
@@ -67,32 +63,23 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   async function launchClaim() {
     setClaim(Status.Loading);
-
     if (!isReadyToClaim) {
-      console.log('polling for claim', isReadyToClaim);
       setClaimStep(ClaimSteps.RetrievingInfo);
       const result = await handleClaimRedeem();
       return result;
     } else if (isReadyToClaim) {
-      console.log('stop polling for claim', isReadyToClaim);
       return false;
     }
   }
 
   useEffect(() => {
     if (burn !== Status.Success) return;
-    if (!amount) {
-      setClaim(Status.Error);
-      throw new Error('Missing required data to redeem: amount');
-    }
     const launchClaimWithRetry = async () => {
       let result = await launchClaim();
       while (!result) {
         result = await launchClaim();
       }
     };
-    console.log('launchingClaim');
-
     launchClaimWithRetry();
     // [] to prevent infinite loop
   }, []);
@@ -127,29 +114,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   async function _handleRedeem() {
     console.log('redeeming...');
-    if (!amount || !evmAddress || !selectedToken || !burnTxId) {
-      setIsReadyToClaim(false);
-      const missingData = !amount
-        ? 'amount'
-        : !evmAddress
-        ? 'evmAddress'
-        : !selectedToken
-        ? 'selectedToken'
-        : !burnTxId
-        ? 'burnTxId'
-        : null;
-      switch (missingData) {
-        case 'amount':
-          throw new Error('Missing required data to redeem: amount');
-        case 'evmAddress':
-          throw new Error('Missing required data to redeem: evmAddress');
-        case 'selectedToken':
-          throw new Error('Missing required data to redeem: selectedToken');
-        case 'burnTxId':
-          throw new Error('Missing required data to redeem: burnTxId');
-      }
-      return;
-    }
+    if (!amount || !evmAddress || !selectedToken || !burnTxId) return;
 
     if (hasClickedClaimed) {
       toast.error(Intl.t('index.loading-box.claim-error-1'));
