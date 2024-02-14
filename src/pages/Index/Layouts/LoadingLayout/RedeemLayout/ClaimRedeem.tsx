@@ -86,34 +86,25 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
 
   useEffect(() => {
     if (isSuccess && hash) {
-      setClaimSuccess();
+      setClaimTxId(hash);
+      setClaim(Status.Success);
+      setBox(Status.Success);
+      refreshBalances();
     }
     if (error) {
-      handleClaimErrors(error);
+      const state = handleEvmClaimBoxError(error);
+      if (state === ClaimState.REJECTED) {
+        setClaim(Status.Error);
+        setHasClickedClaimed(false);
+        setClaimStep(ClaimSteps.Reject);
+      } else {
+        setLoadingToError();
+        setClaimStep(ClaimSteps.Error);
+      }
     }
   }, [error, isSuccess, hash]);
 
-  function setClaimSuccess() {
-    setClaimTxId(hash);
-    setClaim(Status.Success);
-    setBox(Status.Success);
-    refreshBalances();
-  }
-
-  function handleClaimErrors(error: Error) {
-    const state = handleEvmClaimBoxError(error);
-    if (state === ClaimState.REJECTED) {
-      setClaim(Status.Error);
-      setHasClickedClaimed(false);
-      setClaimStep(ClaimSteps.Reject);
-    } else {
-      setLoadingToError();
-      setClaimStep(ClaimSteps.Error);
-    }
-  }
-
   async function _handleRedeem() {
-    console.log('redeeming...');
     if (!amount || !evmAddress || !selectedToken || !burnTxId) return;
 
     if (hasClickedClaimed) {
