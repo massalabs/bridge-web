@@ -47,7 +47,15 @@ export function Index() {
     Intl.t('index.loading-box.burn'),
   );
 
-  const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
+  const {
+    box,
+    setBox,
+    setLock,
+    setApprove,
+    reset,
+    isOperationPending,
+    setIsOperationPending,
+  } = useGlobalStatusesStore();
 
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
@@ -68,8 +76,7 @@ export function Index() {
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
-  const isLoading = box !== Status.None;
-  const isBlurred = isLoading ? 'blur-md' : '';
+  const isBlurred = isOperationPending ? 'blur-md' : '';
 
   const isButtonDisabled =
     isFetching ||
@@ -130,6 +137,7 @@ export function Index() {
   ]);
 
   const closeLoadingBox = useCallback(() => {
+    setIsOperationPending(false);
     reset();
     setAmount();
     // Reset all transaction id's
@@ -174,6 +182,7 @@ export function Index() {
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!validate() || !amount) return;
+    setIsOperationPending(true);
     setBox(Status.Loading);
 
     if (massaToEvm) {
@@ -214,7 +223,7 @@ export function Index() {
   return (
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
       {/* If loading -> show loading layout else show home page*/}
-      {isLoading ? (
+      {isOperationPending ? (
         <LoadingLayout onClose={closeLoadingBox} redeemSteps={redeemSteps} />
       ) : (
         <BridgeRedeemLayout
@@ -227,7 +236,7 @@ export function Index() {
       )}
 
       <TokensFAQ />
-      {!isLoading && <ClaimTokensPopup />}
+      {!isOperationPending && <ClaimTokensPopup />}
     </div>
   );
 }

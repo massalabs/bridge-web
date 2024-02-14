@@ -17,6 +17,7 @@ export interface LoadingBoxProps {
 export function LoadingLayout(props: LoadingBoxProps) {
   const { onClose } = props;
   const { side } = useOperationStore();
+  const { isOperationPending } = useGlobalStatusesStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
   const { box } = useGlobalStatusesStore();
@@ -58,7 +59,7 @@ export function LoadingLayout(props: LoadingBoxProps) {
 
   function getLoadingBoxContent() {
     switch (true) {
-      case IS_BOX_SUCCESS:
+      case IS_BOX_SUCCESS && isOperationPending:
         return <SuccessLayout {...props} />;
       case IS_BOX_WARNING:
         return <WarningLayout />;

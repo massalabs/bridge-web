@@ -16,6 +16,9 @@ export interface GlobalStatusesStoreState {
   lock: Status;
   mint: Status;
 
+  isOperationPending: boolean;
+  setIsOperationPending: (isOperationPending: boolean) => void;
+
   setBox: (status: Status) => void;
   setApprove: (status: Status) => void;
   setBurn: (status: Status) => void;
@@ -51,5 +54,9 @@ export const useGlobalStatusesStore = create<GlobalStatusesStoreState>(
         lock: Status.None,
         mint: Status.None,
       }),
+
+    isOperationPending: false,
+    setIsOperationPending: (isOperationPending: boolean) =>
+      set({ isOperationPending }),
   }),
 );
