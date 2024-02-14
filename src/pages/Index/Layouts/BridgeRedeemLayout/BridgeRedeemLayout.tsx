@@ -24,28 +24,18 @@ interface BridgeRedeemArgs {
   isBlurred: string;
   isButtonDisabled: boolean;
   error: any;
-  setAmount: (state: string) => void;
   setError: (state: { amount: string } | null) => void;
   handleSubmit: (e: any) => void;
-  handleToggleLayout: () => void;
 }
 
 export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
-  const {
-    isBlurred,
-    isButtonDisabled,
-    error,
-    setAmount,
-    setError,
-    handleSubmit,
-    handleToggleLayout,
-  } = args;
+  const { isBlurred, isButtonDisabled, error, setError, handleSubmit } = args;
 
   const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
     useEvmToken();
   const { isConnected: isEvmWalletConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
-  const { side, amount } = useOperationStore();
+  const { side, amount, setSide, setAmount } = useOperationStore();
   const { isFetching } = useAccountStore();
   const { selectedToken: token } = useTokenStore();
 
@@ -75,6 +65,11 @@ export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
     const res = x.times(y).round(token.decimals).toFixed();
 
     setAmount(res);
+  }
+
+  function handleToggleLayout() {
+    setAmount('');
+    setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
 
   // Money component formats amount without decimals

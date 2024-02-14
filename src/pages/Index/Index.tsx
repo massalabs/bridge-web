@@ -32,7 +32,7 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet } = useBridgeModeStore();
-  const { side, setSide, setLockTxId, amount, setAmount, resetTxIDs } =
+  const { side, setLockTxId, amount, setAmount, resetTxIDs } =
     useOperationStore();
 
   const { address: evmAddress } = useAccount();
@@ -82,10 +82,6 @@ export function Index() {
   useEffect(() => {
     setError({ amount: '' });
   }, [amount, side, selectedToken?.name]);
-
-  useEffect(() => {
-    setAmount('');
-  }, [side, selectedToken?.name, setAmount]);
 
   useEffect(() => {
     if (lockIsSuccess) {
@@ -143,10 +139,6 @@ export function Index() {
   useEffect(() => {
     if (box === Status.None) closeLoadingBox();
   }, [box, closeLoadingBox]);
-
-  function handleToggleLayout() {
-    setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
-  }
 
   function validate() {
     setError(null);
@@ -229,10 +221,8 @@ export function Index() {
           isBlurred={isBlurred}
           isButtonDisabled={isButtonDisabled}
           error={error}
-          setAmount={setAmount}
           setError={setError}
           handleSubmit={handleSubmit}
-          handleToggleLayout={handleToggleLayout}
         />
       )}
 
