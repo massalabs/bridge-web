@@ -28,8 +28,6 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const { burnTxId, amount, setClaimTxId } = useOperationStore();
 
-  const [isReadyToClaim, setIsReadyToClaim] = useState(false);
-
   const { write, error, isSuccess, hash } = useClaim();
 
   const symbol = selectedToken?.symbolEVM as string;
@@ -43,31 +41,13 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
-  const handleClaimRedeem = useCallback(async (): Promise<boolean> => {
-    if (!evmAddress || !burnTxId) return false;
-    try {
-      const operationToRedeem = await findClaimable(evmAddress, burnTxId);
-      if (operationToRedeem) {
-        setSignatures(sortSignatures(operationToRedeem.signatures));
-        setIsReadyToClaim(true);
-        setClaimStep(ClaimSteps.AwaitingSignature);
-        return true;
-      }
-    } catch (error: any) {
-      console.error('Error fetching claim api', error.toString());
-      toast.error(Intl.t('index.claim.error.unknown'));
-      setLoadingToError();
-    }
-    return false;
-  }, [evmAddress, burnTxId, setClaimStep, setLoadingToError]);
-
   async function launchClaim() {
     setClaim(Status.Loading);
-    if (!isReadyToClaim) {
+    if (!signatures.length) {
       setClaimStep(ClaimSteps.RetrievingInfo);
       const result = await handleClaimRedeem();
       return result;
-    } else if (isReadyToClaim) {
+    } else if (signatures) {
       return false;
     }
   }
@@ -104,6 +84,23 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     }
   }, [error, isSuccess, hash]);
 
+  const handleClaimRedeem = useCallback(async (): Promise<boolean> => {
+    if (!evmAddress || !burnTxId) return false;
+    try {
+      const operationToRedeem = await findClaimable(evmAddress, burnTxId);
+      if (operationToRedeem) {
+        setSignatures(sortSignatures(operationToRedeem.signatures));
+        setClaimStep(ClaimSteps.AwaitingSignature);
+        return true;
+      }
+    } catch (error: any) {
+      console.error('Error fetching claim api', error.toString());
+      toast.error(Intl.t('index.claim.error.unknown'));
+      setLoadingToError();
+    }
+    return false;
+  }, [evmAddress, burnTxId, setClaimStep, setLoadingToError]);
+
   async function _handleRedeem() {
     if (!amount || !evmAddress || !selectedToken || !burnTxId) return;
 
@@ -125,7 +122,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   }
 
   const claimMessage =
-    burn === Status.Success && !isReadyToClaim ? (
+    burn === Status.Success && !signatures.length ? (
       <div>
         {Intl.t('index.loading-box.claim-pending-1')}
         <br />
@@ -145,7 +142,7 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   return (
     <div className="flex flex-col gap-6 justify-center">
       <div className="mas-body-2 text-center max-w-full">{claimMessage}</div>
-      {isReadyToClaim && !hasClickedClaimed ? (
+      {signatures.length && !hasClickedClaimed ? (
         <Button
           onClick={() => {
             _handleRedeem();
