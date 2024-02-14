@@ -24,10 +24,11 @@ interface ClaimProps {
 
 export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   const { address: evmAddress, chain } = useAccount();
-
   const { selectedToken, refreshBalances } = useTokenStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const { burnTxId, amount, setClaimTxId } = useOperationStore();
+
+  const [isReadyToClaim, setIsReadyToClaim] = useState(false);
 
   const { write, error, isSuccess, hash } = useClaim();
 
@@ -42,68 +43,113 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
-  const handleClaimRedeem = useCallback(async (): Promise<void> => {
-    if (!evmAddress || !burnTxId) return;
+  const handleClaimRedeem = useCallback(async (): Promise<boolean> => {
+    console.log('evm address', evmAddress);
+    console.log('burn tx id', burnTxId);
+    if (!evmAddress || !burnTxId) return false;
     try {
       const operationToRedeem = await findClaimable(evmAddress, burnTxId);
       if (operationToRedeem) {
+        console.log('found operation to redeem', operationToRedeem);
         setSignatures(sortSignatures(operationToRedeem.signatures));
+        console.log('found signatures', operationToRedeem.signatures);
+        setIsReadyToClaim(true);
         setClaimStep(ClaimSteps.AwaitingSignature);
+        return true;
       }
     } catch (error: any) {
       console.error('Error fetching claim api', error.toString());
       toast.error(Intl.t('index.claim.error.unknown'));
       setLoadingToError();
     }
+    return false;
   }, [evmAddress, burnTxId, setClaimStep, setLoadingToError]);
 
-  const isReadyToClaim = !!signatures.length;
-  // Polls every 3 seconds to see if conditions are met to show claim
-
-  // TODO: determine if we need a timeout here
-  useEffect(() => {
+  async function launchClaim() {
     setClaim(Status.Loading);
-    if (burn === Status.Success && !isReadyToClaim) {
+
+    if (!isReadyToClaim) {
+      console.log('polling for claim', isReadyToClaim);
       setClaimStep(ClaimSteps.RetrievingInfo);
-      const timer = setInterval(() => {
-        handleClaimRedeem();
-      }, 3000);
-      return () => clearInterval(timer);
+      const result = await handleClaimRedeem();
+      return result;
+    } else if (isReadyToClaim) {
+      console.log('stop polling for claim', isReadyToClaim);
+      return false;
     }
-  }, [burn, isReadyToClaim, handleClaimRedeem, setClaim, setClaimStep]);
+  }
+
+  useEffect(() => {
+    if (burn !== Status.Success) return;
+    if (!amount) {
+      setClaim(Status.Error);
+      throw new Error('Missing required data to redeem: amount');
+    }
+    const launchClaimWithRetry = async () => {
+      let result = await launchClaim();
+      while (!result) {
+        result = await launchClaim();
+      }
+    };
+    console.log('launchingClaim');
+
+    launchClaimWithRetry();
+    // [] to prevent infinite loop
+  }, []);
 
   useEffect(() => {
     if (isSuccess && hash) {
-      setClaimTxId(hash);
-      setClaim(Status.Success);
-      setBox(Status.Success);
-      refreshBalances();
+      setClaimSuccess();
     }
     if (error) {
-      const state = handleEvmClaimBoxError(error);
-      if (state === ClaimState.REJECTED) {
-        setClaim(Status.Error);
-        setHasClickedClaimed(false);
-        setClaimStep(ClaimSteps.Reject);
-      } else {
-        setLoadingToError();
-        setClaimStep(ClaimSteps.Error);
-      }
+      handleClaimErrors(error);
     }
-  }, [
-    error,
-    isSuccess,
-    setBox,
-    refreshBalances,
-    setClaim,
-    setHasClickedClaimed,
-    setClaimStep,
-    setLoadingToError,
-    hash,
-  ]);
+  }, [error, isSuccess, hash]);
+
+  function setClaimSuccess() {
+    setClaimTxId(hash);
+    setClaim(Status.Success);
+    setBox(Status.Success);
+    refreshBalances();
+  }
+
+  function handleClaimErrors(error: Error) {
+    const state = handleEvmClaimBoxError(error);
+    if (state === ClaimState.REJECTED) {
+      setClaim(Status.Error);
+      setHasClickedClaimed(false);
+      setClaimStep(ClaimSteps.Reject);
+    } else {
+      setLoadingToError();
+      setClaimStep(ClaimSteps.Error);
+    }
+  }
 
   async function _handleRedeem() {
-    if (!amount || !evmAddress || !selectedToken || !burnTxId) return;
+    console.log('redeeming...');
+    if (!amount || !evmAddress || !selectedToken || !burnTxId) {
+      setIsReadyToClaim(false);
+      const missingData = !amount
+        ? 'amount'
+        : !evmAddress
+        ? 'evmAddress'
+        : !selectedToken
+        ? 'selectedToken'
+        : !burnTxId
+        ? 'burnTxId'
+        : null;
+      switch (missingData) {
+        case 'amount':
+          throw new Error('Missing required data to redeem: amount');
+        case 'evmAddress':
+          throw new Error('Missing required data to redeem: evmAddress');
+        case 'selectedToken':
+          throw new Error('Missing required data to redeem: selectedToken');
+        case 'burnTxId':
+          throw new Error('Missing required data to redeem: burnTxId');
+      }
+      return;
+    }
 
     if (hasClickedClaimed) {
       toast.error(Intl.t('index.loading-box.claim-error-1'));

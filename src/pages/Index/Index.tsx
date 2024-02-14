@@ -53,6 +53,10 @@ export function Index() {
 
   useNetworkCheck(setWrongNetwork);
 
+  useEffect(() => {
+    console.log('amount', amount);
+  }, [amount]);
+
   const {
     isSuccess: approveIsSuccess,
     error: approveError,
@@ -79,9 +83,9 @@ export function Index() {
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
 
-  useEffect(() => {
-    setError({ amount: '' });
-  }, [amount, side, selectedToken?.name]);
+  // useEffect(() => {
+  //   setError({ amount: '' });
+  // }, [amount, side, selectedToken?.name]);
 
   useEffect(() => {
     if (lockIsSuccess) {
