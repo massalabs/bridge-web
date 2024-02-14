@@ -41,9 +41,9 @@ export const config = {
   },
   [BridgeMode.testnet]: {
     evmBridgeContract:
-      '0x141631E69E65c697c142f56c6fdCaF4ec648390e' as `0x${string}`,
+      '0xc784A3df3e4a7613e042e150C26a6Ff7C07104eb' as `0x${string}`,
     massaBridgeContract:
-      'AS12UwPZ3EdM2sLX37zMdVH46McZohZRDbS4AhrfbfxtajRawD4jr',
+      'AS122W8dgX7WKw2HfMpoGkpQutMcFEikGMPzXnmBujSDHzgnjLtsH',
     lambdaUrl:
       'https://6sul7w7nqer7pd5mf7cl6l2muy0isblj.lambda-url.eu-west-3.on.aws/default/',
   },
