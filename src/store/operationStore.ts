@@ -1,5 +1,4 @@
-import { ClaimSteps } from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/RedeemLayout';
-import { SIDE } from '@/utils/const';
+import { ClaimSteps, SIDE } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 interface CurrentRedeemOperation {

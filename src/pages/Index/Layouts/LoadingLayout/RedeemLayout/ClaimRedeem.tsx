@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { ClaimSteps } from './RedeemLayout';
-import { ClaimState } from '../../../../ClaimPage/ClaimButton';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
@@ -13,6 +11,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
+import { ClaimState, ClaimSteps } from '@/utils/const';
 import { findClaimable, sortSignatures } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim

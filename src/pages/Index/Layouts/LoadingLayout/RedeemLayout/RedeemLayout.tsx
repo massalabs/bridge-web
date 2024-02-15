@@ -9,6 +9,7 @@ import {
   MASSA_EXPLO_URL,
   MASSA_EXPLO_EXTENSION,
   MASSA_EXPLORER_URL,
+  ClaimSteps,
 } from '@/utils/const';
 
 export function RedeemLayout(props: LoadingBoxProps) {
@@ -69,13 +70,4 @@ function getClaimStepTranslation(claimStep: ClaimSteps) {
     default:
       return '';
   }
-}
-
-export const enum ClaimSteps {
-  None,
-  RetrievingInfo,
-  AwaitingSignature,
-  Claiming,
-  Error,
-  Reject,
 }

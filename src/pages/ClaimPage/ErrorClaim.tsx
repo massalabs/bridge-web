@@ -1,7 +1,7 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { FiAlertCircle, FiRefreshCcw } from 'react-icons/fi';
-import { ClaimState } from './ClaimButton';
 import Intl from '@/i18n/i18n';
+import { ClaimState } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 

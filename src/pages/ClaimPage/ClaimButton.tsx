@@ -3,16 +3,8 @@ import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { SuccessClaim } from './SuccessClaim';
 import { useTokenStore } from '@/store/tokenStore';
+import { ClaimState } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
-
-export enum ClaimState {
-  INIT = 'init',
-  PENDING = 'pending',
-  SUCCESS = 'success',
-  ERROR = 'error',
-  REJECTED = 'rejected',
-  ALREADY_EXECUTED = 'already-executed',
-}
 
 interface ClaimOperationContainerProps {
   operation: RedeemOperationToClaim;

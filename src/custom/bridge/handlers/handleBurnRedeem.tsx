@@ -2,9 +2,9 @@ import { toast } from '@massalabs/react-ui-kit';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
-import { ClaimSteps } from '@/pages/Index/Layouts/LoadingLayout/RedeemLayout/RedeemLayout';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
+import { ClaimSteps } from '@/utils/const';
 import {
   CustomError,
   isRejectedByUser,
