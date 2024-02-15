@@ -124,8 +124,15 @@ export function Claim() {
   }
 
   async function handleRedeem() {
-    if (!amount || !evmAddress || !selectedToken || !burnTxId || !currentRedeemOperation || 
-      currentRedeemOperation.signatures.length === 0) return;
+    if (
+      !amount ||
+      !evmAddress ||
+      !selectedToken ||
+      !burnTxId ||
+      !currentRedeemOperation ||
+      currentRedeemOperation.signatures.length === 0
+    )
+      return;
 
     if (hasClickedClaimed) {
       toast.error(Intl.t('index.loading-box.claim-error-1'));
@@ -147,9 +154,11 @@ export function Claim() {
     });
   }
 
-  const isClaimPending = burn === Status.Success && !currentRedeemOperation?.signatures.length;
+  const isClaimPending =
+    burn === Status.Success && !currentRedeemOperation?.signatures.length;
 
-  const isClaimRejected = currentRedeemOperation?.claimStep === ClaimSteps.Reject;
+  const isClaimRejected =
+    currentRedeemOperation?.claimStep === ClaimSteps.Reject;
 
   const claimMessage = isClaimPending ? (
     <div>
@@ -168,7 +177,8 @@ export function Claim() {
     })
   ) : null;
 
-  const isReadyToClaim = currentRedeemOperation?.signatures.length && !hasClickedClaimed;
+  const isReadyToClaim =
+    currentRedeemOperation?.signatures.length && !hasClickedClaimed;
 
   return (
     <div className="flex flex-col gap-6 justify-center">

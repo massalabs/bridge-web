@@ -88,16 +88,18 @@ export function useNetworkCheck() {
 
     setWrongNetwork(!massaOk || !evmOk);
   }, [
-    evmConnectedChain,
     currentMode,
+    evmConnectedChain,
     connectedNetwork,
     isMainnet,
-    setWrongNetwork,
     toastIdEvm,
     toastIdMassa,
-    setToastIdEvm,
-    setToastIdMassa,
     currentProvider,
+    evmNetwork,
+    massaNetwork,
+    setToastIdEvm,
+    setWrongNetwork,
+    setToastIdMassa,
   ]);
 
   return { wrongNetwork };
