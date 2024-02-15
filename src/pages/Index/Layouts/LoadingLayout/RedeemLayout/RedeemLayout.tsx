@@ -8,12 +8,11 @@ import {
   MASSA_EXPLO_URL,
   MASSA_EXPLO_EXTENSION,
   MASSA_EXPLORER_URL,
-  ClaimSteps,
 } from '@/utils/const';
 
 export function RedeemLayout() {
   const { burn, approve, claim, redeemLabels } = useGlobalStatusesStore();
-  const { burnTxId, currentRedeemOperation } = useOperationStore();
+  const { burnTxId } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
 
   // wait for burn success --> then check additional conditions
@@ -32,15 +31,18 @@ export function RedeemLayout() {
           <LoadingState state={approve} />
         </div>
         <div className="flex justify-between">
-          <p className="mas-body-2">{redeemLabels.burn}</p>
+          <p className="mas-body-2">
+            {' '}
+            {Intl.t('index.loading-box.burn-step', {
+              state: redeemLabels.burn ? redeemLabels.burn : '',
+            })}
+          </p>
           <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">
           <p className="mas-body-2">
             {Intl.t('index.loading-box.claim-step', {
-              state: getClaimStepTranslation(
-                currentRedeemOperation?.claimStep || ClaimSteps.None,
-              ),
+              state: redeemLabels.claim ? redeemLabels.claim : '',
             })}
           </p>
           <LoadingState state={claim} />
@@ -50,21 +52,4 @@ export function RedeemLayout() {
       </div>
     </>
   );
-}
-function getClaimStepTranslation(claimStep: ClaimSteps) {
-  switch (claimStep) {
-    case ClaimSteps.RetrievingInfo:
-      return Intl.t('index.loading-box.claim-step-retrieving-info');
-    case ClaimSteps.AwaitingSignature:
-      return Intl.t('index.loading-box.claim-step-awaiting-signature');
-    case ClaimSteps.Claiming:
-      return Intl.t('index.loading-box.claim-step-claiming');
-    case ClaimSteps.Reject:
-      return Intl.t('index.loading-box.claim-step-rejected');
-    case ClaimSteps.Error:
-      return Intl.t('index.loading-box.claim-step-error');
-    case ClaimSteps.None:
-    default:
-      return '';
-  }
 }

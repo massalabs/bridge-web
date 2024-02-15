@@ -36,7 +36,6 @@ async function initiateBurn({ recipient, amount }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
   const { setBurnTxId, setCurrentRedeemOperation } =
     useOperationStore.getState();
-  const { updateCurrentRedeemOperation } = useOperationStore.getState();
   const { setRedeemLabels } = useGlobalStatusesStore.getState();
 
   setBurn(Status.Loading);
@@ -55,11 +54,9 @@ async function initiateBurn({ recipient, amount }: BurnRedeemParams) {
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
-
-  setRedeemLabels({ burn: Intl.t('index.loading-box.burned-final') });
-
-  updateCurrentRedeemOperation({
-    claimStep: ClaimSteps.RetrievingInfo,
+  setRedeemLabels({
+    burn: Intl.t('index.loading-box.burn-final'),
+    claim: Intl.t('index.loading-box.claim-step-retrieving-info'),
   });
 }
 

@@ -20,7 +20,8 @@ import { findClaimable, sortSignatures } from '@/utils/lambdaApi';
 export function Claim() {
   const { address: evmAddress, chain } = useAccount();
   const { selectedToken, refreshBalances } = useTokenStore();
-  const { burn, setClaim, setBox } = useGlobalStatusesStore();
+  const { burn, setClaim, setBox, setRedeemLabels, redeemLabels } =
+    useGlobalStatusesStore();
   const {
     burnTxId,
     amount,
@@ -54,14 +55,12 @@ export function Claim() {
       if (state === ClaimState.REJECTED) {
         setClaim(Status.Error);
         setHasClickedClaimed(false);
-        updateCurrentRedeemOperation({
-          claimStep: ClaimSteps.Reject,
+        setRedeemLabels({
+          burn: redeemLabels.burn,
+          claim: Intl.t('index.loading-box.claim-step-rejected'),
         });
       } else {
         setLoadingToError();
-        updateCurrentRedeemOperation({
-          claimStep: ClaimSteps.Error,
-        });
       }
     }
   }, [
@@ -93,8 +92,11 @@ export function Claim() {
               updateCurrentRedeemOperation({
                 signatures: signatures,
               });
-              updateCurrentRedeemOperation({
-                claimStep: ClaimSteps.AwaitingSignature,
+              setRedeemLabels({
+                burn: redeemLabels.burn,
+                claim: Intl.t(
+                  'index.loading-box.claim-step-awaiting-signature',
+                ),
               });
               return;
             }
@@ -143,8 +145,9 @@ export function Claim() {
       recipient: evmAddress,
     });
 
-    updateCurrentRedeemOperation({
-      claimStep: ClaimSteps.Claiming,
+    setRedeemLabels({
+      burn: redeemLabels.burn,
+      claim: Intl.t('index.loading-box.claim-step-claiming'),
     });
   }
 
