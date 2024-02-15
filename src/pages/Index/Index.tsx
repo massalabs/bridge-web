@@ -2,7 +2,7 @@ import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
-import { LoadingLayout } from './Layouts/LoadingLayout/LoadingLayout';
+import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
@@ -68,8 +68,8 @@ export function Index() {
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
-  const isLoading = box !== Status.None;
-  const isBlurred = isLoading ? 'blur-md' : '';
+  const isOperationPending = box !== Status.None;
+  const isBlurred = isOperationPending ? 'blur-md' : '';
 
   const isButtonDisabled =
     isFetching ||
@@ -214,8 +214,11 @@ export function Index() {
   return (
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
       {/* If loading -> show loading layout else show home page*/}
-      {isLoading ? (
-        <LoadingLayout onClose={closeLoadingBox} redeemSteps={redeemSteps} />
+      {isOperationPending ? (
+        <PendingOperationLayout
+          onClose={closeLoadingBox}
+          redeemSteps={redeemSteps}
+        />
       ) : (
         <BridgeRedeemLayout
           isBlurred={isBlurred}
@@ -227,7 +230,7 @@ export function Index() {
       )}
 
       <TokensFAQ />
-      {!isLoading && <ClaimTokensPopup />}
+      {!isOperationPending && <ClaimTokensPopup />}
     </div>
   );
 }

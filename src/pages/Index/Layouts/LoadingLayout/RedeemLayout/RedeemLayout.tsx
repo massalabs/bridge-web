@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { Claim } from './ClaimRedeem';
-import { LoadingBoxProps } from '../LoadingLayout';
 import { LoadingState } from '../LoadingState';
+import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
