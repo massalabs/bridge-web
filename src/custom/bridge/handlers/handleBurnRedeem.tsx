@@ -41,6 +41,7 @@ async function initiateBurn({
   const { setBurn } = useGlobalStatusesStore.getState();
   const { setBurnTxId, setCurrentRedeemOperation } =
     useOperationStore.getState();
+  const { updateCurrentRedeemOperation } = useOperationStore.getState();
 
   setBurn(Status.Loading);
 
@@ -60,6 +61,10 @@ async function initiateBurn({
   setBurn(Status.Success);
 
   setRedeemSteps(Intl.t('index.loading-box.burned-final'));
+
+  updateCurrentRedeemOperation({
+    claimStep: ClaimSteps.RetrievingInfo,
+  });
 }
 
 function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
