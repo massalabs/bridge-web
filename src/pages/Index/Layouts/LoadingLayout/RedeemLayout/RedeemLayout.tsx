@@ -1,6 +1,5 @@
 import { Claim } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
-import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
@@ -12,10 +11,8 @@ import {
   ClaimSteps,
 } from '@/utils/const';
 
-export function RedeemLayout(props: LoadingBoxProps) {
-  const { redeemSteps } = props;
-
-  const { burn, approve, claim } = useGlobalStatusesStore();
+export function RedeemLayout() {
+  const { burn, approve, claim, redeemLabels } = useGlobalStatusesStore();
   const { burnTxId, currentRedeemOperation } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
 
@@ -35,7 +32,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={approve} />
         </div>
         <div className="flex justify-between">
-          <p className="mas-body-2">{redeemSteps}</p>
+          <p className="mas-body-2">{redeemLabels.burn}</p>
           <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">

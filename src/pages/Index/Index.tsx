@@ -42,10 +42,6 @@ export function Index() {
 
   const [error, setError] = useState<{ amount: string } | null>(null);
 
-  const [redeemSteps, setRedeemSteps] = useState<string>(
-    Intl.t('index.loading-box.burn'),
-  );
-
   const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
 
   const { wrongNetwork } = useNetworkCheck();
@@ -187,7 +183,6 @@ export function Index() {
         await handleBurnRedeem({
           recipient: evmAddress,
           amount,
-          setRedeemSteps,
         });
       }
     } else {
@@ -212,10 +207,7 @@ export function Index() {
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
       {/* If loading -> show loading layout else show home page*/}
       {isOperationPending ? (
-        <PendingOperationLayout
-          onClose={closeLoadingBox}
-          redeemSteps={redeemSteps}
-        />
+        <PendingOperationLayout onClose={closeLoadingBox} />
       ) : (
         <BridgeRedeemLayout
           isBlurred={isBlurred}

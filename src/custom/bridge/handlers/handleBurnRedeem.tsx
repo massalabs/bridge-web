@@ -14,7 +14,6 @@ import {
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
   amount: string;
-  setRedeemSteps: (state: string) => void;
 }
 
 export async function handleBurnRedeem(
@@ -25,7 +24,7 @@ export async function handleBurnRedeem(
   try {
     await initiateBurn(args);
   } catch (error) {
-    handleBurnError(args, error);
+    handleBurnError(error);
     setBox(Status.Error);
     setBurn(Status.Error);
     return false;
@@ -33,19 +32,16 @@ export async function handleBurnRedeem(
   return true;
 }
 
-async function initiateBurn({
-  recipient,
-  amount,
-  setRedeemSteps,
-}: BurnRedeemParams) {
+async function initiateBurn({ recipient, amount }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
   const { setBurnTxId, setCurrentRedeemOperation } =
     useOperationStore.getState();
   const { updateCurrentRedeemOperation } = useOperationStore.getState();
+  const { setRedeemLabels } = useGlobalStatusesStore.getState();
 
   setBurn(Status.Loading);
 
-  setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
+  setRedeemLabels({ burn: Intl.t('index.loading-box.awaiting-inclusion') });
 
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
@@ -55,29 +51,30 @@ async function initiateBurn({
     signatures: [],
   });
 
-  setRedeemSteps(Intl.t('index.loading-box.included-pending'));
+  setRedeemLabels({ burn: Intl.t('index.loading-box.included-pending') });
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
 
-  setRedeemSteps(Intl.t('index.loading-box.burned-final'));
+  setRedeemLabels({ burn: Intl.t('index.loading-box.burned-final') });
 
   updateCurrentRedeemOperation({
     claimStep: ClaimSteps.RetrievingInfo,
   });
 }
 
-function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
-  const { setRedeemSteps } = args;
-
+function handleBurnError(error: undefined | unknown) {
+  const { setRedeemLabels } = useGlobalStatusesStore.getState();
   const typedError = error as CustomError;
   const isErrorTimeout = typedError.cause?.error === 'timeout';
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t('index.burn.error.rejected'));
-    setRedeemSteps(Intl.t('index.loading-box.burn-rejected'));
+    setRedeemLabels({ burn: Intl.t('index.loading-box.burn-rejected') });
   } else if (isWalletTimeoutError(typedError)) {
     toast.error(Intl.t('index.burn.error.timeout'));
-    setRedeemSteps(Intl.t('index.loading-box.burn-signature-timeout'));
+    setRedeemLabels({
+      burn: Intl.t('index.loading-box.burn-signature-timeout'),
+    });
   } else if (isErrorTimeout) {
     toast.error(Intl.t('index.burn.error.timeout'));
   } else {

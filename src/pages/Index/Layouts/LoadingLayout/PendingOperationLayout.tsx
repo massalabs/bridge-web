@@ -11,7 +11,6 @@ import { SIDE } from '@/utils/const';
 
 export interface LoadingBoxProps {
   onClose: () => void;
-  redeemSteps: string;
 }
 
 export function PendingOperationLayout(props: LoadingBoxProps) {
@@ -63,7 +62,7 @@ export function PendingOperationLayout(props: LoadingBoxProps) {
       case IS_BOX_WARNING:
         return <WarningLayout />;
       case massaToEvm:
-        return <RedeemLayout {...props} />;
+        return <RedeemLayout />;
       default:
         return <BridgeLayout />;
     }

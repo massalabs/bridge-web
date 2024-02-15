@@ -23,6 +23,7 @@ export const globalStatusesStoreStateMock = {
   setLock: jest.fn().mockImplementation(),
   setMint: jest.fn().mockImplementation(),
   reset: jest.fn().mockImplementation(),
+  setRedeemLabels: jest.fn(),
 } as GlobalStatusesStoreState;
 
 export const initGlobalStatusesStoreMock = () => {
