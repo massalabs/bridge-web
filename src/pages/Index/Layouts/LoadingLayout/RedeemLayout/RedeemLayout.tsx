@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Claim } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { LoadingBoxProps } from '../PendingOperationLayout';
@@ -11,27 +9,19 @@ import {
   MASSA_EXPLO_URL,
   MASSA_EXPLO_EXTENSION,
   MASSA_EXPLORER_URL,
+  ClaimSteps,
 } from '@/utils/const';
 
-export function RedeemLayout({ ...props }: LoadingBoxProps) {
+export function RedeemLayout(props: LoadingBoxProps) {
   const { redeemSteps } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
-
-  const { burnTxId } = useOperationStore();
-
-  const [claimStep, setClaimStep] = useState(ClaimSteps.None);
-
+  const { burnTxId, currentRedeemOperation } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessful = burn === Status.Success;
-
-  const claimArgs = {
-    claimStep,
-    setClaimStep,
-  };
 
   const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${burnTxId}${MASSA_EXPLO_EXTENSION}`;
   const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${burnTxId}`;
@@ -51,12 +41,14 @@ export function RedeemLayout({ ...props }: LoadingBoxProps) {
         <div className="flex justify-between">
           <p className="mas-body-2">
             {Intl.t('index.loading-box.claim-step', {
-              state: getClaimStepTranslation(claimStep),
+              state: getClaimStepTranslation(
+                currentRedeemOperation?.claimStep || ClaimSteps.None,
+              ),
             })}
           </p>
           <LoadingState state={claim} />
         </div>
-        {isBurnSuccessful && <Claim {...claimArgs} />}
+        {isBurnSuccessful && <Claim />}
         <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
       </div>
     </>
@@ -78,13 +70,4 @@ function getClaimStepTranslation(claimStep: ClaimSteps) {
     default:
       return '';
   }
-}
-
-export const enum ClaimSteps {
-  None,
-  RetrievingInfo,
-  AwaitingSignature,
-  Claiming,
-  Error,
-  Reject,
 }

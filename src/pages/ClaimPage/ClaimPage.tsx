@@ -13,8 +13,6 @@ export function Claim() {
 
   const { address: evmAddress } = useAccount();
 
-  if (!evmAddress) throw new Error('EVM address not found');
-
   useEffect(() => {
     if (!evmAddress) return;
 
@@ -24,6 +22,11 @@ export function Claim() {
   }, [evmAddress, setOpToRedeem]);
 
   const burnListIsNotEmpty = opToRedeem.length;
+
+  if (!evmAddress) {
+    console.warn('EVM address not found');
+    return null;
+  }
 
   return (
     <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">

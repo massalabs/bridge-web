@@ -1,5 +1,5 @@
 import { toast } from '@massalabs/react-ui-kit';
-import { ClaimState } from '../pages/ClaimPage/ClaimButton';
+import { ClaimState } from './const';
 import Intl from '@/i18n/i18n';
 import {
   CustomError,
