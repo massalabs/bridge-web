@@ -24,7 +24,6 @@ interface ClaimProps {
 
 export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   const { address: evmAddress, chain } = useAccount();
-
   const { selectedToken, refreshBalances } = useTokenStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const { burnTxId, amount, setClaimTxId } = useOperationStore();
@@ -42,35 +41,28 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
-  const handleClaimRedeem = useCallback(async (): Promise<void> => {
-    if (!evmAddress || !burnTxId) return;
-    try {
-      const operationToRedeem = await findClaimable(evmAddress, burnTxId);
-      if (operationToRedeem) {
-        setSignatures(sortSignatures(operationToRedeem.signatures));
-        setClaimStep(ClaimSteps.AwaitingSignature);
-      }
-    } catch (error: any) {
-      console.error('Error fetching claim api', error.toString());
-      toast.error(Intl.t('index.claim.error.unknown'));
-      setLoadingToError();
-    }
-  }, [evmAddress, burnTxId, setClaimStep, setLoadingToError]);
-
-  const isReadyToClaim = !!signatures.length;
-  // Polls every 3 seconds to see if conditions are met to show claim
-
-  // TODO: determine if we need a timeout here
-  useEffect(() => {
+  async function launchClaim() {
     setClaim(Status.Loading);
-    if (burn === Status.Success && !isReadyToClaim) {
+    if (!signatures.length) {
       setClaimStep(ClaimSteps.RetrievingInfo);
-      const timer = setInterval(() => {
-        handleClaimRedeem();
-      }, 3000);
-      return () => clearInterval(timer);
+      const result = await handleClaimRedeem();
+      return result;
     }
-  }, [burn, isReadyToClaim, handleClaimRedeem, setClaim, setClaimStep]);
+    return false;
+  }
+
+  useEffect(() => {
+    if (burn !== Status.Success) return;
+    const launchClaimWithRetry = async () => {
+      let result = await launchClaim();
+      while (!result) {
+        result = await launchClaim();
+      }
+    };
+    launchClaimWithRetry();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // [] to render only on mount
+  }, []);
 
   useEffect(() => {
     if (isSuccess && hash) {
@@ -93,14 +85,31 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
   }, [
     error,
     isSuccess,
-    setBox,
-    refreshBalances,
-    setClaim,
-    setHasClickedClaimed,
-    setClaimStep,
-    setLoadingToError,
     hash,
+    setClaim,
+    setBox,
+    setClaimStep,
+    refreshBalances,
+    setLoadingToError,
+    setClaimTxId,
   ]);
+
+  async function handleClaimRedeem(): Promise<boolean> {
+    if (!evmAddress || !burnTxId) return false;
+    try {
+      const operationToRedeem = await findClaimable(evmAddress, burnTxId);
+      if (operationToRedeem) {
+        setSignatures(sortSignatures(operationToRedeem.signatures));
+        setClaimStep(ClaimSteps.AwaitingSignature);
+        return true;
+      }
+    } catch (error: any) {
+      console.error('Error fetching claim api', error.toString());
+      toast.error(Intl.t('index.claim.error.unknown'));
+      setLoadingToError();
+    }
+    return false;
+  }
 
   async function _handleRedeem() {
     if (!amount || !evmAddress || !selectedToken || !burnTxId) return;
@@ -122,28 +131,33 @@ export function Claim({ claimStep, setClaimStep }: ClaimProps) {
     setClaimStep(ClaimSteps.Claiming);
   }
 
-  const claimMessage =
-    burn === Status.Success && !isReadyToClaim ? (
-      <div>
-        {Intl.t('index.loading-box.claim-pending-1')}
-        <br />
-        {Intl.t('index.loading-box.claim-pending-2')}
-      </div>
-    ) : claimStep === ClaimSteps.Reject ? (
-      <div className="text-s-error">
-        {Intl.t('index.loading-box.rejected-by-user')}
-      </div>
-    ) : !hasClickedClaimed ? (
-      Intl.t('index.loading-box.claim-message', {
-        token: symbol,
-        network: selectedChain,
-      })
-    ) : null;
+  const isClaimPending = burn === Status.Success && !signatures.length;
+
+  const isClaimRejected = claimStep === ClaimSteps.Reject;
+
+  const claimMessage = isClaimPending ? (
+    <div>
+      {Intl.t('index.loading-box.claim-pending-1')}
+      <br />
+      {Intl.t('index.loading-box.claim-pending-2')}
+    </div>
+  ) : isClaimRejected ? (
+    <div className="text-s-error">
+      {Intl.t('index.loading-box.rejected-by-user')}
+    </div>
+  ) : !hasClickedClaimed ? (
+    Intl.t('index.loading-box.claim-message', {
+      token: symbol,
+      network: selectedChain,
+    })
+  ) : null;
+
+  const isReadyToClaim = signatures.length && !hasClickedClaimed;
 
   return (
     <div className="flex flex-col gap-6 justify-center">
       <div className="mas-body-2 text-center max-w-full">{claimMessage}</div>
-      {isReadyToClaim && !hasClickedClaimed ? (
+      {isReadyToClaim ? (
         <Button
           onClick={() => {
             _handleRedeem();

@@ -14,7 +14,7 @@ export interface LoadingBoxProps {
   redeemSteps: string;
 }
 
-export function LoadingLayout(props: LoadingBoxProps) {
+export function PendingOperationLayout(props: LoadingBoxProps) {
   const { onClose } = props;
   const { side } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;

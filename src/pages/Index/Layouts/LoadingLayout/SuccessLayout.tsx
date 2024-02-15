@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { LoadingBoxProps } from './LoadingLayout';
+import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 import { Blockchain, METAMASK } from '@/const';
 import { faqURL } from '@/const/faq';
