@@ -10,6 +10,7 @@ interface ICustomError extends Error {
 }
 
 export async function handleMintBridge(): Promise<boolean> {
+  console.log('starting mint process');
   const { setBox, setMint } = useGlobalStatusesStore.getState();
 
   const { lockTxId } = useOperationStore.getState();

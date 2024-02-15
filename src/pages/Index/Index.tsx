@@ -8,11 +8,6 @@ import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import { handleMintBridge } from '@/custom/bridge/handlers/handleMintBridge';
-import {
-  handleEvmApproveError,
-  handleLockError,
-} from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useLock } from '@/custom/bridge/useLock';
@@ -32,13 +27,14 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet } = useBridgeModeStore();
-  const { side, setLockTxId, amount, setAmount, resetTxIDs } =
-    useOperationStore();
-
+  const { side, amount, setAmount, resetTxIDs } = useOperationStore();
+  const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
   const { address: evmAddress } = useAccount();
 
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmToken();
+
+  const { write: writeEvmApprove } = useEvmApprove();
 
   const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [error, setError] = useState<{ amount: string } | null>(null);
@@ -47,24 +43,11 @@ export function Index() {
     Intl.t('index.loading-box.burn'),
   );
 
-  const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
-
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
   useNetworkCheck(setWrongNetwork);
 
-  const {
-    isSuccess: approveIsSuccess,
-    error: approveError,
-    write: writeEvmApprove,
-  } = useEvmApprove();
-
-  const {
-    isSuccess: lockIsSuccess,
-    write: writeLock,
-    hash: lockHash,
-    error: lockError,
-  } = useLock();
+  const { write: writeLock } = useLock();
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
 
@@ -83,56 +66,9 @@ export function Index() {
     setError({ amount: '' });
   }, [amount, side, selectedToken?.name]);
 
-  useEffect(() => {
-    if (lockIsSuccess) {
-      setLock(Status.Success);
-      if (!lockHash) return;
-      // Set lock id
-      setLockTxId(lockHash);
-      if (!massaClient) return;
-      handleMintBridge();
-    }
-    if (lockError) {
-      handleLockError(lockError);
-      setBox(Status.Error);
-      setLock(Status.Error);
-    }
-  }, [
-    lockIsSuccess,
-    lockError,
-    lockHash,
-    massaClient,
-    setLock,
-    setBox,
-    setLockTxId,
-  ]);
-
-  useEffect(() => {
-    if (approveIsSuccess) {
-      setApprove(Status.Success);
-      if (!amount) return;
-      setLock(Status.Loading);
-      writeLock();
-    }
-    if (approveError) {
-      handleEvmApproveError(approveError);
-      setBox(Status.Error);
-      setApprove(Status.Error);
-    }
-  }, [
-    approveIsSuccess,
-    approveError,
-    amount,
-    setApprove,
-    setLock,
-    setBox,
-    writeLock,
-  ]);
-
   const closeLoadingBox = useCallback(() => {
     reset();
     setAmount();
-    // Reset all transaction id's
     resetTxIDs();
   }, [reset, setAmount, resetTxIDs]);
 
