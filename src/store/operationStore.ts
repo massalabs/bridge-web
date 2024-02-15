@@ -1,9 +1,8 @@
-import { ClaimState, ClaimSteps, SIDE } from '@/utils/const';
+import { ClaimState, SIDE } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 export interface CurrentRedeemOperation {
-  claimStep: ClaimSteps; // TODO later: remove
-  state: ClaimState; // TODO: on the ClaimRedeem component
+  claimState: ClaimState; // TODO: on the ClaimRedeem component
   inputOpId: string;
   outputOpId?: string;
   signatures: string[];

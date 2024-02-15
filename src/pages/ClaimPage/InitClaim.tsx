@@ -27,15 +27,15 @@ export function InitClaim(props: InitClaimProps) {
 
   useEffect(() => {
     if (isSuccess && hash) {
-      onUpdate({ outputOpId: hash, state: ClaimState.SUCCESS });
+      onUpdate({ outputOpId: hash, claimState: ClaimState.SUCCESS });
     }
     if (error) {
-      onUpdate({ state: handleEvmClaimError(error) });
+      onUpdate({ claimState: handleEvmClaimError(error) });
     }
   }, [error, isSuccess, hash, onUpdate]);
 
   function handleClaim() {
-    onUpdate({ state: ClaimState.PENDING });
+    onUpdate({ claimState: ClaimState.PENDING });
     write(operation);
   }
 

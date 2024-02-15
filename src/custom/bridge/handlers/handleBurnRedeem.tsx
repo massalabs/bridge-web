@@ -4,7 +4,7 @@ import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
-import { ClaimState, ClaimSteps } from '@/utils/const';
+import { ClaimState } from '@/utils/const';
 import {
   CustomError,
   isRejectedByUser,
@@ -41,7 +41,6 @@ async function initiateBurn({
   const { setBurn } = useGlobalStatusesStore.getState();
   const { setBurnTxId, setCurrentRedeemOperation } =
     useOperationStore.getState();
-  const { updateCurrentRedeemOperation } = useOperationStore.getState();
 
   setBurn(Status.Loading);
 
@@ -51,9 +50,8 @@ async function initiateBurn({
   setBurnTxId(burnOpId);
   setCurrentRedeemOperation({
     inputOpId: burnOpId,
-    claimStep: ClaimSteps.None,
     signatures: [],
-    state: ClaimState.INIT,
+    claimState: ClaimState.AWAITING_SIGNATURE,
   });
 
   setRedeemSteps(Intl.t('index.loading-box.included-pending'));
@@ -62,10 +60,6 @@ async function initiateBurn({
   setBurn(Status.Success);
 
   setRedeemSteps(Intl.t('index.loading-box.burned-final'));
-
-  updateCurrentRedeemOperation({
-    claimStep: ClaimSteps.RetrievingInfo,
-  });
 }
 
 function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {

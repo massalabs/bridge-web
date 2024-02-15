@@ -11,7 +11,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { ClaimState, ClaimSteps } from '@/utils/const';
+import { ClaimState } from '@/utils/const';
 import { findClaimable, sortSignatures } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
@@ -55,12 +55,12 @@ export function Claim() {
         setClaim(Status.Error);
         setHasClickedClaimed(false);
         updateCurrentRedeemOperation({
-          claimStep: ClaimSteps.Reject,
+          claimState: ClaimState.REJECTED,
         });
       } else {
         setLoadingToError();
         updateCurrentRedeemOperation({
-          claimStep: ClaimSteps.Error,
+          claimState: ClaimState.ERROR,
         });
       }
     }
@@ -94,7 +94,7 @@ export function Claim() {
                 signatures: signatures,
               });
               updateCurrentRedeemOperation({
-                claimStep: ClaimSteps.AwaitingSignature,
+                claimState: ClaimState.AWAITING_SIGNATURE,
               });
               return;
             }
@@ -144,7 +144,7 @@ export function Claim() {
     });
 
     updateCurrentRedeemOperation({
-      claimStep: ClaimSteps.Claiming,
+      claimState: ClaimState.PENDING,
     });
   }
 
@@ -152,7 +152,7 @@ export function Claim() {
     burn === Status.Success && !currentRedeemOperation?.signatures.length;
 
   const isClaimRejected =
-    currentRedeemOperation?.claimStep === ClaimSteps.Reject;
+    currentRedeemOperation?.claimState === ClaimState.REJECTED;
 
   const claimMessage = isClaimPending ? (
     <div>

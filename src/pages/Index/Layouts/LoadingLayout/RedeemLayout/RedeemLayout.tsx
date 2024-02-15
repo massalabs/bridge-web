@@ -9,7 +9,7 @@ import {
   MASSA_EXPLO_URL,
   MASSA_EXPLO_EXTENSION,
   MASSA_EXPLORER_URL,
-  ClaimSteps,
+  ClaimState,
 } from '@/utils/const';
 
 export function RedeemLayout(props: LoadingBoxProps) {
@@ -42,7 +42,8 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <p className="mas-body-2">
             {Intl.t('index.loading-box.claim-step', {
               state: getClaimStepTranslation(
-                currentRedeemOperation?.claimStep || ClaimSteps.None,
+                currentRedeemOperation?.claimState ||
+                  ClaimState.RETRIEVING_INFO,
               ),
             })}
           </p>
@@ -54,19 +55,18 @@ export function RedeemLayout(props: LoadingBoxProps) {
     </>
   );
 }
-function getClaimStepTranslation(claimStep: ClaimSteps) {
-  switch (claimStep) {
-    case ClaimSteps.RetrievingInfo:
+function getClaimStepTranslation(claimState: ClaimState) {
+  switch (claimState) {
+    case ClaimState.RETRIEVING_INFO:
       return Intl.t('index.loading-box.claim-step-retrieving-info');
-    case ClaimSteps.AwaitingSignature:
+    case ClaimState.AWAITING_SIGNATURE:
       return Intl.t('index.loading-box.claim-step-awaiting-signature');
-    case ClaimSteps.Claiming:
+    case ClaimState.PENDING:
       return Intl.t('index.loading-box.claim-step-claiming');
-    case ClaimSteps.Reject:
+    case ClaimState.REJECTED:
       return Intl.t('index.loading-box.claim-step-rejected');
-    case ClaimSteps.Error:
+    case ClaimState.ERROR:
       return Intl.t('index.loading-box.claim-step-error');
-    case ClaimSteps.None:
     default:
       return '';
   }

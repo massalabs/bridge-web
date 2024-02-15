@@ -13,16 +13,20 @@ interface ClaimOperationContainerProps {
 }
 
 export function ClaimButton({ operation }: ClaimOperationContainerProps) {
-  const [claimState, setClaimState] = useState(ClaimState.INIT);
   const { currentRedeemOperation, updateCurrentRedeemOperation } =
     useOperationStore();
+  const [claimState, setClaimState] = useState(
+    currentRedeemOperation?.inputOpId === operation.inputOpId
+      ? currentRedeemOperation.claimState
+      : ClaimState.AWAITING_SIGNATURE,
+  );
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
 
   const updateFilteredCurrentRedeemOperation = useCallback(
     (op: Partial<CurrentRedeemOperation>) => {
       // update the local states
-      if (op.state) {
-        setClaimState(op.state);
+      if (op.claimState) {
+        setClaimState(op.claimState);
       }
       if (op.outputOpId) {
         setTxHash(op.outputOpId as `0x${string}`);
@@ -54,9 +58,10 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
                 />
               </div>
             );
-          case ClaimState.REJECTED:
+          case ClaimState.AWAITING_SIGNATURE:
+          case ClaimState.RETRIEVING_INFO:
           case ClaimState.PENDING:
-          case ClaimState.INIT:
+          case ClaimState.REJECTED:
             return (
               <div className="flex w-full justify-center">
                 <InitClaim
@@ -75,7 +80,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
                   operation={operation}
                   onReset={() =>
                     updateFilteredCurrentRedeemOperation({
-                      state: ClaimState.INIT,
+                      claimState: ClaimState.AWAITING_SIGNATURE,
                     })
                   }
                   claimState={claimState}
