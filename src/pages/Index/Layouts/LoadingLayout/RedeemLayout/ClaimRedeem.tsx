@@ -117,14 +117,6 @@ export function Claim() {
     updateCurrentRedeemOperation,
   ]);
 
-  useEffect(() => {
-    if (burn === Status.Success) {
-      updateCurrentRedeemOperation({
-        claimStep: ClaimSteps.RetrievingInfo,
-      });
-    }
-  }, [burn, updateCurrentRedeemOperation]);
-
   async function handleRedeem() {
     if (
       !amount ||

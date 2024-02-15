@@ -21,6 +21,7 @@ export const initOperationStoreMock = () => {
           claimTxId: 'mockClaimTxId',
           setClaimTxId: jest.fn(),
           setCurrentRedeemOperation: jest.fn(),
+          updateCurrentRedeemOperation: jest.fn(),
         } as any as OperationStoreState),
     );
 };
