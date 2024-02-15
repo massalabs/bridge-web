@@ -1,3 +1,4 @@
+import { SyntheticEvent } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
 import { FiAlertCircle, FiRefreshCcw } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
@@ -7,13 +8,13 @@ import { formatAmount } from '@/utils/parseAmount';
 
 interface ErrorClaimProps {
   operation: RedeemOperationToClaim;
-  setClaimState: (state: ClaimState) => void; // TODO: rename to onClick
+  onReset: () => void;
   symbol: string | undefined;
   claimState: ClaimState;
 }
 
 export function ErrorClaim(props: ErrorClaimProps) {
-  const { operation: op, symbol, setClaimState, claimState } = props;
+  const { operation: op, symbol, onReset, claimState } = props;
   let { amountFormattedPreview } = formatAmount(op.amount);
 
   const isAlreadyExecuted = claimState === ClaimState.ALREADY_EXECUTED;
@@ -41,9 +42,7 @@ export function ErrorClaim(props: ErrorClaimProps) {
           <Button
             variant="icon"
             customClass="text-s-warning"
-            onClick={() => {
-              setClaimState(ClaimState.INIT);
-            }}
+            onClick={(_: SyntheticEvent) => onReset()}
           >
             <FiRefreshCcw />
           </Button>

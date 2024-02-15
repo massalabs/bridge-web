@@ -4,50 +4,39 @@ import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransact
 import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
+import { CurrentRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface InitClaimProps {
   operation: RedeemOperationToClaim;
-  setClaimState: (state: ClaimState) => void;
   claimState: ClaimState;
-  setHash: (hash: `0x${string}`) => void;
   symbol?: string;
+  onUpdate: (op: Partial<CurrentRedeemOperation>) => void;
 }
 
 export function InitClaim(props: InitClaimProps) {
-  const { operation: op, symbol, setClaimState, claimState, setHash } = props;
+  const { operation, symbol, claimState, onUpdate } = props;
   const { write, error, isSuccess, hash } = useClaim();
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
   const isPending = claimState === ClaimState.PENDING;
 
-  const displayContentArgs = {
-    claimState,
-    amount: op.amount,
-    symbol,
-  };
-
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
   useEffect(() => {
     if (isSuccess && hash) {
-      setClaimState(ClaimState.SUCCESS);
-      setHash(hash);
-      // TODO: if CurrentRedeemOperation.inputOpId === op.inputOpId then:
-      // OperationStoreState.updateCurrentRedeemOperation({ outputOpId: hash, state: ClaimState.SUCCESS});
+      onUpdate({ outputOpId: hash, state: ClaimState.SUCCESS });
     }
     if (error) {
-      setClaimState(handleEvmClaimError(error));
-      // TODO: same
+      onUpdate({ state: handleEvmClaimError(error) });
     }
-  }, [error, isSuccess, hash, setHash, setClaimState]);
+  }, [error, isSuccess, hash, onUpdate]);
 
   function handleClaim() {
-    setClaimState(ClaimState.PENDING);
-    // TODO: same
-    write(op);
+    onUpdate({ state: ClaimState.PENDING });
+    write(operation);
   }
 
   return isPending ? (
@@ -58,7 +47,11 @@ export function InitClaim(props: InitClaimProps) {
           bg-secondary/50 backdrop-blur-lg text-f-primary 
           ${boxSize} h-12 border border-tertiary rounded-2xl px-10 py-14`}
     >
-      <DisplayContent {...displayContentArgs} />
+      <DisplayContent
+        claimState={claimState}
+        amount={operation.amount}
+        symbol={symbol}
+      />
       <div>
         <Button onClick={() => handleClaim()}>
           {Intl.t('claim.claim')} {symbol}
@@ -82,8 +75,14 @@ function PendingClaim() {
   );
 }
 
-function DisplayContent({ ...args }) {
-  const { claimState, amount, symbol } = args;
+interface DisplayContentProps {
+  claimState: ClaimState;
+  amount: string;
+  symbol?: string;
+}
+
+function DisplayContent(props: DisplayContentProps) {
+  const { claimState, amount, symbol } = props;
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(amount);
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
