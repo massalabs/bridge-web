@@ -42,29 +42,40 @@ export function Claim() {
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
-  async function launchClaim() {
+  const launchClaim = useCallback(async () => {
     setClaim(Status.Loading);
     if (!currentRedeemOperation?.signatures.length) {
       updateCurrentRedeemOperation({
         claimStep: ClaimSteps.RetrievingInfo,
       });
-      return await handleClaimRedeem();
+      if (!evmAddress || !burnTxId) return false;
+      try {
+        const operationToRedeem = await findClaimable(evmAddress, burnTxId);
+        if (operationToRedeem) {
+          const signatures = sortSignatures(operationToRedeem.signatures);
+          updateCurrentRedeemOperation({
+            signatures: signatures,
+          });
+          updateCurrentRedeemOperation({
+            claimStep: ClaimSteps.AwaitingSignature,
+          });
+        }
+      } catch (error: any) {
+        console.error('Error fetching claim api', error.toString());
+        toast.error(Intl.t('index.claim.error.unknown'));
+        setLoadingToError();
+      }
+      return false;
     }
     return false;
-  }
-
-  useEffect(() => {
-    if (burn !== Status.Success) return;
-    const launchClaimWithRetry = async () => {
-      let result = await launchClaim();
-      while (!result) {
-        result = await launchClaim();
-      }
-    };
-    launchClaimWithRetry();
-    // [] to render only on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    currentRedeemOperation,
+    setClaim,
+    updateCurrentRedeemOperation,
+    burnTxId,
+    evmAddress,
+    setLoadingToError,
+  ]);
 
   // maybe no need for a useEffect here
   useEffect(() => {
@@ -102,26 +113,14 @@ export function Claim() {
     setClaimTxId,
   ]);
 
-  async function handleClaimRedeem(): Promise<boolean> {
-    if (!evmAddress || !burnTxId) return false;
-    try {
-      const operationToRedeem = await findClaimable(evmAddress, burnTxId);
-      if (operationToRedeem) {
-        const signatures = sortSignatures(operationToRedeem.signatures);
-        updateCurrentRedeemOperation({
-          signatures: signatures,
-        });
-        updateCurrentRedeemOperation({
-          claimStep: ClaimSteps.AwaitingSignature,
-        });
-      }
-    } catch (error: any) {
-      console.error('Error fetching claim api', error.toString());
-      toast.error(Intl.t('index.claim.error.unknown'));
-      setLoadingToError();
+  useEffect(() => {
+    if (burn === Status.Success && !currentRedeemOperation?.signatures.length) {
+      const intervalId = setInterval(() => {
+        launchClaim();
+      }, 2000);
+      return () => clearTimeout(intervalId);
     }
-    return false;
-  }
+  }, [burn, currentRedeemOperation, launchClaim]);
 
   async function handleRedeem() {
     if (
