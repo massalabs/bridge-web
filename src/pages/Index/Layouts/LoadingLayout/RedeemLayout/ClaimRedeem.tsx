@@ -42,41 +42,6 @@ export function Claim() {
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
-  const launchClaim = useCallback(async () => {
-    setClaim(Status.Loading);
-    if (!currentRedeemOperation?.signatures.length) {
-      updateCurrentRedeemOperation({
-        claimStep: ClaimSteps.RetrievingInfo,
-      });
-      if (!evmAddress || !burnTxId) return false;
-      try {
-        const operationToRedeem = await findClaimable(evmAddress, burnTxId);
-        if (operationToRedeem) {
-          const signatures = sortSignatures(operationToRedeem.signatures);
-          updateCurrentRedeemOperation({
-            signatures: signatures,
-          });
-          updateCurrentRedeemOperation({
-            claimStep: ClaimSteps.AwaitingSignature,
-          });
-        }
-      } catch (error: any) {
-        console.error('Error fetching claim api', error.toString());
-        toast.error(Intl.t('index.claim.error.unknown'));
-        setLoadingToError();
-      }
-      return false;
-    }
-    return false;
-  }, [
-    currentRedeemOperation,
-    setClaim,
-    updateCurrentRedeemOperation,
-    burnTxId,
-    evmAddress,
-    setLoadingToError,
-  ]);
-
   // maybe no need for a useEffect here
   useEffect(() => {
     if (isSuccess && hash) {
@@ -115,12 +80,51 @@ export function Claim() {
 
   useEffect(() => {
     if (burn === Status.Success && !currentRedeemOperation?.signatures.length) {
-      const intervalId = setInterval(() => {
-        launchClaim();
-      }, 2000);
-      return () => clearTimeout(intervalId);
+      const launchClaim = async () => {
+        if (
+          burn === Status.Success &&
+          !currentRedeemOperation?.signatures.length &&
+          evmAddress &&
+          burnTxId
+        ) {
+          try {
+            const operationToRedeem = await findClaimable(evmAddress, burnTxId);
+            if (operationToRedeem) {
+              const signatures = sortSignatures(operationToRedeem.signatures);
+              updateCurrentRedeemOperation({
+                signatures: signatures,
+              });
+              updateCurrentRedeemOperation({
+                claimStep: ClaimSteps.AwaitingSignature,
+              });
+              return;
+            }
+          } catch (error: any) {
+            console.error('Error fetching claim api', error.toString());
+            toast.error(Intl.t('index.claim.error.unknown'));
+            setLoadingToError();
+          }
+          setTimeout(launchClaim, 1000);
+        }
+      };
+      launchClaim();
     }
-  }, [burn, currentRedeemOperation, launchClaim]);
+  }, [
+    burn,
+    currentRedeemOperation,
+    evmAddress,
+    burnTxId,
+    setLoadingToError,
+    updateCurrentRedeemOperation,
+  ]);
+
+  useEffect(() => {
+    if (burn === Status.Success) {
+      updateCurrentRedeemOperation({
+        claimStep: ClaimSteps.RetrievingInfo,
+      });
+    }
+  }, [burn, updateCurrentRedeemOperation]);
 
   async function handleRedeem() {
     if (
