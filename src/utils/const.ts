@@ -24,6 +24,24 @@ export enum SIDE {
   EVM_TO_MASSA = 'evmToMassa',
 }
 
+export const enum ClaimSteps {
+  None,
+  RetrievingInfo,
+  AwaitingSignature,
+  Claiming,
+  Error,
+  Reject,
+}
+
+export enum ClaimState {
+  INIT = 'init',
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  REJECTED = 'rejected',
+  ALREADY_EXECUTED = 'already-executed',
+}
+
 export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
 
 export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';

@@ -1,6 +1,6 @@
 import { toast } from '@massalabs/react-ui-kit';
 import Intl from '../../../i18n/i18n';
-import { ClaimState } from '../../../pages/ClaimPage/ClaimButton';
+import { ClaimState } from '@/utils/const';
 import {
   isOperationAlreadyExecutedError,
   isParameterError,

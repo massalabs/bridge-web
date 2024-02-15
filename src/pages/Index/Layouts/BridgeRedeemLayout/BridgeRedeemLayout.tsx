@@ -20,7 +20,7 @@ import {
 import { SIDE } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
-interface BridgeRedeemArgs {
+interface BridgeRedeemProps {
   isBlurred: string;
   isButtonDisabled: boolean;
   error: any;
@@ -28,8 +28,8 @@ interface BridgeRedeemArgs {
   handleSubmit: (e: any) => void;
 }
 
-export function BridgeRedeemLayout(args: BridgeRedeemArgs) {
-  const { isBlurred, isButtonDisabled, error, setError, handleSubmit } = args;
+export function BridgeRedeemLayout(props: BridgeRedeemProps) {
+  const { isBlurred, isButtonDisabled, error, setError, handleSubmit } = props;
 
   const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
     useEvmToken();

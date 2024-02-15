@@ -40,7 +40,6 @@ export function Index() {
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmToken();
 
-  const [_interval, _setInterval] = useState<NodeJS.Timeout>();
   const [error, setError] = useState<{ amount: string } | null>(null);
 
   const [redeemSteps, setRedeemSteps] = useState<string>(
@@ -49,9 +48,7 @@ export function Index() {
 
   const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
 
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
-
-  useNetworkCheck(setWrongNetwork);
+  const { wrongNetwork } = useNetworkCheck();
 
   const {
     isSuccess: approveIsSuccess,

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { Tooltip, Button } from '@massalabs/react-ui-kit';
-import { ClaimState } from './ClaimButton';
 import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
+import { ClaimState } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
