@@ -53,7 +53,8 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
               <div>
                 <ErrorClaim
                   operation={operation}
-                  setClaimState={setClaimState}
+                  setClaimState={setClaimState} // TODO: rename to onClick,
+                  // update the local state and the store if necessary
                   claimState={claimState}
                   symbol={symbol}
                 />

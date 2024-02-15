@@ -24,7 +24,7 @@ export enum SIDE {
   EVM_TO_MASSA = 'evmToMassa',
 }
 
-export const enum ClaimSteps {
+export const enum ClaimSteps { // TODO: remove
   None,
   RetrievingInfo,
   AwaitingSignature,
@@ -34,8 +34,10 @@ export const enum ClaimSteps {
 }
 
 export enum ClaimState {
-  INIT = 'init',
-  PENDING = 'pending',
+  INIT = 'init', // TODO later: remove
+  RetrievingInfo = 'retrieving-info',
+  AwaitingSignature = 'awaiting-signature', // this is the initial state
+  PENDING = 'pending', // Claiming
   SUCCESS = 'success',
   ERROR = 'error',
   REJECTED = 'rejected',

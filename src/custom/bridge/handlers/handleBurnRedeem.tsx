@@ -4,7 +4,7 @@ import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
-import { ClaimSteps } from '@/utils/const';
+import { ClaimState, ClaimSteps } from '@/utils/const';
 import {
   CustomError,
   isRejectedByUser,
@@ -53,6 +53,7 @@ async function initiateBurn({
     inputOpId: burnOpId,
     claimStep: ClaimSteps.None,
     signatures: [],
+    state: ClaimState.INIT,
   });
 
   setRedeemSteps(Intl.t('index.loading-box.included-pending'));

@@ -1,9 +1,11 @@
-import { ClaimSteps, SIDE } from '@/utils/const';
+import { ClaimState, ClaimSteps, SIDE } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 interface CurrentRedeemOperation {
-  claimStep: ClaimSteps;
+  claimStep: ClaimSteps; // TODO later: remove
+  state: ClaimState; // TODO: on the ClaimRedeem component
   inputOpId: string;
+  outputOpId?: string;
   signatures: string[];
 }
 
@@ -24,10 +26,10 @@ export interface OperationStoreState {
   mintTxId?: string;
   setMintTxId(currentTxID?: string): void;
 
-  burnTxId?: string;
+  burnTxId?: string; // TODO later: remove it, use currentRedeemOperation.inputOpId
   setBurnTxId(currentTxID?: string): void;
 
-  claimTxId?: string;
+  claimTxId?: string; // TODO: remove it, use currentRedeemOperation.outputOpId
   setClaimTxId(currentTxID?: string): void;
 
   amount?: string;
@@ -36,7 +38,6 @@ export interface OperationStoreState {
   resetTxIDs: () => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const operationStore = (
   set: (params: Partial<OperationStoreState>) => void,
   get: () => OperationStoreState,

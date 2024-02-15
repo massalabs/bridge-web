@@ -34,7 +34,7 @@ export function Claim() {
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
 
-  const [hasClickedClaimed, setHasClickedClaimed] = useState(false);
+  const [hasClickedClaimed, setHasClickedClaimed] = useState(false); // TODO: see if we need that
 
   const setLoadingToError = useCallback(() => {
     setClaim(Status.Error);
@@ -44,7 +44,7 @@ export function Claim() {
   // maybe no need for a useEffect here
   useEffect(() => {
     if (isSuccess && hash) {
-      setClaimTxId(hash);
+      setClaimTxId(hash); // TODO: updateCurrentRedeemOperation({outputOpId: hash})
       setClaim(Status.Success);
       setBox(Status.Success);
       refreshBalances();
@@ -171,7 +171,7 @@ export function Claim() {
     })
   ) : null;
 
-  const isReadyToClaim =
+  const isReadyToClaim = // TODO: see if can use currentRedeemOperation.state
     currentRedeemOperation?.signatures.length && !hasClickedClaimed;
 
   return (

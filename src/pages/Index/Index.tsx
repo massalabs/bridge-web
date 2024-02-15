@@ -41,7 +41,8 @@ export function Index() {
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmToken();
 
-  const [redeemSteps, setRedeemSteps] = useState<string>(
+  // TODO: rename to redeemLabel
+  const [redeemSteps, setRedeemSteps] = useState<string>( // TODO later: see if we need that
     Intl.t('index.loading-box.burn'),
   );
 

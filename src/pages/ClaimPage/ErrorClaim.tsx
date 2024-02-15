@@ -7,7 +7,7 @@ import { formatAmount } from '@/utils/parseAmount';
 
 interface ErrorClaimProps {
   operation: RedeemOperationToClaim;
-  setClaimState: (state: ClaimState) => void;
+  setClaimState: (state: ClaimState) => void; // TODO: rename to onClick
   symbol: string | undefined;
   claimState: ClaimState;
 }

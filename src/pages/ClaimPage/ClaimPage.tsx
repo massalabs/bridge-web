@@ -34,7 +34,7 @@ export function Claim() {
         opToRedeem.map((operation: RedeemOperationToClaim) => {
           return (
             <div
-              key={operation.inputOpId}
+              key={operation.inputOpId} // TODO: see if we need that, maybe move it to ClaimButton bellow
               className="flex w-full justify-center"
             >
               <ClaimButton operation={operation} />

@@ -8,7 +8,7 @@ import { ClaimState } from '@/utils/const';
 import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
-interface ClaimButton {
+interface InitClaimProps {
   operation: RedeemOperationToClaim;
   setClaimState: (state: ClaimState) => void;
   claimState: ClaimState;
@@ -16,8 +16,8 @@ interface ClaimButton {
   symbol?: string;
 }
 
-export function InitClaim(args: ClaimButton) {
-  const { operation: op, symbol, setClaimState, claimState, setHash } = args;
+export function InitClaim(props: InitClaimProps) {
+  const { operation: op, symbol, setClaimState, claimState, setHash } = props;
   const { write, error, isSuccess, hash } = useClaim();
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
@@ -35,15 +35,18 @@ export function InitClaim(args: ClaimButton) {
     if (isSuccess && hash) {
       setClaimState(ClaimState.SUCCESS);
       setHash(hash);
+      // TODO: if CurrentRedeemOperation.inputOpId === op.inputOpId then:
+      // OperationStoreState.updateCurrentRedeemOperation({ outputOpId: hash, state: ClaimState.SUCCESS});
     }
     if (error) {
-      const state = handleEvmClaimError(error);
-      setClaimState(state);
+      setClaimState(handleEvmClaimError(error));
+      // TODO: same
     }
   }, [error, isSuccess, hash, setHash, setClaimState]);
 
   function handleClaim() {
     setClaimState(ClaimState.PENDING);
+    // TODO: same
     write(op);
   }
 
