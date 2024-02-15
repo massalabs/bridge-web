@@ -13,6 +13,7 @@ import {
   handleEvmApproveError,
   handleLockError,
 } from '@/custom/bridge/handlers/handleTransactionErrors';
+import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useLock } from '@/custom/bridge/useLock';
@@ -40,13 +41,12 @@ export function Index() {
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmToken();
 
-  const [error, setError] = useState<{ amount: string } | null>(null);
-
   const [redeemSteps, setRedeemSteps] = useState<string>(
     Intl.t('index.loading-box.burn'),
   );
 
-  const { box, setBox, setLock, setApprove, reset } = useGlobalStatusesStore();
+  const { box, setBox, setLock, setApprove, reset, setAmountError } =
+    useGlobalStatusesStore();
 
   const { wrongNetwork } = useNetworkCheck();
 
@@ -77,7 +77,7 @@ export function Index() {
     (REDEEM_OFF && massaToEvm);
 
   useEffect(() => {
-    setError({ amount: '' });
+    setAmountError('');
   }, [amount, side, selectedToken?.name]);
 
   useEffect(() => {
@@ -137,40 +137,11 @@ export function Index() {
     if (box === Status.None) closeLoadingBox();
   }, [box, closeLoadingBox]);
 
-  function validate() {
-    setError(null);
-
-    if (!amount || !selectedToken) {
-      setError({ amount: Intl.t('index.approve.error.invalid-amount') });
-      return false;
-    }
-
-    const _amount = parseUnits(amount, selectedToken.decimals);
-    let _balance;
-
-    if (massaToEvm) {
-      _balance = selectedToken?.balance || 0n;
-    } else {
-      _balance = _tokenBalanceEVM;
-    }
-
-    if (_amount <= 0n) {
-      setError({ amount: Intl.t('index.approve.error.invalid-amount') });
-      return false;
-    }
-
-    if (_balance < _amount) {
-      setError({ amount: Intl.t('index.approve.error.insufficient-funds') });
-      return false;
-    }
-
-    return true;
-  }
-
   // TODO: refactor this
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    if (!validate() || !amount) return;
+    // validate amount to transact
+    if (!validate(_tokenBalanceEVM) || !amount) return;
     setBox(Status.Loading);
 
     if (massaToEvm) {
@@ -220,8 +191,6 @@ export function Index() {
         <BridgeRedeemLayout
           isBlurred={isBlurred}
           isButtonDisabled={isButtonDisabled}
-          error={error}
-          setError={setError}
           handleSubmit={handleSubmit}
         />
       )}

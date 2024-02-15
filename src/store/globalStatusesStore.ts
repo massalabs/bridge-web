@@ -24,6 +24,9 @@ export interface GlobalStatusesStoreState {
   setMint: (status: Status) => void;
 
   reset: () => void;
+
+  amountError: string | undefined;
+  setAmountError: (state: string | undefined) => void;
 }
 
 export const useGlobalStatusesStore = create<GlobalStatusesStoreState>(
@@ -41,6 +44,9 @@ export const useGlobalStatusesStore = create<GlobalStatusesStoreState>(
     setClaim: (claim: Status) => set({ claim }),
     setLock: (lock: Status) => set({ lock }),
     setMint: (mint: Status) => set({ mint }),
+
+    amountError: undefined,
+    setAmountError: (error: string | undefined) => set({ amountError: error }),
 
     reset: () =>
       set({
