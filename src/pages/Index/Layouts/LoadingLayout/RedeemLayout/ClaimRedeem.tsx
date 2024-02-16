@@ -12,7 +12,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { checkIfUserHasTokensToClaim, findClaimable } from '@/utils/lambdaApi';
+import { getClaimableOperations, findClaimable } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -44,7 +44,7 @@ export function Claim() {
   useEffect(() => {
     if (!evmAddress) return;
     // TODO: duplicate code here
-    checkIfUserHasTokensToClaim(evmAddress).then((pendingOperations) => {
+    getClaimableOperations(evmAddress).then((pendingOperations) => {
       setOpToRedeem(pendingOperations);
     });
   }, [evmAddress, setOpToRedeem]);
