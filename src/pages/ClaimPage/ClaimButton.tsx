@@ -42,7 +42,6 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
             );
           case ClaimState.AWAITING_SIGNATURE:
           case ClaimState.READY_TO_CLAIM:
-          case ClaimState.RETRIEVING_INFO:
           case ClaimState.PENDING:
           case ClaimState.REJECTED:
             return (

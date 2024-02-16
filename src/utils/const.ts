@@ -32,7 +32,7 @@ export enum ClaimState {
   SUCCESS = 'success',
   ERROR = 'error',
   REJECTED = 'rejected',
-  ALREADY_EXECUTED = 'already-executed',
+  ALREADY_EXECUTED = 'already-executed', // TODO: This state is never used
 }
 
 export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';

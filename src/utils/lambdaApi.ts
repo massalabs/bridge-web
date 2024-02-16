@@ -137,6 +137,8 @@ export async function getRedeemOperation(
       outputTxId: undefined,
     };
 
+    // The operation state given by the lambda is processing but the operation may be already claimed
+    // if the outputTxId is set, so in this case we set the claimState to SUCCESS
     if (
       opToClaim.state === operationStates.processing &&
       opToClaim.outputTxId
