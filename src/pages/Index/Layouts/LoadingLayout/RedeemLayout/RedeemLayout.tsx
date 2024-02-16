@@ -48,7 +48,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
           </p>
           <LoadingState state={claim} />
         </div>
-        {isBurnSuccessful && <Claim />}
+        {isBurnSuccessful && <ClaimRedeem />}
         <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
       </div>
     </>

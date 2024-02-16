@@ -6,7 +6,7 @@ import { RedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
 import { getClaimableOperations } from '@/utils/lambdaApi';
 
-export function Claim() {
+export function ClaimPage() {
   const { opToRedeem, setOpToRedeem } = useOperationStore();
 
   const { address: evmAddress } = useAccount();

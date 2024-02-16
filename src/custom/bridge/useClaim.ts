@@ -4,7 +4,7 @@ import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
 import { useBridgeModeStore } from '@/store/store';
 
-export interface ClaimArguments {
+interface ClaimArguments {
   amount: string;
   recipient: string;
   inputOpId: string;
