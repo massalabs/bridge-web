@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { SuccessClaim } from './SuccessClaim';
@@ -11,62 +10,45 @@ interface ClaimOperationContainerProps {
   operation: RedeemOperation;
 }
 
+// This component takes as props an operation and update it via the operationStore,
+// so the current redeem operation in the index page is also updated, as long as the operation item in the claim page.
 export function ClaimButton({ operation }: ClaimOperationContainerProps) {
-  const { currentRedeemOperation, updateCurrentRedeemOperation } =
-    useOperationStore();
-
-  const [claimState, setClaimState] = useState(
-    currentRedeemOperation?.inputOpId === operation.inputOpId
-      ? currentRedeemOperation.claimState
-      : ClaimState.AWAITING_SIGNATURE,
-  );
-  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
-
-  const updateFilteredCurrentRedeemOperation = useCallback(
-    (op: Partial<RedeemOperation>) => {
-      // update the local states
-      if (op.claimState) {
-        setClaimState(op.claimState);
-      }
-      if (op.outputTxId) {
-        setTxHash(op.outputTxId as `0x${string}`);
-      }
-      // update the global state (store)
-      if (currentRedeemOperation?.inputOpId === operation.inputOpId) {
-        updateCurrentRedeemOperation(op);
-      }
-    },
-    [currentRedeemOperation, operation, updateCurrentRedeemOperation],
-  );
+  const { updateOpToRedeemByInputOpId } = useOperationStore();
   const { tokens } = useTokenStore();
 
   const symbol = tokens.find(
     (t) => t.evmToken === operation.evmToken,
   )?.symbolEVM;
 
+  const onReset = () => {
+    updateOpToRedeemByInputOpId(operation.inputOpId, {
+      claimState: ClaimState.READY_TO_CLAIM,
+    });
+  };
+
+  const onUpdate = (op: Partial<RedeemOperation>) => {
+    updateOpToRedeemByInputOpId(operation.inputOpId, op);
+  };
+
   return (
-    <>
+    <div className="flex w-full justify-center">
       {(() => {
-        switch (claimState) {
+        switch (operation.claimState) {
           case ClaimState.SUCCESS:
             return (
               <div className="flex w-full justify-center">
-                <SuccessClaim
-                  operation={operation}
-                  txHash={txHash}
-                  symbol={symbol}
-                />
+                <SuccessClaim operation={operation} symbol={symbol} />
               </div>
             );
           case ClaimState.AWAITING_SIGNATURE:
+          case ClaimState.READY_TO_CLAIM:
           case ClaimState.RETRIEVING_INFO:
           case ClaimState.PENDING:
           case ClaimState.REJECTED:
             return (
               <div className="flex w-full justify-center">
                 <InitClaim
-                  onUpdate={updateFilteredCurrentRedeemOperation}
-                  claimState={claimState}
+                  onUpdate={onUpdate}
                   operation={operation}
                   symbol={symbol}
                 />
@@ -78,18 +60,13 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
               <div>
                 <ErrorClaim
                   operation={operation}
-                  onReset={() =>
-                    updateFilteredCurrentRedeemOperation({
-                      claimState: ClaimState.AWAITING_SIGNATURE,
-                    })
-                  }
-                  claimState={claimState}
+                  onReset={onReset}
                   symbol={symbol}
                 />
               </div>
             );
         }
       })()}
-    </>
+    </div>
   );
 }

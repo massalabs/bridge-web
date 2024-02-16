@@ -25,8 +25,9 @@ export enum SIDE {
 }
 
 export enum ClaimState {
-  RETRIEVING_INFO = 'retrieving-info',
-  AWAITING_SIGNATURE = 'awaiting-signature',
+  RETRIEVING_INFO = 'retrieving-info', // Relayer are adding signatures
+  READY_TO_CLAIM = 'ready-to-claim', // User can claim
+  AWAITING_SIGNATURE = 'awaiting-signature', // User clicked on claim button, waiting for signature
   PENDING = 'pending',
   SUCCESS = 'success',
   ERROR = 'error',

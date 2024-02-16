@@ -1,4 +1,4 @@
-import { Claim } from './ClaimRedeem';
+import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
@@ -16,7 +16,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
   const { redeemSteps } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
-  const { burnTxId, currentRedeemOperation } = useOperationStore();
+  const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
 
   // wait for burn success --> then check additional conditions
@@ -42,7 +42,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <p className="mas-body-2">
             {Intl.t('index.loading-box.claim-step', {
               state: getClaimStepTranslation(
-                currentRedeemOperation?.claimState,
+                getCurrentRedeemOperation()?.claimState,
               ),
             })}
           </p>
@@ -59,6 +59,7 @@ function getClaimStepTranslation(claimState?: ClaimState) {
     case ClaimState.RETRIEVING_INFO:
       return Intl.t('index.loading-box.claim-step-retrieving-info');
     case ClaimState.AWAITING_SIGNATURE:
+    case ClaimState.READY_TO_CLAIM:
       return Intl.t('index.loading-box.claim-step-awaiting-signature');
     case ClaimState.PENDING:
       return Intl.t('index.loading-box.claim-step-claiming');

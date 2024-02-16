@@ -17,10 +17,9 @@ export interface OperationStoreState {
     inputOpId: string,
     op: Partial<RedeemOperation>,
   ) => void;
-
-  currentRedeemOperation?: RedeemOperation;
-  setCurrentRedeemOperation: (op: RedeemOperation) => void;
-  updateCurrentRedeemOperation: (op: Partial<RedeemOperation>) => void;
+  pushNewOpToRedeem: (op: RedeemOperation) => void;
+  getOpToRedeemByInputOpId: (inputOpId: string) => RedeemOperation | undefined;
+  getCurrentRedeemOperation: () => RedeemOperation | undefined;
 
   side: SIDE;
   setSide(side: SIDE): void;
@@ -47,19 +46,6 @@ const operationStore = (
   opToRedeem: [],
   setOpToRedeem: (opToRedeem: RedeemOperation[]) => {
     set({ opToRedeem });
-
-    // Update currentRedeemOperation
-    if (opToRedeem.length) {
-      const op = opToRedeem.find(
-        (operation) =>
-          operation.inputOpId === get().currentRedeemOperation?.inputOpId,
-      );
-      if (op && op.outputTxId) {
-        get().updateCurrentRedeemOperation({
-          claimState: ClaimState.SUCCESS,
-        });
-      }
-    }
   },
   updateOpToRedeemByInputOpId: (
     inputOpId: string,
@@ -73,16 +59,14 @@ const operationStore = (
       set({ opToRedeem });
     }
   },
-
-  currentRedeemOperation: undefined,
-  setCurrentRedeemOperation(op: RedeemOperation) {
-    set({ currentRedeemOperation: op });
+  pushNewOpToRedeem: (op: RedeemOperation) => {
+    set({ opToRedeem: [...get().opToRedeem, op] });
   },
-  updateCurrentRedeemOperation(op: Partial<RedeemOperation>) {
-    const currentOp = get().currentRedeemOperation;
-    if (currentOp) {
-      set({ currentRedeemOperation: { ...currentOp, ...op } });
-    }
+  getOpToRedeemByInputOpId: (inputOpId: string) => {
+    return get().opToRedeem.find((op) => op.inputOpId === inputOpId);
+  },
+  getCurrentRedeemOperation: () => {
+    return get().getOpToRedeemByInputOpId(get().burnTxId || '');
   },
 
   side: SIDE.EVM_TO_MASSA,

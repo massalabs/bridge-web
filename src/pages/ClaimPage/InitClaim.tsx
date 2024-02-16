@@ -10,39 +10,51 @@ import { formatAmount } from '@/utils/parseAmount';
 
 interface InitClaimProps {
   operation: RedeemOperation;
-  claimState: ClaimState; // TODO: check if the state is not already in the operation
   symbol?: string;
   onUpdate: (op: Partial<RedeemOperation>) => void;
 }
 
 export function InitClaim(props: InitClaimProps) {
-  const { operation, symbol, claimState, onUpdate } = props;
+  const { operation, symbol, onUpdate } = props;
   const { write, error, isSuccess, hash, isPending } = useClaim();
 
+  const claimState = operation.claimState;
   const isClaimRejected = claimState === ClaimState.REJECTED;
-
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
   useEffect(() => {
-    if (isPending) {
+    if (isPending && claimState !== ClaimState.PENDING) {
       onUpdate({ claimState: ClaimState.PENDING });
     }
-    if (isSuccess && hash) {
+    if (
+      isSuccess &&
+      hash &&
+      claimState !== ClaimState.SUCCESS &&
+      !operation.outputTxId
+    ) {
       onUpdate({ outputTxId: hash, claimState: ClaimState.SUCCESS });
     }
     if (error) {
-      onUpdate({ claimState: handleEvmClaimError(error) });
+      const errorClaimState = handleEvmClaimError(error);
+      if (claimState !== errorClaimState) {
+        onUpdate({ claimState: errorClaimState });
+      }
     }
-  }, [isPending, error, isSuccess, hash, onUpdate]);
+  }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
 
   function handleClaim() {
     onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
     write(operation);
   }
 
-  return claimState === ClaimState.PENDING ? (
-    <PendingClaim />
-  ) : (
+  if (
+    claimState === ClaimState.PENDING ||
+    claimState === ClaimState.AWAITING_SIGNATURE
+  ) {
+    return <PendingClaim />;
+  }
+
+  return (
     <div
       className={`flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 

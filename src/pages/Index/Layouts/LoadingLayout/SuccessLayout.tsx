@@ -21,16 +21,16 @@ import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { side, mintTxId, currentRedeemOperation, amount } =
+  const { side, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
   const { currentMode, isMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
-
   const { selectedToken: token } = useTokenStore();
 
   if (!chain || !token || !amount) return null;
 
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const currentRedeemOperation = getCurrentRedeemOperation();
   const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
 
   const massaChainAndNetwork = `${Blockchain.MASSA} ${

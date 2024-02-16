@@ -29,16 +29,9 @@ export function ClaimPage() {
   return (
     <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
       {burnListIsNotEmpty ? (
-        opToRedeem.map((operation: RedeemOperation) => {
-          return (
-            <div
-              key={operation.inputOpId} // TODO: see if we need that, maybe move it to ClaimButton bellow
-              className="flex w-full justify-center"
-            >
-              <ClaimButton operation={operation} />
-            </div>
-          );
-        })
+        opToRedeem.map((operation: RedeemOperation) => (
+          <ClaimButton operation={operation} key={operation.inputOpId} />
+        ))
       ) : (
         <p className="mas-menu-active text-info text-2xl">
           {Intl.t('claim.no-claim', { address: evmAddress })}

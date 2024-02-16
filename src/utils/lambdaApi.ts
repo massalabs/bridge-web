@@ -114,7 +114,7 @@ export async function getRedeemOperation(
 
     // Signatures are added, user can claim, user may have claim, tx may be in a fork
     // if outputTxId is set, we are waiting for evm confirmations
-    [operationStates.processing]: ClaimState.AWAITING_SIGNATURE,
+    [operationStates.processing]: ClaimState.READY_TO_CLAIM, // AWAITING_SIGNATURE or PENDING or SUCCESS
 
     // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
     [operationStates.finalizing]: ClaimState.SUCCESS,
@@ -126,15 +126,26 @@ export async function getRedeemOperation(
     [operationStates.error]: ClaimState.ERROR,
   };
 
-  return burnedOpList.map((opToClaim) => ({
-    claimState: statesCorrespondence[opToClaim.state],
-    recipient: opToClaim.recipient,
-    amount: opToClaim.amount,
-    inputOpId: opToClaim.inputOpId,
-    signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
-    evmToken: opToClaim.evmToken,
-    outputTxId: undefined,
-  }));
+  return burnedOpList.map((opToClaim) => {
+    const op = {
+      claimState: statesCorrespondence[opToClaim.state],
+      recipient: opToClaim.recipient,
+      amount: opToClaim.amount,
+      inputOpId: opToClaim.inputOpId,
+      signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
+      evmToken: opToClaim.evmToken,
+      outputTxId: undefined,
+    };
+
+    if (
+      opToClaim.state === operationStates.processing &&
+      opToClaim.outputTxId
+    ) {
+      op.claimState = ClaimState.SUCCESS;
+    }
+
+    return op;
+  });
 }
 
 export async function getClaimableOperations(
@@ -143,6 +154,6 @@ export async function getClaimableOperations(
   const redeemOperations = await getRedeemOperation(evmAddress);
 
   return redeemOperations.filter(
-    (op) => op.claimState === ClaimState.AWAITING_SIGNATURE && !op.outputTxId,
+    (op) => op.claimState === ClaimState.READY_TO_CLAIM,
   );
 }

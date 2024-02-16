@@ -10,14 +10,14 @@ interface ErrorClaimProps {
   operation: RedeemOperation;
   onReset: () => void;
   symbol: string | undefined;
-  claimState: ClaimState; // TODO: check if the claim state is not already in the operation
 }
 
 export function ErrorClaim(props: ErrorClaimProps) {
-  const { operation, symbol, onReset, claimState } = props;
+  const { operation, symbol, onReset } = props;
   let { amountFormattedPreview } = formatAmount(operation.amount);
 
-  const isAlreadyExecuted = claimState === ClaimState.ALREADY_EXECUTED;
+  const isAlreadyExecuted =
+    operation.claimState === ClaimState.ALREADY_EXECUTED;
 
   return (
     <div

@@ -1,9 +1,10 @@
 import { toast } from '@massalabs/react-ui-kit';
+import { parseUnits } from 'viem';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useOperationStore } from '@/store/store';
+import { useOperationStore, useTokenStore } from '@/store/store';
 import { ClaimState } from '@/utils/const';
 import {
   CustomError,
@@ -39,8 +40,13 @@ async function initiateBurn({
   setRedeemSteps,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
-  const { setBurnTxId, setCurrentRedeemOperation } =
-    useOperationStore.getState();
+  const { setBurnTxId, pushNewOpToRedeem } = useOperationStore.getState();
+  const { selectedToken } = useTokenStore.getState();
+
+  if (!selectedToken) {
+    console.error('No token selected');
+    return;
+  }
 
   setBurn(Status.Loading);
 
@@ -53,13 +59,13 @@ async function initiateBurn({
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
-  setCurrentRedeemOperation({
+  pushNewOpToRedeem({
     inputOpId: burnOpId,
     signatures: [],
     claimState: ClaimState.RETRIEVING_INFO,
-    amount, // TODO: check if the format is correct
+    amount: parseUnits(amount, selectedToken.decimals).toString(),
     recipient,
-    evmToken: `0x0`, // TODO: check if we need to provide the token, if no, improve the interface
+    evmToken: selectedToken.evmToken as `0x${string}`,
   });
   setRedeemSteps(Intl.t('index.loading-box.burned-final'));
 }

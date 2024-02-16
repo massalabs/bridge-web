@@ -6,63 +6,47 @@ import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransacti
 import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
+import { RedeemOperation } from '@/store/operationStore';
 import {
   useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { getClaimableOperations, findClaimable } from '@/utils/lambdaApi';
+import { findClaimable } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
 
-export function Claim() {
+export function ClaimRedeem() {
   const { address: evmAddress, chain } = useAccount();
   const { selectedToken, refreshBalances } = useTokenStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const {
     burnTxId,
     amount,
-    currentRedeemOperation,
-    updateCurrentRedeemOperation,
-    opToRedeem,
-    setOpToRedeem,
+    getCurrentRedeemOperation,
+    updateOpToRedeemByInputOpId,
   } = useOperationStore();
 
   const { write, error, isSuccess, hash, isPending } = useClaim();
 
+  const currentRedeemOperation = getCurrentRedeemOperation();
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
+
+  const updateCurrentRedeemOperation = useCallback(
+    (op: Partial<RedeemOperation>) => {
+      if (!burnTxId) return;
+      updateOpToRedeemByInputOpId(burnTxId, op);
+    },
+    [burnTxId, updateOpToRedeemByInputOpId],
+  );
 
   const setLoadingToError = useCallback(() => {
     setClaim(Status.Error);
     setBox(Status.Error);
   }, [setClaim, setBox]);
-
-  // Update opToRedeem in the store
-  useEffect(() => {
-    if (!evmAddress) return;
-    // TODO: duplicate code here
-    getClaimableOperations(evmAddress).then((pendingOperations) => {
-      setOpToRedeem(pendingOperations);
-    });
-  }, [evmAddress, setOpToRedeem]);
-
-  // TODO: check if it's necessary
-  // Update currentRedeemOperation in the store based on opToRedeem
-  useEffect(() => {
-    if (opToRedeem.length) {
-      const op = opToRedeem.find(
-        (operation) => operation.inputOpId === burnTxId,
-      );
-      if (op && op.outputTxId) {
-        updateCurrentRedeemOperation({
-          claimState: ClaimState.SUCCESS,
-        });
-      }
-    }
-  }, [opToRedeem, burnTxId, updateCurrentRedeemOperation]);
 
   useEffect(() => {
     if (isPending) {
@@ -123,7 +107,7 @@ export function Claim() {
                 ),
               });
               updateCurrentRedeemOperation({
-                claimState: ClaimState.AWAITING_SIGNATURE,
+                claimState: ClaimState.READY_TO_CLAIM,
               });
               return;
             }
@@ -158,16 +142,15 @@ export function Claim() {
       return;
 
     setClaim(Status.Loading);
+    updateCurrentRedeemOperation({
+      claimState: ClaimState.AWAITING_SIGNATURE,
+    });
     write({
       amount: parseUnits(amount, selectedToken.decimals).toString(),
       evmToken: selectedToken.evmToken as `0x${string}`,
       inputOpId: burnTxId,
       signatures: currentRedeemOperation.signatures,
       recipient: evmAddress,
-    });
-
-    updateCurrentRedeemOperation({
-      claimState: ClaimState.AWAITING_SIGNATURE,
     });
   }
 
@@ -176,7 +159,8 @@ export function Claim() {
   const isClaimRejected =
     currentRedeemOperation?.claimState === ClaimState.REJECTED;
   const isClaimAwaitingSignature =
-    currentRedeemOperation?.claimState === ClaimState.AWAITING_SIGNATURE;
+    currentRedeemOperation?.claimState === ClaimState.AWAITING_SIGNATURE ||
+    currentRedeemOperation?.claimState === ClaimState.READY_TO_CLAIM;
 
   const claimMessage = isRetrievingInformation ? (
     <div>
