@@ -2,19 +2,19 @@ import { useCallback, useState } from 'react';
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { SuccessClaim } from './SuccessClaim';
-import { CurrentRedeemOperation } from '@/store/operationStore';
+import { RedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
 import { ClaimState } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
 interface ClaimOperationContainerProps {
-  operation: RedeemOperationToClaim;
+  operation: RedeemOperation;
 }
 
 export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   const { currentRedeemOperation, updateCurrentRedeemOperation } =
     useOperationStore();
+
   const [claimState, setClaimState] = useState(
     currentRedeemOperation?.inputOpId === operation.inputOpId
       ? currentRedeemOperation.claimState
@@ -23,13 +23,13 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
 
   const updateFilteredCurrentRedeemOperation = useCallback(
-    (op: Partial<CurrentRedeemOperation>) => {
+    (op: Partial<RedeemOperation>) => {
       // update the local states
       if (op.claimState) {
         setClaimState(op.claimState);
       }
-      if (op.outputOpId) {
-        setTxHash(op.outputOpId as `0x${string}`);
+      if (op.outputTxId) {
+        setTxHash(op.outputTxId as `0x${string}`);
       }
       // update the global state (store)
       if (currentRedeemOperation?.inputOpId === operation.inputOpId) {

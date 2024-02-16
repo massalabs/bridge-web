@@ -48,17 +48,19 @@ async function initiateBurn({
 
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
-  setCurrentRedeemOperation({
-    inputOpId: burnOpId,
-    signatures: [],
-    claimState: ClaimState.AWAITING_SIGNATURE,
-  });
 
   setRedeemSteps(Intl.t('index.loading-box.included-pending'));
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
-
+  setCurrentRedeemOperation({
+    inputOpId: burnOpId,
+    signatures: [],
+    claimState: ClaimState.RETRIEVING_INFO,
+    amount, // TODO: check if the format is correct
+    recipient,
+    evmToken: `0x0`, // TODO: check if we need to provide the token, if no, improve the interface
+  });
   setRedeemSteps(Intl.t('index.loading-box.burned-final'));
 }
 

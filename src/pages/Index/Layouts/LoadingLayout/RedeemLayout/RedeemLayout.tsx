@@ -42,8 +42,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <p className="mas-body-2">
             {Intl.t('index.loading-box.claim-step', {
               state: getClaimStepTranslation(
-                currentRedeemOperation?.claimState ||
-                  ClaimState.RETRIEVING_INFO,
+                currentRedeemOperation?.claimState,
               ),
             })}
           </p>
@@ -55,7 +54,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
     </>
   );
 }
-function getClaimStepTranslation(claimState: ClaimState) {
+function getClaimStepTranslation(claimState?: ClaimState) {
   switch (claimState) {
     case ClaimState.RETRIEVING_INFO:
       return Intl.t('index.loading-box.claim-step-retrieving-info');

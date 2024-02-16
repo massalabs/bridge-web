@@ -1,19 +1,26 @@
 import { useCallback } from 'react';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { RedeemOperationToClaim } from '../../utils/lambdaApi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
 import { useBridgeModeStore } from '@/store/store';
+
+export interface ClaimArguments {
+  amount: string;
+  recipient: string;
+  inputOpId: string;
+  evmToken: string;
+  signatures: string[];
+}
 
 export function useClaim() {
   const { currentMode } = useBridgeModeStore();
 
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
 
-  const { data: hash, writeContract, error } = useWriteContract();
+  const { data: hash, writeContract, error, isPending } = useWriteContract();
 
   const write = useCallback(
-    (operation: RedeemOperationToClaim) => {
+    (operation: ClaimArguments) => {
       writeContract({
         abi: bridgeVaultAbi,
         address: bridgeContractAddr,
@@ -34,5 +41,5 @@ export function useClaim() {
     hash,
   });
 
-  return { isSuccess, error, write, hash };
+  return { isPending, isSuccess, error, write, hash };
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -12,7 +12,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { findClaimable, sortSignatures } from '@/utils/lambdaApi';
+import { checkIfUserHasTokensToClaim, findClaimable } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -27,24 +27,55 @@ export function Claim() {
     setClaimTxId,
     currentRedeemOperation,
     updateCurrentRedeemOperation,
+    opToRedeem,
+    setOpToRedeem,
   } = useOperationStore();
 
-  const { write, error, isSuccess, hash } = useClaim();
+  const { write, error, isSuccess, hash, isPending } = useClaim();
 
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
-
-  const [hasClickedClaimed, setHasClickedClaimed] = useState(false); // TODO: see if we need that
 
   const setLoadingToError = useCallback(() => {
     setClaim(Status.Error);
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
-  // maybe no need for a useEffect here
+  // Update opToRedeem in the store
   useEffect(() => {
+    if (!evmAddress) return;
+    // TODO: duplicate code here
+    checkIfUserHasTokensToClaim(evmAddress).then((pendingOperations) => {
+      setOpToRedeem(pendingOperations);
+    });
+  }, [evmAddress, setOpToRedeem]);
+
+  // Update currentRedeemOperation in the store based on opToRedeem
+  useEffect(() => {
+    if (opToRedeem.length) {
+      const op = opToRedeem.find(
+        (operation) => operation.inputOpId === burnTxId,
+      );
+      if (op && op.outputTxId) {
+        updateCurrentRedeemOperation({
+          claimState: ClaimState.SUCCESS,
+        });
+      }
+    }
+  }, [opToRedeem, burnTxId, updateCurrentRedeemOperation]);
+
+  useEffect(() => {
+    if (isPending) {
+      updateCurrentRedeemOperation({
+        claimState: ClaimState.PENDING,
+      });
+    }
     if (isSuccess && hash) {
-      setClaimTxId(hash); // TODO: updateCurrentRedeemOperation({outputOpId: hash})
+      updateCurrentRedeemOperation({
+        claimState: ClaimState.SUCCESS,
+        outputTxId: hash,
+      });
+      setClaimTxId(hash);
       setClaim(Status.Success);
       setBox(Status.Success);
       refreshBalances();
@@ -53,7 +84,6 @@ export function Claim() {
       const state = handleEvmClaimBoxError(error);
       if (state === ClaimState.REJECTED) {
         setClaim(Status.Error);
-        setHasClickedClaimed(false);
         updateCurrentRedeemOperation({
           claimState: ClaimState.REJECTED,
         });
@@ -65,13 +95,13 @@ export function Claim() {
       }
     }
   }, [
+    isPending,
     error,
     isSuccess,
     hash,
     setBox,
     refreshBalances,
     setClaim,
-    setHasClickedClaimed,
     updateCurrentRedeemOperation,
     setLoadingToError,
     setClaimTxId,
@@ -89,9 +119,10 @@ export function Claim() {
           try {
             const operationToRedeem = await findClaimable(evmAddress, burnTxId);
             if (operationToRedeem) {
-              const signatures = sortSignatures(operationToRedeem.signatures);
               updateCurrentRedeemOperation({
-                signatures: signatures,
+                signatures: operationToRedeem.signatures.map(
+                  (s) => s.signature,
+                ),
               });
               updateCurrentRedeemOperation({
                 claimState: ClaimState.AWAITING_SIGNATURE,
@@ -128,13 +159,7 @@ export function Claim() {
     )
       return;
 
-    if (hasClickedClaimed) {
-      toast.error(Intl.t('index.loading-box.claim-error-1'));
-      return;
-    }
-
     setClaim(Status.Loading);
-    setHasClickedClaimed(true);
     write({
       amount: parseUnits(amount, selectedToken.decimals).toString(),
       evmToken: selectedToken.evmToken as `0x${string}`,
@@ -144,40 +169,38 @@ export function Claim() {
     });
 
     updateCurrentRedeemOperation({
-      claimState: ClaimState.PENDING,
+      claimState: ClaimState.AWAITING_SIGNATURE,
     });
   }
 
-  const isClaimPending =
-    burn === Status.Success && !currentRedeemOperation?.signatures.length;
-
+  const isRetrievingInformation =
+    currentRedeemOperation?.claimState === ClaimState.RETRIEVING_INFO;
   const isClaimRejected =
     currentRedeemOperation?.claimState === ClaimState.REJECTED;
+  const isClaimAwaitingSignature =
+    currentRedeemOperation?.claimState === ClaimState.AWAITING_SIGNATURE;
 
-  const claimMessage = isClaimPending ? (
+  const claimMessage = isRetrievingInformation ? (
     <div>
-      {Intl.t('index.loading-box.claim-pending-1')}
+      {Intl.t('index.loading-box.retrieving-claim-info-1')}
       <br />
-      {Intl.t('index.loading-box.claim-pending-2')}
+      {Intl.t('index.loading-box.retrieving-claim-info-2')}
     </div>
   ) : isClaimRejected ? (
     <div className="text-s-error">
       {Intl.t('index.loading-box.rejected-by-user')}
     </div>
-  ) : !hasClickedClaimed ? (
+  ) : isClaimAwaitingSignature ? (
     Intl.t('index.loading-box.claim-message', {
       token: symbol,
       network: selectedChain,
     })
   ) : null;
 
-  const isReadyToClaim = // TODO: see if can use currentRedeemOperation.state
-    currentRedeemOperation?.signatures.length && !hasClickedClaimed;
-
   return (
     <div className="flex flex-col gap-6 justify-center">
       <div className="mas-body-2 text-center max-w-full">{claimMessage}</div>
-      {isReadyToClaim ? (
+      {isClaimAwaitingSignature ? (
         <Button
           onClick={() => {
             handleRedeem();

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+import { ClaimState } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
+import { RedeemOperation } from '@/store/operationStore';
 
 export interface Locked {
   amount: string;
@@ -46,14 +48,6 @@ export interface LambdaResponse {
   };
 }
 
-export interface RedeemOperationToClaim {
-  amount: string;
-  recipient: `0x${string}`;
-  inputOpId: string;
-  signatures: string[];
-  evmToken: `0x${string}`;
-}
-
 const lambdaEndpoint = 'bridge-getHistory-prod';
 
 export async function getBurnedByEvmAddress(
@@ -92,25 +86,27 @@ export async function findClaimable(
 ): Promise<Burned | undefined> {
   const burnedOpList = await getBurnedByEvmAddress(userEvmAddress);
 
-  return burnedOpList.find(
+  const claimableOp = burnedOpList.find(
     (item) =>
       item.outputTxId === null &&
       item.state === operationStates.processing &&
       item.inputOpId === burnOpId,
   );
+
+  if (!claimableOp) return;
+
+  claimableOp.signatures = sortSignatures(claimableOp.signatures || []);
+
+  return claimableOp;
 }
 
-export function sortSignatures(signatures: Signatures[]): string[] {
-  return signatures
-    .sort((a, b) => a.relayerId - b.relayerId)
-    .map((signature: Signatures) => {
-      return signature.signature;
-    });
+function sortSignatures(signatures: Signatures[]): Signatures[] {
+  return signatures.sort((a, b) => a.relayerId - b.relayerId);
 }
 
 export async function checkIfUserHasTokensToClaim(
   evmAddress: `0x${string}`,
-): Promise<RedeemOperationToClaim[]> {
+): Promise<RedeemOperation[]> {
   const burnedOpList = await getBurnedByEvmAddress(evmAddress);
 
   return burnedOpList
@@ -119,10 +115,12 @@ export async function checkIfUserHasTokensToClaim(
         item.outputTxId === null && item.state === operationStates.processing,
     )
     .map((opToClaim) => ({
+      claimState: ClaimState.AWAITING_SIGNATURE,
       recipient: opToClaim.recipient,
       amount: opToClaim.amount,
       inputOpId: opToClaim.inputOpId,
-      signatures: sortSignatures(opToClaim.signatures),
+      signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
       evmToken: opToClaim.evmToken,
+      outputTxId: undefined,
     }));
 }

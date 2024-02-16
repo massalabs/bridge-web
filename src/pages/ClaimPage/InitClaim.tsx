@@ -4,42 +4,43 @@ import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransact
 import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
-import { CurrentRedeemOperation } from '@/store/operationStore';
+import { RedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface InitClaimProps {
-  operation: RedeemOperationToClaim;
-  claimState: ClaimState;
+  operation: RedeemOperation;
+  claimState: ClaimState; // TODO: check if the state is not already in the operation
   symbol?: string;
-  onUpdate: (op: Partial<CurrentRedeemOperation>) => void;
+  onUpdate: (op: Partial<RedeemOperation>) => void;
 }
 
 export function InitClaim(props: InitClaimProps) {
   const { operation, symbol, claimState, onUpdate } = props;
-  const { write, error, isSuccess, hash } = useClaim();
+  const { write, error, isSuccess, hash, isPending } = useClaim();
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
-  const isPending = claimState === ClaimState.PENDING;
 
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
   useEffect(() => {
+    if (isPending) {
+      onUpdate({ claimState: ClaimState.PENDING });
+    }
     if (isSuccess && hash) {
-      onUpdate({ outputOpId: hash, claimState: ClaimState.SUCCESS });
+      onUpdate({ outputTxId: hash, claimState: ClaimState.SUCCESS });
     }
     if (error) {
       onUpdate({ claimState: handleEvmClaimError(error) });
     }
-  }, [error, isSuccess, hash, onUpdate]);
+  }, [isPending, error, isSuccess, hash, onUpdate]);
 
   function handleClaim() {
-    onUpdate({ claimState: ClaimState.PENDING });
+    onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
     write(operation);
   }
 
-  return isPending ? (
+  return claimState === ClaimState.PENDING ? (
     <PendingClaim />
   ) : (
     <div

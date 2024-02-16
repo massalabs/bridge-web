@@ -2,20 +2,20 @@ import { SyntheticEvent } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
 import { FiAlertCircle, FiRefreshCcw } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
+import { RedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface ErrorClaimProps {
-  operation: RedeemOperationToClaim;
+  operation: RedeemOperation;
   onReset: () => void;
   symbol: string | undefined;
-  claimState: ClaimState;
+  claimState: ClaimState; // TODO: check if the claim state is not already in the operation
 }
 
 export function ErrorClaim(props: ErrorClaimProps) {
-  const { operation: op, symbol, onReset, claimState } = props;
-  let { amountFormattedPreview } = formatAmount(op.amount);
+  const { operation, symbol, onReset, claimState } = props;
+  let { amountFormattedPreview } = formatAmount(operation.amount);
 
   const isAlreadyExecuted = claimState === ClaimState.ALREADY_EXECUTED;
 

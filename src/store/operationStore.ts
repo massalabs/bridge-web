@@ -1,20 +1,22 @@
 import { ClaimState, SIDE } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 
-export interface CurrentRedeemOperation {
-  claimState: ClaimState; // TODO: on the ClaimRedeem component
+export interface RedeemOperation {
+  claimState: ClaimState;
+  amount: string;
+  recipient: `0x${string}`;
   inputOpId: string;
-  outputOpId?: string;
   signatures: string[];
+  outputTxId?: string;
+  evmToken: `0x${string}`;
 }
 
 export interface OperationStoreState {
-  opToRedeem: RedeemOperationToClaim[];
-  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => void;
+  opToRedeem: RedeemOperation[];
+  setOpToRedeem: (opToRedeem: RedeemOperation[]) => void;
 
-  currentRedeemOperation?: CurrentRedeemOperation;
-  setCurrentRedeemOperation: (op: CurrentRedeemOperation) => void;
-  updateCurrentRedeemOperation: (op: Partial<CurrentRedeemOperation>) => void;
+  currentRedeemOperation?: RedeemOperation;
+  setCurrentRedeemOperation: (op: RedeemOperation) => void;
+  updateCurrentRedeemOperation: (op: Partial<RedeemOperation>) => void;
 
   side: SIDE;
   setSide(side: SIDE): void;
@@ -42,13 +44,13 @@ const operationStore = (
   get: () => OperationStoreState,
 ) => ({
   opToRedeem: [],
-  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => set({ opToRedeem }),
+  setOpToRedeem: (opToRedeem: RedeemOperation[]) => set({ opToRedeem }),
 
   currentRedeemOperation: undefined,
-  setCurrentRedeemOperation(op: CurrentRedeemOperation) {
+  setCurrentRedeemOperation(op: RedeemOperation) {
     set({ currentRedeemOperation: op });
   },
-  updateCurrentRedeemOperation(op: Partial<CurrentRedeemOperation>) {
+  updateCurrentRedeemOperation(op: Partial<RedeemOperation>) {
     const currentOp = get().currentRedeemOperation;
     if (currentOp) {
       set({ currentRedeemOperation: { ...currentOp, ...op } });
