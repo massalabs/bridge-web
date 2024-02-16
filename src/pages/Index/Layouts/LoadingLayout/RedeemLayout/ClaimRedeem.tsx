@@ -22,12 +22,10 @@ export function Claim() {
   const { selectedToken, refreshBalances } = useTokenStore();
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const {
-    burnTxId,
     amount,
     setClaimTxId,
     currentRedeemOperation,
     updateCurrentRedeemOperation,
-    opToRedeem,
     setOpToRedeem,
   } = useOperationStore();
 
@@ -49,20 +47,6 @@ export function Claim() {
       setOpToRedeem(pendingOperations);
     });
   }, [evmAddress, setOpToRedeem]);
-
-  // Update currentRedeemOperation in the store based on opToRedeem
-  useEffect(() => {
-    if (opToRedeem.length) {
-      const op = opToRedeem.find(
-        (operation) => operation.inputOpId === burnTxId,
-      );
-      if (op && op.outputTxId) {
-        updateCurrentRedeemOperation({
-          claimState: ClaimState.SUCCESS,
-        });
-      }
-    }
-  }, [opToRedeem, burnTxId, updateCurrentRedeemOperation]);
 
   useEffect(() => {
     if (isPending) {
@@ -114,10 +98,13 @@ export function Claim() {
           burn === Status.Success &&
           !currentRedeemOperation?.signatures.length &&
           evmAddress &&
-          burnTxId
+          currentRedeemOperation?.inputOpId
         ) {
           try {
-            const operationToRedeem = await findClaimable(evmAddress, burnTxId);
+            const operationToRedeem = await findClaimable(
+              evmAddress,
+              currentRedeemOperation?.inputOpId,
+            );
             if (operationToRedeem) {
               updateCurrentRedeemOperation({
                 signatures: operationToRedeem.signatures.map(
@@ -143,7 +130,6 @@ export function Claim() {
     burn,
     currentRedeemOperation,
     evmAddress,
-    burnTxId,
     setLoadingToError,
     updateCurrentRedeemOperation,
   ]);
@@ -153,8 +139,8 @@ export function Claim() {
       !amount ||
       !evmAddress ||
       !selectedToken ||
-      !burnTxId ||
       !currentRedeemOperation ||
+      !currentRedeemOperation.inputOpId ||
       currentRedeemOperation.signatures.length === 0
     )
       return;
@@ -163,7 +149,7 @@ export function Claim() {
     write({
       amount: parseUnits(amount, selectedToken.decimals).toString(),
       evmToken: selectedToken.evmToken as `0x${string}`,
-      inputOpId: burnTxId,
+      inputOpId: currentRedeemOperation?.inputOpId,
       signatures: currentRedeemOperation.signatures,
       recipient: evmAddress,
     });

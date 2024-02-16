@@ -16,15 +16,15 @@ export function RedeemLayout(props: LoadingBoxProps) {
   const { redeemSteps } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
-  const { burnTxId, currentRedeemOperation } = useOperationStore();
+  const { currentRedeemOperation } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessful = burn === Status.Success;
 
-  const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${burnTxId}${MASSA_EXPLO_EXTENSION}`;
-  const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${burnTxId}`;
+  const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${currentRedeemOperation?.inputOpId}${MASSA_EXPLO_EXTENSION}`;
+  const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${currentRedeemOperation?.inputOpId}`;
   const explorerUrl = isMainnet ? mainnetExplorerUrl : buildnetExplorerUrl;
 
   return (
@@ -49,7 +49,10 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <Claim />}
-        <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
+        <ShowLinkToExplorers
+          explorerUrl={explorerUrl}
+          currentTxID={currentRedeemOperation?.inputOpId}
+        />
       </div>
     </>
   );

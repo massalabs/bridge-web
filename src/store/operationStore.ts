@@ -13,6 +13,10 @@ export interface RedeemOperation {
 export interface OperationStoreState {
   opToRedeem: RedeemOperation[];
   setOpToRedeem: (opToRedeem: RedeemOperation[]) => void;
+  updateOpToRedeemByInputOpId: (
+    inputOpId: string,
+    op: Partial<RedeemOperation>,
+  ) => void;
 
   currentRedeemOperation?: RedeemOperation;
   setCurrentRedeemOperation: (op: RedeemOperation) => void;
@@ -26,9 +30,6 @@ export interface OperationStoreState {
 
   mintTxId?: string;
   setMintTxId(currentTxID?: string): void;
-
-  burnTxId?: string; // TODO later: remove it, use currentRedeemOperation.inputOpId
-  setBurnTxId(currentTxID?: string): void;
 
   claimTxId?: string; // TODO: remove it, use currentRedeemOperation.outputOpId
   setClaimTxId(currentTxID?: string): void;
@@ -44,7 +45,34 @@ const operationStore = (
   get: () => OperationStoreState,
 ) => ({
   opToRedeem: [],
-  setOpToRedeem: (opToRedeem: RedeemOperation[]) => set({ opToRedeem }),
+  setOpToRedeem: (opToRedeem: RedeemOperation[]) => {
+    set({ opToRedeem });
+
+    // Update currentRedeemOperation
+    if (opToRedeem.length) {
+      const op = opToRedeem.find(
+        (operation) =>
+          operation.inputOpId === get().currentRedeemOperation?.inputOpId,
+      );
+      if (op && op.outputTxId) {
+        get().updateCurrentRedeemOperation({
+          claimState: ClaimState.SUCCESS,
+        });
+      }
+    }
+  },
+  updateOpToRedeemByInputOpId: (
+    inputOpId: string,
+    op: Partial<RedeemOperation>,
+  ) => {
+    const opToRedeem = get().opToRedeem;
+    const index = opToRedeem.findIndex((op) => op.inputOpId === inputOpId);
+    if (index !== -1) {
+      const newOp = { ...opToRedeem[index], ...op };
+      opToRedeem[index] = newOp;
+      set({ opToRedeem });
+    }
+  },
 
   currentRedeemOperation: undefined,
   setCurrentRedeemOperation(op: RedeemOperation) {
@@ -72,11 +100,6 @@ const operationStore = (
     set({ mintTxId });
   },
 
-  burnTxId: undefined,
-  setBurnTxId(burnTxId?: string) {
-    set({ burnTxId });
-  },
-
   claimTxId: undefined,
   setClaimTxId(claimTxId?: string) {
     set({ claimTxId });
@@ -91,7 +114,6 @@ const operationStore = (
     set({
       lockTxId: undefined,
       mintTxId: undefined,
-      burnTxId: undefined,
       claimTxId: undefined,
       amount: undefined,
     });
