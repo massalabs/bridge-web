@@ -50,7 +50,7 @@ export interface LambdaResponse {
 
 const lambdaEndpoint = 'bridge-getHistory-prod';
 
-export async function getBurnedByEvmAddress(
+async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
 ): Promise<Burned[]> {
   const { currentMode } = useBridgeModeStore.getState();
@@ -71,7 +71,7 @@ export async function getBurnedByEvmAddress(
   return response.data.burned;
 }
 
-export enum operationStates {
+enum operationStates {
   new = 'new',
   processing = 'processing',
   done = 'done',
@@ -79,7 +79,6 @@ export enum operationStates {
   finalizing = 'finalizing',
 }
 
-// returns all processing operations with a burn operation id
 export async function findClaimable(
   userEvmAddress: `0x${string}`,
   burnOpId: string,
@@ -104,23 +103,46 @@ function sortSignatures(signatures: Signatures[]): Signatures[] {
   return signatures.sort((a, b) => a.relayerId - b.relayerId);
 }
 
-export async function checkIfUserHasTokensToClaim(
+export async function getRedeemOperation(
   evmAddress: `0x${string}`,
 ): Promise<RedeemOperation[]> {
   const burnedOpList = await getBurnedByEvmAddress(evmAddress);
 
-  return burnedOpList
-    .filter(
-      (item) =>
-        item.outputTxId === null && item.state === operationStates.processing,
-    )
-    .map((opToClaim) => ({
-      claimState: ClaimState.AWAITING_SIGNATURE,
-      recipient: opToClaim.recipient,
-      amount: opToClaim.amount,
-      inputOpId: opToClaim.inputOpId,
-      signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
-      evmToken: opToClaim.evmToken,
-      outputTxId: undefined,
-    }));
+  const statesCorrespondence = {
+    // Relayer are adding signatures
+    [operationStates.new]: ClaimState.RETRIEVING_INFO,
+
+    // Signatures are added, user can claim, user may have claim, tx may be in a fork
+    // if outputTxId is set, we are waiting for evm confirmations
+    [operationStates.processing]: ClaimState.AWAITING_SIGNATURE,
+
+    // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
+    [operationStates.finalizing]: ClaimState.SUCCESS,
+
+    // Relayer have deleted burn log in massa smart contract, we have enough evm confirmations
+    [operationStates.done]: ClaimState.SUCCESS,
+
+    // Error in the process
+    [operationStates.error]: ClaimState.ERROR,
+  };
+
+  return burnedOpList.map((opToClaim) => ({
+    claimState: statesCorrespondence[opToClaim.state],
+    recipient: opToClaim.recipient,
+    amount: opToClaim.amount,
+    inputOpId: opToClaim.inputOpId,
+    signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
+    evmToken: opToClaim.evmToken,
+    outputTxId: undefined,
+  }));
+}
+
+export async function getClaimableOperations(
+  evmAddress: `0x${string}`,
+): Promise<RedeemOperation[]> {
+  const redeemOperations = await getRedeemOperation(evmAddress);
+
+  return redeemOperations.filter(
+    (op) => op.claimState === ClaimState.AWAITING_SIGNATURE && !op.outputTxId,
+  );
 }

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
-import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
+import { getClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
   const { opToRedeem, setOpToRedeem } = useOperationStore();
@@ -17,7 +17,7 @@ export function ClaimTokensPopup() {
 
   useEffect(() => {
     if (!evmAddress) return;
-    checkIfUserHasTokensToClaim(evmAddress).then((pendingOperations) => {
+    getClaimableOperations(evmAddress).then((pendingOperations) => {
       setOpToRedeem(pendingOperations);
     });
   }, [evmAddress, currentMode, setOpToRedeem]);

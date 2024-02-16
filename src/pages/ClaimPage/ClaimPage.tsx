@@ -4,7 +4,7 @@ import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
 import { RedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
-import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
+import { getClaimableOperations } from '@/utils/lambdaApi';
 
 export function Claim() {
   const { opToRedeem, setOpToRedeem } = useOperationStore();
@@ -14,7 +14,7 @@ export function Claim() {
   useEffect(() => {
     if (!evmAddress) return;
     // TODO: duplicate code here
-    checkIfUserHasTokensToClaim(evmAddress).then((pendingOperations) => {
+    getClaimableOperations(evmAddress).then((pendingOperations) => {
       setOpToRedeem(pendingOperations);
     });
   }, [evmAddress, setOpToRedeem]);
