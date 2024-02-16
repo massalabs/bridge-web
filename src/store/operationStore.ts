@@ -31,9 +31,6 @@ export interface OperationStoreState {
   mintTxId?: string;
   setMintTxId(currentTxID?: string): void;
 
-  claimTxId?: string; // TODO: remove it, use currentRedeemOperation.outputOpId
-  setClaimTxId(currentTxID?: string): void;
-
   amount?: string;
   setAmount(amount?: string): void;
 
@@ -100,11 +97,6 @@ const operationStore = (
     set({ mintTxId });
   },
 
-  claimTxId: undefined,
-  setClaimTxId(claimTxId?: string) {
-    set({ claimTxId });
-  },
-
   amount: undefined,
   setAmount(amount?: string) {
     set({ amount });
@@ -114,7 +106,6 @@ const operationStore = (
     set({
       lockTxId: undefined,
       mintTxId: undefined,
-      claimTxId: undefined,
       amount: undefined,
     });
   },

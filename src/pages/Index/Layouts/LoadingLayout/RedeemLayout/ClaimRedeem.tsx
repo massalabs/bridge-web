@@ -23,7 +23,6 @@ export function Claim() {
   const { burn, setClaim, setBox } = useGlobalStatusesStore();
   const {
     amount,
-    setClaimTxId,
     currentRedeemOperation,
     updateCurrentRedeemOperation,
     setOpToRedeem,
@@ -59,7 +58,6 @@ export function Claim() {
         claimState: ClaimState.SUCCESS,
         outputTxId: hash,
       });
-      setClaimTxId(hash);
       setClaim(Status.Success);
       setBox(Status.Success);
       refreshBalances();
@@ -88,7 +86,6 @@ export function Claim() {
     setClaim,
     updateCurrentRedeemOperation,
     setLoadingToError,
-    setClaimTxId,
   ]);
 
   useEffect(() => {
