@@ -20,6 +20,7 @@ const modeStore = (
   currentMode: BridgeMode.mainnet,
   availableModes: Object.values(BridgeMode),
   isMainnet: () => get().currentMode === BridgeMode.mainnet,
+
   massaNetwork: () =>
     get().isMainnet() ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET,
   evmNetwork: () =>
@@ -28,7 +29,6 @@ const modeStore = (
   setCurrentMode: (mode: BridgeMode) => {
     const previousMode = get().currentMode;
     set({ currentMode: mode });
-    get().isMainnet();
 
     _setInStorage(BRIDGE_MODE_STORAGE_KEY, mode);
 

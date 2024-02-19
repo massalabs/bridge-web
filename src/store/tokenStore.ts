@@ -60,9 +60,8 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
 
   getTokens: async () => {
     const { isMainnet: getIsMainnet } = useBridgeModeStore.getState();
-    const isMainnet = getIsMainnet();
 
-    const massaClient = await initMassaClient(isMainnet);
+    const massaClient = await initMassaClient(getIsMainnet());
 
     let tokenList: IToken[] = [];
     try {
