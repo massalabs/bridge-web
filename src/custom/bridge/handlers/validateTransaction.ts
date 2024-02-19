@@ -7,7 +7,7 @@ import {
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
-export function validate(_tokenBalanceEVM: any) {
+export function validate(tokenBalanceEVM: any) {
   const { amount, side } = useOperationStore.getState();
   const { selectedToken } = useTokenStore.getState();
   const { setAmountError } = useGlobalStatusesStore.getState();
@@ -25,7 +25,7 @@ export function validate(_tokenBalanceEVM: any) {
   if (massaToEvm) {
     _balance = selectedToken?.balance || 0n;
   } else {
-    _balance = _tokenBalanceEVM;
+    _balance = tokenBalanceEVM;
   }
 
   if (_amount <= 0n) {
