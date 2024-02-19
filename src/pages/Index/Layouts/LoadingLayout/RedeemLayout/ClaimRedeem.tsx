@@ -182,7 +182,7 @@ export function ClaimRedeem() {
   return (
     <div className="flex flex-col gap-6 justify-center">
       <div className="mas-body-2 text-center max-w-full">{claimMessage}</div>
-      {isClaimAwaitingSignature ? (
+      {isClaimAwaitingSignature || isClaimRejected ? (
         <Button
           onClick={() => {
             handleRedeem();
