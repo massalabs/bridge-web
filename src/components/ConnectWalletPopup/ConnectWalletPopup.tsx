@@ -18,8 +18,6 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
   const { massaNetwork, evmNetwork } = useBridgeModeStore();
   const { chain } = useAccount();
 
-  // Depending on mode and side
-
   const networks = {
     network1: `${chain ? chain.name : Blockchain.ETHEREUM} ${evmNetwork}`,
     network2: `${Blockchain.MASSA} ${massaNetwork}`,
