@@ -26,7 +26,11 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
   const isMainnet = getIsMainnet();
-  const { evmNetwork, massaNetwork } = useBridgeModeStore();
+  const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
+    useBridgeModeStore();
+
+  const evmNetwork = getEvmNetwork();
+  const massaNetwork = getMassaNetwork();
 
   const { selectedToken: token } = useTokenStore();
 

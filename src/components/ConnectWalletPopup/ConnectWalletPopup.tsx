@@ -15,8 +15,12 @@ interface ConnectWalletPopupProps {
 }
 export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
   const { setOpen } = props;
-  const { massaNetwork, evmNetwork } = useBridgeModeStore();
+  const { massaNetwork: getMassaNetwork, evmNetwork: getEvmNetwork } =
+    useBridgeModeStore();
   const { chain } = useAccount();
+
+  const evmNetwork = getEvmNetwork();
+  const massaNetwork = getMassaNetwork();
 
   const networks = {
     network1: `${

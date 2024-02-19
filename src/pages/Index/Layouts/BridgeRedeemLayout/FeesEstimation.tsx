@@ -65,8 +65,12 @@ export function FeesEstimation() {
   const { side, amount } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const { selectedToken } = useTokenStore();
-  const { evmNetwork, massaNetwork } = useBridgeModeStore();
+  const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
+    useBridgeModeStore();
   const { isConnected: isEvmWalletConnected } = useAccount();
+
+  const evmNetwork = getEvmNetwork();
+  const massaNetwork = getMassaNetwork();
 
   const { allowance } = useEvmToken();
 

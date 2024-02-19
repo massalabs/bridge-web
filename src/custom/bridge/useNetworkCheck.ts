@@ -12,10 +12,13 @@ export function useNetworkCheck() {
   const {
     isMainnet: getIsMainnet,
     currentMode,
-    evmNetwork,
-    massaNetwork,
+    evmNetwork: getEvmNetwork,
+    massaNetwork: getMassaNetwork,
   } = useBridgeModeStore();
+
   const isMainnet = getIsMainnet();
+  const evmNetwork = getEvmNetwork();
+  const massaNetwork = getMassaNetwork();
 
   // state to dismiss toast
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
