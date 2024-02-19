@@ -28,21 +28,19 @@ const modeStore = (
   setCurrentMode: (mode: BridgeMode) => {
     const previousMode = get().currentMode;
 
-    set({ currentMode: mode });
-
     get().isMainnet();
+    const isMainnetMode = get().isMainnet();
+    set({
+      currentMode: mode,
+      massaNetwork: isMainnetMode
+        ? Blockchain.MASSA_MAINNET
+        : Blockchain.MASSA_BUILDNET,
+      evmNetwork: isMainnetMode
+        ? Blockchain.EVM_MAINNET
+        : Blockchain.EVM_TESTNET,
+    });
 
     _setInStorage(BRIDGE_MODE_STORAGE_KEY, mode);
-
-    const isMainnetMode = get().isMainnet();
-
-    if (isMainnetMode) {
-      set({ massaNetwork: Blockchain.MASSA_MAINNET });
-      set({ evmNetwork: Blockchain.EVM_MAINNET });
-    } else {
-      set({ massaNetwork: Blockchain.MASSA_BUILDNET });
-      set({ evmNetwork: Blockchain.EVM_TESTNET });
-    }
 
     // if the mode has changed, we need to refresh the tokens
     if (previousMode !== mode) {
