@@ -25,6 +25,8 @@ export function SuccessLayout(props: LoadingBoxProps) {
     useOperationStore();
   const { currentMode, isMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
+  const { evmNetwork, massaNetwork } = useBridgeModeStore();
+
   const { selectedToken: token } = useTokenStore();
 
   if (!chain || !token || !amount) return null;
@@ -33,13 +35,9 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const currentRedeemOperation = getCurrentRedeemOperation();
   const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
 
-  const massaChainAndNetwork = `${Blockchain.MASSA} ${
-    isMainnet ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET
-  }`;
+  const massaChainAndNetwork = `${Blockchain.MASSA} ${massaNetwork}`;
 
-  const evmChainAndNetwork = `${chain.name} ${
-    isMainnet ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET
-  }`;
+  const evmChainAndNetwork = `${chain.name} ${evmNetwork}`;
 
   // claim && bridge success need to show respective show link to explorer
   const explorerUrl = massaToEvm
