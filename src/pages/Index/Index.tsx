@@ -1,16 +1,11 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
-import {
-  Button,
-  PopupModal,
-  PopupModalContent,
-  PopupModalHeader,
-} from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
+import { Tos } from '@/components/tos/tos';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
@@ -204,21 +199,7 @@ export function Index() {
       <TokensFAQ />
       {!isOperationPending && <ClaimTokensPopup />}
 
-      <PopupModal
-        customClass="flex justify-center text-s-info"
-        customClassNested="w-1/2 py-10"
-        fullMode={true}
-      >
-        <PopupModalContent>
-          <div className=" flex flex-col justify-center gap-4">
-            <div className="mas-title">Accept the Terms of Service</div>
-            <a href="https://bridge.massa.net/legal/ToS.pdf" target="_blank">
-              <u>Terms of service</u>
-            </a>
-            <Button>Accept</Button>
-          </div>
-        </PopupModalContent>
-      </PopupModal>
+      <Tos />
     </div>
   );
 }
