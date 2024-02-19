@@ -8,15 +8,25 @@ import { getClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
   const { opToRedeem, setOpToRedeem } = useOperationStore();
-
   const { address: evmAddress } = useAccount();
 
   useEffect(() => {
     if (!evmAddress) return;
-    // TODO: duplicate code here
-    getClaimableOperations(evmAddress).then((pendingOperations) => {
-      setOpToRedeem(pendingOperations);
-    });
+    let timeoutId: NodeJS.Timeout;
+
+    const fetchOpToRedeem = async () => {
+      if (!evmAddress) return;
+      getClaimableOperations(evmAddress).then((newOps) => {
+        setOpToRedeem(newOps);
+        timeoutId = setTimeout(fetchOpToRedeem, 2_500);
+      });
+    };
+
+    fetchOpToRedeem();
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [evmAddress, setOpToRedeem]);
 
   const burnListIsNotEmpty = opToRedeem.length;
