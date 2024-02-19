@@ -16,6 +16,7 @@ import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
+  useAccountStore,
   useBridgeModeStore,
   useOperationStore,
   useTokenStore,
@@ -65,6 +66,7 @@ export function FeesEstimation() {
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const { selectedToken } = useTokenStore();
   const { evmNetwork, massaNetwork } = useBridgeModeStore();
+  const { isConnected: isEvmWalletConnected } = useAccount();
 
   const { allowance } = useEvmToken();
 
@@ -74,11 +76,13 @@ export function FeesEstimation() {
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
     useFeeEstimation();
 
-  const { address, chain } = useAccount();
+  const { address } = useAccount();
 
   const { data: balanceData } = useBalance({
     address,
   });
+
+  const { connectedAccount } = useAccountStore();
 
   useEffect(() => {
     const setFeesETHWithCheck = (fees: bigint) => {
@@ -127,7 +131,8 @@ export function FeesEstimation() {
     selectedToken,
   ]);
 
-  if (!selectedToken) return null;
+  if (!selectedToken || (!isEvmWalletConnected && !connectedAccount))
+    return null;
 
   const symbolEVM = selectedToken.symbolEVM;
   const symbolMASSA = selectedToken.symbol;
@@ -151,7 +156,8 @@ export function FeesEstimation() {
         <div className="flex items-center">
           <p>
             {Intl.t('index.fee-estimate.network-fees', {
-              network: `${Blockchain.MASSA} ${massaNetwork}`,
+              name: Intl.t(`general.${Blockchain.MASSA}`),
+              network: Intl.t(`general.${massaNetwork}`),
             })}
           </p>
           {feesMAS && feesMAS !== '0' && (
@@ -169,9 +175,8 @@ export function FeesEstimation() {
       <div className="flex items-center justify-between">
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
-            network: `${
-              chain ? chain.name : Blockchain.ETHEREUM
-            } ${evmNetwork}`,
+            name: Intl.t(`general.${Blockchain.ETHEREUM}`),
+            network: Intl.t(`general.${evmNetwork}`),
           })}
         </p>
         <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />

@@ -19,8 +19,14 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
   const { chain } = useAccount();
 
   const networks = {
-    network1: `${chain ? chain.name : Blockchain.ETHEREUM} ${evmNetwork}`,
-    network2: `${Blockchain.MASSA} ${massaNetwork}`,
+    network1: `${
+      chain
+        ? Intl.t(`general.${chain.name}`)
+        : Intl.t(`general.${Blockchain.ETHEREUM}`)
+    } ${Intl.t(`general.${evmNetwork}`)}`,
+    network2: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
+      `general.${massaNetwork}`,
+    )}`,
   };
 
   return (

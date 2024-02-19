@@ -2,7 +2,13 @@
   "general": {
     "click-here": "Click here",
     "select-this-account": "Select this account",
-    "loading": "loading..."
+    "loading": "loading...",
+    "Massa": "Massa",
+    "Sepolia": "Sepolia",
+    "Ethereum": "EVM",
+    "Testnet": "Testnet",
+    "Buildnet": "Buildnet",
+    "Mainnet": "Mainnet"
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -185,7 +191,7 @@
     },
     "fee-estimate": {
       "bridge-rate": "Bridge rate",
-      "network-fees": "Transaction fees on {network} est.",
+      "network-fees": "Transaction fees on {name} {network} est.",
       "on": "on",
       "tooltip-massa": "Massa blockchain charges {fees} MAS to pay for the storage on the ledger."
     }
