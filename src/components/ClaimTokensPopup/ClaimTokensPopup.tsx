@@ -1,30 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore, useOperationStore } from '@/store/store';
-import { checkIfUserHasTokensToClaim } from '@/utils/lambdaApi';
+import { useBridgeModeStore } from '@/store/store';
+import { getClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
-  const { opToRedeem, setOpToRedeem } = useOperationStore();
-
   const { address: evmAddress, chain: evmConnectedChain } = useAccount();
-
   const { currentMode } = useBridgeModeStore();
 
-  const renderButton = !!opToRedeem?.length;
+  const [renderButton, setRenderButton] = useState(false);
 
   useEffect(() => {
     if (!evmAddress) return;
-    checkIfUserHasTokensToClaim(evmAddress).then((pendingOperations) => {
-      setOpToRedeem(pendingOperations);
+    getClaimableOperations(evmAddress).then((pendingOperations) => {
+      setRenderButton(!!pendingOperations.length);
     });
-  }, [evmAddress, currentMode, setOpToRedeem]);
-
-  const evmChainName = evmConnectedChain?.name;
+  }, [evmAddress, currentMode]);
 
   function ClaimButton() {
+    const evmChainName = evmConnectedChain?.name;
     if (!evmChainName) return null;
     return (
       <div

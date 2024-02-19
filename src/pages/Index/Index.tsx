@@ -41,7 +41,7 @@ export function Index() {
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmToken();
 
-  const [redeemSteps, setRedeemSteps] = useState<string>(
+  const [redeemLabel, setRedeemLabel] = useState<string>( // TODO later: see if we need that
     Intl.t('index.loading-box.burn'),
   );
 
@@ -158,7 +158,7 @@ export function Index() {
         await handleBurnRedeem({
           recipient: evmAddress,
           amount,
-          setRedeemSteps,
+          setRedeemLabel,
         });
       }
     } else {
@@ -185,7 +185,7 @@ export function Index() {
       {isOperationPending ? (
         <PendingOperationLayout
           onClose={closeLoadingBox}
-          redeemSteps={redeemSteps}
+          redeemLabel={redeemLabel}
         />
       ) : (
         <BridgeRedeemLayout

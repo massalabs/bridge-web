@@ -1,4 +1,4 @@
-import { Claim } from './ClaimRedeem';
+import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
@@ -9,14 +9,14 @@ import {
   MASSA_EXPLO_URL,
   MASSA_EXPLO_EXTENSION,
   MASSA_EXPLORER_URL,
-  ClaimSteps,
+  ClaimState,
 } from '@/utils/const';
 
 export function RedeemLayout(props: LoadingBoxProps) {
-  const { redeemSteps } = props;
+  const { redeemLabel } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
-  const { burnTxId, currentRedeemOperation } = useOperationStore();
+  const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
 
   // wait for burn success --> then check additional conditions
@@ -35,38 +35,38 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={approve} />
         </div>
         <div className="flex justify-between">
-          <p className="mas-body-2">{redeemSteps}</p>
+          <p className="mas-body-2">{redeemLabel}</p>
           <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">
           <p className="mas-body-2">
             {Intl.t('index.loading-box.claim-step', {
               state: getClaimStepTranslation(
-                currentRedeemOperation?.claimStep || ClaimSteps.None,
+                getCurrentRedeemOperation()?.claimState,
               ),
             })}
           </p>
           <LoadingState state={claim} />
         </div>
-        {isBurnSuccessful && <Claim />}
+        {isBurnSuccessful && <ClaimRedeem />}
         <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
       </div>
     </>
   );
 }
-function getClaimStepTranslation(claimStep: ClaimSteps) {
-  switch (claimStep) {
-    case ClaimSteps.RetrievingInfo:
+function getClaimStepTranslation(claimState?: ClaimState) {
+  switch (claimState) {
+    case ClaimState.RETRIEVING_INFO:
       return Intl.t('index.loading-box.claim-step-retrieving-info');
-    case ClaimSteps.AwaitingSignature:
+    case ClaimState.AWAITING_SIGNATURE:
+    case ClaimState.READY_TO_CLAIM:
       return Intl.t('index.loading-box.claim-step-awaiting-signature');
-    case ClaimSteps.Claiming:
+    case ClaimState.PENDING:
       return Intl.t('index.loading-box.claim-step-claiming');
-    case ClaimSteps.Reject:
+    case ClaimState.REJECTED:
       return Intl.t('index.loading-box.claim-step-rejected');
-    case ClaimSteps.Error:
+    case ClaimState.ERROR:
       return Intl.t('index.loading-box.claim-step-error');
-    case ClaimSteps.None:
     default:
       return '';
   }

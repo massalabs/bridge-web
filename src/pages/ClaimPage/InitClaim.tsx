@@ -4,58 +4,67 @@ import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransact
 import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
+import { RedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
-interface ClaimButton {
-  operation: RedeemOperationToClaim;
-  setClaimState: (state: ClaimState) => void;
-  claimState: ClaimState;
-  setHash: (hash: `0x${string}`) => void;
+interface InitClaimProps {
+  operation: RedeemOperation;
   symbol?: string;
+  onUpdate: (op: Partial<RedeemOperation>) => void;
 }
 
-export function InitClaim(args: ClaimButton) {
-  const { operation: op, symbol, setClaimState, claimState, setHash } = args;
-  const { write, error, isSuccess, hash } = useClaim();
+export function InitClaim(props: InitClaimProps) {
+  const { operation, symbol, onUpdate } = props;
+  const { write, error, isSuccess, hash, isPending } = useClaim();
 
+  const claimState = operation.claimState;
   const isClaimRejected = claimState === ClaimState.REJECTED;
-  const isPending = claimState === ClaimState.PENDING;
-
-  const displayContentArgs = {
-    claimState,
-    amount: op.amount,
-    symbol,
-  };
-
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
   useEffect(() => {
-    if (isSuccess && hash) {
-      setClaimState(ClaimState.SUCCESS);
-      setHash(hash);
+    if (isPending && claimState !== ClaimState.PENDING) {
+      onUpdate({ claimState: ClaimState.PENDING });
+    }
+    if (
+      isSuccess &&
+      hash &&
+      claimState !== ClaimState.SUCCESS &&
+      !operation.outputTxId
+    ) {
+      onUpdate({ outputTxId: hash, claimState: ClaimState.SUCCESS });
     }
     if (error) {
-      const state = handleEvmClaimError(error);
-      setClaimState(state);
+      const errorClaimState = handleEvmClaimError(error);
+      if (claimState !== errorClaimState) {
+        onUpdate({ claimState: errorClaimState });
+      }
     }
-  }, [error, isSuccess, hash, setHash, setClaimState]);
+  }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
 
   function handleClaim() {
-    setClaimState(ClaimState.PENDING);
-    write(op);
+    onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
+    write(operation);
   }
 
-  return isPending ? (
-    <PendingClaim />
-  ) : (
+  if (
+    claimState === ClaimState.PENDING ||
+    claimState === ClaimState.AWAITING_SIGNATURE
+  ) {
+    return <PendingClaim />;
+  }
+
+  return (
     <div
       className={`flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 
           ${boxSize} h-12 border border-tertiary rounded-2xl px-10 py-14`}
     >
-      <DisplayContent {...displayContentArgs} />
+      <DisplayContent
+        claimState={claimState}
+        amount={operation.amount}
+        symbol={symbol}
+      />
       <div>
         <Button onClick={() => handleClaim()}>
           {Intl.t('claim.claim')} {symbol}
@@ -79,8 +88,14 @@ function PendingClaim() {
   );
 }
 
-function DisplayContent({ ...args }) {
-  const { claimState, amount, symbol } = args;
+interface DisplayContentProps {
+  claimState: ClaimState;
+  amount: string;
+  symbol?: string;
+}
+
+function DisplayContent(props: DisplayContentProps) {
+  const { claimState, amount, symbol } = props;
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(amount);
 
   const isClaimRejected = claimState === ClaimState.REJECTED;

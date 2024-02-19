@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+import { ClaimState } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
+import { RedeemOperation } from '@/store/operationStore';
 
 export interface Locked {
   amount: string;
@@ -46,17 +48,9 @@ export interface LambdaResponse {
   };
 }
 
-export interface RedeemOperationToClaim {
-  amount: string;
-  recipient: `0x${string}`;
-  inputOpId: string;
-  signatures: string[];
-  evmToken: `0x${string}`;
-}
-
 const lambdaEndpoint = 'bridge-getHistory-prod';
 
-export async function getBurnedByEvmAddress(
+async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
 ): Promise<Burned[]> {
   const { currentMode } = useBridgeModeStore.getState();
@@ -77,7 +71,7 @@ export async function getBurnedByEvmAddress(
   return response.data.burned;
 }
 
-export enum operationStates {
+enum operationStates {
   new = 'new',
   processing = 'processing',
   done = 'done',
@@ -85,44 +79,83 @@ export enum operationStates {
   finalizing = 'finalizing',
 }
 
-// returns all processing operations with a burn operation id
 export async function findClaimable(
   userEvmAddress: `0x${string}`,
   burnOpId: string,
 ): Promise<Burned | undefined> {
   const burnedOpList = await getBurnedByEvmAddress(userEvmAddress);
 
-  return burnedOpList.find(
+  const claimableOp = burnedOpList.find(
     (item) =>
       item.outputTxId === null &&
       item.state === operationStates.processing &&
       item.inputOpId === burnOpId,
   );
+
+  if (!claimableOp) return;
+
+  claimableOp.signatures = sortSignatures(claimableOp.signatures || []);
+
+  return claimableOp;
 }
 
-export function sortSignatures(signatures: Signatures[]): string[] {
-  return signatures
-    .sort((a, b) => a.relayerId - b.relayerId)
-    .map((signature: Signatures) => {
-      return signature.signature;
-    });
+function sortSignatures(signatures: Signatures[]): Signatures[] {
+  return signatures.sort((a, b) => a.relayerId - b.relayerId);
 }
 
-export async function checkIfUserHasTokensToClaim(
+export async function getRedeemOperation(
   evmAddress: `0x${string}`,
-): Promise<RedeemOperationToClaim[]> {
+): Promise<RedeemOperation[]> {
   const burnedOpList = await getBurnedByEvmAddress(evmAddress);
 
-  return burnedOpList
-    .filter(
-      (item) =>
-        item.outputTxId === null && item.state === operationStates.processing,
-    )
-    .map((opToClaim) => ({
+  const statesCorrespondence = {
+    // Relayer are adding signatures
+    [operationStates.new]: ClaimState.RETRIEVING_INFO,
+
+    // Signatures are added, user can claim, user may have claim, tx may be in a fork
+    // if outputTxId is set, we are waiting for evm confirmations
+    [operationStates.processing]: ClaimState.READY_TO_CLAIM, // AWAITING_SIGNATURE or PENDING or SUCCESS
+
+    // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
+    [operationStates.finalizing]: ClaimState.SUCCESS,
+
+    // Relayer have deleted burn log in massa smart contract, we have enough evm confirmations
+    [operationStates.done]: ClaimState.SUCCESS,
+
+    // Error in the process
+    [operationStates.error]: ClaimState.ERROR,
+  };
+
+  return burnedOpList.map((opToClaim) => {
+    const op = {
+      claimState: statesCorrespondence[opToClaim.state],
       recipient: opToClaim.recipient,
       amount: opToClaim.amount,
       inputOpId: opToClaim.inputOpId,
-      signatures: sortSignatures(opToClaim.signatures),
+      signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
       evmToken: opToClaim.evmToken,
-    }));
+      outputTxId: undefined,
+    };
+
+    // The operation state given by the lambda is processing but the operation may be already claimed
+    // if the outputTxId is set, so in this case we set the claimState to SUCCESS
+    if (
+      opToClaim.state === operationStates.processing &&
+      opToClaim.outputTxId
+    ) {
+      op.claimState = ClaimState.SUCCESS;
+    }
+
+    return op;
+  });
+}
+
+export async function getClaimableOperations(
+  evmAddress: `0x${string}`,
+): Promise<RedeemOperation[]> {
+  const redeemOperations = await getRedeemOperation(evmAddress);
+
+  return redeemOperations.filter(
+    (op) => op.claimState === ClaimState.READY_TO_CLAIM,
+  );
 }

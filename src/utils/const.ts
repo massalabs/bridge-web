@@ -24,17 +24,10 @@ export enum SIDE {
   EVM_TO_MASSA = 'evmToMassa',
 }
 
-export const enum ClaimSteps {
-  None,
-  RetrievingInfo,
-  AwaitingSignature,
-  Claiming,
-  Error,
-  Reject,
-}
-
 export enum ClaimState {
-  INIT = 'init',
+  RETRIEVING_INFO = 'retrieving-info', // Relayer are adding signatures
+  READY_TO_CLAIM = 'ready-to-claim', // User can claim
+  AWAITING_SIGNATURE = 'awaiting-signature', // User clicked on claim button, waiting for signature
   PENDING = 'pending',
   SUCCESS = 'success',
   ERROR = 'error',

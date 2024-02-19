@@ -6,7 +6,6 @@ import configStore, {
   ConfigStoreState,
 } from './configStore';
 import modeStore, { ModeStoreState } from './modeStore';
-import operationStore, { OperationStoreState } from './operationStore';
 import { useTokenStore } from './tokenStore';
 import {
   BRIDGE_MODE_STORAGE_KEY,
@@ -15,8 +14,10 @@ import {
 } from '../utils/storage';
 import { BridgeMode } from '@/const';
 import { updateProviders } from '@/store/helpers/massaProviders';
+
 export { useTokenStore } from './tokenStore';
 export { useGlobalStatusesStore } from './globalStatusesStore';
+export { useOperationStore } from './operationStore';
 
 export const useConfigStore = create<ConfigStoreState>((...obj) => ({
   ...configStore(...obj),
@@ -28,10 +29,6 @@ export const useAccountStore = create<AccountStoreState>((set, get) => ({
 
 export const useBridgeModeStore = create<ModeStoreState>((set, get) => ({
   ...modeStore(set, get),
-}));
-
-export const useOperationStore = create<OperationStoreState>((set, get) => ({
-  ...operationStore(set, get),
 }));
 
 function initConfigStore() {
