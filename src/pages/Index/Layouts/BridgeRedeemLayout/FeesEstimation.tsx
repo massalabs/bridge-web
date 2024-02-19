@@ -6,11 +6,20 @@ import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { EthSvg } from '../../../../assets/EthSvg';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
-import { forwardBurnFees, increaseAllowanceFee, massaToken } from '@/const';
+import {
+  Blockchain,
+  forwardBurnFees,
+  increaseAllowanceFee,
+  massaToken,
+} from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
-import { useOperationStore, useTokenStore } from '@/store/store';
+import {
+  useBridgeModeStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store/store';
 import { SIDE } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -55,6 +64,7 @@ export function FeesEstimation() {
   const { side, amount } = useOperationStore();
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const { selectedToken } = useTokenStore();
+  const { evmNetwork, massaNetwork } = useBridgeModeStore();
 
   const { allowance } = useEvmToken();
 
@@ -64,7 +74,7 @@ export function FeesEstimation() {
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
     useFeeEstimation();
 
-  const { address } = useAccount();
+  const { address, chain } = useAccount();
 
   const { data: balanceData } = useBalance({
     address,
@@ -139,7 +149,11 @@ export function FeesEstimation() {
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <p>{Intl.t('index.fee-estimate.massa')}</p>
+          <p className="bg-blue-500">
+            {Intl.t('index.fee-estimate.network-fees', {
+              network: `${Blockchain.MASSA} ${massaNetwork}`,
+            })}
+          </p>
           {feesMAS && feesMAS !== '0' && (
             <Tooltip
               body={Intl.t('index.fee-estimate.tooltip-massa', {
@@ -153,7 +167,13 @@ export function FeesEstimation() {
         <EstimatedAmount amount={feesMAS} symbol={massaToken} />
       </div>
       <div className="flex items-center justify-between">
-        <p>{Intl.t('index.fee-estimate.ethereum')}</p>
+        <p className="bg-blue-500">
+          {Intl.t('index.fee-estimate.network-fees', {
+            network: `${
+              chain ? chain.name : Blockchain.ETHEREUM
+            } ${evmNetwork}`,
+          })}
+        </p>
         <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
       </div>
     </div>
