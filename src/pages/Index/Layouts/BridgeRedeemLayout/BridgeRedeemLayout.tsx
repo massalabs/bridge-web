@@ -14,6 +14,7 @@ import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
   useBridgeModeStore,
+  useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
@@ -23,13 +24,13 @@ import { formatAmount } from '@/utils/parseAmount';
 interface BridgeRedeemProps {
   isBlurred: string;
   isButtonDisabled: boolean;
-  error: any;
-  setError: (state: { amount: string } | null) => void;
   handleSubmit: (e: any) => void;
 }
 
 export function BridgeRedeemLayout(props: BridgeRedeemProps) {
-  const { isBlurred, isButtonDisabled, error, setError, handleSubmit } = props;
+  const { isBlurred, isButtonDisabled, handleSubmit } = props;
+
+  const { setAmountError, amountError } = useGlobalStatusesStore();
 
   const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
     useEvmToken();
@@ -50,7 +51,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       (massaToEvm && token.balance <= 0) ||
       (!massaToEvm && _tokenBalanceEVM <= 0)
     ) {
-      setError({ amount: Intl.t('index.approve.error.insufficient-funds') });
+      setAmountError(Intl.t('index.approve.error.insufficient-funds'));
       return;
     }
 
@@ -93,7 +94,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 placeholder={Intl.t('index.input.placeholder.amount')}
                 suffix=""
                 decimalScale={token?.decimals}
-                error={error?.amount}
+                error={amountError}
               />
               <div className="flex flex-row-reverse">
                 <ul className="flex flex-row mas-body2">
