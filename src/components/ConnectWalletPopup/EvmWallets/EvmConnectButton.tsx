@@ -15,6 +15,8 @@ export default function EvmConnectButton(): JSX.Element {
   const { wrongNetwork } = useWrongNetworkEVM();
 
   const { isMainnet } = useBridgeModeStore();
+
+  const isMainnetMode = isMainnet();
   const { switchChain } = useSwitchChain();
 
   const { address } = useAccount();
@@ -57,7 +59,7 @@ export default function EvmConnectButton(): JSX.Element {
                     <div>
                       {Intl.t(
                         'connect-wallet.connect-metamask.invalid-network',
-                        { network: isMainnet ? 'Mainnet' : 'Sepolia' },
+                        { network: isMainnetMode ? 'Mainnet' : 'Sepolia' },
                       )}
                     </div>
                     <Button
@@ -65,7 +67,7 @@ export default function EvmConnectButton(): JSX.Element {
                       customClass="h-14"
                       onClick={() =>
                         switchChain?.({
-                          chainId: isMainnet ? mainnet.id : sepolia.id,
+                          chainId: isMainnetMode ? mainnet.id : sepolia.id,
                         })
                       }
                     >

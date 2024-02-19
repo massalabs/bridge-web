@@ -14,11 +14,11 @@ export function EvmWalletContext({ children }: PropsWithChildren<unknown>) {
   const { theme } = useConfigStore();
   const { isMainnet } = useBridgeModeStore();
   const rainbowkitTheme = theme === 'theme-dark' ? darkTheme : lightTheme;
-
+  const isMainnetMode = isMainnet();
   return (
     <WagmiProvider config={config}>
       <RainbowKitProvider
-        initialChain={isMainnet ? mainnet : sepolia}
+        initialChain={isMainnetMode ? mainnet : sepolia}
         theme={rainbowkitTheme({
           accentColor: '#3271A5',
           accentColorForeground: 'white',

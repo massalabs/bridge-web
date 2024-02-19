@@ -14,13 +14,14 @@ export function WrongChain(props: WrongChainProps) {
   const { blockchain } = props;
   const { isMainnet } = useBridgeModeStore();
   const { currentProvider } = useAccountStore();
+  const isMainnetMode = isMainnet();
 
   let network = '';
   let transKey = '';
   if (blockchain === Blockchain.MASSA && currentProvider) {
     // currentProvider is always defined when blockchain is MASSA
     const providerName = currentProvider.name();
-    if (isMainnet) {
+    if (isMainnetMode) {
       network = 'Mainnet';
     } else {
       network = 'Buildnet';
@@ -35,7 +36,7 @@ export function WrongChain(props: WrongChainProps) {
     }
   } else if (blockchain === Blockchain.ETHEREUM) {
     transKey = 'connect-wallet.connect-metamask.invalid-network';
-    if (isMainnet) {
+    if (isMainnetMode) {
       network = 'Mainnet';
     } else {
       network = 'Sepolia';

@@ -12,6 +12,8 @@ export function useNetworkCheck() {
   const { isMainnet, currentMode, evmNetwork, massaNetwork } =
     useBridgeModeStore();
 
+  const isMainnetMode = isMainnet();
+
   // state to dismiss toast
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
@@ -32,7 +34,7 @@ export function useNetworkCheck() {
     let evmOk = false;
     if (
       evmConnectedChain &&
-      !validateEvmNetwork(isMainnet, evmConnectedChain.id)
+      !validateEvmNetwork(isMainnetMode, evmConnectedChain.id)
     ) {
       setToastIdEvm(
         toast.error(
@@ -53,7 +55,7 @@ export function useNetworkCheck() {
     let massaOk = false;
     if (
       connectedNetwork &&
-      !validateMassaNetwork(isMainnet, connectedNetwork)
+      !validateMassaNetwork(isMainnetMode, connectedNetwork)
     ) {
       setToastIdMassa(
         toast.error(

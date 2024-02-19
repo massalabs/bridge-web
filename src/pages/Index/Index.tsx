@@ -68,11 +68,13 @@ export function Index() {
   const isOperationPending = box !== Status.None;
   const isBlurred = isOperationPending ? 'blur-md' : '';
 
+  const isMainnetMode = isMainnet();
+
   const isButtonDisabled =
     isFetching ||
     !connectedAccount ||
     wrongNetwork ||
-    isMainnet ||
+    isMainnetMode ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
 

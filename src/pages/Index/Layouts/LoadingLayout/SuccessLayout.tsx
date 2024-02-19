@@ -23,6 +23,8 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
   const { side, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
+  const { side, mintTxId, getCurrentRedeemOperation, amount } =
+    useOperationStore();
   const { currentMode, isMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
   const { evmNetwork, massaNetwork } = useBridgeModeStore();
@@ -33,11 +35,18 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const massaToEvm = side === SIDE.MASSA_TO_EVM;
   const currentRedeemOperation = getCurrentRedeemOperation();
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const currentRedeemOperation = getCurrentRedeemOperation();
   const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
+  const isMainnetMode = isMainnet();
 
-  const massaChainAndNetwork = `${Blockchain.MASSA} ${massaNetwork}`;
+  const massaChainAndNetwork = `${Blockchain.MASSA} ${
+    isMainnet ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET
+  }`;
 
-  const evmChainAndNetwork = `${chain.name} ${evmNetwork}`;
+  const evmChainAndNetwork = `${chain.name} ${
+    isMainnet ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET
+  }`;
 
   // claim && bridge success need to show respective show link to explorer
   const explorerUrl = massaToEvm

@@ -18,6 +18,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
   const { burn, approve, claim } = useGlobalStatusesStore();
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
   const { isMainnet } = useBridgeModeStore();
+  const isMainnetMode = isMainnet();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
@@ -25,7 +26,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
 
   const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${burnTxId}${MASSA_EXPLO_EXTENSION}`;
   const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${burnTxId}`;
-  const explorerUrl = isMainnet ? mainnetExplorerUrl : buildnetExplorerUrl;
+  const explorerUrl = isMainnetMode ? mainnetExplorerUrl : buildnetExplorerUrl;
 
   return (
     <>

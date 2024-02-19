@@ -39,7 +39,7 @@ const iconsNetworks = {
 function EVMHeader() {
   const { isConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
-
+  const isMainnetMode = isMainnet();
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
@@ -49,7 +49,7 @@ function EVMHeader() {
             {
               // todo add icons if we want to support different chains
               icon: iconsNetworks.ETHEREUM,
-              item: isMainnet ? 'Ethereum Mainnet' : 'Sepolia Testnet',
+              item: isMainnetMode ? 'Ethereum Mainnet' : 'Sepolia Testnet',
             },
           ]}
         />
@@ -69,6 +69,7 @@ function EVMHeader() {
 function MassaHeader() {
   const { isFetching, accounts, currentProvider } = useAccountStore();
   const { isMainnet } = useBridgeModeStore();
+  const isMainnetMode = isMainnet();
 
   const hasNoAccounts = !accounts?.length;
 
@@ -82,7 +83,7 @@ function MassaHeader() {
           options={[
             {
               item: `Massa ${capitalize(
-                isMainnet ? MassaNetworks.mainnet : MassaNetworks.buildnet,
+                isMainnetMode ? MassaNetworks.mainnet : MassaNetworks.buildnet,
               )}`,
               icon: iconsNetworks[SUPPORTED_MASSA_WALLETS.MASSASTATION],
             },
