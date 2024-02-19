@@ -1,11 +1,10 @@
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
-import { SIDE } from '@/utils/const';
 
 export function WarningLayout() {
-  const { side } = useOperationStore();
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const { getCurrentSide } = useOperationStore();
+  const massaToEvm = getCurrentSide();
 
   const currentTxID = undefined;
 

@@ -36,13 +36,13 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     useEvmToken();
   const { isConnected: isEvmWalletConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
-  const { side, amount, setSide, setAmount } = useOperationStore();
+  const { getCurrentSide, amount, setSide, setAmount } = useOperationStore();
   const { isFetching } = useAccountStore();
   const { selectedToken: token } = useTokenStore();
 
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
 
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const massaToEvm = getCurrentSide();
 
   function handlePercent(percent: number) {
     if (!token || !isBalanceFetched) return;

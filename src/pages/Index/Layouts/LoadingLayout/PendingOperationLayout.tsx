@@ -7,7 +7,6 @@ import { WarningLayout } from './WarningLayout';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
-import { SIDE } from '@/utils/const';
 
 export interface LoadingBoxProps {
   onClose: () => void;
@@ -16,8 +15,8 @@ export interface LoadingBoxProps {
 
 export function PendingOperationLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { side } = useOperationStore();
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const { getCurrentSide } = useOperationStore();
+  const massaToEvm = getCurrentSide();
 
   const { box } = useGlobalStatusesStore();
 

@@ -15,13 +15,12 @@ import {
   MASSA_EXPLORER_URL,
   MASSA_EXPLO_EXTENSION,
   MASSA_EXPLO_URL,
-  SIDE,
 } from '@/utils/const';
 import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { side, mintTxId, getCurrentRedeemOperation, amount } =
+  const { getCurrentSide, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
@@ -36,7 +35,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   if (!chain || !token || !amount) return null;
 
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const massaToEvm = getCurrentSide();
   const currentRedeemOperation = getCurrentRedeemOperation();
   const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
 
