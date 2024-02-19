@@ -4,19 +4,29 @@ import {
   PopupModalHeader,
 } from '@massalabs/react-ui-kit';
 
+import { useAccount } from 'wagmi';
 import { ConnectWallets } from './ConnectWallets';
 import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/store';
 
 interface ConnectWalletPopupProps {
   setOpen: (open: boolean) => void;
 }
 export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
   const { setOpen } = props;
+  const { massaNetwork, evmNetwork } = useBridgeModeStore();
+  const { chain } = useAccount();
 
   const networks = {
-    network1: Blockchain.ETHEREUM,
-    network2: Blockchain.MASSA,
+    network1: `${
+      chain
+        ? Intl.t(`general.${chain.name}`)
+        : Intl.t(`general.${Blockchain.ETHEREUM}`)
+    } ${Intl.t(`general.${evmNetwork}`)}`,
+    network2: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
+      `general.${massaNetwork}`,
+    )}`,
   };
 
   return (
