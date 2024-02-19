@@ -12,21 +12,9 @@ export function ClaimPage() {
 
   useEffect(() => {
     if (!evmAddress) return;
-    let timeoutId: NodeJS.Timeout;
-
-    const fetchOpToRedeem = async () => {
-      if (!evmAddress) return;
-      getClaimableOperations(evmAddress).then((newOps) => {
-        setOpToRedeem(newOps);
-        timeoutId = setTimeout(fetchOpToRedeem, 2_500);
-      });
-    };
-
-    fetchOpToRedeem();
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    getClaimableOperations(evmAddress).then((newOps) => {
+      setOpToRedeem(newOps);
+    });
   }, [evmAddress, setOpToRedeem]);
 
   const burnListIsNotEmpty = opToRedeem.length;
