@@ -10,13 +10,16 @@ import { formatAmount } from '@/utils/parseAmount';
 
 interface SuccessClaimProps {
   operation: RedeemOperation;
-  txHash?: `0x${string}`; // TODO: check if the hash is not already in the operation
   symbol?: string;
 }
 
 export function SuccessClaim(args: SuccessClaimProps) {
-  const { operation: op, txHash, symbol } = args;
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
+  const { operation, symbol } = args;
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
+    operation.amount,
+  );
+
+  const txHash = operation.outputTxId;
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
