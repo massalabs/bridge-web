@@ -1,10 +1,11 @@
 import { toast } from '@massalabs/react-ui-kit';
+import { parseUnits } from 'viem';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useOperationStore } from '@/store/store';
-import { ClaimSteps } from '@/utils/const';
+import { useOperationStore, useTokenStore } from '@/store/store';
+import { ClaimState } from '@/utils/const';
 import {
   CustomError,
   isRejectedByUser,
@@ -14,7 +15,7 @@ import {
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
   amount: string;
-  setRedeemSteps: (state: string) => void;
+  setRedeemLabel: (state: string) => void;
 }
 
 export async function handleBurnRedeem(
@@ -36,48 +37,50 @@ export async function handleBurnRedeem(
 async function initiateBurn({
   recipient,
   amount,
-  setRedeemSteps,
+  setRedeemLabel,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
-  const { setBurnTxId, setCurrentRedeemOperation } =
-    useOperationStore.getState();
-  const { updateCurrentRedeemOperation } = useOperationStore.getState();
+  const { setBurnTxId, pushNewOpToRedeem } = useOperationStore.getState();
+  const { selectedToken } = useTokenStore.getState();
+
+  if (!selectedToken) {
+    console.error('No token selected');
+    return;
+  }
 
   setBurn(Status.Loading);
 
-  setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
+  setRedeemLabel(Intl.t('index.loading-box.awaiting-inclusion'));
 
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
-  setCurrentRedeemOperation({
-    inputOpId: burnOpId,
-    claimStep: ClaimSteps.None,
-    signatures: [],
-  });
 
-  setRedeemSteps(Intl.t('index.loading-box.included-pending'));
+  setRedeemLabel(Intl.t('index.loading-box.included-pending'));
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
-
-  setRedeemSteps(Intl.t('index.loading-box.burned-final'));
-
-  updateCurrentRedeemOperation({
-    claimStep: ClaimSteps.RetrievingInfo,
+  pushNewOpToRedeem({
+    inputOpId: burnOpId,
+    signatures: [],
+    claimState: ClaimState.RETRIEVING_INFO,
+    amount: parseUnits(amount, selectedToken.decimals).toString(),
+    recipient,
+    evmToken: selectedToken.evmToken as `0x${string}`,
   });
+  setRedeemLabel(Intl.t('index.loading-box.burned-final'));
 }
 
 function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
-  const { setRedeemSteps } = args;
+  const { setRedeemLabel } = args;
 
   const typedError = error as CustomError;
   const isErrorTimeout = typedError.cause?.error === 'timeout';
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t('index.burn.error.rejected'));
-    setRedeemSteps(Intl.t('index.loading-box.burn-rejected'));
+    setRedeemLabel(Intl.t('index.loading-box.burn-rejected'));
   } else if (isWalletTimeoutError(typedError)) {
     toast.error(Intl.t('index.burn.error.timeout'));
-    setRedeemSteps(Intl.t('index.loading-box.burn-signature-timeout'));
+    setRedeemLabel(Intl.t('index.loading-box.burn-signature-timeout'));
   } else if (isErrorTimeout) {
     toast.error(Intl.t('index.burn.error.timeout'));
   } else {

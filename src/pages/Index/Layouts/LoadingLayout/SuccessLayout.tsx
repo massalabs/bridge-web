@@ -21,15 +21,16 @@ import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { side, mintTxId, claimTxId, amount } = useOperationStore();
+  const { side, mintTxId, getCurrentRedeemOperation, amount } =
+    useOperationStore();
   const { currentMode, isMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
-
   const { selectedToken: token } = useTokenStore();
 
   if (!chain || !token || !amount) return null;
 
+  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const currentRedeemOperation = getCurrentRedeemOperation();
   const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
 
   const massaChainAndNetwork = `${Blockchain.MASSA} ${
@@ -42,7 +43,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   // claim && bridge success need to show respective show link to explorer
   const explorerUrl = massaToEvm
-    ? `${EVM_EXPLORER[currentMode]}tx/${claimTxId}`
+    ? `${EVM_EXPLORER[currentMode]}tx/${currentRedeemOperation?.outputTxId}`
     : isMainnet
     ? `${MASSA_EXPLORER_URL}${mintTxId}`
     : `${MASSA_EXPLO_URL}${mintTxId}${MASSA_EXPLO_EXTENSION}`;
@@ -50,7 +51,9 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
 
-  const currentTxID = massaToEvm ? claimTxId : mintTxId;
+  const currentTxID = massaToEvm
+    ? currentRedeemOperation?.outputTxId
+    : mintTxId;
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">

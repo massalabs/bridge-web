@@ -11,7 +11,7 @@ import { SIDE } from '@/utils/const';
 
 export interface LoadingBoxProps {
   onClose: () => void;
-  redeemSteps: string;
+  redeemLabel: string;
 }
 
 export function PendingOperationLayout(props: LoadingBoxProps) {

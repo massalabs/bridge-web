@@ -17,10 +17,10 @@ export function ShowLinkToExplorers(props: ShowLinkToExplorers) {
 
   const isEVMTxID = /^0x/i;
 
-  const showLinkToEpxlorers = currentTxID && explorerUrl;
+  const showLinkToExplorers = currentTxID && explorerUrl;
 
   return (
-    showLinkToEpxlorers && (
+    showLinkToExplorers && (
       <div className="flex align-middle items-center w-full justify-center">
         <div className="flex justify-center items-center w-fit h-fit">
           {isEVMTxID.test(currentTxID)

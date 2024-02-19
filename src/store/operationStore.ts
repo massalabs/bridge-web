@@ -1,19 +1,26 @@
-import { ClaimSteps, SIDE } from '@/utils/const';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
+import { create } from 'zustand';
+import { ClaimState, SIDE } from '@/utils/const';
 
-interface CurrentRedeemOperation {
-  claimStep: ClaimSteps;
+export interface RedeemOperation {
+  claimState: ClaimState;
+  amount: string;
+  recipient: `0x${string}`;
   inputOpId: string;
   signatures: string[];
+  outputTxId?: string;
+  evmToken: `0x${string}`;
 }
 
 export interface OperationStoreState {
-  opToRedeem: RedeemOperationToClaim[];
-  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => void;
-
-  currentRedeemOperation?: CurrentRedeemOperation;
-  setCurrentRedeemOperation: (op: CurrentRedeemOperation) => void;
-  updateCurrentRedeemOperation: (op: Partial<CurrentRedeemOperation>) => void;
+  opToRedeem: RedeemOperation[];
+  setOpToRedeem: (opToRedeem: RedeemOperation[]) => void;
+  updateOpToRedeemByInputOpId: (
+    inputOpId: string,
+    op: Partial<RedeemOperation>,
+  ) => void;
+  pushNewOpToRedeem: (op: RedeemOperation) => void;
+  getOpToRedeemByInputOpId: (inputOpId: string) => RedeemOperation | undefined;
+  getCurrentRedeemOperation: () => RedeemOperation | undefined;
 
   side: SIDE;
   setSide(side: SIDE): void;
@@ -27,73 +34,90 @@ export interface OperationStoreState {
   burnTxId?: string;
   setBurnTxId(currentTxID?: string): void;
 
-  claimTxId?: string;
-  setClaimTxId(currentTxID?: string): void;
-
   amount?: string;
   setAmount(amount?: string): void;
 
   resetTxIDs: () => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const operationStore = (
-  set: (params: Partial<OperationStoreState>) => void,
-  get: () => OperationStoreState,
-) => ({
-  opToRedeem: [],
-  setOpToRedeem: (opToRedeem: RedeemOperationToClaim[]) => set({ opToRedeem }),
+export const useOperationStore = create<OperationStoreState>(
+  (
+    set: (params: Partial<OperationStoreState>) => void,
+    get: () => OperationStoreState,
+  ) => ({
+    opToRedeem: [],
+    setOpToRedeem: (newOps: RedeemOperation[]) => {
+      const oldOps = get().opToRedeem;
+      for (let i = 0; i < newOps.length; i++) {
+        for (let j = 0; j < oldOps.length; j++) {
+          if (newOps[i].inputOpId === oldOps[j].inputOpId) {
+            if (
+              oldOps[j].claimState === ClaimState.AWAITING_SIGNATURE ||
+              oldOps[j].claimState === ClaimState.PENDING
+            ) {
+              // Keep the old claim step because the lambda can't know all the UI states
+              newOps[i].claimState = oldOps[j].claimState;
+            }
+          }
+        }
+      }
 
-  currentRedeemOperation: undefined,
-  setCurrentRedeemOperation(op: CurrentRedeemOperation) {
-    set({ currentRedeemOperation: op });
-  },
-  updateCurrentRedeemOperation(op: Partial<CurrentRedeemOperation>) {
-    const currentOp = get().currentRedeemOperation;
-    if (currentOp) {
-      set({ currentRedeemOperation: { ...currentOp, ...op } });
-    }
-  },
+      set({ opToRedeem: newOps });
+    },
+    updateOpToRedeemByInputOpId: (
+      inputOpId: string,
+      op: Partial<RedeemOperation>,
+    ) => {
+      const opToRedeem = get().opToRedeem;
+      const index = opToRedeem.findIndex((op) => op.inputOpId === inputOpId);
+      if (index !== -1) {
+        const newOp = { ...opToRedeem[index], ...op };
+        opToRedeem[index] = newOp;
+        set({ opToRedeem });
+      }
+    },
+    pushNewOpToRedeem: (op: RedeemOperation) => {
+      set({ opToRedeem: [...get().opToRedeem, op] });
+    },
+    getOpToRedeemByInputOpId: (inputOpId: string) => {
+      return get().opToRedeem.find((op) => op.inputOpId === inputOpId);
+    },
+    getCurrentRedeemOperation: () => {
+      return get().getOpToRedeemByInputOpId(get().burnTxId || '');
+    },
 
-  side: SIDE.EVM_TO_MASSA,
-  setSide(side: SIDE) {
-    set({ side });
-  },
+    side: SIDE.EVM_TO_MASSA,
+    setSide(side: SIDE) {
+      set({ side });
+    },
 
-  lockTxId: undefined,
-  setLockTxId(lockTxId?: string) {
-    set({ lockTxId });
-  },
+    lockTxId: undefined,
+    setLockTxId(lockTxId?: string) {
+      set({ lockTxId });
+    },
 
-  mintTxId: undefined,
-  setMintTxId(mintTxId?: string) {
-    set({ mintTxId });
-  },
+    mintTxId: undefined,
+    setMintTxId(mintTxId?: string) {
+      set({ mintTxId });
+    },
 
-  burnTxId: undefined,
-  setBurnTxId(burnTxId?: string) {
-    set({ burnTxId });
-  },
+    burnTxId: undefined,
+    setBurnTxId(burnTxId?: string) {
+      set({ burnTxId });
+    },
 
-  claimTxId: undefined,
-  setClaimTxId(claimTxId?: string) {
-    set({ claimTxId });
-  },
+    amount: undefined,
+    setAmount(amount?: string) {
+      set({ amount });
+    },
 
-  amount: undefined,
-  setAmount(amount?: string) {
-    set({ amount });
-  },
-
-  resetTxIDs: () => {
-    set({
-      lockTxId: undefined,
-      mintTxId: undefined,
-      burnTxId: undefined,
-      claimTxId: undefined,
-      amount: undefined,
-    });
-  },
-});
-
-export default operationStore;
+    resetTxIDs: () => {
+      set({
+        lockTxId: undefined,
+        mintTxId: undefined,
+        burnTxId: undefined,
+        amount: undefined,
+      });
+    },
+  }),
+);

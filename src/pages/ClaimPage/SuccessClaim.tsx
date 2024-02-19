@@ -5,18 +5,21 @@ import { useBridgeModeStore } from '../../store/store';
 import { EVM_EXPLORER } from '../../utils/const';
 import { SuccessCheck } from '@/components';
 import Intl from '@/i18n/i18n';
-import { RedeemOperationToClaim } from '@/utils/lambdaApi';
+import { RedeemOperation } from '@/store/operationStore';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface SuccessClaimProps {
-  operation: RedeemOperationToClaim;
-  txHash?: `0x${string}`;
+  operation: RedeemOperation;
   symbol?: string;
 }
 
 export function SuccessClaim(args: SuccessClaimProps) {
-  const { operation: op, txHash, symbol } = args;
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
+  const { operation, symbol } = args;
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
+    operation.amount,
+  );
+
+  const txHash = operation.outputTxId;
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
