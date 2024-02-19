@@ -4,6 +4,7 @@ import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransact
 import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { RedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
@@ -17,6 +18,7 @@ interface InitClaimProps {
 export function InitClaim(props: InitClaimProps) {
   const { operation, symbol, onUpdate } = props;
   const { write, error, isSuccess, hash, isPending } = useClaim();
+  const { setClaim } = useGlobalStatusesStore();
 
   const claimState = operation.claimState;
   const isClaimRejected = claimState === ClaimState.REJECTED;
@@ -44,6 +46,7 @@ export function InitClaim(props: InitClaimProps) {
 
   function handleClaim() {
     onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
+    setClaim(Status.Loading);
     write(operation);
   }
 

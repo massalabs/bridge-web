@@ -53,7 +53,8 @@ export const useOperationStore = create<OperationStoreState>(
           if (newOps[i].inputOpId === oldOps[j].inputOpId) {
             if (
               oldOps[j].claimState === ClaimState.AWAITING_SIGNATURE ||
-              oldOps[j].claimState === ClaimState.PENDING
+              oldOps[j].claimState === ClaimState.PENDING ||
+              oldOps[j].claimState === ClaimState.REJECTED
             ) {
               // Keep the old claim step because the lambda can't know all the UI states
               newOps[i].claimState = oldOps[j].claimState;

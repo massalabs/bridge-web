@@ -114,7 +114,10 @@ export async function getRedeemOperation(
 
     // Signatures are added, user can claim, user may have claim, tx may be in a fork
     // if outputTxId is set, we are waiting for evm confirmations
-    [operationStates.processing]: ClaimState.READY_TO_CLAIM, // AWAITING_SIGNATURE or PENDING or SUCCESS
+    // it can be ClaimState.AWAITING_SIGNATURE but we can't know from the lambda
+    // it can be ClaimState.PENDING but we can't know from the lambda
+    // it can be ClaimState.SUCCESS if the outputTxId is set (see bellow)
+    [operationStates.processing]: ClaimState.READY_TO_CLAIM,
 
     // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
     [operationStates.finalizing]: ClaimState.SUCCESS,
