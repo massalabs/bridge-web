@@ -23,8 +23,9 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
   const { side, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
-  const { currentMode, isMainnet } = useBridgeModeStore();
+  const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
+  const isMainnet = getIsMainnet();
   const { evmNetwork, massaNetwork } = useBridgeModeStore();
 
   const { selectedToken: token } = useTokenStore();

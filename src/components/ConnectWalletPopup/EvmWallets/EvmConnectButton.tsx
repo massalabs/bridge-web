@@ -14,7 +14,8 @@ import { formatAmount } from '@/utils/parseAmount';
 export default function EvmConnectButton(): JSX.Element {
   const { wrongNetwork } = useWrongNetworkEVM();
 
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
   const { switchChain } = useSwitchChain();
 
   const { address } = useAccount();

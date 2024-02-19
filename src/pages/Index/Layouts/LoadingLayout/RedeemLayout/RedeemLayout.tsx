@@ -17,7 +17,8 @@ export function RedeemLayout(props: LoadingBoxProps) {
 
   const { burn, approve, claim } = useGlobalStatusesStore();
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow

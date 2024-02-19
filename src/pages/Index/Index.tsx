@@ -32,7 +32,7 @@ import { SIDE } from '@/utils/const';
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { side, setLockTxId, amount, setAmount, resetTxIDs } =
     useOperationStore();
 
@@ -67,6 +67,7 @@ export function Index() {
 
   const isOperationPending = box !== Status.None;
   const isBlurred = isOperationPending ? 'blur-md' : '';
+  const isMainnet = getIsMainnet();
 
   const isButtonDisabled =
     isFetching ||

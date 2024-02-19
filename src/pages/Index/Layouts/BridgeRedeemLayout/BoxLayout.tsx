@@ -38,7 +38,8 @@ const iconsNetworks = {
 
 function EVMHeader() {
   const { isConnected } = useAccount();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   return (
     <div className="flex items-center justify-between">
@@ -68,7 +69,8 @@ function EVMHeader() {
 
 function MassaHeader() {
   const { isFetching, accounts, currentProvider } = useAccountStore();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   const hasNoAccounts = !accounts?.length;
 

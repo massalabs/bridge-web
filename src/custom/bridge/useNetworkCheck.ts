@@ -9,8 +9,13 @@ import { useAccountStore, useBridgeModeStore } from '@/store/store';
 export function useNetworkCheck() {
   const { connectedNetwork, currentProvider } = useAccountStore();
   const { chain: evmConnectedChain } = useAccount();
-  const { isMainnet, currentMode, evmNetwork, massaNetwork } =
-    useBridgeModeStore();
+  const {
+    isMainnet: getIsMainnet,
+    currentMode,
+    evmNetwork,
+    massaNetwork,
+  } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   // state to dismiss toast
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
