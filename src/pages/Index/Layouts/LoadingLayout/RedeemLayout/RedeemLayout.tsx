@@ -13,7 +13,7 @@ import {
 } from '@/utils/const';
 
 export function RedeemLayout(props: LoadingBoxProps) {
-  const { redeemSteps } = props;
+  const { redeemLabel } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
@@ -35,7 +35,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={approve} />
         </div>
         <div className="flex justify-between">
-          <p className="mas-body-2">{redeemSteps}</p>
+          <p className="mas-body-2">{redeemLabel}</p>
           <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">

@@ -15,7 +15,7 @@ import {
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
   amount: string;
-  setRedeemSteps: (state: string) => void;
+  setRedeemLabel: (state: string) => void;
 }
 
 export async function handleBurnRedeem(
@@ -37,7 +37,7 @@ export async function handleBurnRedeem(
 async function initiateBurn({
   recipient,
   amount,
-  setRedeemSteps,
+  setRedeemLabel,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
   const { setBurnTxId, pushNewOpToRedeem } = useOperationStore.getState();
@@ -50,12 +50,12 @@ async function initiateBurn({
 
   setBurn(Status.Loading);
 
-  setRedeemSteps(Intl.t('index.loading-box.awaiting-inclusion'));
+  setRedeemLabel(Intl.t('index.loading-box.awaiting-inclusion'));
 
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
 
-  setRedeemSteps(Intl.t('index.loading-box.included-pending'));
+  setRedeemLabel(Intl.t('index.loading-box.included-pending'));
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
@@ -67,20 +67,20 @@ async function initiateBurn({
     recipient,
     evmToken: selectedToken.evmToken as `0x${string}`,
   });
-  setRedeemSteps(Intl.t('index.loading-box.burned-final'));
+  setRedeemLabel(Intl.t('index.loading-box.burned-final'));
 }
 
 function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
-  const { setRedeemSteps } = args;
+  const { setRedeemLabel } = args;
 
   const typedError = error as CustomError;
   const isErrorTimeout = typedError.cause?.error === 'timeout';
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t('index.burn.error.rejected'));
-    setRedeemSteps(Intl.t('index.loading-box.burn-rejected'));
+    setRedeemLabel(Intl.t('index.loading-box.burn-rejected'));
   } else if (isWalletTimeoutError(typedError)) {
     toast.error(Intl.t('index.burn.error.timeout'));
-    setRedeemSteps(Intl.t('index.loading-box.burn-signature-timeout'));
+    setRedeemLabel(Intl.t('index.loading-box.burn-signature-timeout'));
   } else if (isErrorTimeout) {
     toast.error(Intl.t('index.burn.error.timeout'));
   } else {
