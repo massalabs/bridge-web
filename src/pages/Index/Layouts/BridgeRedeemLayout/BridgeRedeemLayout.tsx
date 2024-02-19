@@ -37,7 +37,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const { isConnected: isEvmWalletConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
   const { side, amount, setSide, setAmount } = useOperationStore();
-  const { isFetching } = useAccountStore();
+  const { isFetching, connectedAccount } = useAccountStore();
   const { selectedToken: token } = useTokenStore();
 
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
@@ -181,7 +181,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               : Intl.t('index.button.bridge')}
           </Button>
         </div>
-        <FeesEstimation />
+        {isEvmWalletConnected && connectedAccount && <FeesEstimation />}
       </div>
 
       {openTokensModal && (

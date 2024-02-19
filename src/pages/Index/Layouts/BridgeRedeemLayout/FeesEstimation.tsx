@@ -149,7 +149,7 @@ export function FeesEstimation() {
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <p className="bg-blue-500">
+          <p>
             {Intl.t('index.fee-estimate.network-fees', {
               network: `${Blockchain.MASSA} ${massaNetwork}`,
             })}
@@ -167,7 +167,7 @@ export function FeesEstimation() {
         <EstimatedAmount amount={feesMAS} symbol={massaToken} />
       </div>
       <div className="flex items-center justify-between">
-        <p className="bg-blue-500">
+        <p>
           {Intl.t('index.fee-estimate.network-fees', {
             network: `${
               chain ? chain.name : Blockchain.ETHEREUM
