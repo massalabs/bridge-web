@@ -42,11 +42,3 @@ const modeStore = (
 });
 
 export default modeStore;
-
-// const massaNetwork = isMainnet
-//   ? Blockchain.MASSA_MAINNET
-//   : Blockchain.MASSA_BUILDNET;
-
-// const evmNetwork = isMainnet
-//   ? Blockchain.EVM_MAINNET
-//   : Blockchain.EVM_TESTNET;

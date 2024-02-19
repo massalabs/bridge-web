@@ -3,25 +3,14 @@ import { toast } from '@massalabs/react-ui-kit';
 
 import { useAccount } from 'wagmi';
 import { validateEvmNetwork, validateMassaNetwork } from '../../utils/network';
-import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 export function useNetworkCheck() {
   const { connectedNetwork, currentProvider } = useAccountStore();
   const { chain: evmConnectedChain } = useAccount();
-  const [isMainnet, currentMode] = useBridgeModeStore((state) => [
-    state.isMainnet,
-    state.currentMode,
-  ]);
-
-  const massaNetwork = isMainnet
-    ? Blockchain.MASSA_MAINNET
-    : Blockchain.MASSA_BUILDNET;
-
-  const evmNetwork = isMainnet
-    ? Blockchain.EVM_MAINNET
-    : Blockchain.EVM_TESTNET;
+  const { isMainnet, currentMode, evmNetwork, massaNetwork } =
+    useBridgeModeStore();
 
   // state to dismiss toast
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
