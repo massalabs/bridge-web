@@ -13,11 +13,10 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { findClaimable } from '@/utils/lambdaApi';
+import { findClaimable, getRedeemOperation } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
-
 export function ClaimRedeem() {
   const { address: evmAddress, chain } = useAccount();
   const { selectedToken, refreshBalances } = useTokenStore();
@@ -32,8 +31,6 @@ export function ClaimRedeem() {
   const { write, error, isSuccess, hash, isPending } = useClaim();
 
   const currentRedeemOperation = getCurrentRedeemOperation();
-  const symbol = selectedToken?.symbolEVM as string;
-  const selectedChain = chain?.name as string;
 
   const updateCurrentRedeemOperation = useCallback(
     (op: Partial<RedeemOperation>) => {
@@ -48,6 +45,7 @@ export function ClaimRedeem() {
     setBox(Status.Error);
   }, [setClaim, setBox]);
 
+  // Updates current redeem operation state based on claim status
   useEffect(() => {
     if (isPending) {
       updateCurrentRedeemOperation({
@@ -89,6 +87,7 @@ export function ClaimRedeem() {
     setLoadingToError,
   ]);
 
+  // Polls api to see if the server has the operation to claim with the signatures
   useEffect(() => {
     if (burn === Status.Success && !currentRedeemOperation?.signatures.length) {
       const launchClaim = async () => {
@@ -130,6 +129,28 @@ export function ClaimRedeem() {
     updateCurrentRedeemOperation,
   ]);
 
+  // Polls the api to see the new status of the claim operation
+  useEffect(() => {
+    if (!evmAddress) return;
+
+    const fetchOperations = () => {
+      if (!evmAddress) return;
+      getRedeemOperation(evmAddress).then((operations) => {
+        operations.forEach((op) => {
+          if (
+            op.inputOpId === burnTxId &&
+            op.claimState === ClaimState.SUCCESS
+          ) {
+            setBox(Status.None);
+          }
+        });
+      });
+    };
+
+    fetchOperations();
+  });
+
+  // Event handler for claim button
   async function handleRedeem() {
     if (
       !amount ||
@@ -153,6 +174,9 @@ export function ClaimRedeem() {
       recipient: evmAddress,
     });
   }
+
+  const symbol = selectedToken?.symbolEVM as string;
+  const selectedChain = chain?.name as string;
 
   const isRetrievingInformation =
     currentRedeemOperation?.claimState === ClaimState.RETRIEVING_INFO;

@@ -78,7 +78,7 @@ export function Index() {
 
   useEffect(() => {
     setAmountError('');
-  }, [amount, side, selectedToken?.name]);
+  }, [amount, side, selectedToken?.name, setAmountError]);
 
   useEffect(() => {
     if (lockIsSuccess) {
