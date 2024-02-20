@@ -21,7 +21,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { SIDE } from '@/utils/const';
+
 import { formatAmount } from '@/utils/parseAmount';
 
 interface FeesEstimationProps {
@@ -62,11 +62,15 @@ function EstimatedAmount(props: FeesEstimationProps) {
 }
 
 export function FeesEstimation() {
-  const { side, amount } = useOperationStore();
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const { isMassaToEvm, amount } = useOperationStore();
+  const massaToEvm = isMassaToEvm();
   const { selectedToken } = useTokenStore();
-  const { evmNetwork, massaNetwork } = useBridgeModeStore();
+  const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
+    useBridgeModeStore();
   const { isConnected: isEvmWalletConnected } = useAccount();
+
+  const evmNetwork = getEvmNetwork();
+  const massaNetwork = getMassaNetwork();
 
   const { allowance } = useEvmToken();
 

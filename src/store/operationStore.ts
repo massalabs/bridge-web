@@ -25,6 +25,8 @@ export interface OperationStoreState {
   side: SIDE;
   setSide(side: SIDE): void;
 
+  isMassaToEvm(): boolean;
+
   lockTxId?: string;
   setLockTxId(currentTxID?: string): void;
 
@@ -86,6 +88,8 @@ export const useOperationStore = create<OperationStoreState>(
     getCurrentRedeemOperation: () => {
       return get().getOpToRedeemByInputOpId(get().burnTxId || '');
     },
+
+    isMassaToEvm: () => get().side === SIDE.MASSA_TO_EVM,
 
     side: SIDE.EVM_TO_MASSA,
     setSide(side: SIDE) {

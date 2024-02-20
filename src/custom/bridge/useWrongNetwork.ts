@@ -5,7 +5,8 @@ import { validateEvmNetwork, validateMassaNetwork } from '@/utils/network';
 
 export function useWrongNetworkEVM() {
   const { chain } = useAccount();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
@@ -20,8 +21,8 @@ export function useWrongNetworkEVM() {
 
 export function useWrongNetworkMASSA() {
   const { connectedNetwork } = useAccountStore();
-
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 

@@ -12,7 +12,8 @@ interface WrongChainProps {
 
 export function WrongChain(props: WrongChainProps) {
   const { blockchain } = props;
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
   const { currentProvider } = useAccountStore();
 
   let network = '';

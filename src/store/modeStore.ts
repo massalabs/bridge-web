@@ -5,9 +5,9 @@ import { BRIDGE_MODE_STORAGE_KEY, _setInStorage } from '../utils/storage';
 export interface ModeStoreState {
   currentMode: BridgeMode;
   availableModes: BridgeMode[];
-  isMainnet: boolean;
-  massaNetwork: string;
-  evmNetwork: string;
+  isMainnet(): boolean;
+  massaNetwork(): string;
+  evmNetwork(): string;
 
   setCurrentMode: (mode: BridgeMode) => void;
 }
@@ -19,20 +19,18 @@ const modeStore = (
 ) => ({
   currentMode: BridgeMode.mainnet,
   availableModes: Object.values(BridgeMode),
-  isMainnet: true,
-  massaNetwork: '',
-  evmNetwork: '',
+  isMainnet: () => get().currentMode === BridgeMode.mainnet,
+
+  massaNetwork: () =>
+    get().isMainnet() ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET,
+  evmNetwork: () =>
+    get().isMainnet() ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET,
+
   setCurrentMode: (mode: BridgeMode) => {
     const previousMode = get().currentMode;
-    set({ currentMode: mode, isMainnet: mode === BridgeMode.mainnet });
+    set({ currentMode: mode });
+
     _setInStorage(BRIDGE_MODE_STORAGE_KEY, mode);
-    if (get().isMainnet) {
-      set({ massaNetwork: Blockchain.MASSA_MAINNET });
-      set({ evmNetwork: Blockchain.EVM_MAINNET });
-    } else {
-      set({ massaNetwork: Blockchain.MASSA_BUILDNET });
-      set({ evmNetwork: Blockchain.EVM_TESTNET });
-    }
 
     // if the mode has changed, we need to refresh the tokens
     if (previousMode !== mode) {

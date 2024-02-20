@@ -38,7 +38,8 @@ const iconsNetworks = {
 
 function EVMHeader() {
   const { isConnected } = useAccount();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   return (
     <div className="flex items-center justify-between">
@@ -68,7 +69,8 @@ function EVMHeader() {
 
 function MassaHeader() {
   const { isFetching, accounts, currentProvider } = useAccountStore();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   const hasNoAccounts = !accounts?.length;
 
@@ -138,7 +140,7 @@ interface TokenOptionsProps {
 
 function TokenOptions(props: TokenOptionsProps) {
   const { layoutSide } = props;
-  const { side } = useOperationStore.getState();
+  const { isMassaToEvm } = useOperationStore.getState();
   const { isFetching } = useAccountStore();
   const { tokens, setSelectedToken, selectedToken } = useTokenStore();
 
@@ -148,7 +150,7 @@ function TokenOptions(props: TokenOptionsProps) {
     ) || '0',
   );
 
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const massaToEvm = isMassaToEvm();
   let readOnlyDropdown;
   if (layoutSide === SIDE.MASSA_TO_EVM) {
     readOnlyDropdown = !massaToEvm || isFetching;

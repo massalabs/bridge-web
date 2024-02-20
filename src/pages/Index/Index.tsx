@@ -27,14 +27,15 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { SIDE } from '@/utils/const';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
-  const { isMainnet } = useBridgeModeStore();
-  const { side, setLockTxId, amount, setAmount, resetTxIDs } =
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const { side, setLockTxId, amount, setAmount, resetTxIDs, isMassaToEvm } =
     useOperationStore();
+
+  const massaToEvm = isMassaToEvm();
 
   const { address: evmAddress } = useAccount();
 
@@ -63,10 +64,9 @@ export function Index() {
     error: lockError,
   } = useLock();
 
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
-
   const isOperationPending = box !== Status.None;
   const isBlurred = isOperationPending ? 'blur-md' : '';
+  const isMainnet = getIsMainnet();
 
   const isButtonDisabled =
     isFetching ||

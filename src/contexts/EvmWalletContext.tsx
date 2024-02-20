@@ -12,7 +12,8 @@ import { useBridgeModeStore, useConfigStore } from '@/store/store';
 
 export function EvmWalletContext({ children }: PropsWithChildren<unknown>) {
   const { theme } = useConfigStore();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
   const rainbowkitTheme = theme === 'theme-dark' ? darkTheme : lightTheme;
 
   return (
