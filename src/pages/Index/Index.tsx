@@ -30,7 +30,8 @@ import {
 } from '@/store/store';
 
 export function Index() {
-  const { massaClient, connectedAccount, isFetching } = useAccountStore();
+  const { massaClient, connectedAccount, isFetching, tosAcceptance } =
+    useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { side, setLockTxId, amount, setAmount, resetTxIDs, isMassaToEvm } =
@@ -70,6 +71,7 @@ export function Index() {
   const isMainnet = getIsMainnet();
 
   const isButtonDisabled =
+    !tosAcceptance ||
     isFetching ||
     !connectedAccount ||
     wrongNetwork ||
@@ -198,7 +200,6 @@ export function Index() {
 
       <TokensFAQ />
       {!isOperationPending && <ClaimTokensPopup />}
-
       <Tos />
     </div>
   );

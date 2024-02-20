@@ -1,15 +1,17 @@
 import { useEffect } from 'react';
 import { PopupModal, PopupModalContent, Button } from '@massalabs/react-ui-kit';
+import { useAccountStore } from '@/store/store';
 import { _getFromStorage, _setInStorage } from '@/utils/storage';
 import { acceptTos, areTosValid } from '@/utils/tos';
 
 export function Tos() {
+  const { tosAcceptance } = useAccountStore();
   useEffect(() => {
     areTosValid();
   }, []);
   return (
     <>
-      {!areTosValid() && (
+      {!tosAcceptance && (
         <PopupModal
           customClass="flex justify-center text-s-info"
           customClassNested="w-1/2 py-10"
