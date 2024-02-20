@@ -8,7 +8,6 @@ import {
   _getFromStorage,
   _setInStorage,
 } from '@/utils/storage';
-import { areTosValid } from '@/utils/tos';
 
 export interface AccountStoreState {
   connectedAccount?: IAccount;
@@ -31,7 +30,7 @@ export interface AccountStoreState {
   setConnectedAccount: (account?: IAccount) => void;
   refreshMassaClient: () => void;
 
-  tosAcceptance: boolean;
+  tosAcceptance: boolean | undefined;
   setTosAcceptance: (tosAcceptance: boolean) => void;
 }
 
@@ -48,7 +47,7 @@ const accountStore = (
   providers: [],
   isFetching: false,
   connectedNetwork: undefined,
-  tosAcceptance: areTosValid(),
+  tosAcceptance: true,
 
   setTosAcceptance: (tosAcceptance: boolean) => {
     set({ tosAcceptance });

@@ -21,6 +21,8 @@ export const initAccountStoreMock = () => {
         networkObserver: undefined,
         connectedNetwork: 'buildnet',
         setProviders: jest.fn(),
+        setTosAcceptance: jest.fn(),
+        tosAcceptance: true,
       } as any as AccountStoreState),
   );
 };

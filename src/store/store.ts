@@ -13,6 +13,7 @@ import {
   _getFromStorage,
 } from '../utils/storage';
 import { BridgeMode } from '@/const';
+import { areTosValid } from '@/custom/bridge/tos';
 import { updateProviders } from '@/store/helpers/massaProviders';
 
 export { useTokenStore } from './tokenStore';
@@ -66,6 +67,8 @@ async function initAccountStore() {
   new ProvidersListener().subscribe((providers) => {
     useAccountStore.getState().setProviders(providers);
   });
+
+  useAccountStore.getState().setTosAcceptance(areTosValid());
 }
 
 async function initTokenStore() {

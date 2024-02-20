@@ -1,4 +1,4 @@
-import { _getFromStorage, _setInStorage } from './storage';
+import { _getFromStorage, _setInStorage } from '../../utils/storage';
 import { useAccountStore } from '@/store/store';
 
 export function areTosValid(): boolean {

@@ -261,5 +261,10 @@
       "ETH": "Get Ethereum",
       "MAS": "Get MAS"
     }
+  },
+  "terms-of-service": {
+    "title": "Accept the Terms of Service",
+    "description": "Terms of service",
+    "cta": "Accept"
   }
 }
