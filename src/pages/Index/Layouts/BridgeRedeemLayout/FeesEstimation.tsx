@@ -67,7 +67,7 @@ export function FeesEstimation() {
   const { selectedToken } = useTokenStore();
   const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();
-  const { isConnected: isEvmWalletConnected } = useAccount();
+  const { isConnected: isEvmWalletConnected, chain } = useAccount();
 
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
@@ -135,8 +135,7 @@ export function FeesEstimation() {
     selectedToken,
   ]);
 
-  if (!selectedToken || (!isEvmWalletConnected && !connectedAccount))
-    return null;
+  if (!selectedToken || !isEvmWalletConnected || !connectedAccount) return null;
 
   const symbolEVM = selectedToken.symbolEVM;
   const symbolMASSA = selectedToken.symbol;
@@ -179,7 +178,9 @@ export function FeesEstimation() {
       <div className="flex items-center justify-between">
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
-            name: Intl.t(`general.${Blockchain.ETHEREUM}`),
+            name: chain
+              ? Intl.t(`general.${chain.name}`)
+              : Intl.t(`general.${Blockchain.ETHEREUM}`),
             network: Intl.t(`general.${evmNetwork}`),
           })}
         </p>
