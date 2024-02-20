@@ -140,7 +140,7 @@ interface TokenOptionsProps {
 
 function TokenOptions(props: TokenOptionsProps) {
   const { layoutSide } = props;
-  const { getCurrentSide } = useOperationStore.getState();
+  const { isMassaToEvm } = useOperationStore.getState();
   const { isFetching } = useAccountStore();
   const { tokens, setSelectedToken, selectedToken } = useTokenStore();
 
@@ -150,7 +150,7 @@ function TokenOptions(props: TokenOptionsProps) {
     ) || '0',
   );
 
-  const massaToEvm = getCurrentSide();
+  const massaToEvm = isMassaToEvm();
   let readOnlyDropdown;
   if (layoutSide === SIDE.MASSA_TO_EVM) {
     readOnlyDropdown = !massaToEvm || isFetching;

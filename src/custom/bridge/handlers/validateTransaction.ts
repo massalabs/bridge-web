@@ -7,10 +7,10 @@ import {
 } from '@/store/store';
 
 export function validate(tokenBalanceEVM: any) {
-  const { amount, getCurrentSide } = useOperationStore.getState();
+  const { amount, isMassaToEvm } = useOperationStore.getState();
   const { selectedToken } = useTokenStore.getState();
   const { setAmountError } = useGlobalStatusesStore.getState();
-  const massaToEvm = getCurrentSide();
+  const massaToEvm = isMassaToEvm();
   setAmountError(undefined);
 
   if (!amount || !selectedToken) {

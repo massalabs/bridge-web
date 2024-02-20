@@ -20,7 +20,7 @@ import { formatAmountToDisplay } from '@/utils/parseAmount';
 
 export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { getCurrentSide, mintTxId, getCurrentRedeemOperation, amount } =
+  const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
@@ -35,7 +35,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   if (!chain || !token || !amount) return null;
 
-  const massaToEvm = getCurrentSide();
+  const massaToEvm = isMassaToEvm();
   const currentRedeemOperation = getCurrentRedeemOperation();
   const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
 

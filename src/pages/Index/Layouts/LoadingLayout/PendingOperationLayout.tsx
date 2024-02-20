@@ -15,8 +15,8 @@ export interface LoadingBoxProps {
 
 export function PendingOperationLayout(props: LoadingBoxProps) {
   const { onClose } = props;
-  const { getCurrentSide } = useOperationStore();
-  const massaToEvm = getCurrentSide();
+  const { isMassaToEvm } = useOperationStore();
+  const massaToEvm = isMassaToEvm();
 
   const { box } = useGlobalStatusesStore();
 

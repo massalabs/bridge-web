@@ -61,8 +61,8 @@ function MassaToEVMContent() {
 export function GetTokensPopUpModal(props: GetTokensModalProps) {
   const { setOpenModal } = props;
 
-  const { getCurrentSide } = useOperationStore();
-  const massaToEvm = getCurrentSide();
+  const { isMassaToEvm } = useOperationStore();
+  const massaToEvm = isMassaToEvm();
 
   return (
     <PopupModal

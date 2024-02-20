@@ -3,8 +3,8 @@ import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 
 export function WarningLayout() {
-  const { getCurrentSide } = useOperationStore();
-  const massaToEvm = getCurrentSide();
+  const { isMassaToEvm } = useOperationStore();
+  const massaToEvm = isMassaToEvm();
 
   const currentTxID = undefined;
 

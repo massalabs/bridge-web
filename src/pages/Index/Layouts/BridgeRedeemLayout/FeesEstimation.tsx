@@ -62,8 +62,8 @@ function EstimatedAmount(props: FeesEstimationProps) {
 }
 
 export function FeesEstimation() {
-  const { getCurrentSide, amount } = useOperationStore();
-  const massaToEvm = getCurrentSide();
+  const { isMassaToEvm, amount } = useOperationStore();
+  const massaToEvm = isMassaToEvm();
   const { selectedToken } = useTokenStore();
   const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();

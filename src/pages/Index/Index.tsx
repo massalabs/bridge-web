@@ -32,10 +32,10 @@ export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const { side, setLockTxId, amount, setAmount, resetTxIDs, getCurrentSide } =
+  const { side, setLockTxId, amount, setAmount, resetTxIDs, isMassaToEvm } =
     useOperationStore();
 
-  const massaToEvm = getCurrentSide();
+  const massaToEvm = isMassaToEvm();
 
   const { address: evmAddress } = useAccount();
 
