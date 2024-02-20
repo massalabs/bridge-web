@@ -11,22 +11,17 @@ export function useTosValidation() {
     '',
   );
 
-  function areTosValid(): boolean {
-    if (lastAcceptanceDateTime) {
-      const lastAcceptanceDate = new Date(lastAcceptanceDateTime);
-      const currentDate: Date = new Date();
-      const timeDifference =
-        currentDate.getTime() - lastAcceptanceDate.getTime();
-      const hoursDifference = timeDifference / (1000 * 60 * 60);
-
-      if (hoursDifference >= 1) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-    return false;
+  function checkTosValid(acceptandDate: string): boolean {
+    const oneHourInMs = 60 * 60 * 1000;
+    if (acceptandDate === '') return false;
+    const lastAcceptanceDate = new Date(acceptandDate);
+    const currentDate = new Date();
+    const timeDifference = currentDate.getTime() - lastAcceptanceDate.getTime();
+    const hoursDifference = timeDifference / oneHourInMs;
+    return hoursDifference < 1;
   }
+
+  const areTosValid = checkTosValid(lastAcceptanceDateTime);
 
   function acceptTos() {
     const currentDate = new Date();

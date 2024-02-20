@@ -6,7 +6,7 @@ import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperation
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 
-import { Tos } from '@/components/Tos/tos';
+import { Tos } from '@/components/Tos';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';

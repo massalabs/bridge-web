@@ -7,7 +7,7 @@ export function Tos() {
 
   return (
     <>
-      {!areTosValid() && (
+      {!areTosValid && (
         <PopupModal
           customClass="flex justify-center text-s-info"
           customClassNested="w-1/2 py-10"
