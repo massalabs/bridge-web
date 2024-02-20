@@ -5,13 +5,12 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { SIDE } from '@/utils/const';
 
 export function validate(tokenBalanceEVM: any) {
-  const { amount, side } = useOperationStore.getState();
+  const { amount, isMassaToEvm } = useOperationStore.getState();
   const { selectedToken } = useTokenStore.getState();
   const { setAmountError } = useGlobalStatusesStore.getState();
-  const massaToEvm = side === SIDE.MASSA_TO_EVM;
+  const massaToEvm = isMassaToEvm();
   setAmountError(undefined);
 
   if (!amount || !selectedToken) {

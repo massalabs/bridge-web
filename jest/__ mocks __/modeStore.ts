@@ -9,7 +9,7 @@ export const initModeStoreMock = () => {
     (): ModeStoreState =>
       ({
         currentMode: BridgeMode.testnet,
-        isMainnet: false,
+        isMainnet: () => false,
       } as any as ModeStoreState),
   );
 };
