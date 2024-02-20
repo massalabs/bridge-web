@@ -6,7 +6,7 @@ import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperation
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 
-import { Tos } from '@/components/Tos/Tos';
+import { Tos } from '@/components/Tos/tos';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
@@ -31,8 +31,7 @@ import {
 } from '@/store/store';
 
 export function Index() {
-  const { massaClient, connectedAccount, isFetching, tosAcceptance } =
-    useAccountStore();
+  const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { side, setLockTxId, amount, setAmount, resetTxIDs, isMassaToEvm } =
@@ -72,7 +71,6 @@ export function Index() {
   const isMainnet = getIsMainnet();
 
   const isButtonDisabled =
-    !tosAcceptance ||
     isFetching ||
     !connectedAccount ||
     wrongNetwork ||

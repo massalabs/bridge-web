@@ -1,18 +1,13 @@
-import { useEffect } from 'react';
 import { PopupModal, PopupModalContent, Button } from '@massalabs/react-ui-kit';
-import { acceptTos, areTosValid } from '@/custom/bridge/tos';
+import { useTosValidation } from '@/custom/bridge/useTosValidation';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
-import { _getFromStorage, _setInStorage } from '@/utils/storage';
 
 export function Tos() {
-  const { tosAcceptance } = useAccountStore();
-  useEffect(() => {
-    areTosValid();
-  }, [areTosValid]);
+  const { areTosValid, acceptTos } = useTosValidation();
+
   return (
     <>
-      {!tosAcceptance && (
+      {!areTosValid() && (
         <PopupModal
           customClass="flex justify-center text-s-info"
           customClassNested="w-1/2 py-10"

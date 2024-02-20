@@ -29,9 +29,6 @@ export interface AccountStoreState {
 
   setConnectedAccount: (account?: IAccount) => void;
   refreshMassaClient: () => void;
-
-  tosAcceptance: boolean | undefined;
-  setTosAcceptance: (tosAcceptance: boolean) => void;
 }
 
 const accountStore = (
@@ -47,11 +44,7 @@ const accountStore = (
   providers: [],
   isFetching: false,
   connectedNetwork: undefined,
-  tosAcceptance: true,
 
-  setTosAcceptance: (tosAcceptance: boolean) => {
-    set({ tosAcceptance });
-  },
   setCurrentProvider: (currentProvider?: IProvider) => {
     try {
       set({ isFetching: true });
