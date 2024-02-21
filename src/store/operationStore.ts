@@ -29,8 +29,10 @@ export interface LockMintOperation extends Operation {
 }
 
 export interface OperationStoreState {
-  burnOperations: BurnRedeemOperation[];
-  setBurnRedeemOperations: (burnOperations: BurnRedeemOperation[]) => void;
+  burnRedeemOperations: BurnRedeemOperation[];
+  setBurnRedeemOperations: (
+    burnRedeemOperations: BurnRedeemOperation[],
+  ) => void;
   updateBurnRedeemOperationById: (
     inputOpId: string,
     op: Partial<BurnRedeemOperation>,
@@ -66,9 +68,9 @@ export const useOperationStore = create<OperationStoreState>(
     set: (params: Partial<OperationStoreState>) => void,
     get: () => OperationStoreState,
   ) => ({
-    burnOperations: [],
+    burnRedeemOperations: [],
     setBurnRedeemOperations: (newOps: BurnRedeemOperation[]) => {
-      const oldOps = get().burnOperations;
+      const oldOps = get().burnRedeemOperations;
       for (let newOp of newOps) {
         for (let oldOp of oldOps) {
           if (newOp.inputId === oldOp.inputId) {
@@ -84,25 +86,27 @@ export const useOperationStore = create<OperationStoreState>(
         }
       }
 
-      set({ burnOperations: newOps });
+      set({ burnRedeemOperations: newOps });
     },
     updateBurnRedeemOperationById: (
       inputOpId: string,
       op: Partial<BurnRedeemOperation>,
     ) => {
-      const burnOperations = get().burnOperations;
-      const index = burnOperations.findIndex((op) => op.inputId === inputOpId);
+      const burnRedeemOperations = get().burnRedeemOperations;
+      const index = burnRedeemOperations.findIndex(
+        (op) => op.inputId === inputOpId,
+      );
       if (index !== -1) {
-        const newOp = { ...burnOperations[index], ...op };
-        burnOperations[index] = newOp;
-        set({ burnOperations });
+        const newOp = { ...burnRedeemOperations[index], ...op };
+        burnRedeemOperations[index] = newOp;
+        set({ burnRedeemOperations });
       }
     },
     appendBurnRedeemOperation: (op: BurnRedeemOperation) => {
-      set({ burnOperations: [...get().burnOperations, op] });
+      set({ burnRedeemOperations: [...get().burnRedeemOperations, op] });
     },
     getBurnRedeemOperationById: (inputOpId: string) => {
-      return get().burnOperations.find((op) => op.inputId === inputOpId);
+      return get().burnRedeemOperations.find((op) => op.inputId === inputOpId);
     },
     getCurrentRedeemOperation: () => {
       return get().getBurnRedeemOperationById(get().burnTxId || '');

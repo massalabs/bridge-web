@@ -9,7 +9,7 @@ export const initOperationStoreMock = () => {
     .mockImplementation(
       (): OperationStoreState =>
         ({
-          burnOperations: [],
+          burnRedeemOperations: [],
           setBurnRedeemOperations: jest.fn(),
           updateBurnRedeemOperationById: jest.fn(),
           appendBurnRedeemOperation: jest.fn(),
