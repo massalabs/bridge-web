@@ -4,7 +4,11 @@ import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useOperationStore, useTokenStore } from '@/store/store';
+import {
+  useAccountStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store/store';
 import { BurnState, ClaimState } from '@/utils/const';
 import {
   CustomError,
@@ -40,8 +44,10 @@ async function initiateBurn({
   setBurnState,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
-  const { setBurnTxId, pushNewOpToRedeem } = useOperationStore.getState();
+  const { setBurnTxId, appendBurnRedeemOperation } =
+    useOperationStore.getState();
   const { selectedToken } = useTokenStore.getState();
+  const { connectedAccount } = useAccountStore.getState();
 
   if (!selectedToken) {
     console.error('No token selected');
@@ -58,13 +64,15 @@ async function initiateBurn({
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
-  pushNewOpToRedeem({
-    inputOpId: burnOpId,
+  appendBurnRedeemOperation({
+    inputId: burnOpId,
     signatures: [],
     claimState: ClaimState.RETRIEVING_INFO,
     amount: parseUnits(amount, selectedToken.decimals).toString(),
     recipient,
     evmToken: selectedToken.evmToken as `0x${string}`,
+    massaToken: selectedToken.massaToken as `AS${string}`,
+    emitter: connectedAccount?.address() || '',
   });
   setBurnState(BurnState.SUCCESS);
 }

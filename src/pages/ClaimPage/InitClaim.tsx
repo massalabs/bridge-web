@@ -5,14 +5,14 @@ import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { RedeemOperation } from '@/store/operationStore';
+import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface InitClaimProps {
-  operation: RedeemOperation;
+  operation: BurnRedeemOperation;
   symbol?: string;
-  onUpdate: (op: Partial<RedeemOperation>) => void;
+  onUpdate: (op: Partial<BurnRedeemOperation>) => void;
 }
 
 export function InitClaim(props: InitClaimProps) {
@@ -32,9 +32,9 @@ export function InitClaim(props: InitClaimProps) {
       isSuccess &&
       hash &&
       claimState !== ClaimState.SUCCESS &&
-      !operation.outputTxId
+      !operation.outputId
     ) {
-      onUpdate({ outputTxId: hash, claimState: ClaimState.SUCCESS });
+      onUpdate({ outputId: hash, claimState: ClaimState.SUCCESS });
     }
     if (error) {
       const errorClaimState = handleEvmClaimError(error);
@@ -47,7 +47,13 @@ export function InitClaim(props: InitClaimProps) {
   function handleClaim() {
     onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
     setClaim(Status.Loading);
-    write(operation);
+    write({
+      amount: operation.amount,
+      recipient: operation.recipient,
+      inputOpId: operation.inputId,
+      evmToken: operation.evmToken,
+      signatures: operation.signatures,
+    });
   }
 
   if (
