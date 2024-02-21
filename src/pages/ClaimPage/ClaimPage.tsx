@@ -7,7 +7,7 @@ import { useOperationStore } from '@/store/store';
 import { getClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
-  const { burnOperations, setBurnRedeemOperations } = useOperationStore();
+  const { burnRedeemOperations, setBurnRedeemOperations } = useOperationStore();
   const { address: evmAddress } = useAccount();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export function ClaimPage() {
     });
   }, [evmAddress, setBurnRedeemOperations]);
 
-  const burnListIsNotEmpty = burnOperations.length;
+  const burnListIsNotEmpty = burnRedeemOperations.length;
 
   if (!evmAddress) {
     console.warn('EVM address not found');
@@ -27,7 +27,7 @@ export function ClaimPage() {
   return (
     <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
       {burnListIsNotEmpty ? (
-        burnOperations.map((operation: BurnRedeemOperation) => (
+        burnRedeemOperations.map((operation: BurnRedeemOperation) => (
           <ClaimButton operation={operation} key={operation.inputId} />
         ))
       ) : (
