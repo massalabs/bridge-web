@@ -46,6 +46,16 @@ export enum BurnState {
   OPERATION_FINALITY_TIMEOUT = 'operation-finality-timeout',
 }
 
+// TODO: complete the enums
+export enum BurnState {}
+export enum LockState {}
+
+export enum MintState {
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
+
 export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
 
 export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ClaimState } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
-import { RedeemOperation } from '@/store/operationStore';
+import { BurnRedeemOperation } from '@/store/operationStore';
 
 export interface Locked {
   amount: string;
@@ -105,7 +105,7 @@ function sortSignatures(signatures: Signatures[]): Signatures[] {
 
 export async function getRedeemOperation(
   evmAddress: `0x${string}`,
-): Promise<RedeemOperation[]> {
+): Promise<BurnRedeemOperation[]> {
   const burnedOpList = await getBurnedByEvmAddress(evmAddress);
 
   const statesCorrespondence = {
@@ -132,11 +132,13 @@ export async function getRedeemOperation(
   return burnedOpList.map((opToClaim) => {
     const op = {
       claimState: statesCorrespondence[opToClaim.state],
+      emitter: opToClaim.emitter,
       recipient: opToClaim.recipient,
       amount: opToClaim.amount,
-      inputOpId: opToClaim.inputOpId,
+      inputId: opToClaim.inputOpId,
       signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
       evmToken: opToClaim.evmToken,
+      massaToken: opToClaim.massaToken,
       outputTxId: undefined,
     };
 
@@ -155,7 +157,7 @@ export async function getRedeemOperation(
 
 export async function getClaimableOperations(
   evmAddress: `0x${string}`,
-): Promise<RedeemOperation[]> {
+): Promise<BurnRedeemOperation[]> {
   const redeemOperations = await getRedeemOperation(evmAddress);
 
   return redeemOperations.filter(

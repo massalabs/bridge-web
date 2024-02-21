@@ -9,11 +9,11 @@ export const initOperationStoreMock = () => {
     .mockImplementation(
       (): OperationStoreState =>
         ({
-          opToRedeem: [],
-          setOpToRedeem: jest.fn(),
-          updateOpToRedeemByInputOpId: jest.fn(),
-          pushNewOpToRedeem: jest.fn(),
-          getOpToRedeemByInputOpId: jest.fn(),
+          burnOperations: [],
+          setBurnRedeemOperations: jest.fn(),
+          updateBurnRedeemOperationById: jest.fn(),
+          appendBurnRedeemOperation: jest.fn(),
+          getBurnRedeemOperationById: jest.fn(),
           getCurrentRedeemOperation: jest.fn(),
 
           lockTxId: 'mockLockTxId',

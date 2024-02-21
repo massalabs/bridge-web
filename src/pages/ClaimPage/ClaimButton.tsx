@@ -1,19 +1,19 @@
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { SuccessClaim } from './SuccessClaim';
-import { RedeemOperation } from '@/store/operationStore';
+import { BurnRedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
 import { ClaimState } from '@/utils/const';
 
 interface ClaimOperationContainerProps {
-  operation: RedeemOperation;
+  operation: BurnRedeemOperation;
 }
 
 // This component takes as props an operation and update it via the operationStore,
 // so the current redeem operation in the index page is also updated, as long as the operation item in the claim page.
 export function ClaimButton({ operation }: ClaimOperationContainerProps) {
-  const { updateOpToRedeemByInputOpId } = useOperationStore();
+  const { updateBurnRedeemOperationById } = useOperationStore();
   const { tokens } = useTokenStore();
 
   const symbol = tokens.find(
@@ -21,13 +21,13 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   )?.symbolEVM;
 
   const onReset = () => {
-    updateOpToRedeemByInputOpId(operation.inputOpId, {
+    updateBurnRedeemOperationById(operation.inputId, {
       claimState: ClaimState.READY_TO_CLAIM,
     });
   };
 
-  const onUpdate = (op: Partial<RedeemOperation>) => {
-    updateOpToRedeemByInputOpId(operation.inputOpId, op);
+  const onUpdate = (op: Partial<BurnRedeemOperation>) => {
+    updateBurnRedeemOperationById(operation.inputId, op);
   };
 
   return (

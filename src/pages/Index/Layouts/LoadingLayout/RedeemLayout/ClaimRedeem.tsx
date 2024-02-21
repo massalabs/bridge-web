@@ -6,7 +6,7 @@ import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransacti
 import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
-import { RedeemOperation } from '@/store/operationStore';
+import { BurnRedeemOperation } from '@/store/operationStore';
 import {
   useGlobalStatusesStore,
   useOperationStore,
@@ -25,7 +25,7 @@ export function ClaimRedeem() {
     burnTxId,
     amount,
     getCurrentRedeemOperation,
-    updateOpToRedeemByInputOpId,
+    updateBurnRedeemOperationById,
   } = useOperationStore();
 
   const { write, error, isSuccess, hash, isPending } = useClaim();
@@ -33,11 +33,11 @@ export function ClaimRedeem() {
   const currentRedeemOperation = getCurrentRedeemOperation();
 
   const updateCurrentRedeemOperation = useCallback(
-    (op: Partial<RedeemOperation>) => {
+    (op: Partial<BurnRedeemOperation>) => {
       if (!burnTxId) return;
-      updateOpToRedeemByInputOpId(burnTxId, op);
+      updateBurnRedeemOperationById(burnTxId, op);
     },
-    [burnTxId, updateOpToRedeemByInputOpId],
+    [burnTxId, updateBurnRedeemOperationById],
   );
 
   const setLoadingToError = useCallback(() => {
@@ -55,7 +55,7 @@ export function ClaimRedeem() {
     if (isSuccess && hash) {
       updateCurrentRedeemOperation({
         claimState: ClaimState.SUCCESS,
-        outputTxId: hash,
+        outputId: hash,
       });
       setClaim(Status.Success);
       setBox(Status.Success);
@@ -137,10 +137,7 @@ export function ClaimRedeem() {
       if (!evmAddress) return;
       getRedeemOperation(evmAddress).then((operations) => {
         operations.forEach((op) => {
-          if (
-            op.inputOpId === burnTxId &&
-            op.claimState === ClaimState.SUCCESS
-          ) {
+          if (op.inputId === burnTxId && op.claimState === ClaimState.SUCCESS) {
             setBox(Status.None);
           }
         });

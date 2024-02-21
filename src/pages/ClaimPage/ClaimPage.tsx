@@ -2,22 +2,22 @@ import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
-import { RedeemOperation } from '@/store/operationStore';
+import { BurnRedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
 import { getClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
-  const { opToRedeem, setOpToRedeem } = useOperationStore();
+  const { burnOperations, setBurnRedeemOperations } = useOperationStore();
   const { address: evmAddress } = useAccount();
 
   useEffect(() => {
     if (!evmAddress) return;
     getClaimableOperations(evmAddress).then((newOps) => {
-      setOpToRedeem(newOps);
+      setBurnRedeemOperations(newOps);
     });
-  }, [evmAddress, setOpToRedeem]);
+  }, [evmAddress, setBurnRedeemOperations]);
 
-  const burnListIsNotEmpty = opToRedeem.length;
+  const burnListIsNotEmpty = burnOperations.length;
 
   if (!evmAddress) {
     console.warn('EVM address not found');
@@ -27,8 +27,8 @@ export function ClaimPage() {
   return (
     <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
       {burnListIsNotEmpty ? (
-        opToRedeem.map((operation: RedeemOperation) => (
-          <ClaimButton operation={operation} key={operation.inputOpId} />
+        burnOperations.map((operation: BurnRedeemOperation) => (
+          <ClaimButton operation={operation} key={operation.inputId} />
         ))
       ) : (
         <p className="mas-menu-active text-info text-2xl">
