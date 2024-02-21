@@ -7,10 +7,11 @@ import { WarningLayout } from './WarningLayout';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
+import { BurnState } from '@/utils/const';
 
 export interface LoadingBoxProps {
   onClose: () => void;
-  redeemLabel: string;
+  burnState: BurnState;
 }
 
 export function PendingOperationLayout(props: LoadingBoxProps) {
