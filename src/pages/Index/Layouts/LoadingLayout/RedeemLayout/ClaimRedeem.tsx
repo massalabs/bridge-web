@@ -13,7 +13,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { findClaimable, getRedeemOperation } from '@/utils/lambdaApi';
+import { findClaimable } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -51,8 +51,7 @@ export function ClaimRedeem() {
       updateCurrentRedeemOperation({
         claimState: ClaimState.PENDING,
       });
-    }
-    if (isSuccess && hash) {
+    } else if (isSuccess && hash) {
       updateCurrentRedeemOperation({
         claimState: ClaimState.SUCCESS,
         outputId: hash,
@@ -60,8 +59,7 @@ export function ClaimRedeem() {
       setClaim(Status.Success);
       setBox(Status.Success);
       refreshBalances();
-    }
-    if (error) {
+    } else if (error) {
       const state = handleEvmClaimBoxError(error);
       if (state === ClaimState.REJECTED) {
         setClaim(Status.Error);
@@ -128,24 +126,6 @@ export function ClaimRedeem() {
     setLoadingToError,
     updateCurrentRedeemOperation,
   ]);
-
-  // Polls the api to see the new status of the claim operation
-  useEffect(() => {
-    if (!evmAddress) return;
-
-    const fetchOperations = () => {
-      if (!evmAddress) return;
-      getRedeemOperation(evmAddress).then((operations) => {
-        operations.forEach((op) => {
-          if (op.inputId === burnTxId && op.claimState === ClaimState.SUCCESS) {
-            setBox(Status.None);
-          }
-        });
-      });
-    };
-
-    fetchOperations();
-  });
 
   // Event handler for claim button
   async function handleRedeem() {
