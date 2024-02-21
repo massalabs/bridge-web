@@ -129,6 +129,7 @@ export function Index() {
   const closeLoadingBox = useCallback(() => {
     reset();
     setAmount();
+    setBurnState(BurnState.INIT);
     // Reset all transaction id's
     resetTxIDs();
   }, [reset, setAmount, resetTxIDs]);
@@ -158,7 +159,7 @@ export function Index() {
         await handleBurnRedeem({
           recipient: evmAddress,
           amount,
-          setBurnState, // TODO: remove
+          setBurnState,
         });
       }
     } else {
