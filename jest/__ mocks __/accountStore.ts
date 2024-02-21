@@ -3,7 +3,7 @@ import { massaClientMock } from './mocks';
 import { AccountStoreState } from '../../src/store/accountStore';
 import { useAccountStore } from '../../src/store/store';
 
-const account = { address: 'toto' } as any as IAccount;
+const account = { address: () => 'toto' } as any as IAccount;
 
 export let accountStoreMock: jest.SpyInstance<AccountStoreState>;
 

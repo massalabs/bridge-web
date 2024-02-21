@@ -45,7 +45,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   // claim && bridge success need to show respective show link to explorer
   const explorerUrl = massaToEvm
-    ? `${EVM_EXPLORER[currentMode]}tx/${currentRedeemOperation?.outputTxId}`
+    ? `${EVM_EXPLORER[currentMode]}tx/${currentRedeemOperation?.outputId}`
     : isMainnet
     ? `${MASSA_EXPLORER_URL}${mintTxId}`
     : `${MASSA_EXPLO_URL}${mintTxId}${MASSA_EXPLO_EXTENSION}`;
@@ -53,9 +53,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
 
-  const currentTxID = massaToEvm
-    ? currentRedeemOperation?.outputTxId
-    : mintTxId;
+  const currentTxID = massaToEvm ? currentRedeemOperation?.outputId : mintTxId;
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">

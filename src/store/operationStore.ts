@@ -1,26 +1,45 @@
 import { create } from 'zustand';
-import { ClaimState, SIDE } from '@/utils/const';
+import {
+  BurnState,
+  ClaimState,
+  LockState,
+  MintState,
+  SIDE,
+} from '@/utils/const';
 
-export interface RedeemOperation {
-  claimState: ClaimState;
+interface Operation {
   amount: string;
-  recipient: `0x${string}`;
-  inputOpId: string;
-  signatures: string[];
-  outputTxId?: string;
+  emitter: string;
+  recipient: string;
+  inputId: string;
+  outputId?: string;
   evmToken: `0x${string}`;
+  massaToken: `AS${string}`;
+}
+
+export interface BurnRedeemOperation extends Operation {
+  burnState?: BurnState;
+  claimState: ClaimState;
+  signatures: string[];
+}
+
+export interface LockMintOperation extends Operation {
+  lockState?: LockState;
+  mintState: MintState;
 }
 
 export interface OperationStoreState {
-  opToRedeem: RedeemOperation[];
-  setOpToRedeem: (opToRedeem: RedeemOperation[]) => void;
-  updateOpToRedeemByInputOpId: (
+  burnOperations: BurnRedeemOperation[];
+  setBurnRedeemOperations: (burnOperations: BurnRedeemOperation[]) => void;
+  updateBurnRedeemOperationById: (
     inputOpId: string,
-    op: Partial<RedeemOperation>,
+    op: Partial<BurnRedeemOperation>,
   ) => void;
-  pushNewOpToRedeem: (op: RedeemOperation) => void;
-  getOpToRedeemByInputOpId: (inputOpId: string) => RedeemOperation | undefined;
-  getCurrentRedeemOperation: () => RedeemOperation | undefined;
+  appendBurnRedeemOperation: (op: BurnRedeemOperation) => void;
+  getBurnRedeemOperationById: (
+    inputOpId: string,
+  ) => BurnRedeemOperation | undefined;
+  getCurrentRedeemOperation: () => BurnRedeemOperation | undefined;
 
   side: SIDE;
   setSide(side: SIDE): void;
@@ -47,46 +66,46 @@ export const useOperationStore = create<OperationStoreState>(
     set: (params: Partial<OperationStoreState>) => void,
     get: () => OperationStoreState,
   ) => ({
-    opToRedeem: [],
-    setOpToRedeem: (newOps: RedeemOperation[]) => {
-      const oldOps = get().opToRedeem;
-      for (let i = 0; i < newOps.length; i++) {
-        for (let j = 0; j < oldOps.length; j++) {
-          if (newOps[i].inputOpId === oldOps[j].inputOpId) {
+    burnOperations: [],
+    setBurnRedeemOperations: (newOps: BurnRedeemOperation[]) => {
+      const oldOps = get().burnOperations;
+      for (let newOp of newOps) {
+        for (let oldOp of oldOps) {
+          if (newOp.inputId === oldOp.inputId) {
             if (
-              oldOps[j].claimState === ClaimState.AWAITING_SIGNATURE ||
-              oldOps[j].claimState === ClaimState.PENDING ||
-              oldOps[j].claimState === ClaimState.REJECTED
+              oldOp.claimState === ClaimState.AWAITING_SIGNATURE ||
+              oldOp.claimState === ClaimState.PENDING ||
+              oldOp.claimState === ClaimState.REJECTED
             ) {
               // Keep the old claim step because the lambda can't know all the UI states
-              newOps[i].claimState = oldOps[j].claimState;
+              newOp.claimState = oldOp.claimState;
             }
           }
         }
       }
 
-      set({ opToRedeem: newOps });
+      set({ burnOperations: newOps });
     },
-    updateOpToRedeemByInputOpId: (
+    updateBurnRedeemOperationById: (
       inputOpId: string,
-      op: Partial<RedeemOperation>,
+      op: Partial<BurnRedeemOperation>,
     ) => {
-      const opToRedeem = get().opToRedeem;
-      const index = opToRedeem.findIndex((op) => op.inputOpId === inputOpId);
+      const burnOperations = get().burnOperations;
+      const index = burnOperations.findIndex((op) => op.inputId === inputOpId);
       if (index !== -1) {
-        const newOp = { ...opToRedeem[index], ...op };
-        opToRedeem[index] = newOp;
-        set({ opToRedeem });
+        const newOp = { ...burnOperations[index], ...op };
+        burnOperations[index] = newOp;
+        set({ burnOperations });
       }
     },
-    pushNewOpToRedeem: (op: RedeemOperation) => {
-      set({ opToRedeem: [...get().opToRedeem, op] });
+    appendBurnRedeemOperation: (op: BurnRedeemOperation) => {
+      set({ burnOperations: [...get().burnOperations, op] });
     },
-    getOpToRedeemByInputOpId: (inputOpId: string) => {
-      return get().opToRedeem.find((op) => op.inputOpId === inputOpId);
+    getBurnRedeemOperationById: (inputOpId: string) => {
+      return get().burnOperations.find((op) => op.inputId === inputOpId);
     },
     getCurrentRedeemOperation: () => {
-      return get().getOpToRedeemByInputOpId(get().burnTxId || '');
+      return get().getBurnRedeemOperationById(get().burnTxId || '');
     },
 
     isMassaToEvm: () => get().side === SIDE.MASSA_TO_EVM,
