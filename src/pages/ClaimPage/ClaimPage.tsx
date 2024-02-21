@@ -1,23 +1,65 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
-import { getClaimableOperations } from '@/utils/lambdaApi';
+import { ClaimState } from '@/utils/const';
+import { getRedeemOperation } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
-  const { burnRedeemOperations, setBurnRedeemOperations } = useOperationStore();
+  const {
+    burnRedeemOperations,
+    setBurnRedeemOperations,
+    getCurrentRedeemOperation,
+  } = useOperationStore();
   const { address: evmAddress } = useAccount();
+  const { setBox } = useGlobalStatusesStore();
+
+  // Keep the list of operation IDs to claim in the first call to getRedeemOperation,
+  // to be able to see only the success state of them, and not the whole list of previous success operations.
+  const [redeemableOperationIds, setRedeemableOperationIds] = useState<
+    string[]
+  >([]);
 
   useEffect(() => {
     if (!evmAddress) return;
-    getClaimableOperations(evmAddress).then((newOps) => {
+    getRedeemOperation(evmAddress).then((newOps) => {
       setBurnRedeemOperations(newOps);
+      if (!redeemableOperationIds.length) {
+        setRedeemableOperationIds(
+          newOps
+            .filter((op) => op.claimState === ClaimState.READY_TO_CLAIM)
+            .map((op) => op.inputId),
+        );
+      }
+      if (getCurrentRedeemOperation()) {
+        getRedeemOperation(evmAddress).then((operations) => {
+          operations.forEach((op) => {
+            if (
+              op.inputId === getCurrentRedeemOperation()?.inputId &&
+              op.claimState === ClaimState.SUCCESS
+            ) {
+              setBox(Status.None);
+            }
+          });
+        });
+      }
     });
-  }, [evmAddress, setBurnRedeemOperations]);
+  }, [
+    evmAddress,
+    redeemableOperationIds,
+    setRedeemableOperationIds,
+    setBurnRedeemOperations,
+    getCurrentRedeemOperation,
+    setBox,
+  ]);
 
-  const burnListIsNotEmpty = burnRedeemOperations.length;
+  const burnOperations = burnRedeemOperations.filter((op) =>
+    redeemableOperationIds.includes(op.inputId),
+  );
+  const burnListIsNotEmpty = burnOperations.length;
 
   if (!evmAddress) {
     console.warn('EVM address not found');
