@@ -35,6 +35,17 @@ export enum ClaimState {
   ALREADY_EXECUTED = 'already-executed',
 }
 
+export enum BurnState {
+  AWAITING_INCLUSION = 'awaiting-inclusion',
+  PENDING = 'included-pending',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  REJECTED = 'rejected',
+  INIT = 'init',
+  SIGNATURE_TIMEOUT = 'signature-timeout',
+  OPERATION_FINALITY_TIMEOUT = 'operation-finality-timeout',
+}
+
 export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
 
 export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';

@@ -5,7 +5,7 @@ import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore, useTokenStore } from '@/store/store';
-import { ClaimState } from '@/utils/const';
+import { BurnState, ClaimState } from '@/utils/const';
 import {
   CustomError,
   isRejectedByUser,
@@ -15,7 +15,7 @@ import {
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
   amount: string;
-  setRedeemLabel: (state: string) => void;
+  setBurnState: (state: BurnState) => void;
 }
 
 export async function handleBurnRedeem(
@@ -37,7 +37,7 @@ export async function handleBurnRedeem(
 async function initiateBurn({
   recipient,
   amount,
-  setRedeemLabel,
+  setBurnState,
 }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
   const { setBurnTxId, pushNewOpToRedeem } = useOperationStore.getState();
@@ -50,12 +50,11 @@ async function initiateBurn({
 
   setBurn(Status.Loading);
 
-  setRedeemLabel(Intl.t('index.loading-box.awaiting-inclusion'));
-
+  setBurnState(BurnState.AWAITING_INCLUSION);
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
 
-  setRedeemLabel(Intl.t('index.loading-box.included-pending'));
+  setBurnState(BurnState.PENDING);
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);
@@ -67,23 +66,26 @@ async function initiateBurn({
     recipient,
     evmToken: selectedToken.evmToken as `0x${string}`,
   });
-  setRedeemLabel(Intl.t('index.loading-box.burned-final'));
+  setBurnState(BurnState.SUCCESS);
 }
 
 function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
-  const { setRedeemLabel } = args;
+  const { setBurnState } = args;
 
   const typedError = error as CustomError;
   const isErrorTimeout = typedError.cause?.error === 'timeout';
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t('index.burn.error.rejected'));
-    setRedeemLabel(Intl.t('index.loading-box.burn-rejected'));
+    setBurnState(BurnState.REJECTED);
   } else if (isWalletTimeoutError(typedError)) {
     toast.error(Intl.t('index.burn.error.timeout'));
-    setRedeemLabel(Intl.t('index.loading-box.burn-signature-timeout'));
+    setBurnState(BurnState.SIGNATURE_TIMEOUT);
   } else if (isErrorTimeout) {
+    // when waitIncludedOperation fails to wait operation finality
+    setBurnState(BurnState.OPERATION_FINALITY_TIMEOUT);
     toast.error(Intl.t('index.burn.error.timeout'));
   } else {
+    setBurnState(BurnState.ERROR);
     toast.error(Intl.t('index.burn.error.unknown'));
     console.error(error);
   }

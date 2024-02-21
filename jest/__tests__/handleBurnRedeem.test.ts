@@ -4,24 +4,25 @@ import {
   handleBurnRedeem,
 } from '../../src/custom/bridge/handlers/handleBurnRedeem';
 import { Status } from '../../src/store/globalStatusesStore';
+import { BurnState } from '../../src/utils/const';
 import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
 import { smartContractsMock } from '../__ mocks __/mocks';
 
 describe('handleBurnRedeem', () => {
   let burnArgs: BurnRedeemParams;
-  let mockSetRedeemSteps: jest.Mock;
+  let mockSetBurnStates: jest.Mock;
 
   beforeEach(() => {
     const amount = '1313';
 
-    mockSetRedeemSteps = jest.fn().mockImplementation();
+    mockSetBurnStates = jest.fn().mockImplementation();
 
     const recipient = '0x1234567890123456789012345678901234567890';
 
     burnArgs = {
       recipient,
       amount,
-      setRedeemLabel: mockSetRedeemSteps,
+      setBurnState: mockSetBurnStates,
     };
   });
 
@@ -39,23 +40,20 @@ describe('handleBurnRedeem', () => {
       1,
       Status.Loading,
     );
-    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
+    expect(mockSetBurnStates).toHaveBeenNthCalledWith(
       1,
-      'Burn (awaiting inclusion...)',
+      BurnState.AWAITING_INCLUSION,
     );
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).toHaveBeenCalled();
 
-    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
-      2,
-      'Burn (included pending)',
-    );
+    expect(mockSetBurnStates).toHaveBeenNthCalledWith(2, BurnState.PENDING);
 
     expect(globalStatusesStoreStateMock.setBurn).toHaveBeenNthCalledWith(
       2,
       Status.Success,
     );
-    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(3, 'Burn (final)');
+    expect(mockSetBurnStates).toHaveBeenNthCalledWith(3, BurnState.SUCCESS);
 
     expect(result).toBeTruthy();
   });
@@ -71,9 +69,9 @@ describe('handleBurnRedeem', () => {
       1,
       Status.Loading,
     );
-    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
+    expect(mockSetBurnStates).toHaveBeenNthCalledWith(
       1,
-      'Burn (awaiting inclusion...)',
+      BurnState.AWAITING_INCLUSION,
     );
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).toHaveBeenCalled();
@@ -100,9 +98,9 @@ describe('handleBurnRedeem', () => {
       1,
       Status.Loading,
     );
-    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
+    expect(mockSetBurnStates).toHaveBeenNthCalledWith(
       1,
-      'Burn (awaiting inclusion...)',
+      BurnState.AWAITING_INCLUSION,
     );
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).toHaveBeenCalled();
@@ -132,9 +130,9 @@ describe('handleBurnRedeem', () => {
       Status.Loading,
     );
 
-    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
+    expect(mockSetBurnStates).toHaveBeenNthCalledWith(
       1,
-      'Burn (awaiting inclusion...)',
+      BurnState.AWAITING_INCLUSION,
     );
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).toHaveBeenCalled();
@@ -162,9 +160,9 @@ describe('handleBurnRedeem', () => {
       Status.Loading,
     );
 
-    expect(mockSetRedeemSteps).toHaveBeenNthCalledWith(
+    expect(mockSetBurnStates).toHaveBeenNthCalledWith(
       1,
-      'Burn (awaiting inclusion...)',
+      BurnState.AWAITING_INCLUSION,
     );
     expect(smartContractsMock.callSmartContract).toHaveBeenCalled();
     expect(smartContractsMock.getOperationStatus).not.toHaveBeenCalled();
