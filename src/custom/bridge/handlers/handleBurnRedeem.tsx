@@ -54,7 +54,7 @@ async function initiateBurn({
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
 
-  setBurnState(BurnState.INCLUDED_PENDING);
+  setBurnState(BurnState.PENDING);
   await waitIncludedOperation(burnOpId);
 
   setBurn(Status.Success);

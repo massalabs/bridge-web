@@ -83,7 +83,7 @@ function getBurnStateTranslation(burnState?: BurnState) {
   switch (burnState) {
     case BurnState.AWAITING_INCLUSION:
       return Intl.t('index.loading-box.burn-label-awaiting-inclusion');
-    case BurnState.INCLUDED_PENDING:
+    case BurnState.PENDING:
       return Intl.t('index.loading-box.burn-label-included-pending');
     case BurnState.SUCCESS:
       return Intl.t('index.loading-box.burn-label-success');

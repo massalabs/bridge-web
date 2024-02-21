@@ -37,13 +37,13 @@ export enum ClaimState {
 
 export enum BurnState {
   AWAITING_INCLUSION = 'awaiting-inclusion',
-  INCLUDED_PENDING = 'included-pending',
+  PENDING = 'included-pending',
   SUCCESS = 'success',
   ERROR = 'error',
-  SIGNATURE_TIMEOUT = 'signature-timeout',
-  OPERATION_FINALITY_TIMEOUT = 'operation-finality-timeout',
   REJECTED = 'rejected',
   INIT = 'init',
+  SIGNATURE_TIMEOUT = 'signature-timeout',
+  OPERATION_FINALITY_TIMEOUT = 'operation-finality-timeout',
 }
 
 export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
