@@ -20,7 +20,6 @@ import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useLock } from '@/custom/bridge/useLock';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
-import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -29,6 +28,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
+import { BurnState } from '@/utils/const';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
@@ -44,9 +44,7 @@ export function Index() {
   const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
     useEvmToken();
 
-  const [redeemLabel, setRedeemLabel] = useState<string>( // TODO later: see if we need that
-    Intl.t('index.loading-box.burn'),
-  );
+  const [burnState, setBurnState] = useState<BurnState>(BurnState.INIT);
 
   const { box, setBox, setLock, setApprove, reset, setAmountError } =
     useGlobalStatusesStore();
@@ -160,7 +158,7 @@ export function Index() {
         await handleBurnRedeem({
           recipient: evmAddress,
           amount,
-          setRedeemLabel,
+          setBurnState, // TODO: remove
         });
       }
     } else {
@@ -187,7 +185,7 @@ export function Index() {
       {isOperationPending ? (
         <PendingOperationLayout
           onClose={closeLoadingBox}
-          redeemLabel={redeemLabel}
+          burnState={burnState}
         />
       ) : (
         <BridgeRedeemLayout

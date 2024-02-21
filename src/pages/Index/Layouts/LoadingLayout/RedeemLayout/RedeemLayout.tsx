@@ -10,10 +10,11 @@ import {
   MASSA_EXPLO_EXTENSION,
   MASSA_EXPLORER_URL,
   ClaimState,
+  BurnState,
 } from '@/utils/const';
 
 export function RedeemLayout(props: LoadingBoxProps) {
-  const { redeemLabel } = props;
+  const { burnState } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
@@ -36,13 +37,17 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={approve} />
         </div>
         <div className="flex justify-between">
-          <p className="mas-body-2">{redeemLabel}</p>
+          <p className="mas-body-2">
+            {Intl.t('index.loading-box.burn-label', {
+              state: getBurnStateTranslation(burnState),
+            })}{' '}
+          </p>
           <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">
           <p className="mas-body-2">
-            {Intl.t('index.loading-box.claim-step', {
-              state: getClaimStepTranslation(
+            {Intl.t('index.loading-box.claim-label', {
+              state: getClaimStateTranslation(
                 getCurrentRedeemOperation()?.claimState,
               ),
             })}
@@ -55,19 +60,39 @@ export function RedeemLayout(props: LoadingBoxProps) {
     </>
   );
 }
-function getClaimStepTranslation(claimState?: ClaimState) {
+
+function getClaimStateTranslation(claimState?: ClaimState) {
   switch (claimState) {
     case ClaimState.RETRIEVING_INFO:
-      return Intl.t('index.loading-box.claim-step-retrieving-info');
+      return Intl.t('index.loading-box.claim-label-retrieving-info');
     case ClaimState.AWAITING_SIGNATURE:
     case ClaimState.READY_TO_CLAIM:
-      return Intl.t('index.loading-box.claim-step-awaiting-signature');
+      return Intl.t('index.loading-box.claim-label-awaiting-signature');
     case ClaimState.PENDING:
-      return Intl.t('index.loading-box.claim-step-claiming');
+      return Intl.t('index.loading-box.claim-label-claiming');
     case ClaimState.REJECTED:
-      return Intl.t('index.loading-box.claim-step-rejected');
+      return Intl.t('index.loading-box.claim-label-rejected');
     case ClaimState.ERROR:
-      return Intl.t('index.loading-box.claim-step-error');
+      return Intl.t('index.loading-box.claim-label-error');
+    default:
+      return '';
+  }
+}
+
+function getBurnStateTranslation(burnState?: BurnState) {
+  switch (burnState) {
+    case BurnState.AWAITING_INCLUSION:
+      return Intl.t('index.loading-box.burn-label-awaiting-inclusion');
+    case BurnState.INCLUDED_PENDING:
+      return Intl.t('index.loading-box.burn-label-included-pending');
+    case BurnState.SUCCESS:
+      return Intl.t('index.loading-box.burn-label-success');
+    case BurnState.SIGNATURE_TIMEOUT:
+      return Intl.t('index.loading-box.burn-label-signature-timeout');
+    case BurnState.REJECTED:
+      return Intl.t('index.loading-box.burn-label-rejected');
+    case BurnState.ERROR:
+      return Intl.t('index.loading-box.burn-label-error');
     default:
       return '';
   }
