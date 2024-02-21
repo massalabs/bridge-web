@@ -40,7 +40,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <p className="mas-body-2">
             {Intl.t('index.loading-box.burn-label', {
               state: getBurnStateTranslation(burnState),
-            })}{' '}
+            })}
           </p>
           <LoadingState state={burn} />
         </div>
