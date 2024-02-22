@@ -273,5 +273,14 @@
     "description": "You must accept the terms of service to continue, to proceed with the Massa Bridge.",
     "subtitle": "Terms of service",
     "cta": "Accept"
+  },
+  "history": {
+    "title": "History of transfers",
+    "from": "From",
+    "to": "To",
+    "time": "Time",
+    "amount": "Amount",
+    "status": "Status",
+    "transaction-id": "Transaction ID"
   }
 }
