@@ -10,6 +10,11 @@
     "Buildnet": "Buildnet",
     "Mainnet": "Mainnet"
   },
+  "navbar": {
+    "history": "History",
+    "bridge": "Bridge",
+    "claim": "Claim"
+  },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
     "subtitle": "A new smart contract is being deployed! We should be back soon."
