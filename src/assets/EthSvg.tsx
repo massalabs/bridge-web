@@ -1,8 +1,15 @@
-export function EthSvg() {
+import { ComponentPropsWithoutRef } from 'react';
+
+interface SVGProps extends ComponentPropsWithoutRef<'div'> {
+  size?: number;
+}
+
+export function EthSvg(props: SVGProps) {
+  let { size } = props;
   return (
     <svg
-      width="20px"
-      height="20px"
+      width={size ?? 20}
+      height={size ?? 20}
       viewBox="0 0 48 48"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

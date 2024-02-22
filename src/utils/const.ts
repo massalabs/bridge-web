@@ -63,3 +63,5 @@ export const EVM_EXPLORER = {
   [BridgeMode.mainnet]: 'https://etherscan.io/',
   [BridgeMode.testnet]: 'https://sepolia.etherscan.io/',
 };
+
+export const sepoliaChainId = 11155111;

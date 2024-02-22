@@ -1,34 +1,43 @@
-import { FiImage } from 'react-icons/fi';
-import { SuccessCheck } from '@/components';
+import { useEffect } from 'react';
+import { Tooltip } from '@massalabs/react-ui-kit';
+import { RecipientEmitter } from './RecipientEmitter';
+import { ShowStatus } from './ShowStatus';
+import { TxLinkToExplorers } from './TxLinkToExplorers';
+import { useTokenStore } from '@/store/tokenStore';
+import { Burned, formatApiCreationTime } from '@/utils/lambdaApi';
+import { formatAmount } from '@/utils/parseAmount';
 
-export function Operation() {
+interface operationProps {
+  operation: Burned;
+}
+
+export function Operation({ ...props }: operationProps) {
+  const { operation: op } = props;
+  const { tokens } = useTokenStore();
+
+  useEffect(() => {
+    console.log(op);
+  }, [op]);
+
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
+
+  const symbol = tokens.find((t) => t.evmToken === op.evmToken)?.symbolEVM;
+
   return (
     <div className="grid grid-cols-6 mas-body2">
-      <div className="flex items-center gap-2">
-        <div>
-          <FiImage />
-        </div>
-        <div>Massa</div>
-      </div>
-      <div className="flex items-center gap-2">
-        <div>
-          <FiImage />
-        </div>
-        <div>Ethereum</div>
-      </div>
-      <div className="flex items-center">10.10.2021</div>
-      <div className="flex items-center">123.121313 tDAI</div>
-      <div className="flex items-center gap-2">
-        <div>
-          <SuccessCheck size={'sm'} />
-        </div>
-        <div>Done</div>
+      <RecipientEmitter address={op.emitter} />
+      <RecipientEmitter address={op.recipient} />
+      <div className="flex items-center">
+        {formatApiCreationTime(op.createdAt)}
       </div>
       <div className="flex items-center">
-        <a href="https://foo-bar.com">
-          <u>0000...0000</u>
-        </a>
+        {amountFormattedPreview} {symbol} <Tooltip body={amountFormattedFull} />
       </div>
+      <ShowStatus isConfirmed={op.isConfirmed} />
+      <TxLinkToExplorers
+        outputTxId={op.outputTxId}
+        evmChainId={op.evmChainId}
+      />
     </div>
   );
 }

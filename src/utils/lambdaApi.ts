@@ -20,6 +20,8 @@ export interface Locked {
   };
   emitter: `0x${string}`;
   outputOpId: string;
+  isConfirmed: boolean;
+  createdAt: string;
 }
 
 export interface Burned {
@@ -34,6 +36,9 @@ export interface Burned {
   emitter: string;
   inputOpId: string;
   signatures: Signatures[];
+  isConfirmed: boolean;
+  outputConfirmations: number;
+  createdAt: string;
 }
 
 export interface Signatures {
@@ -49,6 +54,27 @@ export interface LambdaResponse {
 }
 
 const lambdaEndpoint = 'bridge-getHistory-prod';
+
+export async function getBridgeHistory(
+  evmAddress: `0x${string}`,
+): Promise<{ locked: Locked[]; burned: Burned[] }> {
+  const { currentMode } = useBridgeModeStore.getState();
+
+  let response: LambdaResponse;
+  if (!evmAddress) return { locked: [], burned: [] };
+  try {
+    response = await axios.get(config[currentMode].lambdaUrl + lambdaEndpoint, {
+      params: {
+        evmAddress,
+      },
+    });
+  } catch (error: any) {
+    console.warn('Error getting burned by evm address', error?.response?.data);
+    return { locked: [], burned: [] };
+  }
+
+  return response.data;
+}
 
 async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
@@ -163,4 +189,31 @@ export async function getClaimableOperations(
   return redeemOperations.filter(
     (op) => op.claimState === ClaimState.READY_TO_CLAIM,
   );
+}
+
+export function formatApiCreationTime(inputTimestamp: string) {
+  // Create a Date object from the input timestamp string
+  const dateObject = new Date(inputTimestamp);
+
+  // Format the date object as per the desired French format
+  const formattedTimestamp = dateObject.toLocaleString('fr-FR', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
+  return formattedTimestamp;
+}
+
+export function isEvmToMassa(address: string): boolean {
+  const regex = /^0x/i;
+
+  if (regex.test(address)) {
+    return true;
+  }
+  return false;
 }
