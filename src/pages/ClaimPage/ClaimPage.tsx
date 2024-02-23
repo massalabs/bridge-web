@@ -34,17 +34,17 @@ export function ClaimPage() {
             .map((op) => op.inputId),
         );
       }
-      if (getCurrentRedeemOperation()) {
-        getRedeemOperation(evmAddress).then((operations) => {
-          operations.forEach((op) => {
-            if (
-              op.inputId === getCurrentRedeemOperation()?.inputId &&
-              op.claimState === ClaimState.SUCCESS
-            ) {
-              setBox(Status.None);
-            }
-          });
-        });
+      const currentRedeemOperation = getCurrentRedeemOperation();
+      if (currentRedeemOperation) {
+        const newCurrentRedeemOperation = newOps.find(
+          (op) => op.inputId === currentRedeemOperation.inputId,
+        );
+        if (
+          newCurrentRedeemOperation &&
+          newCurrentRedeemOperation.claimState === ClaimState.SUCCESS
+        ) {
+          setBox(Status.None);
+        }
       }
     });
   }, [
@@ -69,7 +69,7 @@ export function ClaimPage() {
   return (
     <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
       {burnListIsNotEmpty ? (
-        burnRedeemOperations.map((operation: BurnRedeemOperation) => (
+        burnOperations.map((operation: BurnRedeemOperation) => (
           <ClaimButton operation={operation} key={operation.inputId} />
         ))
       ) : (
