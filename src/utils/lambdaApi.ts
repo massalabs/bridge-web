@@ -37,7 +37,7 @@ export interface Burned {
   inputOpId: string;
   signatures: Signatures[];
   isConfirmed: boolean;
-  outputConfirmations: number;
+  outputConfirmations: number | null;
   createdAt: string;
 }
 

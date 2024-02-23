@@ -28,7 +28,13 @@ export function Operation({ ...props }: operationProps) {
       <div className="flex items-center">
         {amountFormattedPreview} {symbol} <Tooltip body={amountFormattedFull} />
       </div>
-      <ShowStatus isConfirmed={op.isConfirmed} />
+      <ShowStatus
+        isConfirmed={op.isConfirmed}
+        outputConfirmations={op.outputConfirmations}
+        outputTxId={op.outputTxId}
+        error={op.error}
+        state={op.state}
+      />
       <TxLinkToExplorers
         outputTxId={op.outputTxId}
         evmChainId={op.evmChainId}

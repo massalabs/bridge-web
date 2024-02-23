@@ -281,6 +281,12 @@
     "time": "Time",
     "amount": "Amount",
     "status": "Status",
-    "transaction-id": "Transaction ID"
+    "transaction-id": "Transaction ID",
+    "operation-status": {
+      "pending": "Pending",
+      "done": "Done",
+      "error": "Failed",
+      "claimable": "Click to claim"
+    }
   }
 }

@@ -19,7 +19,6 @@ export function HistoryPage() {
 
   // TODO: add loading state
   // TODO: add pending operations on top of list (tbd)
-  // TODO: improve pagination to use steps as buttons
 
   // might be replaced by store
   // this is for dev purposes
@@ -36,6 +35,7 @@ export function HistoryPage() {
     fetchData();
   }, [evmAddress]);
 
+  // TODO: rename to "older"
   function loadMore() {
     setPageStep(pageStep + 1);
     const newLowest = shownOperations[0] + 10;
@@ -43,6 +43,7 @@ export function HistoryPage() {
     setShownOperations([newLowest, newHighest]);
   }
 
+  // TODO:  rename to "newest"
   function loadLess() {
     setPageStep(pageStep - 1);
     const newLowest = shownOperations[0] - 10;
@@ -106,10 +107,3 @@ export function HistoryPage() {
 // objective = pagination (max height) and display operation history
 // TODO: []Operation component ->
 // objective = display operation details, should also format and contain all logic
-
-// Questions: if no tx id what to show ?
-// How are we getting diffrent states and what does each state equate to ?
-// What is the case for a failed state ? should we really display it ?
-// Case where operations has been shown as successful but it does not have
-// the three block confirmations yet = async compared to the rest of the screen
-// --> success pending and success waiting for 3 confirmations
