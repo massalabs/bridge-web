@@ -47,7 +47,6 @@ export enum BurnState {
 }
 
 // TODO: complete the enums
-export enum BurnState {}
 export enum LockState {}
 
 export enum MintState {
