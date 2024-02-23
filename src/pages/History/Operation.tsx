@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { RecipientEmitter } from './RecipientEmitter';
 import { ShowStatus } from './ShowStatus';
@@ -14,10 +13,6 @@ interface operationProps {
 export function Operation({ ...props }: operationProps) {
   const { operation: op } = props;
   const { tokens } = useTokenStore();
-
-  useEffect(() => {
-    console.log(op);
-  }, [op]);
 
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
 

@@ -72,7 +72,6 @@ export async function getBridgeHistory(
     console.warn('Error getting burned by evm address', error?.response?.data);
     return { locked: [], burned: [] };
   }
-
   return response.data;
 }
 
@@ -192,10 +191,7 @@ export async function getClaimableOperations(
 }
 
 export function formatApiCreationTime(inputTimestamp: string) {
-  // Create a Date object from the input timestamp string
   const dateObject = new Date(inputTimestamp);
-
-  // Format the date object as per the desired French format
   const formattedTimestamp = dateObject.toLocaleString('fr-FR', {
     year: 'numeric',
     month: 'numeric',
@@ -204,6 +200,7 @@ export function formatApiCreationTime(inputTimestamp: string) {
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
+    timeZone: 'UTC',
   });
 
   return formattedTimestamp;
