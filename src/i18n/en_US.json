@@ -5,7 +5,8 @@
     "loading": "loading...",
     "Massa": "Massa",
     "Sepolia": "Sepolia",
-    "Ethereum": "EVM",
+    "Ethereum": "Ethereum",
+    "EVM": "EVM",
     "Testnet": "Testnet",
     "Buildnet": "Buildnet",
     "Mainnet": "Mainnet"
@@ -275,11 +276,6 @@
     "cta": "Accept"
   },
   "history": {
-    "Ethereum": "Ethereum Mainnet",
-    "Massa": "Massa",
-    "buildnet": "Buildnet",
-    "mainnet": "Mainnet",
-    "Sepolia": "Sepolia Testnet",
     "title": "History of transfers",
     "from": "From",
     "to": "To",

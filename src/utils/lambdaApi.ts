@@ -13,7 +13,7 @@ export interface Locked {
   massaToken: `AS${string}`;
   inputTxId: `0x${string}`;
   recipient: string;
-  state: apiOperationStats;
+  state: apiOperationStates;
   error: null | apiError;
   emitter: `0x${string}`;
   outputOpId: string;
@@ -34,7 +34,7 @@ export interface Burned {
   massaToken: `AS${string}`;
   evmChainId: number;
   recipient: `0x${string}`;
-  state: apiOperationStats;
+  state: apiOperationStates;
   error: null | apiError;
   emitter: string;
   inputOpId: string;
@@ -99,7 +99,7 @@ async function getBurnedByEvmAddress(
   return response.data.burned;
 }
 
-enum apiOperationStats {
+enum apiOperationStates {
   new = 'new',
   processing = 'processing',
   done = 'done',
@@ -116,7 +116,7 @@ export async function findClaimable(
   const claimableOp = burnedOpList.find(
     (item) =>
       item.outputTxId === null &&
-      item.state === apiOperationStats.processing &&
+      item.state === apiOperationStates.processing &&
       item.inputOpId === burnOpId,
   );
 
@@ -138,23 +138,23 @@ export async function getRedeemOperation(
 
   const statesCorrespondence = {
     // Relayer are adding signatures
-    [apiOperationStats.new]: ClaimState.RETRIEVING_INFO,
+    [apiOperationStates.new]: ClaimState.RETRIEVING_INFO,
 
     // Signatures are added, user can claim, user may have claim, tx may be in a fork
     // if outputTxId is set, we are waiting for evm confirmations
     // it can be ClaimState.AWAITING_SIGNATURE but we can't know from the lambda
     // it can be ClaimState.PENDING but we can't know from the lambda
     // it can be ClaimState.SUCCESS if the outputTxId is set (see bellow)
-    [apiOperationStats.processing]: ClaimState.READY_TO_CLAIM,
+    [apiOperationStates.processing]: ClaimState.READY_TO_CLAIM,
 
     // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
-    [apiOperationStats.finalizing]: ClaimState.SUCCESS,
+    [apiOperationStates.finalizing]: ClaimState.SUCCESS,
 
     // Relayer have deleted burn log in massa smart contract, we have enough evm confirmations
-    [apiOperationStats.done]: ClaimState.SUCCESS,
+    [apiOperationStates.done]: ClaimState.SUCCESS,
 
     // Error in the process
-    [apiOperationStats.error]: ClaimState.ERROR,
+    [apiOperationStates.error]: ClaimState.ERROR,
   };
 
   return burnedOpList.map((opToClaim) => {
@@ -173,7 +173,7 @@ export async function getRedeemOperation(
     // The operation state given by the lambda is processing but the operation may be already claimed
     // if the outputTxId is set, so in this case we set the claimState to SUCCESS
     if (
-      opToClaim.state === apiOperationStats.processing &&
+      opToClaim.state === apiOperationStates.processing &&
       opToClaim.outputTxId
     ) {
       op.claimState = ClaimState.SUCCESS;
@@ -260,7 +260,7 @@ export function lockToItem(object: Locked): OperationHistoryItem {
   };
 }
 
-// satus correspondance fn's
+// status correspondance fn's
 export function getBurnedStatus(
   isConfirmed: boolean,
   outputTxId: string | null,

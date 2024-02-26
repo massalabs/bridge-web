@@ -43,14 +43,15 @@ export function Operation(props: OperationProps) {
 }
 
 export function OperationSkeleton() {
+  const numSkeletons = 10;
+
+  const skeletons = Array.from({ length: numSkeletons }, (_, index) => (
+    <div key={index} className="w-full h-4 bg-gray-300 rounded-xl"></div>
+  ));
+
   return (
     <div className="grid grid-cols-6 mas-body2 animate-pulse gap-4">
-      <div className="w-full h-4 bg-gray-300 rounded-xl"></div>
-      <div className="w-full h-4 bg-gray-300 rounded-xl"></div>
-      <div className="w-full h-4 bg-gray-300 rounded-xl"></div>
-      <div className="w-full h-4 bg-gray-300 rounded-xl"></div>
-      <div className="w-full h-4 bg-gray-300 rounded-xl"></div>
-      <div className="w-full h-4 bg-gray-300 rounded-xl"></div>
+      {skeletons}
     </div>
   );
 }

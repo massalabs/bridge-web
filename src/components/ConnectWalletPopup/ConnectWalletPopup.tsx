@@ -24,9 +24,7 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
 
   const networks = {
     network1: `${
-      chain
-        ? Intl.t(`general.${chain.name}`)
-        : Intl.t(`general.${Blockchain.ETHEREUM}`)
+      chain ? Intl.t(`general.${chain.name}`) : Intl.t(`general.EVM`)
     } ${Intl.t(`general.${evmNetwork}`)}`,
     network2: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
       `general.${massaNetwork}`,

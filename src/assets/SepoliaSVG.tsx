@@ -4,7 +4,7 @@ interface SVGProps extends ComponentPropsWithoutRef<'div'> {
   size?: number;
 }
 
-export function SepSvg(props: SVGProps) {
+export function SepoliaSvg(props: SVGProps) {
   let { size } = props;
   return (
     <svg

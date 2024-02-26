@@ -1,7 +1,7 @@
 import { MassaLogo } from '@massalabs/react-ui-kit';
 import { sepolia } from 'wagmi/chains';
 import { EthSvg } from '@/assets/EthSvg';
-import { SepSvg } from '@/assets/SepSvg';
+import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 
@@ -20,21 +20,21 @@ export function EmitterRecipient(props: EmitterRecipientProps) {
         ) : isOpOnMainnet ? (
           <EthSvg size={22} />
         ) : (
-          <SepSvg size={22} />
+          <SepoliaSvg size={22} />
         )}
       </div>
       <div>
         {isMassaToEvm
-          ? `${Intl.t(`history.${Blockchain.MASSA}`)} ${
+          ? `${Intl.t(`general.${Blockchain.MASSA}`)} ${
               isOpOnMainnet
-                ? Intl.t(`history.mainnet`)
-                : Intl.t(`history.buildnet`)
+                ? Intl.t(`general.Mainnet`)
+                : Intl.t(`general.Buildnet`)
             }`
           : isOpOnMainnet
-          ? `${Intl.t(`history.${Blockchain.ETHEREUM}`)} ${Intl.t(
-              `history.mainnet`,
+          ? `${Intl.t(`general.${Blockchain.ETHEREUM}`)} ${Intl.t(
+              `general.Mainnet`,
             )}`
-          : Intl.t(`history.${sepolia.name}`)}
+          : `${Intl.t(`general.${sepolia.name}`)} ${Intl.t(`general.Testnet`)}`}
       </div>
     </div>
   );
