@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { ClaimState } from './const';
+import { ClaimState, SIDE, sepoliaChainId } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
 import { BurnRedeemOperation } from '@/store/operationStore';
@@ -13,7 +13,7 @@ export interface Locked {
   inputTxId: `0x${string}`;
   recipient: string;
   state: operationStates;
-  error: {
+  error: null | {
     msg: string;
     code: number;
     title: string;
@@ -32,7 +32,11 @@ export interface Burned {
   evmChainId: number;
   recipient: `0x${string}`;
   state: operationStates;
-  error: null | string;
+  error: null | {
+    msg: string;
+    code: number;
+    title: string;
+  };
   emitter: string;
   inputOpId: string;
   signatures: Signatures[];
@@ -206,11 +210,128 @@ export function formatApiCreationTime(inputTimestamp: string) {
   return formattedTimestamp;
 }
 
-export function isEvmToMassa(address: string): boolean {
-  const regex = /^0x/i;
+export enum OperationStatus {
+  claimable = 'claimable',
+  pending = 'pending',
+  done = 'done',
+  error = 'error',
+}
 
-  if (regex.test(address)) {
-    return true;
+// Shared information between Lock and burn
+export interface OperationHistoryItem {
+  side: SIDE;
+  time: string;
+  amount: string;
+  status: OperationStatus;
+  outputId?: string | `0x${string}` | null;
+  inputId: string | `0x${string}` | null;
+  evmToken: `0x${string}`;
+  isOpOnMainnet: boolean;
+}
+
+// converts
+// Massa To Evm
+export function burnToItem(object: Burned): OperationHistoryItem {
+  return {
+    side: SIDE.MASSA_TO_EVM,
+    inputId: object.inputOpId,
+    time: object.createdAt,
+    amount: object.amount,
+    status: getBurnedStatus(
+      object.isConfirmed,
+      object.outputTxId,
+      object.error,
+      object.state,
+    ),
+    outputId: object.outputTxId,
+    evmToken: object.evmToken,
+    isOpOnMainnet: object.evmChainId === sepoliaChainId,
+  };
+}
+
+// Evm To Massa
+export function lockToItem(object: Locked): OperationHistoryItem {
+  return {
+    side: SIDE.EVM_TO_MASSA,
+    time: object.createdAt,
+    inputId: object.inputTxId,
+    amount: object.amount,
+    status: getLockedStatus(
+      object.isConfirmed,
+      object.outputOpId,
+      object.error,
+      object.state,
+    ),
+    outputId: object.outputOpId,
+    evmToken: object.evmToken,
+    isOpOnMainnet: object.evmChainId === sepoliaChainId,
+  };
+}
+
+// fn/side to setStatus depending on different operation factors
+export function getBurnedStatus(
+  isConfirmed: boolean,
+  outputTxId: string | null,
+  error: null | {
+    msg: string;
+    code: number;
+    title: string;
+  },
+  state: string,
+): OperationStatus {
+  if (isConfirmed) {
+    return OperationStatus.done;
+    // on lock side from state "new" = pending
+  } else if (state === 'processing' && !isConfirmed && outputTxId !== null) {
+    return OperationStatus.pending;
+  } else if (outputTxId === null) {
+    return OperationStatus.claimable;
+  } else if (error !== null) {
+    return OperationStatus.error;
   }
-  return false;
+  return OperationStatus.error;
+}
+
+export function getLockedStatus(
+  isConfirmed: boolean,
+  outputOpId: string | null,
+  error: null | {
+    msg: string;
+    code: number;
+    title: string;
+  },
+  state: string,
+): OperationStatus {
+  if (isConfirmed) {
+    return OperationStatus.done;
+    // on lock side from state "new" = pending
+  } else if (state === 'processing' && outputOpId !== null) {
+    return OperationStatus.pending;
+  } else if (error !== null) {
+    return OperationStatus.error;
+  }
+  return OperationStatus.error;
+}
+
+export function mergeBurnAndLock(
+  burnedArray: Burned[],
+  lockedArray: Locked[],
+): OperationHistoryItem[] {
+  const newOpHistArray: OperationHistoryItem[] = [];
+
+  // push.. toItem functions to new OpHistArray
+  for (const item of burnedArray) {
+    newOpHistArray.push(burnToItem(item));
+  }
+
+  for (const item of lockedArray) {
+    newOpHistArray.push(lockToItem(item));
+  }
+
+  // sort by date
+  newOpHistArray.sort((a, b) => {
+    return new Date(b.time).getTime() - new Date(a.time).getTime();
+  });
+
+  return newOpHistArray;
 }

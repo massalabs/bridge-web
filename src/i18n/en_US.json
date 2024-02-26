@@ -287,6 +287,8 @@
       "done": "Done",
       "error": "Failed",
       "claimable": "Click to claim"
-    }
+    },
+    "show-recent": "Show recent",
+    "show-previous": "Show previous"
   }
 }

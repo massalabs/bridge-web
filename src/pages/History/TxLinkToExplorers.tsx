@@ -1,40 +1,27 @@
-import {
-  EVM_EXPLORER,
-  MASSA_EXPLORER_URL,
-  MASSA_EXPLO_EXTENSION,
-  MASSA_EXPLO_URL,
-  sepoliaChainId,
-} from '@/utils/const';
-import { isEvmToMassa } from '@/utils/lambdaApi';
+import { EVM_EXPLORER, MASSA_EXPLORER_URL, SIDE } from '@/utils/const';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface TxLinkToExplorersProps {
-  outputTxId: `0x${string}` | null;
-  evmChainId: number;
+  outputId: string | null | undefined;
+  isOpOnMainnet: boolean;
+  side: string;
 }
 
 export function TxLinkToExplorers({ ...props }: TxLinkToExplorersProps) {
-  const { outputTxId, evmChainId } = props;
+  const { outputId, isOpOnMainnet, side } = props;
 
-  if (outputTxId === null) return;
+  if (outputId === null || outputId === undefined) return;
 
-  // hacky logic here is temporary, will need to change as it is not scalable
-  // Perhaps we could get chain from api ?
-  const currentMode = evmChainId === sepoliaChainId ? 'testnet' : 'mainnet';
+  const currentMode = isOpOnMainnet ? 'testnet' : 'mainnet';
 
-  // if bridge operation (isEvmToMassa = true) then use EVM_EXPLORER, else use MASSA_EXPLORER
-  // Current mode reflects the network, if chain id is the same as sepolia (so testnet network),
-  // then current mode is testnet, else it is mainnet
-  // Improvement: refactor this to fn if possible
-  const explorerUrl = isEvmToMassa(outputTxId)
-    ? `${EVM_EXPLORER[currentMode]}tx/${outputTxId}`
-    : currentMode === 'mainnet'
-    ? `${MASSA_EXPLORER_URL}${outputTxId}`
-    : `${MASSA_EXPLO_URL}${outputTxId}${MASSA_EXPLO_EXTENSION}`;
+  const explorerUrl =
+    side === SIDE.MASSA_TO_EVM
+      ? `${EVM_EXPLORER[currentMode]}tx/${outputId}`
+      : `${MASSA_EXPLORER_URL}${outputId}`;
 
   return (
     <a className="flex gap-2 items-center" href={explorerUrl} target="_blank">
-      <u>{maskAddress(outputTxId)}</u>
+      <u>{maskAddress(outputId)}</u>
     </a>
   );
 }

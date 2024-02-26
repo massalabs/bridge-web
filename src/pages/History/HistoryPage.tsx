@@ -6,28 +6,37 @@ import { Categories } from './Categories';
 import { Operation } from './Operation';
 import { Hr } from '@/components/Hr';
 import Intl from '@/i18n/i18n';
-import { Burned, getBridgeHistory } from '@/utils/lambdaApi';
+import {
+  OperationHistoryItem,
+  getBridgeHistory,
+  mergeBurnAndLock,
+} from '@/utils/lambdaApi';
 
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
-  // containes all operations
-  const [operationList, setOperationList] = useState<Burned[]>([]);
+
+  // containes all operations to render
+  const [operationList, setOperationList] = useState<OperationHistoryItem[]>(
+    [],
+  );
 
   // pagination
-  const [shownOperations, setShownOperations] = useState<number[]>([0, 10]);
+  const [shownOperations, setShownOperations] = useState<{
+    low: number;
+    high: number;
+  }>({
+    low: 0,
+    high: 10,
+  });
   const [pageStep, setPageStep] = useState<number>(0);
 
-  // TODO: add loading state
   // TODO: add pending operations on top of list (tbd)
-
-  // might be replaced by store
-  // this is for dev purposes
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getBridgeHistory(evmAddress as `0x${string}`);
-        const returnedData = data.burned;
-        setOperationList(returnedData);
+        const mergedData = mergeBurnAndLock(data.burned, data.locked);
+        setOperationList(mergedData);
       } catch (error) {
         console.error('Error fetching operation', error);
       }
@@ -35,20 +44,18 @@ export function HistoryPage() {
     fetchData();
   }, [evmAddress]);
 
-  // TODO: rename to "older"
-  function loadMore() {
+  function loadOldest() {
     setPageStep(pageStep + 1);
-    const newLowest = shownOperations[0] + 10;
-    const newHighest = shownOperations[1] + 10;
-    setShownOperations([newLowest, newHighest]);
+    const newLowest = shownOperations.low + 10;
+    const newHighest = shownOperations.high + 10;
+    setShownOperations({ low: newLowest, high: newHighest });
   }
 
-  // TODO:  rename to "newest"
-  function loadLess() {
+  function loadNewest() {
     setPageStep(pageStep - 1);
-    const newLowest = shownOperations[0] - 10;
-    const newHighest = shownOperations[1] - 10;
-    setShownOperations([newLowest, newHighest]);
+    const newLowest = shownOperations.low - 10;
+    const newHighest = shownOperations.high - 10;
+    setShownOperations({ low: newLowest, high: newHighest });
   }
 
   return (
@@ -71,8 +78,8 @@ export function HistoryPage() {
         <div className="flex flex-col gap-8 py-4 mt-8 mb-8">
           {operationList &&
             operationList
-              .slice(shownOperations[0], shownOperations[1])
-              .map((op) => <Operation operation={op} key={op.inputOpId} />)}
+              .slice(shownOperations.low, shownOperations.high)
+              .map((op) => <Operation operation={op} />)}
         </div>
         <div className="flex gap-12 items-center justify-center">
           <Button
@@ -80,20 +87,20 @@ export function HistoryPage() {
             disabled={pageStep <= 0}
             preIcon={<FiMinus />}
             onClick={() => {
-              loadLess();
+              loadNewest();
             }}
           >
-            Show previous
+            {Intl.t('history.show-recent')}
           </Button>
           <Button
             customClass="w-64"
             posIcon={<FiPlus />}
             disabled={pageStep >= Math.ceil(operationList.length / 10 - 1)}
             onClick={() => {
-              loadMore();
+              loadOldest();
             }}
           >
-            Show next
+            {Intl.t('history.show-previous')}
           </Button>
         </div>
       </div>
@@ -101,9 +108,4 @@ export function HistoryPage() {
   );
 }
 
-// Top level objectives and questions:
-
-// TODO: []Table component (receive 1 to n operations) ->
-// objective = pagination (max height) and display operation history
-// TODO: []Operation component ->
-// objective = display operation details, should also format and contain all logic
+// TODO: add skeleton loading

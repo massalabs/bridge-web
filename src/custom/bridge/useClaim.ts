@@ -38,6 +38,7 @@ export function useClaim() {
   );
 
   const { isSuccess } = useWaitForTransactionReceipt({
+    confirmations: 3,
     hash,
   });
 
