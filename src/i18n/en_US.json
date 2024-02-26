@@ -275,6 +275,11 @@
     "cta": "Accept"
   },
   "history": {
+    "Ethereum": "Ethereum Mainnet",
+    "Massa": "Massa",
+    "buildnet": "Buildnet",
+    "mainnet": "Mainnet",
+    "Sepolia": "Sepolia Testnet",
     "title": "History of transfers",
     "from": "From",
     "to": "To",

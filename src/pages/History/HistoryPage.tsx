@@ -3,7 +3,7 @@ import { Button } from '@massalabs/react-ui-kit';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 import { Categories } from './Categories';
-import { Operation } from './Operation';
+import { Operation, OperationSkeleton } from './Operation';
 import { Hr } from '@/components/Hr';
 import Intl from '@/i18n/i18n';
 import {
@@ -20,17 +20,19 @@ export function HistoryPage() {
     [],
   );
 
+  let lowest = 0;
+  let highest = 10;
+
   // pagination
   const [shownOperations, setShownOperations] = useState<{
     low: number;
     high: number;
   }>({
-    low: 0,
-    high: 10,
+    low: lowest,
+    high: highest,
   });
   const [pageStep, setPageStep] = useState<number>(0);
 
-  // TODO: add pending operations on top of list (tbd)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,10 +78,14 @@ export function HistoryPage() {
         <Hr />
 
         <div className="flex flex-col gap-8 py-4 mt-8 mb-8">
-          {operationList &&
-            operationList
+          {operationList
+            ? operationList
               .slice(shownOperations.low, shownOperations.high)
-              .map((op) => <Operation operation={op} />)}
+                .map((op) => <Operation operation={op} key={op.inputId} />)
+            : operationList &&
+              Array(10)
+                .fill(0)
+                .map((_, index) => <OperationSkeleton key={index} />)}
         </div>
         <div className="flex gap-12 items-center justify-center">
           <Button
@@ -107,5 +113,3 @@ export function HistoryPage() {
     </div>
   );
 }
-
-// TODO: add skeleton loading

@@ -1,31 +1,34 @@
-// import { Spinner, SuccessCheck } from '@/components';
 import { Link } from 'react-router-dom';
 import { ErrorCheck, Spinner, SuccessCheck } from '@/components';
 import Intl from '@/i18n/i18n';
-import { OperationStatus } from '@/utils/lambdaApi';
+import { historyOperationStatus } from '@/utils/lambdaApi';
 
-export function ShowStatus({ ...props }) {
+interface ShowStatusProps {
+  status: historyOperationStatus;
+}
+
+export function ShowStatus(props: ShowStatusProps) {
   const { status: operationStatus } = props;
 
   return (
     <div className="flex items-center gap-2">
       {(() => {
         switch (operationStatus) {
-          case OperationStatus.done:
+          case historyOperationStatus.done:
             return (
               <div className="flex items-center gap-2">
                 <SuccessCheck size="sm" />
                 <p> {Intl.t(`history.operation-status.${operationStatus}`)}</p>
               </div>
             );
-          case OperationStatus.pending:
+          case historyOperationStatus.pending:
             return (
               <div className="flex items-center gap-2">
                 <Spinner size="sm" />
                 <p> {Intl.t(`history.operation-status.${operationStatus}`)}</p>
               </div>
             );
-          case OperationStatus.claimable:
+          case historyOperationStatus.claimable:
             return (
               <div className="flex items-center gap-2">
                 <Link to="/claim">
@@ -36,7 +39,7 @@ export function ShowStatus({ ...props }) {
                 </Link>
               </div>
             );
-          case OperationStatus.error:
+          case historyOperationStatus.error:
             return (
               <div className="flex items-center gap-2">
                 <ErrorCheck size="sm" />

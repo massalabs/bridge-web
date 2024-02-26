@@ -7,12 +7,12 @@ interface TxLinkToExplorersProps {
   side: string;
 }
 
-export function TxLinkToExplorers({ ...props }: TxLinkToExplorersProps) {
+export function TxLinkToExplorers(props: TxLinkToExplorersProps) {
   const { outputId, isOpOnMainnet, side } = props;
 
   if (outputId === null || outputId === undefined) return;
 
-  const currentMode = isOpOnMainnet ? 'testnet' : 'mainnet';
+  const currentMode = isOpOnMainnet ? 'mainnet' : 'testnet';
 
   const explorerUrl =
     side === SIDE.MASSA_TO_EVM

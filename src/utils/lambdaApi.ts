@@ -13,16 +13,18 @@ export interface Locked {
   massaToken: `AS${string}`;
   inputTxId: `0x${string}`;
   recipient: string;
-  state: operationStates;
-  error: null | {
-    msg: string;
-    code: number;
-    title: string;
-  };
+  state: apiOperationStats;
+  error: null | apiError;
   emitter: `0x${string}`;
   outputOpId: string;
   isConfirmed: boolean;
   createdAt: string;
+}
+
+interface apiError {
+  msg: string;
+  code: number;
+  title: string;
 }
 
 export interface Burned {
@@ -32,12 +34,8 @@ export interface Burned {
   massaToken: `AS${string}`;
   evmChainId: number;
   recipient: `0x${string}`;
-  state: operationStates;
-  error: null | {
-    msg: string;
-    code: number;
-    title: string;
-  };
+  state: apiOperationStats;
+  error: null | apiError;
   emitter: string;
   inputOpId: string;
   signatures: Signatures[];
@@ -74,7 +72,7 @@ export async function getBridgeHistory(
       },
     });
   } catch (error: any) {
-    console.warn('Error getting burned by evm address', error?.response?.data);
+    console.warn('Error getting history by evm address', error?.response?.data);
     return { locked: [], burned: [] };
   }
   return response.data;
@@ -101,7 +99,7 @@ async function getBurnedByEvmAddress(
   return response.data.burned;
 }
 
-enum operationStates {
+enum apiOperationStats {
   new = 'new',
   processing = 'processing',
   done = 'done',
@@ -118,7 +116,7 @@ export async function findClaimable(
   const claimableOp = burnedOpList.find(
     (item) =>
       item.outputTxId === null &&
-      item.state === operationStates.processing &&
+      item.state === apiOperationStats.processing &&
       item.inputOpId === burnOpId,
   );
 
@@ -140,23 +138,23 @@ export async function getRedeemOperation(
 
   const statesCorrespondence = {
     // Relayer are adding signatures
-    [operationStates.new]: ClaimState.RETRIEVING_INFO,
+    [apiOperationStats.new]: ClaimState.RETRIEVING_INFO,
 
     // Signatures are added, user can claim, user may have claim, tx may be in a fork
     // if outputTxId is set, we are waiting for evm confirmations
     // it can be ClaimState.AWAITING_SIGNATURE but we can't know from the lambda
     // it can be ClaimState.PENDING but we can't know from the lambda
     // it can be ClaimState.SUCCESS if the outputTxId is set (see bellow)
-    [operationStates.processing]: ClaimState.READY_TO_CLAIM,
+    [apiOperationStats.processing]: ClaimState.READY_TO_CLAIM,
 
     // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
-    [operationStates.finalizing]: ClaimState.SUCCESS,
+    [apiOperationStats.finalizing]: ClaimState.SUCCESS,
 
     // Relayer have deleted burn log in massa smart contract, we have enough evm confirmations
-    [operationStates.done]: ClaimState.SUCCESS,
+    [apiOperationStats.done]: ClaimState.SUCCESS,
 
     // Error in the process
-    [operationStates.error]: ClaimState.ERROR,
+    [apiOperationStats.error]: ClaimState.ERROR,
   };
 
   return burnedOpList.map((opToClaim) => {
@@ -175,7 +173,7 @@ export async function getRedeemOperation(
     // The operation state given by the lambda is processing but the operation may be already claimed
     // if the outputTxId is set, so in this case we set the claimState to SUCCESS
     if (
-      opToClaim.state === operationStates.processing &&
+      opToClaim.state === apiOperationStats.processing &&
       opToClaim.outputTxId
     ) {
       op.claimState = ClaimState.SUCCESS;
@@ -197,7 +195,7 @@ export async function getClaimableOperations(
 
 export function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
-  const formattedTimestamp = dateObject.toLocaleString('fr-FR', {
+  return dateObject.toLocaleString('fr-FR', {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
@@ -207,11 +205,9 @@ export function formatApiCreationTime(inputTimestamp: string) {
     hour12: false,
     timeZone: 'UTC',
   });
-
-  return formattedTimestamp;
 }
 
-export enum OperationStatus {
+export enum historyOperationStatus {
   claimable = 'claimable',
   pending = 'pending',
   done = 'done',
@@ -223,7 +219,7 @@ export interface OperationHistoryItem {
   side: SIDE;
   time: string;
   amount: string;
-  status: OperationStatus;
+  status: historyOperationStatus;
   outputId?: string | `0x${string}` | null;
   inputId: string | `0x${string}` | null;
   evmToken: `0x${string}`;
@@ -246,7 +242,7 @@ export function burnToItem(object: Burned): OperationHistoryItem {
     ),
     outputId: object.outputTxId,
     evmToken: object.evmToken,
-    isOpOnMainnet: object.evmChainId === sepolia.id,
+    isOpOnMainnet: object.evmChainId !== sepolia.id,
   };
 }
 
@@ -257,19 +253,14 @@ export function lockToItem(object: Locked): OperationHistoryItem {
     time: object.createdAt,
     inputId: object.inputTxId,
     amount: object.amount,
-    status: getLockedStatus(
-      object.isConfirmed,
-      object.outputOpId,
-      object.error,
-      object.state,
-    ),
+    status: getLockedStatus(object.isConfirmed, object.error, object.state),
     outputId: object.outputOpId,
     evmToken: object.evmToken,
-    isOpOnMainnet: object.evmChainId === sepolia.id,
+    isOpOnMainnet: object.evmChainId !== sepolia.id,
   };
 }
 
-// fn/side to setStatus depending on different operation factors
+// satus correspondance fn's
 export function getBurnedStatus(
   isConfirmed: boolean,
   outputTxId: string | null,
@@ -279,41 +270,40 @@ export function getBurnedStatus(
     title: string;
   },
   state: string,
-): OperationStatus {
-  if (isConfirmed) {
-    return OperationStatus.done;
-  } else if (state === 'processing' && !isConfirmed && outputTxId !== null) {
-    return OperationStatus.pending;
-  } else if (outputTxId === null) {
-    return OperationStatus.claimable;
-  } else if (error !== null) {
-    return OperationStatus.error;
+): historyOperationStatus {
+  if (error !== null) {
+    return historyOperationStatus.error;
   }
-  return OperationStatus.error;
+  if (isConfirmed) {
+    return historyOperationStatus.done;
+  } else if (state === 'processing' && !isConfirmed && outputTxId !== null) {
+    return historyOperationStatus.pending;
+  }
+  if (outputTxId === null) {
+    return historyOperationStatus.claimable;
+  }
+  return historyOperationStatus.error;
 }
 
 export function getLockedStatus(
   isConfirmed: boolean,
-  outputOpId: string | null,
   error: null | {
     msg: string;
     code: number;
     title: string;
   },
   state: string,
-): OperationStatus {
-  if (isConfirmed) {
-    return OperationStatus.done;
-    // on lock side from state "new" = pending
-  } else if (
-    state === 'processing' ||
-    (state === 'new' && outputOpId !== null)
-  ) {
-    return OperationStatus.pending;
-  } else if (error !== null) {
-    return OperationStatus.error;
+): historyOperationStatus {
+  if (error !== null) {
+    return historyOperationStatus.error;
   }
-  return OperationStatus.error;
+  if (isConfirmed) {
+    return historyOperationStatus.done;
+  }
+  if (state === 'processing' || state === 'new') {
+    return historyOperationStatus.pending;
+  }
+  return historyOperationStatus.error;
 }
 
 export function mergeBurnAndLock(
@@ -335,6 +325,8 @@ export function mergeBurnAndLock(
   newOpHistArray.sort((a, b) => {
     return new Date(b.time).getTime() - new Date(a.time).getTime();
   });
+
+  // TBD: add pending operations on top of list
 
   return newOpHistArray;
 }
