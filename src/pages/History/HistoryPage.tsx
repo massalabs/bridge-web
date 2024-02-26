@@ -15,7 +15,7 @@ import {
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
 
-  // containes all operations to render
+  // contains all operations to render
   const [operationList, setOperationList] = useState<OperationHistoryItem[]>(
     [],
   );

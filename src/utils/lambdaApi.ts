@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-import { ClaimState, SIDE, sepoliaChainId } from './const';
+import { sepolia } from 'wagmi/chains';
+import { ClaimState, SIDE } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
 import { BurnRedeemOperation } from '@/store/operationStore';
@@ -230,7 +231,7 @@ export interface OperationHistoryItem {
 }
 
 // converts
-// Massa To Evm
+// Burned op to history item
 export function burnToItem(object: Burned): OperationHistoryItem {
   return {
     side: SIDE.MASSA_TO_EVM,
@@ -245,11 +246,11 @@ export function burnToItem(object: Burned): OperationHistoryItem {
     ),
     outputId: object.outputTxId,
     evmToken: object.evmToken,
-    isOpOnMainnet: object.evmChainId === sepoliaChainId,
+    isOpOnMainnet: object.evmChainId === sepolia.id,
   };
 }
 
-// Evm To Massa
+// Locked op to history item
 export function lockToItem(object: Locked): OperationHistoryItem {
   return {
     side: SIDE.EVM_TO_MASSA,
@@ -264,7 +265,7 @@ export function lockToItem(object: Locked): OperationHistoryItem {
     ),
     outputId: object.outputOpId,
     evmToken: object.evmToken,
-    isOpOnMainnet: object.evmChainId === sepoliaChainId,
+    isOpOnMainnet: object.evmChainId === sepolia.id,
   };
 }
 
@@ -281,7 +282,6 @@ export function getBurnedStatus(
 ): OperationStatus {
   if (isConfirmed) {
     return OperationStatus.done;
-    // on lock side from state "new" = pending
   } else if (state === 'processing' && !isConfirmed && outputTxId !== null) {
     return OperationStatus.pending;
   } else if (outputTxId === null) {
@@ -305,7 +305,10 @@ export function getLockedStatus(
   if (isConfirmed) {
     return OperationStatus.done;
     // on lock side from state "new" = pending
-  } else if (state === 'processing' && outputOpId !== null) {
+  } else if (
+    state === 'processing' ||
+    (state === 'new' && outputOpId !== null)
+  ) {
     return OperationStatus.pending;
   } else if (error !== null) {
     return OperationStatus.error;
