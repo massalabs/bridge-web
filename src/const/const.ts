@@ -69,7 +69,7 @@ export const supportedTokens = {
   WETH: 'WETH',
 };
 
-export const massaToken = 'MAS';
+export const MASSA_TOKEN = 'MAS';
 
 export enum SUPPORTED_MASSA_WALLETS {
   MASSASTATION = 'MASSASTATION',

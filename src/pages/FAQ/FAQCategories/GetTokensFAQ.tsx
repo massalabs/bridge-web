@@ -3,7 +3,7 @@ import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
 import {
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
-  massaToken,
+  MASSA_TOKEN,
   supportedTokens,
 } from '@/const';
 import { FAQProps, FAQcategories, faqURL } from '@/const/faq';
@@ -163,7 +163,7 @@ export function GetTokensFAQ(props: FAQProps) {
           <div className="flex flex-col gap-6">
             <p>
               To Redeem tokens from Massa Buildnet to Sepolia testnet, you need
-              some Massa coins ({massaToken}) to pay for the transaction fees.
+              some Massa coins ({MASSA_TOKEN}) to pay for the transaction fees.
             </p>
 
             <div className="flex flex-col gap-3">

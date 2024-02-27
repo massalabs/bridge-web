@@ -10,7 +10,7 @@ import {
   Blockchain,
   forwardBurnFees,
   increaseAllowanceFee,
-  massaToken,
+  MASSA_TOKEN,
 } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
@@ -173,7 +173,7 @@ export function FeesEstimation() {
             </Tooltip>
           )}
         </div>
-        <EstimatedAmount amount={feesMAS} symbol={massaToken} />
+        <EstimatedAmount amount={feesMAS} symbol={MASSA_TOKEN} />
       </div>
       <div className="flex items-center justify-between">
         <p>
