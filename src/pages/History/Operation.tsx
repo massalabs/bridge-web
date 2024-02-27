@@ -24,24 +24,14 @@ export function Operation(props: OperationProps) {
 
   return (
     <div className="grid grid-cols-6 mas-body2">
-      <EmitterOrRecipient
-        isMassaToEvm={op.side === SIDE.MASSA_TO_EVM}
-        isOpOnMainnet={op.isOpOnMainnet}
-      />
-      <EmitterOrRecipient
-        isMassaToEvm={op.side !== SIDE.MASSA_TO_EVM}
-        isOpOnMainnet={op.isOpOnMainnet}
-      />
+      <EmitterOrRecipient isMassaToEvm={op.side === SIDE.MASSA_TO_EVM} />
+      <EmitterOrRecipient isMassaToEvm={op.side !== SIDE.MASSA_TO_EVM} />
       <div className="flex items-center">{formatApiCreationTime(op.time)}</div>
       <div className="flex items-center">
         {amountFormattedPreview} {symbol} <Tooltip body={amountFormattedFull} />
       </div>
       <ShowStatus status={op.status} />
-      <TxLinkToExplorers
-        outputId={op.outputId}
-        isOpOnMainnet={op.isOpOnMainnet}
-        side={op.side}
-      />
+      <TxLinkToExplorers outputId={op.outputId} side={op.side} />
     </div>
   );
 }

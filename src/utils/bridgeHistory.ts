@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { sepolia } from 'viem/chains';
 import { SIDE } from './const';
 import { Burned, LambdaResponse, Locked, lambdaEndpoint } from './lambdaApi';
 import { config } from '@/const';
@@ -44,6 +43,7 @@ export enum HistoryOperationStatus {
   Pending = 'pending',
   Done = 'done',
   Error = 'error',
+  Unknown = 'unknown',
 }
 
 // Shared information between Lock and burn
@@ -55,7 +55,6 @@ export interface OperationHistoryItem {
   outputId?: string;
   inputId?: string | `0x${string}`;
   evmToken: `0x${string}`;
-  isOpOnMainnet: boolean;
 }
 
 // converts
@@ -74,7 +73,6 @@ export function burnToItem(object: Burned): OperationHistoryItem {
     ),
     outputId: object.outputTxId ?? undefined,
     evmToken: object.evmToken,
-    isOpOnMainnet: object.evmChainId !== sepolia.id,
   };
 }
 
@@ -88,7 +86,6 @@ export function lockToItem(object: Locked): OperationHistoryItem {
     status: getLockedStatus(object.isConfirmed, object.error, object.state),
     outputId: object.outputOpId,
     evmToken: object.evmToken,
-    isOpOnMainnet: object.evmChainId !== sepolia.id,
   };
 }
 
@@ -108,13 +105,14 @@ export function getBurnedStatus(
   }
   if (isConfirmed) {
     return HistoryOperationStatus.Done;
-  } else if (state === 'processing' && !isConfirmed && outputTxId !== null) {
-    return HistoryOperationStatus.Pending;
   }
-  if (outputTxId === null) {
+  if (state === 'processing') {
+    if (outputTxId) {
+      return HistoryOperationStatus.Pending;
+    }
     return HistoryOperationStatus.Claimable;
   }
-  return HistoryOperationStatus.Error;
+  return HistoryOperationStatus.Unknown;
 }
 
 export function getLockedStatus(
@@ -135,7 +133,7 @@ export function getLockedStatus(
   if (state === 'processing' || state === 'new') {
     return HistoryOperationStatus.Pending;
   }
-  return HistoryOperationStatus.Error;
+  return HistoryOperationStatus.Unknown;
 }
 
 export function mergeBurnAndLock(
