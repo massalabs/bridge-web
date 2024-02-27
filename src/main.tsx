@@ -14,12 +14,18 @@ import './index.css';
 
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
-import { ClaimPage } from './pages/ClaimPage/ClaimPage';
-import { FAQ } from './pages/FAQ/FAQ';
-import { HistoryPage } from './pages/History/HistoryPage';
 import { Base } from '@/components';
 import { PAGES } from '@/const/pages/pages';
-import { Error, NotFound, Index, Unavailable, SCDeploy } from '@/pages/index';
+import {
+  Error,
+  NotFound,
+  Index,
+  Unavailable,
+  SCDeploy,
+  FAQ,
+  HistoryPage,
+  ClaimPage,
+} from '@/pages/index';
 
 const baseENV = import.meta.env.VITE_ENV;
 

@@ -1,5 +1,5 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
-import { isEqual } from '../BuildnetFAQ';
+
 import {
   TDAI_CONTRACT_ADDRESS,
   TDAI_MASSA_ADDRESS,
@@ -9,6 +9,7 @@ import {
 } from '@/const';
 import { FAQProps, FAQcategories } from '@/const/faq';
 import Intl from '@/i18n/i18n';
+import { isEqual } from '@/utils/utils';
 
 export function AddTokensFAQ(props: FAQProps) {
   const { category } = props;

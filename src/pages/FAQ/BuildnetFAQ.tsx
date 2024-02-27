@@ -6,10 +6,7 @@ import { AddTokensFAQ, GetTokensFAQ } from './FAQCategories';
 import { FAQsections } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
-
-export function isEqual(value1: string | null, value2: string) {
-  return value1 === value2;
-}
+import { isEqual } from '@/utils/utils';
 
 export function BuildnetFAQ() {
   const query = useQuery();
