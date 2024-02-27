@@ -5,22 +5,24 @@ import { useAccount } from 'wagmi';
 import { Categories } from './Categories';
 import { Operation, OperationSkeleton } from './Operation';
 import { Hr } from '@/components/Hr';
-import { config } from '@/const';
 import { useResource } from '@/custom/api';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore } from '@/store/store';
 import { OperationHistoryItem, mergeBurnAndLock } from '@/utils/bridgeHistory';
-import { LambdaResponse, lambdaEndpoint } from '@/utils/lambdaApi';
+import { Burned, Locked, lambdaUrl } from '@/utils/lambdaApi';
 
 export const itemsInPage = 10;
 
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
-  const { currentMode } = useBridgeModeStore();
 
-  const url = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=${evmAddress}`;
+  interface LambdaHookResponse {
+    burned: Burned[];
+    locked: Locked[];
+  }
 
-  const { data: lambdaResponse, isFetching } = useResource<LambdaResponse>(url);
+  const { data: lambdaResponse, isFetching } = useResource<LambdaHookResponse>(
+    `${lambdaUrl}${evmAddress}`,
+  );
 
   // contains all operations to render
   const [operationList, setOperationList] = useState<OperationHistoryItem[]>(
@@ -38,12 +40,13 @@ export function HistoryPage() {
   const [pageStep, setPageStep] = useState<number>(0);
 
   useEffect(() => {
-    if (!lambdaResponse) return;
-    const mergedData = mergeBurnAndLock(
-      lambdaResponse.data.burned,
-      lambdaResponse.data.locked,
-    );
-    setOperationList(mergedData);
+    if (lambdaResponse) {
+      const mergedData = mergeBurnAndLock(
+        lambdaResponse.burned,
+        lambdaResponse.locked,
+      );
+      setOperationList(mergedData);
+    }
   }, [lambdaResponse]);
 
   function loadOldest() {

@@ -47,21 +47,22 @@ export interface Signatures {
   relayerId: number;
 }
 
-export interface LambdaResponse {
-  data: {
-    locked: Locked[];
-    burned: Burned[];
-  };
+export interface LambdaAPIResponse {
+  data: { locked: Locked[]; burned: Burned[] };
 }
 
 export const lambdaEndpoint = 'bridge-getHistory-prod';
+
+const { currentMode } = useBridgeModeStore.getState();
+
+export const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=`;
 
 async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
 ): Promise<Burned[]> {
   const { currentMode } = useBridgeModeStore.getState();
 
-  let response: LambdaResponse;
+  let response: LambdaAPIResponse;
   if (!evmAddress) return [];
   try {
     response = await axios.get(config[currentMode].lambdaUrl + lambdaEndpoint, {
@@ -73,7 +74,6 @@ async function getBurnedByEvmAddress(
     console.warn('Error getting burned by evm address', error?.response?.data);
     return [];
   }
-
   return response.data.burned;
 }
 
