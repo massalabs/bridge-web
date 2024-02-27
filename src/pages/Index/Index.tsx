@@ -40,7 +40,7 @@ export function Index() {
 
   const { address: evmAddress } = useAccount();
 
-  const { allowance: _allowanceEVM, tokenBalance: _tokenBalanceEVM } =
+  const { allowance: allowanceEVM, tokenBalance: tokenBalanceEVM } =
     useEvmToken();
 
   const [burnState, setBurnState] = useState<BurnState>(BurnState.INIT);
@@ -141,7 +141,7 @@ export function Index() {
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     // validate amount to transact
-    if (!validate(_tokenBalanceEVM) || !amount) return;
+    if (!validate(tokenBalanceEVM) || !amount) return;
     setBox(Status.Loading);
 
     if (massaToEvm) {
@@ -166,8 +166,8 @@ export function Index() {
         return;
       }
       setApprove(Status.Loading);
-      let _amount = parseUnits(amount, selectedToken.decimals);
-      const needApproval = _allowanceEVM < _amount;
+      let parsedAmount = parseUnits(amount, selectedToken.decimals);
+      const needApproval = allowanceEVM < parsedAmount;
 
       if (needApproval) {
         writeEvmApprove?.();
@@ -175,7 +175,7 @@ export function Index() {
       }
       setApprove(Status.Success);
       setLock(Status.Loading);
-      writeLock?.();
+      writeLock();
     }
   }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 
 import { Button, Money } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
@@ -24,7 +24,7 @@ import { formatAmount } from '@/utils/parseAmount';
 interface BridgeRedeemProps {
   isBlurred: string;
   isButtonDisabled: boolean;
-  handleSubmit: (e: any) => void;
+  handleSubmit: (e: SyntheticEvent) => void;
 }
 
 export function BridgeRedeemLayout(props: BridgeRedeemProps) {
@@ -35,7 +35,8 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
     useEvmToken();
   const { isConnected: isEvmWalletConnected } = useAccount();
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
   const { isMassaToEvm, amount, setSide, setAmount } = useOperationStore();
   const { isFetching } = useAccountStore();
   const { selectedToken: token } = useTokenStore();
@@ -134,7 +135,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                   className="mas-h3 text-f-disabled-1 underline cursor-pointer"
                   onClick={() => setOpenTokensModal(true)}
                 >
-                  {Intl.t(`index.get-tokens`)}
+                  {Intl.t('index.get-tokens')}
                 </h3>
               )}
             </div>
