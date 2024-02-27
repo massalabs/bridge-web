@@ -206,6 +206,8 @@
     "connected": "Connected wallets",
     "description": "Connect wallets for {network1} and {network2}, to bridge tokens.",
     "button": "Connect",
+    "empty-balance": "You’ll receive 0.002 MAS!",
+    "empty-balance-description": "It seems you wish to bridge tokens to a new wallet account that has 0.00 MAS on it. Your account is eligible for allocation of 0.002 MAS for storage costs and gas fees of a few future transfers. We’ll send it to you at the same time of the bridge transfer.",
     "card-destination": {
       "from": "Ethereum wallet",
       "to": "Massa wallet",

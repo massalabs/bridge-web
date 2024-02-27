@@ -74,7 +74,7 @@ const MassaWallet = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4  ">
         <div className="flex gap-2 items-center">
           {renderSelectedWallet()}
           <ChainStatus blockchain={Blockchain.MASSA} />
