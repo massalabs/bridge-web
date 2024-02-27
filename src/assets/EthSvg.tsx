@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef } from 'react';
 
-interface SVGProps extends ComponentPropsWithoutRef<'div'> {
+export interface SVGProps extends ComponentPropsWithoutRef<'div'> {
   size?: number;
 }
 

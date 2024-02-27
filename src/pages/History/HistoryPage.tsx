@@ -10,7 +10,9 @@ import {
   OperationHistoryItem,
   getBridgeHistory,
   mergeBurnAndLock,
-} from '@/utils/lambdaApi';
+} from '@/utils/bridgeHistory';
+
+export const itemsInPage = 10;
 
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
@@ -26,7 +28,7 @@ export function HistoryPage() {
     high: number;
   }>({
     low: 0,
-    high: 10,
+    high: itemsInPage,
   });
   const [pageStep, setPageStep] = useState<number>(0);
 
@@ -45,15 +47,15 @@ export function HistoryPage() {
 
   function loadOldest() {
     setPageStep(pageStep + 1);
-    const newLowest = shownOperations.low + 10;
-    const newHighest = shownOperations.high + 10;
+    const newLowest = shownOperations.low + itemsInPage;
+    const newHighest = shownOperations.high + itemsInPage;
     setShownOperations({ low: newLowest, high: newHighest });
   }
 
   function loadNewest() {
     setPageStep(pageStep - 1);
-    const newLowest = shownOperations.low - 10;
-    const newHighest = shownOperations.high - 10;
+    const newLowest = shownOperations.low - itemsInPage;
+    const newHighest = shownOperations.high - itemsInPage;
     setShownOperations({ low: newLowest, high: newHighest });
   }
 
@@ -90,9 +92,7 @@ export function HistoryPage() {
             customClass="w-64"
             disabled={pageStep <= 0}
             preIcon={<FiMinus />}
-            onClick={() => {
-              loadNewest();
-            }}
+            onClick={loadNewest}
           >
             {Intl.t('history.show-recent')}
           </Button>
@@ -100,9 +100,7 @@ export function HistoryPage() {
             customClass="w-64"
             posIcon={<FiPlus />}
             disabled={pageStep >= Math.ceil(operationList.length / 10 - 1)}
-            onClick={() => {
-              loadOldest();
-            }}
+            onClick={loadOldest}
           >
             {Intl.t('history.show-previous')}
           </Button>

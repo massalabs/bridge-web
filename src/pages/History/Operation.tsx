@@ -1,10 +1,14 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
-import { EmitterRecipient } from './EmitterRecipient';
+import { EmitterOrRecipient } from './EmitterOrRecipient';
+import { itemsInPage } from './HistoryPage';
 import { ShowStatus } from './ShowStatus';
 import { TxLinkToExplorers } from './TxLinkToExplorers';
 import { useTokenStore } from '@/store/tokenStore';
+import {
+  OperationHistoryItem,
+  formatApiCreationTime,
+} from '@/utils/bridgeHistory';
 import { SIDE } from '@/utils/const';
-import { OperationHistoryItem, formatApiCreationTime } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface OperationProps {
@@ -20,11 +24,11 @@ export function Operation(props: OperationProps) {
 
   return (
     <div className="grid grid-cols-6 mas-body2">
-      <EmitterRecipient
+      <EmitterOrRecipient
         isMassaToEvm={op.side === SIDE.MASSA_TO_EVM}
         isOpOnMainnet={op.isOpOnMainnet}
       />
-      <EmitterRecipient
+      <EmitterOrRecipient
         isMassaToEvm={op.side !== SIDE.MASSA_TO_EVM}
         isOpOnMainnet={op.isOpOnMainnet}
       />
@@ -43,9 +47,7 @@ export function Operation(props: OperationProps) {
 }
 
 export function OperationSkeleton() {
-  const numSkeletons = 10;
-
-  const skeletons = Array.from({ length: numSkeletons }, (_, index) => (
+  const skeletons = Array.from({ length: itemsInPage }, (_, index) => (
     <div key={index} className="w-full h-4 bg-gray-300 rounded-xl"></div>
   ));
 

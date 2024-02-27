@@ -1,8 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react';
-
-interface SVGProps extends ComponentPropsWithoutRef<'div'> {
-  size?: number;
-}
+import { SVGProps } from './EthSvg';
 
 export function SepoliaSvg(props: SVGProps) {
   let { size } = props;
