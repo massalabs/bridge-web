@@ -22,7 +22,7 @@ export function WalletCard({ ...props }) {
   const { children } = props;
 
   return (
-    <div className="bg-deep-blue p-6 rounded-2xl flex flex-col justify-center items-center">
+    <div className="bg-deep-blue p-6 rounded-2xl flex flex-col justify-center items-center ">
       <div className="flex flex-col w-full mas-body">{children}</div>
     </div>
   );
