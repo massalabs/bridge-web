@@ -4,14 +4,16 @@ import { EthSvg } from '@/assets/EthSvg';
 import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/store';
 
 interface EmitterOrRecipientProps {
   isMassaToEvm: boolean;
-  isOpOnMainnet: boolean;
 }
 export function EmitterOrRecipient(props: EmitterOrRecipientProps) {
-  const { isMassaToEvm, isOpOnMainnet } = props;
+  const { isMassaToEvm } = props;
+  const { isMainnet } = useBridgeModeStore();
 
+  const isOpOnMainnet = isMainnet();
   const massaNetworkExtension = isOpOnMainnet
     ? Intl.t('general.Mainnet')
     : Intl.t('general.Buildnet');
