@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { fromMAS } from '@massalabs/massa-web3';
-import { Tag, Tooltip } from '@massalabs/react-ui-kit';
+import { Tag } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { FiHelpCircle } from 'react-icons/fi';
@@ -24,10 +24,12 @@ export function MASBalance() {
     });
   }, [connectedAccount, setBalance]);
 
-  const formattedBalance = formatAmount(
+  const { amountFormattedFull } = formatAmount(
     fromMAS(balance?.candidateBalance || '0').toString(),
     9,
-  ).amountFormattedFull;
+  );
+
+  const isBalanceZero = balance?.candidateBalance === '0';
 
   return (
     <div className="flex gap-2 mas-body">
@@ -36,8 +38,8 @@ export function MASBalance() {
         <FetchingLine />
       ) : (
         <>
-          {formattedBalance} {massaToken}
-          <CustomInfoTag />
+          {amountFormattedFull} {massaToken}
+          {isBalanceZero && <CustomInfoTag />}
         </>
       )}
     </div>
@@ -54,13 +56,9 @@ export function CustomInfoTag() {
     >
       <Tag type="info" customClass="flex items-center gap-2">
         {Intl.t(`connect-wallet.empty-balance`)}
-        {/* <Tooltip
-          customClass="w-96 bg-text-s-info-1"
-        body={Intl.t(`connect-wallet.empty-balance-description`)}
-        /> */}
         {showTooltip && (
           <div
-            className={`w-96 left-[450px] top-[550px] z-10 absolute bg-tertiary p-3 rounded-lg text-neutral ml-2`}
+            className={`w-96 left-[480px] top-[515px] z-10 absolute bg-tertiary p-3 rounded-lg text-neutral ml-2`}
           >
             {Intl.t(`connect-wallet.empty-balance-description`)}
           </div>
