@@ -32,6 +32,7 @@ export async function handleMintBridge(): Promise<boolean> {
     handleMintError(error);
     return false;
   }
+
   return true;
 }
 
