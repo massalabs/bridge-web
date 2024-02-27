@@ -1,2 +1,2 @@
-export * from './TokensFAQ';
+export * from './BuildnetFAQ';
 export * from './FAQCategories';

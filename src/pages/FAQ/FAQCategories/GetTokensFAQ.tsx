@@ -1,6 +1,5 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
-
-import { isEqual } from '@/components';
+import { isEqual } from '../BuildnetFAQ';
 import {
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,

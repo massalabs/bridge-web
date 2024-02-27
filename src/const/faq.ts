@@ -12,7 +12,6 @@ export enum FAQcategories {
 }
 
 export const faqURL = {
-  faq: `?section=faq`,
   getTokens: {
     base: `?section=getTokens`,
     getEthOnSep: `?section=getTokens&category=${FAQcategories.getEthOnSep}`,

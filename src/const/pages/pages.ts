@@ -4,4 +4,5 @@ export const PAGES = {
   SC_DEPLOY: 'sc-deploy',
   CLAIM: 'claim',
   HISTORY: 'history',
+  FAQ: 'faq',
 };

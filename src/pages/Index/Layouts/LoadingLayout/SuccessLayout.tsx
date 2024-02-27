@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
-import { Blockchain, METAMASK } from '@/const';
+import { Blockchain, METAMASK, PAGES } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import {
@@ -27,6 +27,8 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const isMainnet = getIsMainnet();
   const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();
+
+  const location = useLocation();
 
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
@@ -54,6 +56,12 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
 
   const currentTxID = massaToEvm ? currentRedeemOperation?.outputId : mintTxId;
+
+  // https://reactrouter.com/en/main/components/link#relative
+
+  const { href } = new URL('.', window.origin + location.pathname);
+
+  const redirectToFaq = `${href}${PAGES.FAQ}${faqURL.addTokens.addToMetamask}`;
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">
@@ -86,14 +94,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
             {Intl.t('index.loading-box.add-tokens-message')}
           </div>
           {/* this may need to be changed for FAQ mainnet */}
-          <Link
-            onClick={onClose}
-            to={{
-              search: massaToEvm
-                ? faqURL.addTokens.addToMetamask
-                : faqURL.addTokens.addToMassa,
-            }}
-          >
+          <Link onClick={onClose} to={redirectToFaq}>
             <u>{Intl.t('index.loading-box.link-to-instructions')}</u>
           </Link>
         </div>

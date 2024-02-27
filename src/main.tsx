@@ -15,6 +15,7 @@ import './index.css';
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
 import { ClaimPage } from './pages/ClaimPage/ClaimPage';
+import { FAQ } from './pages/FAQ/FAQ';
 import { HistoryPage } from './pages/History/HistoryPage';
 import { Base } from '@/components';
 import { PAGES } from '@/const/pages/pages';
@@ -47,6 +48,7 @@ const router = createBrowserRouter(
         <Route path={PAGES.INDEX} element={<Index />} />
         <Route path={PAGES.CLAIM} element={<ClaimPage />} />
         <Route path={PAGES.HISTORY} element={<HistoryPage />} />
+        <Route path={PAGES.FAQ} element={<FAQ />} />
 
         {/* routes for errors */}
         <Route path="error" element={<Error />} />

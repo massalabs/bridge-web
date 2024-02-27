@@ -11,7 +11,7 @@ export function isEqual(value1: string | null, value2: string) {
   return value1 === value2;
 }
 
-export function TokensFAQ() {
+export function BuildnetFAQ() {
   const query = useQuery();
 
   const getTokensSection = useRef<HTMLDivElement | null>(null);
