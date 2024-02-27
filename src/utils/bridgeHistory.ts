@@ -142,13 +142,20 @@ export function mergeBurnAndLock(
   burnedArray: Burned[],
   lockedArray: Locked[],
 ): OperationHistoryItem[] {
-  return [...burnedArray.map(burnToItem), ...lockedArray.map(lockToItem)].sort(
-    (a, b) => {
-      const pendingComparison =
-        (b.status === 'pending' ? 1 : 0) - (a.status === 'pending' ? 1 : 0);
-      return pendingComparison !== 0
-        ? pendingComparison
-        : new Date(b.time).getTime() - new Date(a.time).getTime();
-    },
-  );
+  return [
+    ...burnedArray.map((item) => burnToItem(item)),
+    ...lockedArray.map((item) => lockToItem(item)),
+  ]
+    .sort((a, b) => {
+      return new Date(b.time).getTime() - new Date(a.time).getTime();
+    })
+    .sort((a, b) =>
+      a.status === HistoryOperationStatus.Pending &&
+      b.status !== HistoryOperationStatus.Pending
+        ? -1
+        : a.status !== HistoryOperationStatus.Pending &&
+          b.status === HistoryOperationStatus.Pending
+        ? 1
+        : 0,
+    );
 }

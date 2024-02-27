@@ -14,21 +14,21 @@ export function ShowStatus(props: ShowStatusProps) {
     <div className="flex items-center gap-2">
       {(() => {
         switch (operationStatus) {
-          case HistoryOperationStatus.done:
+          case HistoryOperationStatus.Done:
             return (
               <div className="flex items-center gap-2">
                 <SuccessCheck size="sm" />
                 <p> {Intl.t(`history.operation-status.${operationStatus}`)}</p>
               </div>
             );
-          case HistoryOperationStatus.pending:
+          case HistoryOperationStatus.Pending:
             return (
               <div className="flex items-center gap-2">
                 <Spinner size="sm" />
                 <p> {Intl.t(`history.operation-status.${operationStatus}`)}</p>
               </div>
             );
-          case HistoryOperationStatus.claimable:
+          case HistoryOperationStatus.Claimable:
             return (
               <div className="flex items-center gap-2">
                 <Link to="/claim">
@@ -39,7 +39,7 @@ export function ShowStatus(props: ShowStatusProps) {
                 </Link>
               </div>
             );
-          case HistoryOperationStatus.error:
+          case HistoryOperationStatus.Error:
             return (
               <div className="flex items-center gap-2">
                 <ErrorCheck size="sm" />
