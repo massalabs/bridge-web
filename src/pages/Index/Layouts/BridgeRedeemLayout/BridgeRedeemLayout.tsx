@@ -8,6 +8,7 @@ import { useAccount } from 'wagmi';
 import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';
+import { WarningNoMASToWMAS } from './WarningNoMASToWMAS';
 import { GetTokensPopUpModal } from '@/components';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
@@ -141,6 +142,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
             </div>
             {boxLayout().up.balance}
           </div>
+          <WarningNoMASToWMAS />
         </div>
         <div className="mb-5 flex justify-center items-center">
           <Button

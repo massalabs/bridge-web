@@ -8,6 +8,7 @@ import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
+import { WMAS } from '@/assets/WMAS';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import useEvmToken from '@/custom/bridge/useEvmToken';
@@ -163,12 +164,14 @@ function TokenOptions(props: TokenOptionsProps) {
       const icons = {
         tDAI: <TDaiMassaSvg />,
         WETH: <WEthMassaSvg />,
+        MAS: <MassaLogo size={40} />,
       };
       return icons[token.symbol as 'tDAI' | 'WETH'];
     } else {
       const icons = {
         tDAI: <TDaiSvg />,
         WETH: <WEthSvg />,
+        WMAS: <WMAS />,
       };
       return icons[token.symbolEVM as 'tDAI' | 'WETH'];
     }

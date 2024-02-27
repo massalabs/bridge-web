@@ -194,6 +194,7 @@
       "loading": "Processing bridge transfer..."
     },
     "warning-no-eth": "To claim tokens, you need to have {fees} {symbol} to pay for transaction fees.",
+    "warning-no-mas-to-wmas": "MAS to WMAS bridge is not available. Select another token.",
     "balance": {
       "error": "We couldn't fetch your balance! Please, try again!"
     },

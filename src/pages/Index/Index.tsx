@@ -22,7 +22,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { BurnState } from '@/utils/const';
+import { BurnState, SIDE } from '@/utils/const';
 
 export function Index() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
@@ -58,6 +58,7 @@ export function Index() {
     !connectedAccount ||
     wrongNetwork ||
     isMainnet ||
+    (side === SIDE.MASSA_TO_EVM && selectedToken?.symbol === 'MAS') ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
 

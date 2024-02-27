@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import {
   BUILDNET,
   CHAIN_ID,
@@ -7,11 +5,14 @@ import {
   ClientFactory,
   DefaultProviderUrls,
   MAINNET,
+  fromMAS,
 } from '@massalabs/massa-web3';
+import { mainnet, sepolia } from 'viem/chains';
 import { create } from 'zustand';
 import { getEVMSymbol, getMASSASymbol } from './helpers/tokenSymbol';
 import { useAccountStore, useBridgeModeStore } from './store';
 import { config } from '../const';
+import { fetchMASBalance } from '@/bridge';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
 import {
   getAllowance,
@@ -59,9 +60,10 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
   tokens: [],
 
   getTokens: async () => {
-    const { isMainnet: getIsMainnet } = useBridgeModeStore.getState();
-
-    const massaClient = await initMassaClient(getIsMainnet());
+    const { isMainnet: getIsMainnet, currentMode } =
+      useBridgeModeStore.getState();
+    const isMainnet = getIsMainnet();
+    const massaClient = await initMassaClient(isMainnet);
 
     let tokenList: IToken[] = [];
     try {
@@ -85,6 +87,19 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
           };
         }),
       );
+
+      // Add WMAS
+      tokenList.push({
+        massaToken: '',
+        evmToken: config[currentMode].wMAS,
+        chainId: isMainnet ? mainnet.id : sepolia.id,
+        name: 'Wrapped MASSA',
+        symbol: 'MAS',
+        symbolEVM: 'WMAS',
+        decimals: 9,
+        allowance: BigInt(0),
+        balance: BigInt(0),
+      });
     } catch (e) {
       console.warn('unable to get supported tokens list', e);
     }
@@ -136,6 +151,13 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
 
     const tokens = await Promise.all(
       supportedTokens.map(async (token) => {
+        if (token.massaToken === '') {
+          // Handle WMAS
+          const balance = await fetchMASBalance(connectedAccount);
+          token.balance = fromMAS(balance.candidateBalance);
+          token.allowance = BigInt(0);
+          return token;
+        }
         const [accountAllowance, accountBalance] = await Promise.all([
           getAllowance(
             config[currentMode].massaBridgeContract,
