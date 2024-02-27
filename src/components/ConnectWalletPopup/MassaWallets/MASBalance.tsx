@@ -9,13 +9,14 @@ import { fetchMASBalance } from '@/bridge';
 import { massaToken } from '@/const';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
 export function MASBalance() {
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
 
   const { connectedAccount } = useAccountStore();
+  const { isMainnet } = useBridgeModeStore();
 
   useEffect(() => {
     if (!connectedAccount) return;
@@ -31,6 +32,8 @@ export function MASBalance() {
 
   const isBalanceZero = balance?.candidateBalance === '0';
 
+  const rendercustomTooltip = isBalanceZero && isMainnet();
+
   return (
     <div className="flex gap-2 mas-body">
       {Intl.t('connect-wallet.connected-cards.wallet-balance')}
@@ -39,7 +42,7 @@ export function MASBalance() {
       ) : (
         <>
           {amountFormattedFull} {massaToken}
-          {isBalanceZero && <CustomInfoTag />}
+          {rendercustomTooltip && <CustomInfoTag />}
         </>
       )}
     </div>
