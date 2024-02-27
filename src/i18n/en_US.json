@@ -5,10 +5,16 @@
     "loading": "loading...",
     "Massa": "Massa",
     "Sepolia": "Sepolia",
-    "Ethereum": "EVM",
+    "Ethereum": "Ethereum",
+    "EVM": "EVM",
     "Testnet": "Testnet",
     "Buildnet": "Buildnet",
     "Mainnet": "Mainnet"
+  },
+  "navbar": {
+    "history": "History",
+    "bridge": "Bridge",
+    "claim": "Claim"
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -270,5 +276,22 @@
     "description": "You must accept the terms of service to continue, to proceed with the Massa Bridge.",
     "subtitle": "Terms of service",
     "cta": "Accept"
+  },
+  "history": {
+    "title": "History of transfers",
+    "from": "From",
+    "to": "To",
+    "time": "Time",
+    "amount": "Amount",
+    "status": "Status",
+    "transaction-id": "Transaction ID",
+    "operation-status": {
+      "pending": "Pending",
+      "done": "Done",
+      "error": "Failed",
+      "claimable": "Click to claim"
+    },
+    "show-recent": "Show recent",
+    "show-previous": "Show previous"
   }
 }

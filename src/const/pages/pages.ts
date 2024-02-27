@@ -3,4 +3,5 @@ export const PAGES = {
   UNAVAILABLE: 'unavailable',
   SC_DEPLOY: 'sc-deploy',
   CLAIM: 'claim',
+  HISTORY: 'history',
 };

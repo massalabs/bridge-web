@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
+import { PAGES } from '@/const';
 import {
   useWrongNetworkEVM,
   useWrongNetworkMASSA,
@@ -73,22 +74,29 @@ export function Navbar(props: NavbarProps) {
     setTheme(newTheme);
   }
 
+  const areBothWalletsConnected = isConnectedEVM && connectedAccount;
+
   return (
     <div className="hidden sm:flex flex-col z-10 w-full">
       <div
         className="flex flex-row items-center justify-between px-6 
-      py-8 w-full"
+        py-8 w-full"
       >
         <div className="flex items-center gap-8 h-fit">
-          <Link to="/index">
+          <Link to={`/${PAGES.INDEX}`}>
             <BridgeLogo />
           </Link>
           <p className="mas-menu-default text-neutral h-fit">
-            <Link to="/index">{Intl.t('index.loading-box.bridge')}</Link>
+            <Link to={`/${PAGES.INDEX}`}>{Intl.t('navbar.bridge')}</Link>
           </p>
           {isConnectedEVM ? (
             <p className="mas-menu-default text-neutral h-fit">
-              <Link to="/claim">{Intl.t('index.loading-box.claim')}</Link>
+              <Link to={`/${PAGES.CLAIM}`}>{Intl.t('navbar.claim')}</Link>
+            </p>
+          ) : null}
+          {areBothWalletsConnected ? (
+            <p className="mas-menu-default text-neutral h-fit">
+              <Link to={`/${PAGES.HISTORY}`}>{Intl.t('navbar.history')}</Link>
             </p>
           ) : null}
         </div>
