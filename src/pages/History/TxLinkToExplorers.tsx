@@ -1,19 +1,17 @@
-import { BridgeMode } from '@/const';
+import { useBridgeModeStore } from '@/store/store';
 import { EVM_EXPLORER, MASSA_EXPLORER_URL, SIDE } from '@/utils/const';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface TxLinkToExplorersProps {
   outputId?: string;
-  isOpOnMainnet: boolean;
   side: string;
 }
 
 export function TxLinkToExplorers(props: TxLinkToExplorersProps) {
-  const { outputId, isOpOnMainnet, side } = props;
+  const { outputId, side } = props;
+  const { currentMode } = useBridgeModeStore();
 
   if (outputId === null || outputId === undefined) return;
-
-  const currentMode = isOpOnMainnet ? BridgeMode.mainnet : BridgeMode.testnet;
 
   const explorerUrl =
     side === SIDE.MASSA_TO_EVM
