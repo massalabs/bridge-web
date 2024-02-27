@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 import { ClaimState } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
@@ -12,14 +11,18 @@ export interface Locked {
   massaToken: `AS${string}`;
   inputTxId: `0x${string}`;
   recipient: string;
-  state: operationStates;
-  error: {
-    msg: string;
-    code: number;
-    title: string;
-  };
+  state: apiOperationStates;
+  error: null | ApiError;
   emitter: `0x${string}`;
   outputOpId: string;
+  isConfirmed: boolean;
+  createdAt: string;
+}
+
+interface ApiError {
+  msg: string;
+  code: number;
+  title: string;
 }
 
 export interface Burned {
@@ -29,11 +32,14 @@ export interface Burned {
   massaToken: `AS${string}`;
   evmChainId: number;
   recipient: `0x${string}`;
-  state: operationStates;
-  error: null | string;
+  state: apiOperationStates;
+  error: null | ApiError;
   emitter: string;
   inputOpId: string;
   signatures: Signatures[];
+  isConfirmed: boolean;
+  outputConfirmations: number | null;
+  createdAt: string;
 }
 
 export interface Signatures {
@@ -48,7 +54,7 @@ export interface LambdaResponse {
   };
 }
 
-const lambdaEndpoint = 'bridge-getHistory-prod';
+export const lambdaEndpoint = 'bridge-getHistory-prod';
 
 async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
@@ -71,7 +77,7 @@ async function getBurnedByEvmAddress(
   return response.data.burned;
 }
 
-enum operationStates {
+enum apiOperationStates {
   new = 'new',
   processing = 'processing',
   done = 'done',
@@ -88,7 +94,7 @@ export async function findClaimable(
   const claimableOp = burnedOpList.find(
     (item) =>
       item.outputTxId === null &&
-      item.state === operationStates.processing &&
+      item.state === apiOperationStates.processing &&
       item.inputOpId === burnOpId,
   );
 
@@ -110,23 +116,23 @@ export async function getRedeemOperation(
 
   const statesCorrespondence = {
     // Relayer are adding signatures
-    [operationStates.new]: ClaimState.RETRIEVING_INFO,
+    [apiOperationStates.new]: ClaimState.RETRIEVING_INFO,
 
     // Signatures are added, user can claim, user may have claim, tx may be in a fork
     // if outputTxId is set, we are waiting for evm confirmations
     // it can be ClaimState.AWAITING_SIGNATURE but we can't know from the lambda
     // it can be ClaimState.PENDING but we can't know from the lambda
     // it can be ClaimState.SUCCESS if the outputTxId is set (see bellow)
-    [operationStates.processing]: ClaimState.READY_TO_CLAIM,
+    [apiOperationStates.processing]: ClaimState.READY_TO_CLAIM,
 
     // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
-    [operationStates.finalizing]: ClaimState.SUCCESS,
+    [apiOperationStates.finalizing]: ClaimState.SUCCESS,
 
     // Relayer have deleted burn log in massa smart contract, we have enough evm confirmations
-    [operationStates.done]: ClaimState.SUCCESS,
+    [apiOperationStates.done]: ClaimState.SUCCESS,
 
     // Error in the process
-    [operationStates.error]: ClaimState.ERROR,
+    [apiOperationStates.error]: ClaimState.ERROR,
   };
 
   return burnedOpList.map((opToClaim) => {
@@ -145,7 +151,7 @@ export async function getRedeemOperation(
     // The operation state given by the lambda is processing but the operation may be already claimed
     // if the outputTxId is set, so in this case we set the claimState to SUCCESS
     if (
-      opToClaim.state === operationStates.processing &&
+      opToClaim.state === apiOperationStates.processing &&
       opToClaim.outputTxId
     ) {
       op.claimState = ClaimState.SUCCESS;
