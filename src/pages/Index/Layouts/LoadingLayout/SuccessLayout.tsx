@@ -61,7 +61,9 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const { href } = new URL('.', window.origin + location.pathname);
 
-  const redirectToFaq = `${href}${PAGES.FAQ}${faqURL.addTokens.addToMassa}`;
+  const redirectToFaq = massaToEvm
+    ? `${href}${PAGES.FAQ}${faqURL.addTokens.addToMetamask}`
+    : `${href}${PAGES.FAQ}${faqURL.addTokens.addToMassa}`;
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">

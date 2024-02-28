@@ -16,7 +16,3 @@ export function stringToByteArray(input: string): Uint8Array {
   const utf8Encoder = new TextEncoder();
   return utf8Encoder.encode(input);
 }
-
-export function isEqual(value1: string | null, value2: string) {
-  return value1 === value2;
-}

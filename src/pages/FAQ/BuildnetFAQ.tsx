@@ -6,7 +6,6 @@ import { AddTokensFAQ, GetTokensFAQ } from './FAQCategories';
 import { FAQsections } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
-import { isEqual } from '@/utils/utils';
 
 export function BuildnetFAQ() {
   const query = useQuery();
@@ -28,20 +27,23 @@ export function BuildnetFAQ() {
     }
   }
 
+  const showGetTokens = sectionToNavigate === FAQsections.getTokens;
+  const showAddTokens = sectionToNavigate === FAQsections.addTokens;
+
   return (
     <div className="w-1/2 flex flex-col gap-5 items-center">
       <div ref={getTokensSection}>
         <p className="mas-title text-neutral">FAQ</p>
       </div>
       <Accordion
-        state={isEqual(sectionToNavigate, FAQsections.getTokens)}
+        state={showGetTokens}
         title={Intl.t('index.faq.get-tokens.title')}
       >
         <GetTokensFAQ category={categoryToNavigate} />
       </Accordion>
 
       <Accordion
-        state={isEqual(sectionToNavigate, FAQsections.addTokens)}
+        state={showAddTokens}
         title={Intl.t('index.faq.add-tokens.title')}
       >
         <AddTokensFAQ category={categoryToNavigate} />

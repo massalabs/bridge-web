@@ -8,15 +8,17 @@ import {
 } from '@/const';
 import { FAQProps, FAQcategories, faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
-import { isEqual } from '@/utils/utils';
 
 export function GetTokensFAQ(props: FAQProps) {
   const { category } = props;
 
+  const showGetEthOnSep = category === FAQcategories.getEthOnSep;
+  const showGetWethAndtDai = category === FAQcategories.getWethAndtDai;
+  const showGetMasOnMassa = category === FAQcategories.getMasOnMassa;
   return (
     <>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.getEthOnSep)}
+        state={showGetEthOnSep}
         categoryTitle={Intl.t('index.faq.get-tokens.categories.get-Eth-On-Sep')}
       >
         <AccordionContent>
@@ -46,7 +48,7 @@ export function GetTokensFAQ(props: FAQProps) {
         </AccordionContent>
       </AccordionCategory>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.getWethAndtDai)}
+        state={showGetWethAndtDai}
         categoryTitle={Intl.t(
           'index.faq.get-tokens.categories.get-Weth-And-tDai',
         )}
@@ -152,7 +154,7 @@ export function GetTokensFAQ(props: FAQProps) {
         </AccordionContent>
       </AccordionCategory>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.getMasOnMassa)}
+        state={showGetMasOnMassa}
         categoryTitle={Intl.t(
           'index.faq.get-tokens.categories.get-Mas-On-Massa',
         )}
