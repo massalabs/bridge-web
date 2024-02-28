@@ -6,11 +6,8 @@ import {
   useBridgeModeStore,
   useOperationStore,
 } from '../../store/store';
-import { config } from '@/const';
+import { STATUS_POLL_INTERVAL_MS, WAIT_STATUS_TIMEOUT, config } from '@/const';
 import { safeJsonParse } from '@/utils/utils';
-
-const WAIT_STATUS_TIMEOUT = 300_000;
-const STATUS_POLL_INTERVAL_MS = 1000;
 
 async function getOperationStatus(
   client: Client,
