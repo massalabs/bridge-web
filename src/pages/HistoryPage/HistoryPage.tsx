@@ -6,6 +6,7 @@ import { Categories } from './Categories';
 import { Operation, OperationSkeleton } from './Operation';
 import { Hr } from '@/components/Hr';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/store';
 import {
   OperationHistoryItem,
   getBridgeHistory,
@@ -22,6 +23,7 @@ export function HistoryPage() {
     [],
   );
 
+  const { currentMode } = useBridgeModeStore();
   // pagination
   const [shownOperations, setShownOperations] = useState<{
     low: number;
@@ -43,7 +45,7 @@ export function HistoryPage() {
       }
     };
     fetchData();
-  }, [evmAddress]);
+  }, [evmAddress, currentMode]);
 
   function loadOldest() {
     setPageStep(pageStep + 1);
