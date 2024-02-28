@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { Accordion } from '@massalabs/react-ui-kit';
 
-import { AddTokensFAQ, GetTokensFAQ } from './FAQCategories';
+import { AddTokensFAQ, GetTokensFAQ } from './BuildnetFAQCategories';
 import { FAQsections } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';

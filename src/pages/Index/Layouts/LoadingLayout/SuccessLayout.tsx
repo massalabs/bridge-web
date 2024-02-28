@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
-import { Blockchain, METAMASK, PAGES } from '@/const';
+import { Blockchain, BridgeMode, METAMASK, PAGES } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import {
@@ -65,6 +65,8 @@ export function SuccessLayout(props: LoadingBoxProps) {
     ? `${href}${PAGES.FAQ}${faqURL.addTokens.addToMetamask}`
     : `${href}${PAGES.FAQ}${faqURL.addTokens.addToMassa}`;
 
+  const showLinkToFAQ = currentMode === BridgeMode.testnet;
+
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">
       <div className="mb-1">
@@ -96,9 +98,11 @@ export function SuccessLayout(props: LoadingBoxProps) {
             {Intl.t('index.loading-box.add-tokens-message')}
           </div>
           {/* this may need to be changed for FAQ mainnet */}
-          <Link onClick={onClose} to={redirectToFaq}>
-            <u>{Intl.t('index.loading-box.link-to-instructions')}</u>
-          </Link>
+          {showLinkToFAQ && (
+            <Link onClick={onClose} to={redirectToFaq}>
+              <u>{Intl.t('index.loading-box.link-to-instructions')}</u>
+            </Link>
+          )}
         </div>
       )}
       <ShowLinkToExplorers

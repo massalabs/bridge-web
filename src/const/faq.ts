@@ -28,3 +28,7 @@ export const faqURL = {
 export interface FAQProps {
   category: string | null;
 }
+
+export const bridgeTutorialLink = undefined;
+
+export const discordSupportChannel = undefined;

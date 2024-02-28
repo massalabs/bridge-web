@@ -1,3 +1,4 @@
-export * from './BuildnetFAQ';
+export * from './BuildnetFAQ/BuildnetFAQ';
+export * from './MainnetFAQ/MainnetFAQ';
 export * from './FAQ';
-export * from './FAQCategories';
+export * from './BuildnetFAQ/BuildnetFAQCategories';
