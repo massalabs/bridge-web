@@ -3,6 +3,7 @@ import { parseUnits } from 'viem';
 import Intl from '../../../i18n/i18n';
 import { forwardBurn } from '../bridge';
 import { waitIncludedOperation } from '../massa-utils';
+import { TIMEOUT } from '@/const/const';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -81,7 +82,7 @@ function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
   const { setBurnState } = args;
 
   const typedError = error as CustomError;
-  const isErrorTimeout = typedError.cause?.error === 'timeout';
+  const isErrorTimeout = typedError.cause?.error === TIMEOUT;
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t('index.burn.error.rejected'));
     setBurnState(BurnState.REJECTED);

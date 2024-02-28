@@ -1,12 +1,16 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseUnits } from 'viem';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { handleMintBridge } from './handlers/handleMintBridge';
+import { handleLockError } from './handlers/handleTransactionErrors';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
+import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
   useBridgeModeStore,
+  useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
@@ -14,8 +18,9 @@ import {
 export function useLock() {
   const { currentMode } = useBridgeModeStore();
   const { selectedToken } = useTokenStore();
-  const { connectedAccount } = useAccountStore();
-  const { amount } = useOperationStore();
+  const { connectedAccount, massaClient } = useAccountStore();
+  const { amount, setLockTxId } = useOperationStore();
+  const { setLock, setBox } = useGlobalStatusesStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
 
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
@@ -24,7 +29,7 @@ export function useLock() {
   const { data: hash, writeContract, error } = useWriteContract();
 
   const write = useCallback(() => {
-    const _amount = parseUnits(
+    const amountInBigInt = parseUnits(
       debouncedAmount || '0',
       selectedToken?.decimals || 18,
     );
@@ -32,7 +37,7 @@ export function useLock() {
       address: bridgeContractAddr,
       abi: bridgeVaultAbi,
       functionName: 'lock',
-      args: [_amount.toString(), connectedAccount?.address(), evmToken],
+      args: [amountInBigInt.toString(), connectedAccount?.address(), evmToken],
     });
   }, [
     debouncedAmount,
@@ -47,5 +52,21 @@ export function useLock() {
     hash,
   });
 
-  return { isSuccess, error, write, hash };
+  useEffect(() => {
+    if (isSuccess) {
+      setLock(Status.Success);
+      if (!hash) return;
+      // Set lock id
+      setLockTxId(hash);
+      if (!massaClient) return;
+      handleMintBridge();
+    }
+    if (error) {
+      handleLockError(error);
+      setBox(Status.Error);
+      setLock(Status.Error);
+    }
+  }, [isSuccess, error, hash, massaClient, setLock, setBox, setLockTxId]);
+
+  return { write };
 }

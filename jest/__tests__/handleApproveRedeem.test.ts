@@ -1,5 +1,5 @@
 import { EOperationStatus } from '@massalabs/massa-web3';
-import { U256_MAX } from '../../src/const';
+import { TIMEOUT, U256_MAX } from '../../src/const';
 import { handleApproveRedeem } from '../../src/custom/bridge/handlers/handleApproveRedeem';
 import { Status } from '../../src/store/globalStatusesStore';
 import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
@@ -122,7 +122,7 @@ describe('handleApproveRedeem', () => {
   test('should show error is approval timeout', async () => {
     smartContractsMock.callSmartContract = jest
       .fn()
-      .mockRejectedValueOnce(new Error('timeout'));
+      .mockRejectedValueOnce(new Error(TIMEOUT));
 
     const amount = U256_MAX.toString();
 

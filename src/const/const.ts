@@ -69,9 +69,14 @@ export const supportedTokens = {
   WETH: 'WETH',
 };
 
-export const massaToken = 'MAS';
+export const MASSA_TOKEN = 'MAS';
 
 export enum SUPPORTED_MASSA_WALLETS {
   MASSASTATION = 'MASSASTATION',
   BEARBY = 'BEARBY',
 }
+
+export const WAIT_STATUS_TIMEOUT = 300_000;
+export const STATUS_POLL_INTERVAL_MS = 1000;
+
+export const TIMEOUT = 'timeout';
