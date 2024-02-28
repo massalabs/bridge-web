@@ -1,7 +1,16 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import {
+  handleBurnWMASError,
+  handleWMASBridge,
+} from './handlers/handleWMASBridge';
 import { config } from '@/const/const';
-import { useBridgeModeStore } from '@/store/store';
+import { Status } from '@/store/globalStatusesStore';
+import {
+  useBridgeModeStore,
+  useGlobalStatusesStore,
+  useOperationStore,
+} from '@/store/store';
 
 interface BurnWMASArguments {
   amount: bigint;
@@ -10,10 +19,12 @@ interface BurnWMASArguments {
 
 export function useBurnWMAS() {
   const { currentMode } = useBridgeModeStore();
+  const { setBurnWMAS, setBox } = useGlobalStatusesStore();
+  const { setBurnWMASTxId } = useOperationStore();
 
   const wMASContractAddr = config[currentMode].wMAS;
 
-  const { data: hash, writeContract, error, isPending } = useWriteContract();
+  const { data: hash, writeContract, error } = useWriteContract();
 
   const write = useCallback(
     (operation: BurnWMASArguments) => {
@@ -43,5 +54,19 @@ export function useBurnWMAS() {
     hash,
   });
 
-  return { isPending, isSuccess, error, write, hash };
+  useEffect(() => {
+    if (isSuccess) {
+      setBurnWMAS(Status.Success);
+      if (!hash) return;
+      setBurnWMASTxId(hash);
+      handleWMASBridge();
+    }
+    if (error) {
+      handleBurnWMASError(error);
+      setBox(Status.Error);
+      setBurnWMAS(Status.Error);
+    }
+  }, [isSuccess, error, hash, setBurnWMAS, setBox, setBurnWMASTxId]);
+
+  return { write };
 }

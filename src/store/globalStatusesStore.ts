@@ -15,6 +15,8 @@ export interface GlobalStatusesStoreState {
   claim: Status;
   lock: Status;
   mint: Status;
+  burnWMAS: Status;
+  redeemMAS: Status;
 
   setBox: (status: Status) => void;
   setApprove: (status: Status) => void;
@@ -22,6 +24,8 @@ export interface GlobalStatusesStoreState {
   setClaim: (status: Status) => void;
   setLock: (status: Status) => void;
   setMint: (status: Status) => void;
+  setBurnWMAS: (status: Status) => void;
+  setRedeemMAS: (status: Status) => void;
 
   reset: () => void;
 
@@ -37,6 +41,8 @@ export const useGlobalStatusesStore = create<GlobalStatusesStoreState>(
     claim: Status.None,
     lock: Status.None,
     mint: Status.None,
+    burnWMAS: Status.None,
+    redeemMAS: Status.None,
 
     setBox: (box: Status) => set({ box }),
     setApprove: (approve: Status) => set({ approve }),
@@ -44,6 +50,8 @@ export const useGlobalStatusesStore = create<GlobalStatusesStoreState>(
     setClaim: (claim: Status) => set({ claim }),
     setLock: (lock: Status) => set({ lock }),
     setMint: (mint: Status) => set({ mint }),
+    setBurnWMAS: (burnWMAS: Status) => set({ burnWMAS }),
+    setRedeemMAS: (redeemMAS: Status) => set({ redeemMAS }),
 
     amountError: undefined,
     setAmountError: (error: string | undefined) => set({ amountError: error }),
@@ -56,6 +64,7 @@ export const useGlobalStatusesStore = create<GlobalStatusesStoreState>(
         claim: Status.None,
         lock: Status.None,
         mint: Status.None,
+        redeemMAS: Status.None,
       }),
   }),
 );

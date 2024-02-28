@@ -6,10 +6,12 @@ import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperation
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 
 import { Tos } from '@/components/Tos';
+import { MASSA_TOKEN } from '@/const';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
+import { useBurnWMAS } from '@/custom/bridge/useBurnWMAS';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useLock } from '@/custom/bridge/useLock';
@@ -44,6 +46,8 @@ export function Index() {
     useGlobalStatusesStore();
 
   const { wrongNetwork } = useNetworkCheck();
+
+  const { write: writeBurnWMAS } = useBurnWMAS();
 
   const { write: writeEvmApprove } = useEvmApprove();
 
@@ -108,6 +112,15 @@ export function Index() {
       }
       setApprove(Status.Loading);
       let parsedAmount = parseUnits(amount, selectedToken.decimals);
+
+      if (selectedToken.symbol === MASSA_TOKEN && connectedAccount) {
+        writeBurnWMAS({
+          amount: parsedAmount,
+          massaAddress: connectedAccount.address(),
+        });
+        return;
+      }
+
       const needApproval = allowanceEVM < parsedAmount;
 
       if (needApproval) {

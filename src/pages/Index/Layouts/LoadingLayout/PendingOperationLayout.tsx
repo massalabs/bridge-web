@@ -1,12 +1,14 @@
 import { FiX } from 'react-icons/fi';
 import { BridgeLayout } from './BridgeLayout';
 import { LoadingState } from './LoadingState';
+import { BridgeWMASLayout } from './RedeemLayout/BridgeWMASLayout';
 import { RedeemLayout } from './RedeemLayout/RedeemLayout';
 import { SuccessLayout } from './SuccessLayout';
 import { WarningLayout } from './WarningLayout';
+import { MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useOperationStore } from '@/store/store';
+import { useOperationStore, useTokenStore } from '@/store/store';
 import { BurnState } from '@/utils/const';
 
 export interface LoadingBoxProps {
@@ -18,6 +20,7 @@ export function PendingOperationLayout(props: LoadingBoxProps) {
   const { onClose } = props;
   const { isMassaToEvm } = useOperationStore();
   const massaToEvm = isMassaToEvm();
+  const { selectedToken } = useTokenStore();
 
   const { box } = useGlobalStatusesStore();
 
@@ -62,6 +65,8 @@ export function PendingOperationLayout(props: LoadingBoxProps) {
         return <SuccessLayout {...props} />;
       case IS_BOX_WARNING:
         return <WarningLayout />;
+      case selectedToken?.symbol === MASSA_TOKEN:
+        return <BridgeWMASLayout />;
       case massaToEvm:
         return <RedeemLayout {...props} />;
       default:

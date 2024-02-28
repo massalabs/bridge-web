@@ -57,6 +57,12 @@ export interface OperationStoreState {
   burnTxId?: string;
   setBurnTxId(currentTxID?: string): void;
 
+  burnWMASTxId?: string;
+  setBurnWMASTxId(currentTxID?: string): void;
+
+  redeemMASOpId?: string;
+  setRedeemMASOpId(releaseTxId?: string): void;
+
   amount?: string;
   setAmount(amount?: string): void;
 
@@ -132,6 +138,16 @@ export const useOperationStore = create<OperationStoreState>(
     burnTxId: undefined,
     setBurnTxId(burnTxId?: string) {
       set({ burnTxId });
+    },
+
+    burnWMASTxId: undefined,
+    setBurnWMASTxId(burnWMASTxId?: string) {
+      set({ burnWMASTxId });
+    },
+
+    redeemMASOpId: undefined,
+    setRedeemMASOpId(redeemMASOpId?: string) {
+      set({ redeemMASOpId });
     },
 
     amount: undefined,
