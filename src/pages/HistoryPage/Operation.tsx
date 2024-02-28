@@ -1,6 +1,5 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { EmitterOrRecipient } from './EmitterOrRecipient';
-import { itemsInPage } from './HistoryPage';
 import { ShowStatus } from './ShowStatus';
 import { TxLinkToExplorers } from './TxLinkToExplorers';
 import { useTokenStore } from '@/store/tokenStore';
@@ -37,7 +36,8 @@ export function Operation(props: OperationProps) {
 }
 
 export function OperationSkeleton() {
-  const skeletons = Array.from({ length: itemsInPage }, (_, index) => (
+  const numberOfCols = 6;
+  const skeletons = Array.from({ length: numberOfCols }, (_, index) => (
     <div key={index} className="w-full h-4 bg-gray-300 rounded-xl"></div>
   ));
 
