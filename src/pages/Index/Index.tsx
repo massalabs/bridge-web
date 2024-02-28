@@ -4,7 +4,6 @@ import { useAccount } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
-import { TokensFAQ } from '@/components/FAQ/TokensFAQ';
 
 import { Tos } from '@/components/Tos';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
@@ -195,8 +194,6 @@ export function Index() {
           handleSubmit={handleSubmit}
         />
       )}
-
-      <TokensFAQ />
       {!isOperationPending && <ClaimTokensPopup />}
       <Tos />
     </div>

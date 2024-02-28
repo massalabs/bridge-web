@@ -99,6 +99,9 @@ export function Navbar(props: NavbarProps) {
               <Link to={`/${PAGES.HISTORY}`}>{Intl.t('navbar.history')}</Link>
             </p>
           ) : null}
+          <p className="mas-menu-default text-neutral h-fit">
+            <Link to={`/${PAGES.FAQ}`}>{Intl.t('navbar.faq')}</Link>
+          </p>
         </div>
         <div className="flex flex-row items-center gap-4">
           <Dropdown
