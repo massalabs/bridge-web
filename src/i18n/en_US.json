@@ -293,6 +293,7 @@
       "claimable": "Click to claim"
     },
     "show-recent": "Show recent",
-    "show-previous": "Show previous"
+    "show-previous": "Show previous",
+    "no-history": "No history found for {address}"
   }
 }

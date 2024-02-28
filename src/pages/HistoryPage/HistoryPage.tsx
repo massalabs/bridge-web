@@ -5,17 +5,27 @@ import { useAccount } from 'wagmi';
 import { Categories } from './Categories';
 import { Operation, OperationSkeleton } from './Operation';
 import { Hr } from '@/components/Hr';
+import { config } from '@/const';
+import { useResource } from '@/custom/api';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/store';
 import {
+  LambdaHookHistory,
   OperationHistoryItem,
-  getBridgeHistory,
   mergeBurnAndLock,
 } from '@/utils/bridgeHistory';
+import { lambdaEndpoint } from '@/utils/lambdaApi';
 
 export const itemsInPage = 10;
 
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
+  const { currentMode } = useBridgeModeStore();
+
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=${evmAddress}`;
+
+  const { data: lambdaResponse, isFetching } =
+    useResource<LambdaHookHistory>(lambdaUrl);
 
   // contains all operations to render
   const [operationList, setOperationList] = useState<OperationHistoryItem[]>(
@@ -33,17 +43,18 @@ export function HistoryPage() {
   const [pageStep, setPageStep] = useState<number>(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getBridgeHistory(evmAddress as `0x${string}`);
-        const mergedData = mergeBurnAndLock(data.burned, data.locked);
-        setOperationList(mergedData);
-      } catch (error) {
-        console.error('Error fetching operation', error);
-      }
-    };
-    fetchData();
-  }, [evmAddress]);
+    if (lambdaResponse) {
+      const mergedData = mergeBurnAndLock(
+        lambdaResponse.burned,
+        lambdaResponse.locked,
+      );
+      setOperationList(mergedData);
+      return;
+    } else {
+      setOperationList([]);
+      return;
+    }
+  }, [lambdaResponse]);
 
   function loadOldest() {
     setPageStep(pageStep + 1);
@@ -59,13 +70,27 @@ export function HistoryPage() {
     setShownOperations({ low: newLowest, high: newHighest });
   }
 
-  const showOperations = operationList
+  const historyOperations = operationList
     .slice(shownOperations.low, shownOperations.high)
     .map((op) => <Operation operation={op} key={op.inputId} />);
 
-  const showSkeleton = Array(10)
+  const skeleton = Array(itemsInPage)
     .fill(0)
     .map((_, index) => <OperationSkeleton key={index} />);
+
+  function renderHistory() {
+    if (isFetching) {
+      return skeleton;
+    }
+    if (operationList.length === 0) {
+      return (
+        <p className="mas-menu-active text-info text-2xl">
+          {Intl.t('history.no-history', { address: evmAddress as string })}
+        </p>
+      );
+    }
+    return historyOperations;
+  }
 
   return (
     <div className="flex w-screen h-fit p-10 items-center justify-center">
@@ -85,7 +110,7 @@ export function HistoryPage() {
         <Hr />
 
         <div className="flex flex-col gap-8 py-4 mt-8 mb-8">
-          {operationList ? showOperations : showSkeleton}
+          {renderHistory()}
         </div>
         <div className="flex gap-12 items-center justify-center">
           <Button

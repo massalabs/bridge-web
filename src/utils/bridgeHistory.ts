@@ -1,28 +1,5 @@
-import axios from 'axios';
 import { SIDE } from './const';
-import { Burned, LambdaResponse, Locked, lambdaEndpoint } from './lambdaApi';
-import { config } from '@/const';
-import { useBridgeModeStore } from '@/store/store';
-
-export async function getBridgeHistory(
-  evmAddress: `0x${string}`,
-): Promise<{ locked: Locked[]; burned: Burned[] }> {
-  const { currentMode } = useBridgeModeStore.getState();
-
-  let response: LambdaResponse;
-  if (!evmAddress) return { locked: [], burned: [] };
-  try {
-    response = await axios.get(config[currentMode].lambdaUrl + lambdaEndpoint, {
-      params: {
-        evmAddress,
-      },
-    });
-  } catch (error: any) {
-    console.warn('Error getting history by evm address', error?.response?.data);
-    return { locked: [], burned: [] };
-  }
-  return response.data;
-}
+import { Burned, Locked } from './lambdaApi';
 
 export function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
@@ -36,6 +13,11 @@ export function formatApiCreationTime(inputTimestamp: string) {
     hour12: false,
     timeZone: 'UTC',
   });
+}
+
+export interface LambdaHookHistory {
+  burned: Burned[];
+  locked: Locked[];
 }
 
 export enum HistoryOperationStatus {
