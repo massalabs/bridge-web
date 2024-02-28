@@ -6,7 +6,7 @@ import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { FiHelpCircle } from 'react-icons/fi';
 import { fetchMASBalance } from '@/bridge';
-import { massaToken } from '@/const';
+import { MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -32,7 +32,7 @@ export function MASBalance() {
 
   const isBalanceZero = balance?.candidateBalance === '0';
 
-  const rendercustomTooltip = isBalanceZero && isMainnet();
+  const renderCustomTooltip = isBalanceZero && isMainnet();
 
   return (
     <div className="flex gap-2 mas-body">
@@ -41,8 +41,8 @@ export function MASBalance() {
         <FetchingLine />
       ) : (
         <>
-          {amountFormattedFull} {massaToken}
-          {rendercustomTooltip && <CustomInfoTag />}
+          {amountFormattedFull} {MASSA_TOKEN}
+          {renderCustomTooltip && <CustomInfoTag />}
         </>
       )}
     </div>

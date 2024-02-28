@@ -40,7 +40,7 @@ export function WETH() {
           className="mas-menu-underline mb-4 cursor-pointer"
           onClick={() => {
             setSelectedToken(WETH_CONTRACT_ADDRESS);
-            write?.();
+            write();
           }}
         >
           {Intl.t('get-tokens.card.mint', { token: 'WETH' })}
