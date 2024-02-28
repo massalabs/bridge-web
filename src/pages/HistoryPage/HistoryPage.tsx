@@ -5,24 +5,28 @@ import { useAccount } from 'wagmi';
 import { Categories } from './Categories';
 import { Operation, OperationSkeleton } from './Operation';
 import { Hr } from '@/components/Hr';
+import { config } from '@/const';
 import { useResource } from '@/custom/api';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/store';
 import { OperationHistoryItem, mergeBurnAndLock } from '@/utils/bridgeHistory';
-import { Burned, Locked, lambdaUrl } from '@/utils/lambdaApi';
+import { Burned, Locked, lambdaEndpoint } from '@/utils/lambdaApi';
 
 export const itemsInPage = 10;
 
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
+  const { currentMode } = useBridgeModeStore();
 
   interface LambdaHookResponse {
     burned: Burned[];
     locked: Locked[];
   }
 
-  const { data: lambdaResponse, isFetching } = useResource<LambdaHookResponse>(
-    `${lambdaUrl}${evmAddress}`,
-  );
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=${evmAddress}`;
+
+  const { data: lambdaResponse, isFetching } =
+    useResource<LambdaHookResponse>(lambdaUrl);
 
   // contains all operations to render
   const [operationList, setOperationList] = useState<OperationHistoryItem[]>(

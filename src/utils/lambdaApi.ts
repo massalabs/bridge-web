@@ -53,10 +53,6 @@ export interface LambdaAPIResponse {
 
 export const lambdaEndpoint = 'bridge-getHistory-prod';
 
-const { currentMode } = useBridgeModeStore.getState();
-
-export const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=`;
-
 async function getBurnedByEvmAddress(
   evmAddress: `0x${string}`,
 ): Promise<Burned[]> {
