@@ -15,6 +15,11 @@ export function formatApiCreationTime(inputTimestamp: string) {
   });
 }
 
+export interface LambdaHookHistory {
+  burned: Burned[];
+  locked: Locked[];
+}
+
 export enum HistoryOperationStatus {
   Claimable = 'claimable',
   Pending = 'pending',

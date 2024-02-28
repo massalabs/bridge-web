@@ -9,8 +9,12 @@ import { config } from '@/const';
 import { useResource } from '@/custom/api';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
-import { OperationHistoryItem, mergeBurnAndLock } from '@/utils/bridgeHistory';
-import { Burned, Locked, lambdaEndpoint } from '@/utils/lambdaApi';
+import {
+  LambdaHookHistory,
+  OperationHistoryItem,
+  mergeBurnAndLock,
+} from '@/utils/bridgeHistory';
+import { lambdaEndpoint } from '@/utils/lambdaApi';
 
 export const itemsInPage = 10;
 
@@ -18,15 +22,10 @@ export function HistoryPage() {
   const { address: evmAddress } = useAccount();
   const { currentMode } = useBridgeModeStore();
 
-  interface LambdaHookResponse {
-    burned: Burned[];
-    locked: Locked[];
-  }
-
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=${evmAddress}`;
 
   const { data: lambdaResponse, isFetching } =
-    useResource<LambdaHookResponse>(lambdaUrl);
+    useResource<LambdaHookHistory>(lambdaUrl);
 
   // contains all operations to render
   const [operationList, setOperationList] = useState<OperationHistoryItem[]>(
@@ -50,6 +49,10 @@ export function HistoryPage() {
         lambdaResponse.locked,
       );
       setOperationList(mergedData);
+      return;
+    } else {
+      setOperationList([]);
+      return;
     }
   }, [lambdaResponse]);
 
