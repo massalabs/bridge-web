@@ -1,6 +1,5 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
 
-import { isEqual } from '@/components';
 import {
   TDAI_CONTRACT_ADDRESS,
   TDAI_MASSA_ADDRESS,
@@ -13,10 +12,13 @@ import Intl from '@/i18n/i18n';
 
 export function AddTokensFAQ(props: FAQProps) {
   const { category } = props;
+
+  const showAddToMassa = category === FAQcategories.addToMassa;
+  const showAddToMetamask = category === FAQcategories.addToMetamask;
   return (
     <>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.addToMassa)}
+        state={showAddToMassa}
         categoryTitle={Intl.t('index.faq.add-tokens.categories.add-To-Massa')}
       >
         <AccordionContent>
@@ -64,7 +66,7 @@ export function AddTokensFAQ(props: FAQProps) {
         </AccordionContent>
       </AccordionCategory>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.addToMetamask)}
+        state={showAddToMetamask}
         categoryTitle={Intl.t(
           'index.faq.add-tokens.categories.add-To-Metamask',
         )}

@@ -1,6 +1,5 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
 
-import { isEqual } from '@/components';
 import {
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
@@ -13,10 +12,13 @@ import Intl from '@/i18n/i18n';
 export function GetTokensFAQ(props: FAQProps) {
   const { category } = props;
 
+  const showGetEthOnSep = category === FAQcategories.getEthOnSep;
+  const showGetWethAndtDai = category === FAQcategories.getWethAndtDai;
+  const showGetMasOnMassa = category === FAQcategories.getMasOnMassa;
   return (
     <>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.getEthOnSep)}
+        state={showGetEthOnSep}
         categoryTitle={Intl.t('index.faq.get-tokens.categories.get-Eth-On-Sep')}
       >
         <AccordionContent>
@@ -46,7 +48,7 @@ export function GetTokensFAQ(props: FAQProps) {
         </AccordionContent>
       </AccordionCategory>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.getWethAndtDai)}
+        state={showGetWethAndtDai}
         categoryTitle={Intl.t(
           'index.faq.get-tokens.categories.get-Weth-And-tDai',
         )}
@@ -152,7 +154,7 @@ export function GetTokensFAQ(props: FAQProps) {
         </AccordionContent>
       </AccordionCategory>
       <AccordionCategory
-        state={isEqual(category, FAQcategories.getMasOnMassa)}
+        state={showGetMasOnMassa}
         categoryTitle={Intl.t(
           'index.faq.get-tokens.categories.get-Mas-On-Massa',
         )}

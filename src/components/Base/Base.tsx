@@ -25,10 +25,9 @@ export function Base() {
   useEffect(() => {
     if (SC_DEPLOY) {
       navigate('/sc-deploy');
-    } else if (NO_BRIDGE) {
+    }
+    if (NO_BRIDGE) {
       navigate('/unavailable');
-    } else {
-      navigate('/index');
     }
   }, [navigate]);
 

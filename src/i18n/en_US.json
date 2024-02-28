@@ -14,7 +14,8 @@
   "navbar": {
     "history": "History",
     "bridge": "Bridge",
-    "claim": "Claim"
+    "claim": "Claim",
+    "faq": "FAQ"
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",

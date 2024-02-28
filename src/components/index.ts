@@ -3,7 +3,6 @@ export * from './ConnectWalletPopup';
 export * from './GradientCard/GradientCard';
 export * from './GetTokensPopUpModal/GetTokensPopUpModal';
 export * from './Spinner/Spinner';
-export * from './FAQ';
 export * from './IconsCheck';
 export * from './Status';
 export * from './Footer/Footer';
