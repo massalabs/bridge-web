@@ -11,7 +11,6 @@ export enum Blockchain {
 }
 
 // SMART CONTRACTS ADDRESSES
-
 export const TDAI_CONTRACT_ADDRESS =
   '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';
 
@@ -27,6 +26,16 @@ export const WETH_MASSA_ADDRESS =
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
+
+export enum SupportedTokens {
+  tDAI = 'tDAI',
+  WETH = 'WETH',
+}
+
+export const supportedScAddress = {
+  [SupportedTokens.tDAI]: TDAI_CONTRACT_ADDRESS,
+  [SupportedTokens.WETH]: WETH_CONTRACT_ADDRESS,
+};
 
 export enum BridgeMode {
   mainnet = 'mainnet',
