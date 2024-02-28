@@ -6,7 +6,12 @@ import {
   useBridgeModeStore,
   useOperationStore,
 } from '../../store/store';
-import { STATUS_POLL_INTERVAL_MS, WAIT_STATUS_TIMEOUT, config } from '@/const';
+import {
+  STATUS_POLL_INTERVAL_MS,
+  TIMEOUT,
+  WAIT_STATUS_TIMEOUT,
+  config,
+} from '@/const';
 import { safeJsonParse } from '@/utils/utils';
 
 async function getOperationStatus(
@@ -56,7 +61,7 @@ export async function waitIncludedOperation(
   const status = await getOperationStatus(massaClient, opId);
   throw new Error(
     `Fail to wait operation finality for ${opId}: Timeout reached. status: ${status}`,
-    { cause: { error: 'timeout', details: opId } },
+    { cause: { error: TIMEOUT, details: opId } },
   );
 }
 
@@ -134,6 +139,6 @@ export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
   }
 
   throw new Error(`Fail to wait bridge process finality lock tx ${lockTxId}`, {
-    cause: { error: 'timeout', details: lockTxId },
+    cause: { error: TIMEOUT, details: lockTxId },
   });
 }

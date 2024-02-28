@@ -1,3 +1,4 @@
+import { TIMEOUT } from '../../src/const';
 import { handleMintBridge } from '../../src/custom/bridge/handlers/handleMintBridge';
 import { Status } from '../../src/store/globalStatusesStore';
 import { globalStatusesStoreStateMock } from '../__ mocks __/globalStatusesStore';
@@ -94,7 +95,7 @@ describe('handleMintBridge', () => {
     smartContractsMock.getFilteredScOutputEvents.mockRejectedValueOnce(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      new Error('timeout', { cause: { error: 'timeout' } }),
+      new Error(TIMEOUT, { cause: { error: TIMEOUT } }),
     );
 
     const result = await handleMintBridge();

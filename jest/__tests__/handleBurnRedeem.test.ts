@@ -1,4 +1,5 @@
 import { EOperationStatus } from '@massalabs/massa-web3';
+import { TIMEOUT } from '../../src/const';
 import {
   BurnRedeemParams,
   handleBurnRedeem,
@@ -120,7 +121,7 @@ describe('handleBurnRedeem', () => {
     smartContractsMock.getOperationStatus.mockRejectedValueOnce(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      Error('timeout', { cause: { error: 'timeout' } }),
+      Error(TIMEOUT, { cause: { error: TIMEOUT } }),
     );
 
     const result = await handleBurnRedeem(burnArgs);

@@ -1,5 +1,6 @@
 import { useOperationStore, useTokenStore } from '../../../store/store';
 import { waitForMintEvent } from '../massa-utils';
+import { TIMEOUT } from '@/const';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 
 interface ICustomError extends Error {
@@ -41,7 +42,7 @@ function handleMintError(error: undefined | unknown) {
   const typedError = error as ICustomError;
 
   const cause = typedError?.cause;
-  const isTimeout = cause?.error === 'timeout';
+  const isTimeout = cause?.error === TIMEOUT;
 
   if (isTimeout) {
     setBox(Status.Warning);

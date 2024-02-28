@@ -78,3 +78,5 @@ export enum SUPPORTED_MASSA_WALLETS {
 
 export const WAIT_STATUS_TIMEOUT = 300_000;
 export const STATUS_POLL_INTERVAL_MS = 1000;
+
+export const TIMEOUT = 'timeout';
