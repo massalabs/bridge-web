@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
-import { Blockchain, METAMASK, PAGES } from '@/const';
+import { Blockchain, BridgeMode, METAMASK, PAGES } from '@/const';
 import { faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import {
@@ -61,9 +61,15 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const { href } = new URL('.', window.origin + location.pathname);
 
-  const redirectToFaq = massaToEvm
-    ? `${href}${PAGES.FAQ}${faqURL.addTokens.addToMetamask}`
-    : `${href}${PAGES.FAQ}${faqURL.addTokens.addToMassa}`;
+  const redirectToFaq = getFaqUrl();
+
+  function getFaqUrl(): string {
+    if (currentMode === BridgeMode.mainnet) {
+      return `${href}${PAGES.FAQ}${faqURL.mainnet.addtokens.addToMassa}`;
+    } else {
+      return `${href}${PAGES.FAQ}${faqURL.buildnet.addTokens.addToMassa}`;
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">

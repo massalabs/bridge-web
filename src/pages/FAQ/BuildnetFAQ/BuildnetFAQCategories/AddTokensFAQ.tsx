@@ -1,17 +1,12 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
-
-import {
-  TDAI_CONTRACT_ADDRESS,
-  TDAI_MASSA_ADDRESS,
-  WETH_CONTRACT_ADDRESS,
-  WETH_MASSA_ADDRESS,
-  supportedTokens,
-} from '@/const';
 import { FAQProps, FAQcategories } from '@/const/faq';
 import Intl from '@/i18n/i18n';
+import { IToken, useTokenStore } from '@/store/tokenStore';
 
 export function AddTokensFAQ(props: FAQProps) {
   const { category } = props;
+
+  const { tokens } = useTokenStore();
 
   const showAddToMassa = category === FAQcategories.addToMassa;
   const showAddToMetamask = category === FAQcategories.addToMetamask;
@@ -25,16 +20,14 @@ export function AddTokensFAQ(props: FAQProps) {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3">
               <p className="text-neutral">Step 1:</p>
-              <div className="flex">
-                <a
-                  className="underline pr-1.5"
-                  href="https://station.massa/plugin/massa-labs/massa-wallet/web-app/account-select"
-                  target="_blank"
-                >
-                  Open Massa Wallet
-                </a>
-                <p> and select the account to which you bridged tokens.</p>
-              </div>
+              <a
+                className="underline pr-1.5"
+                href="https://station.massa/plugin/massa-labs/massa-wallet/web-app/account-select"
+                target="_blank"
+              >
+                Open Massa Wallet
+              </a>
+              <p> and select the account to which you bridged tokens.</p>
             </div>
             <div className="flex flex-col gap-3">
               <p className="text-neutral">Step 2:</p>
@@ -47,12 +40,11 @@ export function AddTokensFAQ(props: FAQProps) {
                 smart-contract address of a token you want to add.
               </p>
               <p> Use these Smart contract addresses to see your balance: </p>
-              <p>
-                {supportedTokens.tDai} - {TDAI_MASSA_ADDRESS}
-              </p>
-              <p>
-                {supportedTokens.WETH} - {WETH_MASSA_ADDRESS}
-              </p>
+              {tokens.map((token: IToken, index) => (
+                <p key={index}>
+                  {token.symbol} - {token.massaToken}
+                </p>
+              ))}
             </div>
             <div className="flex flex-col gap-3">
               <p className="text-neutral">Step 4:</p>
@@ -90,36 +82,23 @@ export function AddTokensFAQ(props: FAQProps) {
                 </a>
                 by Metamask.
               </div>
-              <div className="flex flex-col">
-                <p>
-                  For
-                  <a
-                    className="underline pl-1.5"
-                    href="https://sepolia.etherscan.io/token/0x53844f9577c2334e541aec7df7174ece5df1fcf0"
-                    target="_blank"
-                  >
-                    {supportedTokens.tDai}
-                  </a>
-                  , provide this address: {TDAI_CONTRACT_ADDRESS}
-                </p>
-                <p> Symbol: {supportedTokens.tDai}</p>
-                <p> Decimals: 18</p>
-              </div>
-              <div className="flex flex-col">
-                <p>
-                  For
-                  <a
-                    className="underline pl-1.5"
-                    href="https://sepolia.etherscan.io/address/0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424"
-                    target="_blank"
-                  >
-                    {supportedTokens.WETH}
-                  </a>
-                  , provide this address: {WETH_CONTRACT_ADDRESS}
-                </p>
-                <p> Symbol: {supportedTokens.WETH}</p>
-                <p> Decimals: 18</p>
-              </div>
+              {tokens.map((token: IToken, index) => (
+                <div className="flex flex-col" key={index}>
+                  <p>
+                    For
+                    <a
+                      className="underline pl-1.5"
+                      href={`https://sepolia.etherscan.io/token/${token.evmToken}`}
+                      target="_blank"
+                    >
+                      {token.name}
+                    </a>
+                    , provide this address: {token.evmToken}
+                  </p>
+                  <p> Symbol: {token.symbol}</p>
+                  <p> Decimals: {token.decimals}</p>
+                </div>
+              ))}
             </div>
           </div>
         </AccordionContent>
