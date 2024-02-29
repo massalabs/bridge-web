@@ -94,7 +94,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {bridgeTutorialLink ? (
-              <a href={`${bridgeTutorialLink}`}>
+              <a href={bridgeTutorialLink}>
                 <u>{Intl.t('index.faq.mainnet.tutorial-desc')}</u>
               </a>
             ) : (
@@ -226,14 +226,17 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.feature-request-title')}>
         <AccordionContent>
           <p>
-            {discordSupportChannel
-              ? `${Intl.t('index.faq.mainnet.feature-request-title')} ${(
-                  <a href={discordSupportChannel}>
-                    {' '}
-                    <u>{discordSupportChannel}</u>
-                  </a>
-                )}`
-              : Intl.t('index.faq.mainnet.support-channel')}
+            {discordSupportChannel ? (
+              <>
+                {Intl.t('index.faq.mainnet.no-find-desc-1')}
+                <a href={discordSupportChannel}>
+                  <u>{discordSupportChannel} </u>
+                </a>
+                {Intl.t('index.faq.mainnet.no-find-desc-2')}
+              </>
+            ) : (
+              Intl.t('index.faq.mainnet.support-channel')
+            )}
           </p>
         </AccordionContent>
       </Accordion>
@@ -241,14 +244,17 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.no-find-title')}>
         <AccordionContent>
           <p>
-            {discordSupportChannel
-              ? `${Intl.t('index.faq.mainnet.no-find-desc-1')} ${(
-                  <a href={discordSupportChannel}>
-                    {' '}
-                    <u>{discordSupportChannel} </u>
-                  </a>
-                )} ${Intl.t('index.faq.mainnet.no-find-desc-2')}`
-              : Intl.t('index.faq.mainnet.support-channel')}
+            {discordSupportChannel ? (
+              <>
+                {Intl.t('index.faq.mainnet.no-find-desc-1')}{' '}
+                <a href={discordSupportChannel}>
+                  <u>{discordSupportChannel}</u>
+                </a>
+                {Intl.t('index.faq.mainnet.no-find-desc-2')}
+              </>
+            ) : (
+              Intl.t('index.faq.mainnet.support-channel')
+            )}
           </p>
         </AccordionContent>
       </Accordion>

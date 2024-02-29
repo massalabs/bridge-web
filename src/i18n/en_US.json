@@ -82,7 +82,7 @@
         }
       },
       "mainnet": {
-        "support-channel": "Support discord coming soon",
+        "support-channel": "Support discord coming soon.",
         "massa-wallet": "Massa Wallet",
         "bearby-wallet": "Bearby Wallet",
         "massa-documentation": "Massa documentation.",
