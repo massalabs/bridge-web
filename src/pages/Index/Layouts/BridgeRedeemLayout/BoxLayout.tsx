@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
@@ -36,7 +36,7 @@ interface IconsNetworks {
   [key: string]: JSX.Element;
 }
 
-const iconsNetworks: IconsNetworks = {
+export const iconsNetworks: IconsNetworks = {
   MASSASTATION: <MassaLogo size={40} />,
   ETHEREUM: <EthSvg size={40} />,
   SEPOLIA: <SepoliaSvg size={40} />,
@@ -44,15 +44,16 @@ const iconsNetworks: IconsNetworks = {
 
 function EVMHeader() {
   const { isConnected, chain } = useAccount();
-  const { evmNetwork: getEvmNetwork } = useBridgeModeStore();
+  const { evmNetwork: getEvmNetwork, isMainnet } = useBridgeModeStore();
   const evmNetwork = getEvmNetwork();
-
-  useEffect(() => {
-    console.log('chain', chain);
-  }, [chain]);
 
   // Don't like this
   const chainName = chain?.name || '';
+
+  const evmMainnet = `${Intl.t(`general.${Blockchain.ETHEREUM}`)} ${Intl.t(
+    `general.${evmNetwork}`,
+  )}`;
+  const evmTestnet = `${chainName} ${Intl.t(`general.${evmNetwork}`)}`;
 
   return (
     <div className="flex items-center justify-between">
@@ -61,8 +62,10 @@ function EVMHeader() {
           readOnly={true}
           options={[
             {
-              icon: iconsNetworks[chainName.toUpperCase()],
-              item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
+              icon: isMainnet()
+                ? iconsNetworks.ETHEREUM
+                : iconsNetworks.SEPOLIA,
+              item: isMainnet() ? evmMainnet : evmTestnet,
             },
           ]}
         />
