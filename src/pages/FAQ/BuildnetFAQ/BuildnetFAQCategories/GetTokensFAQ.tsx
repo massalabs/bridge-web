@@ -1,11 +1,10 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
 
-import { massaToken, SupportedTokens, supportedScAddress } from '@/const';
 import {
+  SupportedTokens,
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
-  MASSA_TOKEN,
-  supportedTokens,
+  massaToken,
 } from '@/const';
 import { FAQProps, FAQcategories, faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
@@ -74,9 +73,7 @@ export function GetTokensFAQ(props: FAQProps) {
                 Go to Sepolia explorer’s page for
                 <a
                   className="underline pl-1.5"
-                  href={`https://sepolia.etherscan.io/token/${
-                    supportedScAddress[SupportedTokens.WETH]
-                  }#writeContract`}
+                  href={`https://sepolia.etherscan.io/token/${WETH_CONTRACT_ADDRESS}#writeContract`}
                   target="_blank"
                 >
                   {SupportedTokens.WETH}
@@ -84,9 +81,7 @@ export function GetTokensFAQ(props: FAQProps) {
                 , or for
                 <a
                   className="underline pl-1.5"
-                  href={`https://sepolia.etherscan.io/token/${
-                    supportedScAddress[SupportedTokens.WETH]
-                  }#writeContract`}
+                  href={`https://sepolia.etherscan.io/token/${TDAI_CONTRACT_ADDRESS}#writeContract`}
                   target="_blank"
                 >
                   {SupportedTokens.tDAI}

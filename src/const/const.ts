@@ -32,11 +32,6 @@ export enum SupportedTokens {
   WETH = 'WETH',
 }
 
-export const supportedScAddress = {
-  [SupportedTokens.tDAI]: TDAI_CONTRACT_ADDRESS,
-  [SupportedTokens.WETH]: WETH_CONTRACT_ADDRESS,
-};
-
 export enum BridgeMode {
   mainnet = 'mainnet',
   testnet = 'testnet',

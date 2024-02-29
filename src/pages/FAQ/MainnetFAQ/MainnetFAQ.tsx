@@ -9,9 +9,11 @@ import {
 } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
+import { useTokenStore } from '@/store/tokenStore';
 
 export function MainnetFAQ() {
   const query = useQuery();
+  const { tokens } = useTokenStore();
 
   const addTokensToMassa = useRef<HTMLDivElement | null>(null);
 
@@ -28,7 +30,6 @@ export function MainnetFAQ() {
       addTokensToMassa.current.scrollIntoView({ behavior: 'smooth' });
     }
   }
-  // TODO: add supported tokens from deplay mainnet contracts
 
   const showAddTokens = sectionToNavigate === FAQsections.addTokens;
 
@@ -176,11 +177,11 @@ export function MainnetFAQ() {
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-3')}
             <br /> <br />
-            USDC.e -
-            <br /> <br />
-            WETH.e -
-            <br /> <br />
-            DAI.e -
+            {tokens.map((token, index) => (
+              <p key={index}>
+                {token.symbol} - {token.massaToken}
+              </p>
+            ))}
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-4')}
           </p>

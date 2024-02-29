@@ -9,7 +9,8 @@ export const tagTypes = {
 
 export const MASSA_STATION_INSTALL = 'https://station.massa.net';
 export const MASSA_STATION_STORE = 'https://station.massa/web/store';
-export const MASSA_EXPLORER_URL = 'https://explorer.massa.net/operation/';
+export const MASSA_EXPLORER_URL =
+  'https://explorer.massa.net/mainnet/operation/';
 export const MASSA_EXPLO_URL = 'https://massexplo.io/tx/';
 export const MASSA_EXPLO_EXTENSION = '?network=buildnet';
 export const MASSA_WALLET_CREATE_ACCOUNT =

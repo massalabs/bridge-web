@@ -1,6 +1,4 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
-
-import { supportedScAddress, SupportedTokens } from '@/const';
 import { FAQProps, FAQcategories } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { IToken, useTokenStore } from '@/store/tokenStore';
@@ -42,10 +40,9 @@ export function AddTokensFAQ(props: FAQProps) {
                 smart-contract address of a token you want to add.
               </p>
               <p> Use these Smart contract addresses to see your balance: </p>
-              {tokens.map((token: IToken) => (
-                <p key={token.symbol}>
-                  {token.symbol} -{' '}
-                  {supportedScAddress[token.symbol as SupportedTokens]}
+              {tokens.map((token: IToken, index) => (
+                <p key={index}>
+                  {token.symbol} - {token.massaToken}
                 </p>
               ))}
             </div>
@@ -85,21 +82,18 @@ export function AddTokensFAQ(props: FAQProps) {
                 </a>
                 by Metamask.
               </div>
-              {tokens.map((token: IToken) => (
-                <div className="flex flex-col">
+              {tokens.map((token: IToken, index) => (
+                <div className="flex flex-col" key={index}>
                   <p>
                     For
                     <a
                       className="underline pl-1.5"
-                      href={`https://sepolia.etherscan.io/token/${
-                        supportedScAddress[token.symbol as SupportedTokens]
-                      }`}
+                      href={`https://sepolia.etherscan.io/token/${token.evmToken}`}
                       target="_blank"
                     >
                       {token.name}
                     </a>
-                    , provide this address:{' '}
-                    {supportedScAddress[token.symbol as SupportedTokens]}
+                    , provide this address: {token.evmToken}
                   </p>
                   <p> Symbol: {token.symbol}</p>
                   <p> Decimals: {token.decimals}</p>
