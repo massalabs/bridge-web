@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { Toast } from '@massalabs/react-ui-kit';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { BridgeMode } from '@/const';
 import { NO_BRIDGE, SC_DEPLOY } from '@/const/env/maintenance';
@@ -22,12 +22,17 @@ export function Base() {
   const { theme } = useConfigStore();
   const { currentMode } = useBridgeModeStore();
 
+  const location = useLocation();
+
   useEffect(() => {
     if (SC_DEPLOY) {
       navigate('/sc-deploy');
     }
     if (NO_BRIDGE) {
       navigate('/unavailable');
+    }
+    if (location.pathname === '/') {
+      navigate('/index');
     }
   }, [navigate]);
 
