@@ -44,6 +44,9 @@
     "error-toast": "Claim failed"
   },
   "index": {
+    "box-layout": {
+      "wallet-address": "Wallet address: "
+    },
     "top-banner": {
       "bridge-off": "The Bridge process is temporarily down but you can still Redeem tokens. We expect to be back running soon!",
       "redeem-off": "The Redeem process is temporarily down but you can still Bridge tokens. We expect to be back running soon!",
