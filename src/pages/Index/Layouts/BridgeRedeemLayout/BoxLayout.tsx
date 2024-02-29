@@ -62,6 +62,8 @@ function EVMHeader() {
           readOnly={true}
           options={[
             {
+              // we could directly use chain.name here to be more scalable
+              // but there is a change in the user flow so I leave it as is
               icon: isMainnet()
                 ? iconsNetworks.ETHEREUM
                 : iconsNetworks.SEPOLIA,
@@ -145,7 +147,12 @@ function MassaMiddle() {
   );
 }
 
-function TokenOptions() {
+interface TokenOptionsProps {
+  nativeToken: boolean;
+}
+
+function TokenOptions(props: TokenOptionsProps) {
+  const { nativeToken } = props;
   const { isMainnet } = useBridgeModeStore();
   const { isMassaToEvm } = useOperationStore();
   const { isFetching } = useAccountStore();
@@ -164,20 +171,31 @@ function TokenOptions() {
     readOnlyDropdown = isMassaToEvm() || isFetching;
   }
 
-  function getIcon(token: IToken): JSX.Element {
-    if (isMassaToEvm()) {
-      const icons = {
-        tDAI: isMainnet() ? <TDaiMassaSvg /> : <img src={sepoliaDaiSvg} />,
-        WETH: isMainnet() ? <WEthMassaSvg /> : <img src={sepoliaWethSvg} />,
-      };
-      return icons[token.symbol as 'tDAI' | 'WETH'];
-    } else {
-      const icons = {
+  function getTokenIcons() {
+    if (nativeToken) {
+      return {
         tDAI: <TDaiSvg />,
         WETH: <WEthSvg />,
       };
-      return icons[token.symbolEVM as 'tDAI' | 'WETH'];
+    } else if (isMainnet()) {
+      return {
+        tDAI: <TDaiMassaSvg />,
+        WETH: <WEthMassaSvg />,
+      };
+    } else {
+      return {
+        tDAI: <img src={sepoliaDaiSvg} />,
+        WETH: <img src={sepoliaWethSvg} />,
+      };
     }
+  }
+
+  function getIcon(token: IToken): JSX.Element {
+    const icons = {
+      tDAI: getTokenIcons().tDAI,
+      WETH: getTokenIcons().WETH,
+    };
+    return icons[token.symbol as 'tDAI' | 'WETH'];
   }
 
   return (
@@ -253,13 +271,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions />,
+        token: <TokenOptions nativeToken={false} />,
         balance: <TokenBalance />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions />,
+        token: <TokenOptions nativeToken={true} />,
         balance: null,
       },
     },
@@ -267,13 +285,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions />,
+        token: <TokenOptions nativeToken={true} />,
         balance: <TokenBalance />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions />,
+        token: <TokenOptions nativeToken={false} />,
         balance: null,
       },
     },
