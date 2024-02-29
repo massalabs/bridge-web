@@ -1,8 +1,11 @@
-export function WMasSvg() {
+import { SVGProps } from './EthSvg';
+
+export function WMasSvg(props: SVGProps) {
+  const { size } = props;
   return (
     <svg
-      width="42"
-      height="42"
+      width={size ?? 42}
+      height={size ?? 42}
       viewBox="0 0 42 42"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

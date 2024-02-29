@@ -1,9 +1,12 @@
+import { SVGProps } from './EthSvg';
+
 /* eslint-disable max-len */
-export function TDaiSvg() {
+export function TDaiSvg(props: SVGProps) {
+  const { size } = props;
   return (
     <svg
-      width="44px"
-      height="44px"
+      width={size ?? 44}
+      height={size ?? 44}
       viewBox="0 0 32 32"
       xmlns="http://www.w3.org/2000/svg"
       fill="#000000"
