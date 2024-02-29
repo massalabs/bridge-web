@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { BsDiamondHalf } from 'react-icons/bs';
@@ -37,9 +37,13 @@ const iconsNetworks = {
 };
 
 function EVMHeader() {
-  const { isConnected } = useAccount();
+  const { isConnected, chain } = useAccount();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
+
+  useEffect(() => {
+    console.log('chain', chain);
+  }, [chain]);
 
   return (
     <div className="flex items-center justify-between">
