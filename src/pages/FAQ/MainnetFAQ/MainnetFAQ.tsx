@@ -58,10 +58,16 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.not-visible-desc-1')}
-            <a href="mailto:support.bridge@massa.net">{bridgeEmail}</a>.
+            <a href="mailto:support.bridge@massa.net">
+              <u> {bridgeEmail} </u>
+            </a>
+            .
             <br /> <br />
             {Intl.t('index.faq.mainnet.not-visible-desc-2')}
-            <a href="mailto:support.bridge@massa.net">{bridgeEmail}</a>.
+            <a href="mailto:support.bridge@massa.net">
+              <u>{bridgeEmail}</u>
+            </a>
+            .
           </p>
         </AccordionContent>
       </Accordion>
@@ -70,7 +76,10 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.exceed-desc')}
-            <a href="mailto:support.bridge@massa.net">{bridgeEmail}</a>.
+            <a href="mailto:support.bridge@massa.net">
+              <u>{bridgeEmail}</u>
+            </a>
+            .
           </p>
         </AccordionContent>
       </Accordion>
@@ -86,7 +95,7 @@ export function MainnetFAQ() {
           <p>
             {bridgeTutorialLink ? (
               <a href={`${bridgeTutorialLink}`}>
-                {Intl.t('index.faq.mainnet.tutorial-desc')}
+                <u>{Intl.t('index.faq.mainnet.tutorial-desc')}</u>
               </a>
             ) : (
               Intl.t('index.faq.mainnet.tutorial-empty-desc')
@@ -111,8 +120,9 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.what-token-desc')}
+
             <a href="https://docs.massa.net/docs/learn/storage-costs">
-              {Intl.t('index.faq.mainnet.massa-documentation')}
+              <u> {Intl.t('index.faq.mainnet.massa-documentation')}</u>
             </a>
           </p>
         </AccordionContent>
@@ -128,8 +138,9 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.storage-cost-desc')}
+
             <a href="https://docs.massa.net/docs/learn/storage-costs">
-              {Intl.t('index.faq.mainnet.massa-documentation')}
+              <u>{Intl.t('index.faq.mainnet.massa-documentation')}</u>
             </a>
           </p>
         </AccordionContent>
@@ -151,13 +162,14 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             <a href="https://station.massa.net/">
-              {' '}
-              {Intl.t('index.faq.mainnet.massa-wallet')}
-            </a>{' '}
+              <u> {Intl.t('index.faq.mainnet.massa-wallet')}</u>
+            </a>
+
             {Intl.t('index.faq.mainnet.wallets-desc-1')}
             {Intl.t('index.faq.mainnet.wallets-desc-2')}
             <a href="https://bearby.io/">
-              {Intl.t('index.faq.mainnet.bearby-wallet')}
+              {' '}
+              <u>{Intl.t('index.faq.mainnet.bearby-wallet')}</u>
             </a>
             {Intl.t('index.faq.mainnet.wallets-desc-3')}
           </p>
@@ -197,7 +209,10 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.no-wap-desc')}
-            <a href="bridge.massa.net/index">{bridgeUrl}</a>.
+            <a href="bridge.massa.net/index">
+              <u>{bridgeUrl} </u>
+            </a>
+            .
           </p>
         </AccordionContent>
       </Accordion>
@@ -213,7 +228,10 @@ export function MainnetFAQ() {
           <p>
             {discordSupportChannel
               ? `${Intl.t('index.faq.mainnet.feature-request-title')} ${(
-                  <a href={discordSupportChannel}>{discordSupportChannel}</a>
+                  <a href={discordSupportChannel}>
+                    {' '}
+                    <u>{discordSupportChannel}</u>
+                  </a>
                 )}`
               : Intl.t('index.faq.mainnet.support-channel')}
           </p>
@@ -225,7 +243,10 @@ export function MainnetFAQ() {
           <p>
             {discordSupportChannel
               ? `${Intl.t('index.faq.mainnet.no-find-desc-1')} ${(
-                  <a href={discordSupportChannel}>{discordSupportChannel}</a>
+                  <a href={discordSupportChannel}>
+                    {' '}
+                    <u>{discordSupportChannel} </u>
+                  </a>
                 )} ${Intl.t('index.faq.mainnet.no-find-desc-2')}`
               : Intl.t('index.faq.mainnet.support-channel')}
           </p>

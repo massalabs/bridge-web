@@ -4,7 +4,7 @@ import {
   SupportedTokens,
   TDAI_CONTRACT_ADDRESS,
   WETH_CONTRACT_ADDRESS,
-  massaToken,
+  MASSA_TOKEN,
 } from '@/const';
 import { FAQProps, FAQcategories, faqURL } from '@/const/faq';
 import Intl from '@/i18n/i18n';
