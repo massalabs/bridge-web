@@ -13,12 +13,7 @@ import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import {
-  Blockchain,
-  SUPPORTED_EVM_WALLETS,
-  SUPPORTED_MASSA_WALLETS,
-  SupportedTokens,
-} from '@/const';
+import { Blockchain, SUPPORTED_MASSA_WALLETS, SupportedTokens } from '@/const';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
@@ -48,6 +43,11 @@ export const iconsNetworks: IconsNetworks = {
   SEPOLIA: <SepoliaSvg size={40} />,
 };
 
+interface ChainOptions {
+  icon: JSX.Element | undefined;
+  item: string;
+}
+
 function EVMHeader() {
   const { isConnected } = useAccount();
   const { evmNetwork: getEvmNetwork, isMainnet: getIsMainnet } =
@@ -59,19 +59,8 @@ function EVMHeader() {
 
   const chainName = chain?.name || undefined;
 
-  // Not sure if having the supported evm wallets is necessary,
-  // as we should be compatible with all rainbowkit wallets
-  type ConnectorType = keyof typeof SUPPORTED_EVM_WALLETS;
-
-  const evmWalletName =
-    (connector?.name.toUpperCase() as ConnectorType) ||
-    SUPPORTED_EVM_WALLETS.UNKNOWN;
-
-  interface ChainInfo {
-    icon: JSX.Element | undefined;
-    item: string;
-  }
-  function getCurrentChainInfo(): ChainInfo {
+  const evmWalletName = connector?.name || Blockchain.UNKNOWN;
+  function getCurrentChainInfo(): ChainOptions {
     if (!chainName) {
       return {
         icon: <FiAlertCircle size={32} />,
@@ -82,12 +71,11 @@ function EVMHeader() {
         icon: iconsNetworks.ETHEREUM,
         item: `${Blockchain.ETHEREUM} ${Intl.t(`general.${evmNetwork}`)}`,
       };
-    } else {
-      return {
-        icon: iconsNetworks[chainName.toUpperCase()],
-        item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
-      };
     }
+    return {
+      icon: iconsNetworks[chainName.toUpperCase()],
+      item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
+    };
   }
 
   return (
@@ -98,7 +86,7 @@ function EVMHeader() {
       <div className="flex items-center gap-3">
         <p className="mas-body">
           {isConnected
-            ? SUPPORTED_EVM_WALLETS[evmWalletName]
+            ? evmWalletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
         <ChainStatus blockchain={Blockchain.ETHEREUM} />
@@ -191,10 +179,10 @@ function TokenOptions(props: TokenOptionsProps) {
   const isMassaToEvm = getIsMassaToEvm();
 
   let readOnlyDropdown;
-  if (isMainnet) {
-    readOnlyDropdown = !isMainnet || isFetching;
+  if (isMassaToEvm) {
+    readOnlyDropdown = !isMassaToEvm || isFetching;
   } else {
-    readOnlyDropdown = isMainnet || isFetching;
+    readOnlyDropdown = isMassaToEvm || isFetching;
   }
 
   function getTokenIcons() {
@@ -208,12 +196,11 @@ function TokenOptions(props: TokenOptionsProps) {
         tDAI: <TDaiMassaSvg />,
         WETH: <WEthMassaSvg />,
       };
-    } else {
-      return {
-        tDAI: <img src={sepoliaDaiSvg} />,
-        WETH: <img src={sepoliaWethSvg} />,
-      };
     }
+    return {
+      tDAI: <img src={sepoliaDaiSvg} />,
+      WETH: <img src={sepoliaWethSvg} />,
+    };
   }
 
   function getIcon(token: IToken): JSX.Element {

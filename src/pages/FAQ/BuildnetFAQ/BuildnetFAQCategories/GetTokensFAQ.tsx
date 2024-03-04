@@ -57,7 +57,7 @@ export function GetTokensFAQ(props: FAQProps) {
           <div className="flex flex-col gap-6">
             <p>
               Massa Bridge currently supports bridging two ERC-20 tokens —{' '}
-              {SupportedTokens.WETH} and {SupportedTokens.tDAI} — from Sepolia
+              {SupportedTokens.WETH} and {SupportedTokens.tDai} — from Sepolia
               Testnet to Massa Buildnet. You can Mint testnet tokes in the dApp
               above by clicking ‘Get tokens’ once you connect your Metamask
               wallet.
@@ -84,7 +84,7 @@ export function GetTokensFAQ(props: FAQProps) {
                   href={`https://sepolia.etherscan.io/token/${TDAI_CONTRACT_ADDRESS}#writeContract`}
                   target="_blank"
                 >
-                  {SupportedTokens.tDAI}
+                  {SupportedTokens.tDai}
                 </a>
                 .
               </p>
@@ -139,7 +139,7 @@ export function GetTokensFAQ(props: FAQProps) {
               <div className="text-neutral">Step 6:</div>
               <p>
                 To see balances of {SupportedTokens.WETH} and{' '}
-                {SupportedTokens.tDAI} in your Metamask, you need to manually
+                {SupportedTokens.tDai} in your Metamask, you need to manually
                 add a token to Metamask. Check how-to
                 <a
                   className="underline pl-1.5"
