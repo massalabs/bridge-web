@@ -1,15 +1,19 @@
 import { ReactNode } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
-import { BsDiamondHalf } from 'react-icons/bs';
+import { FiAlertCircle } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
+import { EthSvg } from '@/assets/EthSvg';
+import { SepoliaSvg } from '@/assets/SepoliaSVG';
+import sepoliaDaiSvg from '@/assets/SVG/sepolia_dai.svg';
+import sepoliaWethSvg from '@/assets/SVG/sepolia_weth.svg';
 import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { Blockchain, SUPPORTED_MASSA_WALLETS, SupportedTokens } from '@/const';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
@@ -20,9 +24,7 @@ import {
 } from '@/store/store';
 import { IToken } from '@/store/tokenStore';
 import { SIDE } from '@/utils/const';
-import { MassaNetworks } from '@/utils/network';
 import { formatAmount } from '@/utils/parseAmount';
-import { capitalize } from '@/utils/utils';
 
 interface Layout {
   header: ReactNode;
@@ -31,34 +33,60 @@ interface Layout {
   balance: ReactNode;
 }
 
-const iconsNetworks = {
+interface IconsNetworks {
+  [key: string]: JSX.Element;
+}
+
+export const iconsNetworks: IconsNetworks = {
   MASSASTATION: <MassaLogo size={40} />,
-  ETHEREUM: <BsDiamondHalf size={40} />,
+  ETHEREUM: <EthSvg size={40} />,
+  SEPOLIA: <SepoliaSvg size={40} />,
 };
+
+interface ChainOptions {
+  icon: JSX.Element | undefined;
+  item: string;
+}
 
 function EVMHeader() {
   const { isConnected } = useAccount();
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const { evmNetwork: getEvmNetwork, isMainnet: getIsMainnet } =
+    useBridgeModeStore();
+  const { chain, connector } = useAccount();
+
+  const evmNetwork = getEvmNetwork();
   const isMainnet = getIsMainnet();
+
+  const chainName = chain?.name || undefined;
+
+  const evmWalletName = connector?.name || Blockchain.UNKNOWN;
+  function getCurrentChainInfo(): ChainOptions {
+    if (!chainName) {
+      return {
+        icon: <FiAlertCircle size={32} />,
+        item: Intl.t(`general.${Blockchain.CONNECT_WALLET}`),
+      };
+    } else if (isMainnet) {
+      return {
+        icon: iconsNetworks.ETHEREUM,
+        item: `${Blockchain.ETHEREUM} ${Intl.t(`general.${evmNetwork}`)}`,
+      };
+    }
+    return {
+      icon: iconsNetworks[chainName.toUpperCase()],
+      item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
+    };
+  }
 
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
-        <Dropdown
-          readOnly={true}
-          options={[
-            {
-              // todo add icons if we want to support different chains
-              icon: iconsNetworks.ETHEREUM,
-              item: isMainnet ? 'Ethereum Mainnet' : 'Sepolia Testnet',
-            },
-          ]}
-        />
+        <Dropdown readOnly={true} options={[getCurrentChainInfo()]} />
       </div>
       <div className="flex items-center gap-3">
         <p className="mas-body">
           {isConnected
-            ? 'Metamask'
+            ? evmWalletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
         <ChainStatus blockchain={Blockchain.ETHEREUM} />
@@ -69,8 +97,8 @@ function EVMHeader() {
 
 function MassaHeader() {
   const { isFetching, accounts, currentProvider } = useAccountStore();
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMainnet = getIsMainnet();
+  const { massaNetwork: getMassaNetwork } = useBridgeModeStore();
+  const massaNetwork = getMassaNetwork();
 
   const hasNoAccounts = !accounts?.length;
 
@@ -83,8 +111,8 @@ function MassaHeader() {
           readOnly={true}
           options={[
             {
-              item: `Massa ${capitalize(
-                isMainnet ? MassaNetworks.mainnet : MassaNetworks.buildnet,
+              item: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
+                `general.${massaNetwork}`,
               )}`,
               icon: iconsNetworks[SUPPORTED_MASSA_WALLETS.MASSASTATION],
             },
@@ -107,11 +135,9 @@ function EVMMiddle() {
   const { address } = useAccount();
 
   return (
-    <div>
-      <div className="mt-4 mb-4 flex items-center gap-2">
-        <p className="mas-body2">Wallet address:</p>
-        <p className="mas-caption">{address}</p>
-      </div>
+    <div className="mt-4 mb-4 flex items-center gap-2">
+      <p className="mas-body2">{Intl.t('index.box-layout.wallet-address')}</p>
+      <p className="mas-caption">{address}</p>
     </div>
   );
 }
@@ -123,24 +149,23 @@ function MassaMiddle() {
   ]);
 
   return (
-    <div>
-      <div className="mt-4 mb-4 flex items-center gap-2">
-        <p className="mas-body2">Wallet address:</p>
-        <div className="mas-caption">
-          {isFetching ? <FetchingLine /> : connectedAccount?.address()}
-        </div>
+    <div className="mt-4 mb-4 flex items-center gap-2">
+      <p className="mas-body2">{Intl.t('index.box-layout.wallet-address')}</p>
+      <div className="mas-caption">
+        {isFetching ? <FetchingLine /> : connectedAccount?.address()}
       </div>
     </div>
   );
 }
 
 interface TokenOptionsProps {
-  layoutSide: SIDE;
+  nativeToken: boolean;
 }
 
 function TokenOptions(props: TokenOptionsProps) {
-  const { layoutSide } = props;
-  const { isMassaToEvm } = useOperationStore.getState();
+  const { nativeToken } = props;
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const { isMassaToEvm: getIsMassaToEvm } = useOperationStore();
   const { isFetching } = useAccountStore();
   const { tokens, setSelectedToken, selectedToken } = useTokenStore();
 
@@ -150,28 +175,40 @@ function TokenOptions(props: TokenOptionsProps) {
     ) || '0',
   );
 
-  const massaToEvm = isMassaToEvm();
+  const isMainnet = getIsMainnet();
+  const isMassaToEvm = getIsMassaToEvm();
+
   let readOnlyDropdown;
-  if (layoutSide === SIDE.MASSA_TO_EVM) {
-    readOnlyDropdown = !massaToEvm || isFetching;
+  if (isMassaToEvm) {
+    readOnlyDropdown = !isMassaToEvm || isFetching;
   } else {
-    readOnlyDropdown = massaToEvm || isFetching;
+    readOnlyDropdown = isMassaToEvm || isFetching;
   }
 
-  function getIcon(token: IToken): JSX.Element {
-    if (layoutSide === SIDE.MASSA_TO_EVM) {
-      const icons = {
-        tDAI: <TDaiMassaSvg />,
-        WETH: <WEthMassaSvg />,
-      };
-      return icons[token.symbol as 'tDAI' | 'WETH'];
-    } else {
-      const icons = {
+  function getTokenIcons() {
+    if (!nativeToken) {
+      return {
         tDAI: <TDaiSvg />,
         WETH: <WEthSvg />,
       };
-      return icons[token.symbolEVM as 'tDAI' | 'WETH'];
+    } else if (isMainnet) {
+      return {
+        tDAI: <TDaiMassaSvg />,
+        WETH: <WEthMassaSvg />,
+      };
     }
+    return {
+      tDAI: <img src={sepoliaDaiSvg} />,
+      WETH: <img src={sepoliaWethSvg} />,
+    };
+  }
+
+  function getIcon(token: IToken): JSX.Element {
+    const icons = {
+      tDAI: getTokenIcons().tDAI,
+      WETH: getTokenIcons().WETH,
+    };
+    return icons[token.symbol as SupportedTokens];
   }
 
   return (
@@ -181,8 +218,7 @@ function TokenOptions(props: TokenOptionsProps) {
       size="md"
       options={tokens.map((token: IToken) => {
         return {
-          item:
-            layoutSide === SIDE.MASSA_TO_EVM ? token.symbol : token.symbolEVM,
+          item: isMassaToEvm ? token.symbol : token.symbolEVM,
           icon: getIcon(token),
           onClick: () => setSelectedToken(token),
         };
@@ -191,7 +227,8 @@ function TokenOptions(props: TokenOptionsProps) {
   );
 }
 
-function TokenBalance(props: { layoutSide: SIDE }) {
+function TokenBalance() {
+  const { isMassaToEvm } = useOperationStore();
   const { selectedToken } = useTokenStore();
   const { tokenBalance: tokenBalanceEvm, isFetched } = useEvmToken();
 
@@ -199,7 +236,7 @@ function TokenBalance(props: { layoutSide: SIDE }) {
 
   let amount: bigint | undefined;
   let symbol: string | undefined;
-  if (props.layoutSide === SIDE.MASSA_TO_EVM) {
+  if (isMassaToEvm()) {
     amount = selectedToken?.balance;
     symbol = selectedToken?.symbol;
   } else {
@@ -247,13 +284,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
-        balance: <TokenBalance layoutSide={SIDE.MASSA_TO_EVM} />,
+        token: <TokenOptions nativeToken={true} />,
+        balance: <TokenBalance />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
+        token: <TokenOptions nativeToken={false} />,
         balance: null,
       },
     },
@@ -261,13 +298,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions layoutSide={SIDE.EVM_TO_MASSA} />,
-        balance: <TokenBalance layoutSide={SIDE.EVM_TO_MASSA} />,
+        token: <TokenOptions nativeToken={false} />,
+        balance: <TokenBalance />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions layoutSide={SIDE.MASSA_TO_EVM} />,
+        token: <TokenOptions nativeToken={true} />,
         balance: null,
       },
     },

@@ -34,7 +34,7 @@ export function Base() {
     if (location.pathname === '/') {
       navigate('/index');
     }
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   const themeClassName =
     theme.replace('theme-', '') +
