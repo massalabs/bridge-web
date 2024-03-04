@@ -15,17 +15,22 @@ interface ConnectWalletPopupProps {
 }
 export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
   const { setOpen } = props;
-  const { massaNetwork: getMassaNetwork, evmNetwork: getEvmNetwork } =
-    useBridgeModeStore();
+  const {
+    massaNetwork: getMassaNetwork,
+    evmNetwork: getEvmNetwork,
+    isMainnet: getIsMainnet,
+  } = useBridgeModeStore();
   const { chain } = useAccount();
 
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
-
+  const isMainnet = getIsMainnet();
+  const chainName = chain ? chain.name : Blockchain.UNKNOWN;
+  const currentEvmChain = isMainnet
+    ? Intl.t(`general.${Blockchain.ETHEREUM}`)
+    : chainName;
   const networks = {
-    network1: `${
-      chain ? Intl.t(`general.${chain.name}`) : Intl.t(`general.EVM`)
-    } ${Intl.t(`general.${evmNetwork}`)}`,
+    network1: `${currentEvmChain} ${Intl.t(`general.${evmNetwork}`)}`,
     network2: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
       `general.${massaNetwork}`,
     )}`,
