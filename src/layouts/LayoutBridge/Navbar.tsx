@@ -6,8 +6,9 @@ import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { PAGES } from '@/const';
 import {
-  useWrongNetworkEVM,
-  useWrongNetworkMASSA,
+  useBnbNetworkValidation,
+  useEthNetworkValidation,
+  useMassaNetworkValidation,
 } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
@@ -29,16 +30,18 @@ export function Navbar(props: NavbarProps) {
   const { accounts, isFetching, connectedAccount } = useAccountStore();
 
   const { setTheme } = useConfigStore();
-  const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
-  const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
+  const { isValidEthNetwork } = useEthNetworkValidation();
+  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const { isValidBnbNetwork } = useBnbNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
 
   const hasAccounts = (accounts || []).length > 0;
   const showPingAnimation =
     !isConnectedEVM ||
-    wrongNetworkEVM ||
-    wrongNetworkMassa ||
+    !isValidEthNetwork ||
+    !isValidMassaNetwork ||
+    !isValidBnbNetwork ||
     !connectedAccount;
 
   function ConnectedWallet() {
@@ -94,6 +97,9 @@ export function Navbar(props: NavbarProps) {
               <Link to={`/${PAGES.CLAIM}`}>{Intl.t('navbar.claim')}</Link>
             </p>
           ) : null}
+          <p className="mas-menu-default text-neutral h-fit">
+            <Link to={`/${PAGES.DAO}`}>{Intl.t('navbar.dao-maker')}</Link>
+          </p>
           {areBothWalletsConnected ? (
             <p className="mas-menu-default text-neutral h-fit">
               <Link to={`/${PAGES.HISTORY}`}>{Intl.t('navbar.history')}</Link>

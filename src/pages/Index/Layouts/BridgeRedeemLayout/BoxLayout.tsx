@@ -15,6 +15,8 @@ import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, MASSA_TOKEN, SupportedTokens } from '@/const';
+import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
+import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
@@ -37,8 +39,6 @@ interface Layout {
 interface IconsNetworks {
   [key: string]: JSX.Element;
 }
-
-// TODO: Refacto to use chain.symbol instead of full chain name
 export const iconsNetworks: IconsNetworks = {
   MAS: <MassaLogo size={40} />,
   ETH: <EthSvg size={40} />,
@@ -56,7 +56,7 @@ function EVMHeader() {
   const { isConnected } = useAccount();
   const { evmNetwork: getEvmNetwork, isMainnet: getIsMainnet } =
     useBridgeModeStore();
-  const { chain, connector } = useAccount();
+  const { chain } = useAccount();
 
   const evmNetwork = getEvmNetwork();
   const isMainnet = getIsMainnet();
@@ -64,12 +64,11 @@ function EVMHeader() {
   const chainName = chain?.name || undefined;
   const chainSymbol = chain?.nativeCurrency.symbol || undefined;
 
-  const evmWalletName = connector?.name || Blockchain.UNKNOWN;
   function getCurrentChainInfo(): ChainOptions {
     if (!chainSymbol) {
       return {
         icon: <FiAlertCircle size={32} />,
-        item: Intl.t(`general.${Blockchain.CONNECT_WALLET}`),
+        item: Intl.t(`general.${Blockchain.INVALID_CHAIN}`),
       };
     } else if (isMainnet) {
       return {
@@ -83,6 +82,9 @@ function EVMHeader() {
     };
   }
 
+  const walletName = useConnectorName();
+  const currentEvmChain = useConnectedEvmChain();
+
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
@@ -91,10 +93,10 @@ function EVMHeader() {
       <div className="flex items-center gap-3">
         <p className="mas-body">
           {isConnected
-            ? evmWalletName
+            ? walletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        <ChainStatus blockchain={Blockchain.ETHEREUM} />
+        <ChainStatus blockchain={currentEvmChain} />
       </div>
     </div>
   );

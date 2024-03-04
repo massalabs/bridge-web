@@ -3,9 +3,7 @@ import {
   PopupModalContent,
   PopupModalHeader,
 } from '@massalabs/react-ui-kit';
-
 import { ConnectWallets } from './ConnectWallets';
-import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 
@@ -14,18 +12,8 @@ interface ConnectWalletPopupProps {
 }
 export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
   const { setOpen } = props;
-  const { massaNetwork: getMassaNetwork, evmNetwork: getEvmNetwork } =
-    useBridgeModeStore();
 
-  const evmNetwork = getEvmNetwork();
-  const massaNetwork = getMassaNetwork();
-
-  const networks = {
-    network1: `${Intl.t(`general.${evmNetwork}`)}`,
-    network2: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
-      `general.${massaNetwork}`,
-    )}`,
-  };
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
 
   return (
     <PopupModal
@@ -40,7 +28,9 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
             {Intl.t('connect-wallet.title')}
           </label>
           <div className="mas-body">
-            {Intl.t('connect-wallet.description', networks)}
+            {getIsMainnet()
+              ? Intl.t('connect-wallet.description-mainnet')
+              : Intl.t('connect-wallet.description-buildnet')}
           </div>
         </div>
       </PopupModalHeader>

@@ -2,13 +2,18 @@ import { useEffect, useState } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 
 import { useAccount } from 'wagmi';
-import { validateEvmNetwork, validateMassaNetwork } from '../../utils/network';
+import { useConnectorName } from './useConnectorName';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import {
+  isEthNetworkValid,
+  isMassaNetworkValid,
+} from '@/utils/networkValidation';
 
-export function useNetworkCheck() {
+export function useIndexNetworkCheck() {
+  const { chain } = useAccount();
+
   const { connectedNetwork, currentProvider } = useAccountStore();
-  const { chain: evmConnectedChain } = useAccount();
   const {
     isMainnet: getIsMainnet,
     currentMode,
@@ -19,10 +24,10 @@ export function useNetworkCheck() {
   const isMainnet = getIsMainnet();
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
+  const walletName = useConnectorName();
 
   // state to dismiss toast
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
-
+  const [wrongIndexNetwork, setWrongIndexNetwork] = useState<boolean>(false);
   const [toastIdEvm, setToastIdEvm] = useState<string>('');
   const [toastIdMassa, setToastIdMassa] = useState<string>('');
 
@@ -38,20 +43,17 @@ export function useNetworkCheck() {
 
     // Check and toast EVM
     let evmOk = false;
-    if (
-      evmConnectedChain &&
-      !validateEvmNetwork(isMainnet, evmConnectedChain.id)
-    ) {
+    if (chain && !isEthNetworkValid(isMainnet, chain.id)) {
       setToastIdEvm(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
-            name: 'evm',
-            network: evmNetwork,
+            name: walletName,
+            network: evmNetwork.toLowerCase(),
           }),
           { id: 'evm' },
         ),
       );
-      setWrongNetwork(true);
+      setWrongIndexNetwork(true);
     } else {
       toast.dismiss(toastIdEvm);
       evmOk = true;
@@ -59,10 +61,7 @@ export function useNetworkCheck() {
 
     // Check and toast Massa
     let massaOk = false;
-    if (
-      connectedNetwork &&
-      !validateMassaNetwork(isMainnet, connectedNetwork)
-    ) {
+    if (connectedNetwork && !isMassaNetworkValid(isMainnet, connectedNetwork)) {
       setToastIdMassa(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
@@ -77,16 +76,15 @@ export function useNetworkCheck() {
         ),
       );
 
-      setWrongNetwork(true);
+      setWrongIndexNetwork(true);
     } else {
       toast.dismiss(toastIdMassa);
       massaOk = true;
     }
-
-    setWrongNetwork(!massaOk || !evmOk);
+    setWrongIndexNetwork(!massaOk || !evmOk);
   }, [
     currentMode,
-    evmConnectedChain,
+    chain,
     connectedNetwork,
     isMainnet,
     toastIdEvm,
@@ -95,9 +93,10 @@ export function useNetworkCheck() {
     evmNetwork,
     massaNetwork,
     setToastIdEvm,
-    setWrongNetwork,
+    setWrongIndexNetwork,
     setToastIdMassa,
+    walletName,
   ]);
 
-  return { wrongNetwork };
+  return { wrongIndexNetwork };
 }

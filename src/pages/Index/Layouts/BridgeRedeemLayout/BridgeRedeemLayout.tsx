@@ -4,7 +4,6 @@ import { Button, Money } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
-
 import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';

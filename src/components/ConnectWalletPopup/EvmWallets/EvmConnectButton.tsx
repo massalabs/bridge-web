@@ -3,27 +3,26 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
-
 import { MetaMaskSvg } from '@/assets';
-import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
+import { isEvmNetworkValid } from '@/utils/networkValidation';
 import { formatAmount } from '@/utils/parseAmount';
 
-export default function EvmConnectButton(): JSX.Element {
-  const { wrongNetwork } = useWrongNetworkEVM();
-
+export function EvmConnectButton(): JSX.Element {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
   const { switchChain } = useSwitchChain();
 
-  const { address } = useAccount();
+  const { address, chain } = useAccount();
 
   const { data: balanceData } = useBalance({
     address,
   });
+
+  const isValidEVMNetwork = isEvmNetworkValid(isMainnet, chain?.id);
 
   return (
     <ConnectButton.Custom>
@@ -53,13 +52,12 @@ export default function EvmConnectButton(): JSX.Element {
                 );
               }
 
-              if (wrongNetwork) {
+              if (!isValidEVMNetwork) {
                 return (
                   <>
                     <div>
                       {Intl.t(
                         'connect-wallet.connect-metamask.invalid-network',
-                        { network: isMainnet ? 'Mainnet' : 'Sepolia' },
                       )}
                     </div>
                     <Button
