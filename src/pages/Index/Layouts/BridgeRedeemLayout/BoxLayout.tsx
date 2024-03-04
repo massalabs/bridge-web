@@ -43,17 +43,10 @@ export const iconsNetworks: IconsNetworks = {
 };
 
 function EVMHeader() {
-  const { isConnected, chain } = useAccount();
-  const { evmNetwork: getEvmNetwork, isMainnet } = useBridgeModeStore();
+  const { isConnected } = useAccount();
+  const { evmNetwork: getEvmNetwork } = useBridgeModeStore();
+
   const evmNetwork = getEvmNetwork();
-
-  // Don't like this
-  const chainName = chain?.name || '';
-
-  const evmMainnet = `${Intl.t(`general.${Blockchain.ETHEREUM}`)} ${Intl.t(
-    `general.${evmNetwork}`,
-  )}`;
-  const evmTestnet = `${chainName} ${Intl.t(`general.${evmNetwork}`)}`;
 
   return (
     <div className="flex items-center justify-between">
@@ -64,10 +57,10 @@ function EVMHeader() {
             {
               // we could directly use chain.name here to be more scalable
               // but there is a change in the user flow so I leave it as is
-              icon: isMainnet()
-                ? iconsNetworks.ETHEREUM
-                : iconsNetworks.SEPOLIA,
-              item: isMainnet() ? evmMainnet : evmTestnet,
+              icon: iconsNetworks.ETHEREUM,
+              item: `${Intl.t(`general.${Blockchain.ETHEREUM}`)} ${Intl.t(
+                `general.${evmNetwork}`,
+              )}`,
             },
           ]}
         />
@@ -153,7 +146,7 @@ interface TokenOptionsProps {
 
 function TokenOptions(props: TokenOptionsProps) {
   const { nativeToken } = props;
-  const { isMainnet } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { isMassaToEvm } = useOperationStore();
   const { isFetching } = useAccountStore();
   const { tokens, setSelectedToken, selectedToken } = useTokenStore();
@@ -164,20 +157,22 @@ function TokenOptions(props: TokenOptionsProps) {
     ) || '0',
   );
 
+  const isMainnet = getIsMainnet();
+
   let readOnlyDropdown;
-  if (isMassaToEvm()) {
-    readOnlyDropdown = !isMassaToEvm() || isFetching;
+  if (isMainnet) {
+    readOnlyDropdown = !isMainnet || isFetching;
   } else {
-    readOnlyDropdown = isMassaToEvm() || isFetching;
+    readOnlyDropdown = isMainnet || isFetching;
   }
 
   function getTokenIcons() {
-    if (nativeToken) {
+    if (!nativeToken) {
       return {
         tDAI: <TDaiSvg />,
         WETH: <WEthSvg />,
       };
-    } else if (isMainnet()) {
+    } else if (isMainnet) {
       return {
         tDAI: <TDaiMassaSvg />,
         WETH: <WEthMassaSvg />,
@@ -271,13 +266,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions nativeToken={false} />,
+        token: <TokenOptions nativeToken={true} />,
         balance: <TokenBalance />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions nativeToken={true} />,
+        token: <TokenOptions nativeToken={false} />,
         balance: null,
       },
     },
@@ -285,13 +280,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions nativeToken={true} />,
+        token: <TokenOptions nativeToken={false} />,
         balance: <TokenBalance />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions nativeToken={false} />,
+        token: <TokenOptions nativeToken={true} />,
         balance: null,
       },
     },

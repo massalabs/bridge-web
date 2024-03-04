@@ -9,7 +9,8 @@
     "EVM": "EVM",
     "Testnet": "Testnet",
     "Buildnet": "Buildnet",
-    "Mainnet": "Mainnet"
+    "Mainnet": "Mainnet",
+    "Unknown": "Unknown"
   },
   "navbar": {
     "history": "History",

@@ -8,6 +8,7 @@ export enum Blockchain {
   MASSA = 'Massa',
   MASSA_BUILDNET = 'Buildnet',
   MASSA_MAINNET = 'Mainnet',
+  UNKNOWN = 'Unknown',
 }
 
 // SMART CONTRACTS ADDRESSES
