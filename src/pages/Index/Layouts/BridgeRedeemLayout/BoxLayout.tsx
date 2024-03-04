@@ -17,6 +17,7 @@ import {
   Blockchain,
   SUPPORTED_EVM_WALLETS,
   SUPPORTED_MASSA_WALLETS,
+  SupportedTokens,
 } from '@/const';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
@@ -215,18 +216,12 @@ function TokenOptions(props: TokenOptionsProps) {
     }
   }
 
-  // I'm not sure if this is cleaner than previous implementation
-  interface Icons {
-    tDAI: 'tDAI';
-    WETH: 'WETH';
-  }
-
   function getIcon(token: IToken): JSX.Element {
     const icons = {
       tDAI: getTokenIcons().tDAI,
       WETH: getTokenIcons().WETH,
     };
-    return icons[token.symbol as keyof Icons];
+    return icons[token.symbol as SupportedTokens];
   }
 
   return (
