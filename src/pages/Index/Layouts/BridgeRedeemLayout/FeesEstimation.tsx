@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
@@ -12,8 +13,10 @@ import {
   forwardBurnFees,
   increaseAllowanceFee,
   MASSA_TOKEN,
+  PAGES,
 } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
+import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
@@ -92,6 +95,8 @@ export function FeesEstimation() {
 
   const { connectedAccount } = useAccountStore();
 
+  const currentEvmChain = useConnectedEvmChain();
+
   useEffect(() => {
     const setFeesETHWithCheck = (fees: bigint) => {
       if (fees === 0n) {
@@ -144,6 +149,20 @@ export function FeesEstimation() {
   const symbolEVM = selectedToken.symbolEVM;
   const symbolMASSA = selectedToken.symbol;
 
+  const chainName = chain
+    ? chain.name
+    : Intl.t(`general.${Blockchain.UNKNOWN}`);
+
+  if (currentEvmChain === Blockchain.BSC) {
+    return (
+      <div className="text-s-warning">
+        {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
+        <Link to={PAGES.DAO}>
+          <u>{Intl.t('dao-maker.page-name')} </u>
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="mas-body2">
       <div className="flex items-center justify-between">
@@ -182,7 +201,7 @@ export function FeesEstimation() {
       <div className="flex items-center justify-between">
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
-            name: chain ? chain.name : Intl.t(`general.${Blockchain.ETHEREUM}`),
+            name: chainName,
             network: Intl.t(`general.${evmNetwork}`),
           })}
         </p>

@@ -1,37 +1,66 @@
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
-import { validateEvmNetwork, validateMassaNetwork } from '@/utils/network';
 
-export function useWrongNetworkEVM() {
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import {
+  isBnbNetworkValid,
+  isEthNetworkValid,
+  isMassaNetworkValid,
+} from '@/utils/networkValidation';
+
+// These hooks are used to check if the user is connected to the right network
+
+export function useEthNetworkValidation() {
+  // Used in the context of bridge/redeem
   const { chain } = useAccount();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+  const [isValidEthNetwork, setIsValidEthNetwork] = useState<boolean>(false);
 
   useEffect(() => {
-    setWrongNetwork(!validateEvmNetwork(isMainnet, chain?.id));
+    if (chain) {
+      setIsValidEthNetwork(isEthNetworkValid(isMainnet, chain.id));
+    }
   }, [isMainnet, chain]);
 
   return {
-    wrongNetwork,
+    isValidEthNetwork,
   };
 }
 
-export function useWrongNetworkMASSA() {
+export function useMassaNetworkValidation() {
+  // Used in the context of bridge/redeem
   const { connectedNetwork } = useAccountStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
-  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
+  const [isValidMassaNetwork, setIsValidNetwork] = useState<boolean>(false);
 
   useEffect(() => {
     if (!connectedNetwork) return;
-    setWrongNetwork(!validateMassaNetwork(isMainnet, connectedNetwork));
+    setIsValidNetwork(isMassaNetworkValid(isMainnet, connectedNetwork));
   }, [isMainnet, connectedNetwork]);
 
   return {
-    wrongNetwork,
+    isValidMassaNetwork,
+  };
+}
+
+export function useBnbNetworkValidation() {
+  // Use in context of dao maker
+  const { chain } = useAccount();
+
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
+
+  const [isValidBnbNetwork, setIsValidBnbNetwork] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (chain) setIsValidBnbNetwork(isBnbNetworkValid(isMainnet, chain.id));
+  }, [isMainnet, chain]);
+
+  return {
+    isValidBnbNetwork,
   };
 }

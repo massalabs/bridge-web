@@ -1,12 +1,12 @@
-import EvmWallet from './EvmWallets/EvmWallet';
-import MassaWallet from './MassaWallets/MassaWallet';
+import { ConnectEvmWallet } from './EvmWallets/EvmWallet';
+import { MassaWallet } from './MassaWallets/MassaWallet';
 
 export function ConnectWallets() {
   return (
     <div className="pb-10 text-f-primary grid grid-rows-2 gap-4">
       <div className="col-span-2">
         <WalletCard>
-          <EvmWallet />
+          <ConnectEvmWallet />
         </WalletCard>
       </div>
       <div className="col-span-2">

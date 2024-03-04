@@ -272,7 +272,8 @@
   "connect-wallet": {
     "title": "Connect wallets",
     "connected": "Connected wallets",
-    "description": "Connect preferred wallet to a {network1} chain and {network2}, to bridge tokens.",
+    "description-mainnet": "Connect wallet to a supported mainnet and Massa Mainnet, to bridge tokens.",
+    "description-buildnet": "Connect wallet to a supported testnet and Massa Buildnet, to bridge tokens.",
     "button": "Connect",
     "empty-balance": "You’ll receive 0.002 MAS!",
     "empty-balance-description": "It seems you wish to bridge tokens to a new wallet account that has 0.00 MAS on it. Your account is eligible for allocation of 0.002 MAS for storage costs and gas fees of a few future transfers. We’ll send it to you at the same time of the bridge transfer.",
