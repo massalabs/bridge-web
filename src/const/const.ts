@@ -8,6 +8,8 @@ export enum Blockchain {
   MASSA = 'Massa',
   MASSA_BUILDNET = 'Buildnet',
   MASSA_MAINNET = 'Mainnet',
+  CONNECT_WALLET = 'Connect-Wallet',
+  UNKNOWN = 'Unknown',
 }
 
 // SMART CONTRACTS ADDRESSES
@@ -26,11 +28,6 @@ export const WETH_MASSA_ADDRESS =
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
-
-export enum SupportedTokens {
-  tDAI = 'tDAI',
-  WETH = 'WETH',
-}
 
 export enum BridgeMode {
   mainnet = 'mainnet',
@@ -68,10 +65,10 @@ export const increaseAllowanceFee = {
   maxGas: 100_000_000n,
 };
 
-export const supportedTokens = {
-  tDai: 'tDAI',
-  WETH: 'WETH',
-};
+export enum SupportedTokens {
+  tDai = 'tDAI',
+  WETH = 'WETH',
+}
 
 export const MASSA_TOKEN = 'MAS';
 

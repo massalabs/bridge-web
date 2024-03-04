@@ -1,9 +1,12 @@
+import { SVGProps } from './EthSvg';
+
 /* eslint-disable max-len */
-export function WEthSvg() {
+export function WEthSvg(props: SVGProps) {
+  const { size } = props;
   return (
     <svg
-      width="44px"
-      height="44px"
+      width={size ?? 44}
+      height={size ?? 44}
       viewBox="0 0 64 64"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
