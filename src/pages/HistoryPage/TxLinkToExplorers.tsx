@@ -10,13 +10,16 @@ interface TxLinkToExplorersProps {
 export function TxLinkToExplorers(props: TxLinkToExplorersProps) {
   const { outputId, side } = props;
   const { currentMode } = useBridgeModeStore();
+  const isMassaToEvm = side === SIDE.MASSA_TO_EVM;
 
   if (outputId === null || outputId === undefined) return;
 
-  const explorerUrl =
-    side === SIDE.MASSA_TO_EVM
-      ? `${EVM_EXPLORER[currentMode]}tx/${outputId}`
-      : `${MASSA_EXPLORER_URL}${outputId}`;
+  // We have no way of correctly displaying a buildnet tx
+  if (!isMassaToEvm && currentMode !== 'mainnet') return;
+
+  const explorerUrl = isMassaToEvm
+    ? `${EVM_EXPLORER[currentMode]}tx/${outputId}`
+    : `${MASSA_EXPLORER_URL}${outputId}`;
 
   return (
     <a className="flex gap-2 items-center" href={explorerUrl} target="_blank">
