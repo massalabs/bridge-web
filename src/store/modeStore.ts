@@ -33,6 +33,10 @@ const modeStore = (
     _setInStorage(BRIDGE_MODE_STORAGE_KEY, mode);
 
     // if the mode has changed, we need to refresh the tokens
+
+    // Found a bug here: if user swiches from testnet to mainnet and back to testnet quickly =>
+    // the first switch call is made, but when the response arrives and user is back on testnet that see no tokens
+    // and the second call is not made
     if (previousMode !== mode) {
       useTokenStore.getState().getTokens();
     }

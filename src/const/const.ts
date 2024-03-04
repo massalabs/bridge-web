@@ -8,7 +8,7 @@ export enum Blockchain {
   MASSA = 'Massa',
   MASSA_BUILDNET = 'Buildnet',
   MASSA_MAINNET = 'Mainnet',
-  UNKNOWN = 'Unknown',
+  CONNECT_WALLET = 'Connect-Wallet',
 }
 
 // SMART CONTRACTS ADDRESSES
@@ -79,6 +79,11 @@ export const MASSA_TOKEN = 'MAS';
 export enum SUPPORTED_MASSA_WALLETS {
   MASSASTATION = 'MASSASTATION',
   BEARBY = 'BEARBY',
+}
+
+export enum SUPPORTED_EVM_WALLETS {
+  METAMASK = 'MetaMask',
+  UNKNOWN = 'Unknown',
 }
 
 export const WAIT_STATUS_TIMEOUT = 300_000;

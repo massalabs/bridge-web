@@ -10,7 +10,8 @@
     "Testnet": "Testnet",
     "Buildnet": "Buildnet",
     "Mainnet": "Mainnet",
-    "Unknown": "Unknown"
+    "Unknown": "Unknown",
+    "Connect-Wallet": "Connect EVM Wallet"
   },
   "navbar": {
     "history": "History",

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
+import { FiAlertCircle } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { EthSvg } from '@/assets/EthSvg';
@@ -12,7 +13,11 @@ import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
+import {
+  Blockchain,
+  SUPPORTED_EVM_WALLETS,
+  SUPPORTED_MASSA_WALLETS,
+} from '@/const';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
@@ -44,31 +49,55 @@ export const iconsNetworks: IconsNetworks = {
 
 function EVMHeader() {
   const { isConnected } = useAccount();
-  const { evmNetwork: getEvmNetwork } = useBridgeModeStore();
+  const { evmNetwork: getEvmNetwork, isMainnet: getIsMainnet } =
+    useBridgeModeStore();
+  const { chain, connector } = useAccount();
 
   const evmNetwork = getEvmNetwork();
+  const isMainnet = getIsMainnet();
+
+  const chainName = chain?.name || undefined;
+
+  // Not sure if having the supported evm wallets is necessary,
+  // as we should be compatible with all rainbowkit wallets
+  type ConnectorType = keyof typeof SUPPORTED_EVM_WALLETS;
+
+  const evmWalletName =
+    (connector?.name.toUpperCase() as ConnectorType) ||
+    SUPPORTED_EVM_WALLETS.UNKNOWN;
+
+  interface ChainInfo {
+    icon: JSX.Element | undefined;
+    item: string;
+  }
+  function getCurrentChainInfo(): ChainInfo {
+    if (!chainName) {
+      return {
+        icon: <FiAlertCircle size={32} />,
+        item: Intl.t(`general.${Blockchain.CONNECT_WALLET}`),
+      };
+    } else if (isMainnet) {
+      return {
+        icon: iconsNetworks.ETHEREUM,
+        item: `${Blockchain.ETHEREUM} ${Intl.t(`general.${evmNetwork}`)}`,
+      };
+    } else {
+      return {
+        icon: iconsNetworks[chainName.toUpperCase()],
+        item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
+      };
+    }
+  }
 
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
-        <Dropdown
-          readOnly={true}
-          options={[
-            {
-              // we could directly use chain.name here to be more scalable
-              // but there is a change in the user flow so I leave it as is
-              icon: iconsNetworks.ETHEREUM,
-              item: `${Intl.t(`general.${Blockchain.ETHEREUM}`)} ${Intl.t(
-                `general.${evmNetwork}`,
-              )}`,
-            },
-          ]}
-        />
+        <Dropdown readOnly={true} options={[getCurrentChainInfo()]} />
       </div>
       <div className="flex items-center gap-3">
         <p className="mas-body">
           {isConnected
-            ? 'Metamask'
+            ? SUPPORTED_EVM_WALLETS[evmWalletName]
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
         <ChainStatus blockchain={Blockchain.ETHEREUM} />
@@ -147,7 +176,7 @@ interface TokenOptionsProps {
 function TokenOptions(props: TokenOptionsProps) {
   const { nativeToken } = props;
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const { isMassaToEvm } = useOperationStore();
+  const { isMassaToEvm: getIsMassaToEvm } = useOperationStore();
   const { isFetching } = useAccountStore();
   const { tokens, setSelectedToken, selectedToken } = useTokenStore();
 
@@ -158,6 +187,7 @@ function TokenOptions(props: TokenOptionsProps) {
   );
 
   const isMainnet = getIsMainnet();
+  const isMassaToEvm = getIsMassaToEvm();
 
   let readOnlyDropdown;
   if (isMainnet) {
@@ -185,12 +215,18 @@ function TokenOptions(props: TokenOptionsProps) {
     }
   }
 
+  // I'm not sure if this is cleaner than previous implementation
+  interface Icons {
+    tDAI: 'tDAI';
+    WETH: 'WETH';
+  }
+
   function getIcon(token: IToken): JSX.Element {
     const icons = {
       tDAI: getTokenIcons().tDAI,
       WETH: getTokenIcons().WETH,
     };
-    return icons[token.symbol as 'tDAI' | 'WETH'];
+    return icons[token.symbol as keyof Icons];
   }
 
   return (
@@ -200,7 +236,7 @@ function TokenOptions(props: TokenOptionsProps) {
       size="md"
       options={tokens.map((token: IToken) => {
         return {
-          item: isMassaToEvm() ? token.symbol : token.symbolEVM,
+          item: isMassaToEvm ? token.symbol : token.symbolEVM,
           icon: getIcon(token),
           onClick: () => setSelectedToken(token),
         };
