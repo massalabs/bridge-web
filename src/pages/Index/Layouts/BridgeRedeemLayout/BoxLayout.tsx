@@ -37,8 +37,6 @@ interface Layout {
 interface IconsNetworks {
   [key: string]: JSX.Element;
 }
-
-// TODO: Refacto to use chain.symbol instead of full chain name
 export const iconsNetworks: IconsNetworks = {
   MAS: <MassaLogo size={40} />,
   ETH: <EthSvg size={40} />,

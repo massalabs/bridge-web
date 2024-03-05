@@ -99,6 +99,7 @@ export function useNetworkCheck() {
     setToastIdEvm,
     setWrongNetwork,
     setToastIdMassa,
+    connector?.name,
   ]);
 
   return { wrongNetwork };
