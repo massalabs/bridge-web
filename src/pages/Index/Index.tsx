@@ -1,10 +1,10 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import { bsc, bscTestnet } from 'wagmi/chains';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
-
 import { Tos } from '@/components/Tos';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
@@ -33,7 +33,7 @@ export function Index() {
 
   const massaToEvm = isMassaToEvm();
 
-  const { address: evmAddress } = useAccount();
+  const { address: evmAddress, chain } = useAccount();
 
   const { allowance: allowanceEVM, tokenBalance: tokenBalanceEVM } =
     useEvmToken();
@@ -53,7 +53,11 @@ export function Index() {
   const isBlurred = isOperationPending ? 'blur-md' : '';
   const isMainnet = getIsMainnet();
 
+  // TODO: this is duplicate logic, see if I can put it in a custom hook
+  const isBnbchain = chain?.id === bsc.id || chain?.id === bscTestnet.id;
+
   const isButtonDisabled =
+    isBnbchain ||
     isFetching ||
     !connectedAccount ||
     wrongNetwork ||

@@ -182,9 +182,8 @@ export function FeesEstimation() {
       <div className="flex items-center justify-between">
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
-            name: chain
-              ? Intl.t(`general.${chain.name}`)
-              : Intl.t(`general.${Blockchain.ETHEREUM}`),
+            // TODO: refactor so logic is outside of the component render + see if we can reuse it in a custom hook
+            name: chain ? chain.name : Intl.t(`general.${Blockchain.UNKNOWN}`),
             network: Intl.t(`general.${evmNetwork}`),
           })}
         </p>

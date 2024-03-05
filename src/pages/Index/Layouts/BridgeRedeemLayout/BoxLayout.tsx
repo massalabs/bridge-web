@@ -37,6 +37,7 @@ interface IconsNetworks {
   [key: string]: JSX.Element;
 }
 
+// TODO: Refacto to use chain.symbol instead of full chain name
 export const iconsNetworks: IconsNetworks = {
   MASSASTATION: <MassaLogo size={40} />,
   ETHEREUM: <EthSvg size={40} />,
@@ -68,8 +69,8 @@ function EVMHeader() {
       };
     } else if (isMainnet) {
       return {
-        icon: iconsNetworks.ETHEREUM,
-        item: `${Blockchain.ETHEREUM} ${Intl.t(`general.${evmNetwork}`)}`,
+        icon: iconsNetworks[chainName.toUpperCase()],
+        item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
       };
     }
     return {

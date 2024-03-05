@@ -94,6 +94,9 @@ export function Navbar(props: NavbarProps) {
               <Link to={`/${PAGES.CLAIM}`}>{Intl.t('navbar.claim')}</Link>
             </p>
           ) : null}
+          <p className="mas-menu-default text-neutral h-fit">
+            <Link to={`/${PAGES.DAO}`}>{Intl.t('navbar.maker-dao')}</Link>
+          </p>
           {areBothWalletsConnected ? (
             <p className="mas-menu-default text-neutral h-fit">
               <Link to={`/${PAGES.HISTORY}`}>{Intl.t('navbar.history')}</Link>
