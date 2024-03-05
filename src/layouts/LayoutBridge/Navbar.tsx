@@ -1,10 +1,18 @@
-import { Button, Dropdown, Theme, ThemeMode } from '@massalabs/react-ui-kit';
+import { useEffect } from 'react';
+import {
+  Button,
+  Dropdown,
+  Theme,
+  ThemeMode,
+  toast,
+} from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { PAGES } from '@/const';
+import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import {
   useWrongNetworkEVM,
   useWrongNetworkMASSA,
@@ -33,6 +41,14 @@ export function Navbar(props: NavbarProps) {
   const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
 
   const { isConnected: isConnectedEVM } = useAccount();
+
+  const isBscConnected = useIsBscConnected();
+
+  useEffect(() => {
+    if (isBscConnected) {
+      toast(Intl.t('maker-dao.dao-toast'));
+    }
+  }, [isBscConnected]);
 
   const hasAccounts = (accounts || []).length > 0;
   const showPingAnimation =

@@ -8,7 +8,7 @@ export interface ModeStoreState {
   isMainnet(): boolean;
   massaNetwork(): string;
   evmNetwork(): string;
-
+  bscNetwork(): string;
   setCurrentMode: (mode: BridgeMode) => void;
 }
 
@@ -26,6 +26,9 @@ const modeStore = (
 
   evmNetwork: () =>
     get().isMainnet() ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET,
+
+  bscNetwork: () =>
+    get().isMainnet() ? Blockchain.BSC_MAINNET : Blockchain.BSC_TESTNET,
 
   // TODO: Add new BNB network
 
