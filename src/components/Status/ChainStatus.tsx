@@ -2,6 +2,7 @@ import { useAccount } from 'wagmi';
 import { Connected, Disconnected, WrongChain } from '.';
 import { Blockchain } from '@/const';
 import {
+  useWrongNetworkBsc,
   useWrongNetworkEVM,
   useWrongNetworkMASSA,
 } from '@/custom/bridge/useWrongNetwork';
@@ -18,6 +19,7 @@ export function ChainStatus(props: ChainStatusProps) {
   const { connectedAccount, currentProvider } = useAccountStore();
 
   const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
+  const { wrongNetwork: wrongNetworkBsc } = useWrongNetworkBsc();
   const { isConnected: isConnectedEVM } = useAccount();
 
   if (blockchain === Blockchain.MASSA) {
@@ -41,7 +43,7 @@ export function ChainStatus(props: ChainStatusProps) {
   return (
     <>
       {isConnectedEVM ? (
-        wrongNetworkEVM ? (
+        wrongNetworkEVM || wrongNetworkBsc ? (
           <WrongChain blockchain={blockchain} />
         ) : (
           <Connected />

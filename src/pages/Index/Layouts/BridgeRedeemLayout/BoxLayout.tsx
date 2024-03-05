@@ -85,6 +85,7 @@ function EVMHeader() {
   }
 
   const walletName = useConnectorName();
+  const currentChain = isBscConnected ? Blockchain.BSC : Blockchain.ETHEREUM;
 
   return (
     <div className="flex items-center justify-between">
@@ -97,7 +98,7 @@ function EVMHeader() {
             ? walletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        <ChainStatus blockchain={Blockchain.ETHEREUM} />
+        <ChainStatus blockchain={currentChain} />
       </div>
     </div>
   );

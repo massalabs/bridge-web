@@ -5,14 +5,18 @@ import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 
 import { MetaMaskSvg } from '@/assets';
-import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
+import {
+  useWrongNetworkBsc,
+  useWrongNetworkEVM,
+} from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
 export default function EvmConnectButton(): JSX.Element {
-  const { wrongNetwork } = useWrongNetworkEVM();
+  const { wrongNetwork: wrongNetworkEvm } = useWrongNetworkEVM();
+  const { wrongNetwork: wrongNetworkBsc } = useWrongNetworkBsc();
 
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
@@ -52,7 +56,7 @@ export default function EvmConnectButton(): JSX.Element {
                 );
               }
 
-              if (wrongNetwork) {
+              if (wrongNetworkEvm || wrongNetworkBsc) {
                 return (
                   <>
                     <div>
@@ -64,6 +68,7 @@ export default function EvmConnectButton(): JSX.Element {
                       variant="secondary"
                       customClass="h-14"
                       onClick={() =>
+                        // TODO: improve this switch network
                         switchChain?.({
                           chainId: isMainnet ? mainnet.id : sepolia.id,
                         })

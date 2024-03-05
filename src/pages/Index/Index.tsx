@@ -45,6 +45,8 @@ export function Index() {
 
   const { wrongNetwork } = useNetworkCheck();
 
+  const isBscConnected = useIsBscConnected();
+
   const { write: writeEvmApprove } = useEvmApprove();
 
   const { write: writeLock } = useLock();
@@ -52,8 +54,6 @@ export function Index() {
   const isOperationPending = box !== Status.None;
   const isBlurred = isOperationPending ? 'blur-md' : '';
   const isMainnet = getIsMainnet();
-
-  const isBscConnected = useIsBscConnected();
 
   const isButtonDisabled =
     isBscConnected ||

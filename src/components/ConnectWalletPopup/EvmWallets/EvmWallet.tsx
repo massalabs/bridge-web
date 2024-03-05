@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { toast } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
 import EvmConnectButton from './EvmConnectButton';
 import { MetamaskNotInstalled } from './MetamaskNotInstalled';
@@ -15,15 +13,11 @@ const ConnectEvmWallet = () => {
   // This is not necessary if we decide to adopt multiwallet support
   const isMetamaskInstalled = window.ethereum?.isMetaMask;
 
+  const walletName = useConnectorName();
+
   const isBscConnected = useIsBscConnected();
 
-  useEffect(() => {
-    if (isBscConnected) {
-      toast(Intl.t('maker-dao.dao-toast'));
-    }
-  }, [isBscConnected]);
-
-  const walletName = useConnectorName();
+  const currentChain = isBscConnected ? Blockchain.BSC : Blockchain.ETHEREUM;
 
   return (
     <>
@@ -33,7 +27,7 @@ const ConnectEvmWallet = () => {
             ? walletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        <ChainStatus blockchain={Blockchain.ETHEREUM} />
+        <ChainStatus blockchain={currentChain} />
       </div>
       <div className="w-full">
         {isMetamaskInstalled ? <EvmConnectButton /> : <MetamaskNotInstalled />}

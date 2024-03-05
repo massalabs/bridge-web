@@ -16,6 +16,8 @@ export function WrongChain(props: WrongChainProps) {
   const isMainnet = getIsMainnet();
   const { currentProvider } = useAccountStore();
 
+  // TODO: use Blockchain enum for networks
+
   let network = '';
   let transKey = '';
   if (blockchain === Blockchain.MASSA && currentProvider) {
@@ -40,6 +42,13 @@ export function WrongChain(props: WrongChainProps) {
       network = 'Mainnet';
     } else {
       network = 'Sepolia';
+    }
+  } else if (blockchain === Blockchain.BSC) {
+    transKey = 'connect-wallet.connect-metamask.invalid-network';
+    if (isMainnet) {
+      network = 'Mainnet';
+    } else {
+      network = 'Testnet';
     }
   }
 
