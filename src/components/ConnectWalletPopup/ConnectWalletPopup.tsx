@@ -19,11 +19,7 @@ export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
 
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
-  const isMainnet = getIsMainnet();
-  const chainName = chain ? chain.name : Blockchain.UNKNOWN;
-  const currentEvmChain = isMainnet
-    ? Intl.t(`general.${Blockchain.ETHEREUM}`)
-    : chainName;
+
   const networks = {
     network1: `${Intl.t(`general.${evmNetwork}`)}`,
     network2: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
