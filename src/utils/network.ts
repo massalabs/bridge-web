@@ -10,6 +10,8 @@ export const MassaNetworks = {
 };
 
 // function that validate the connected network is the right one
+
+// TODO: create BNB specific validate fn
 export function validateEvmNetwork(
   isMainnet: boolean,
   chainId?: number,
