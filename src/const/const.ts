@@ -8,7 +8,7 @@ export enum Blockchain {
   MASSA = 'Massa',
   MASSA_BUILDNET = 'Buildnet',
   MASSA_MAINNET = 'Mainnet',
-  CONNECT_WALLET = 'Connect-Wallet',
+  INVALID_CHAIN = 'Invalid-chain',
   UNKNOWN = 'Unknown',
 }
 
