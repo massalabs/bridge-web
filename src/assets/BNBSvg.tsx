@@ -15,7 +15,7 @@ export function BNBSvg(props: SVGProps) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_495_2)">
+      <g clipPath="url(#clip0_495_2)">
         <path
           fillRule="evenodd"
           clipRule="evenodd"
