@@ -144,6 +144,10 @@ export function FeesEstimation() {
   const symbolEVM = selectedToken.symbolEVM;
   const symbolMASSA = selectedToken.symbol;
 
+  const chainName = chain
+    ? chain.name
+    : Intl.t(`general.${Blockchain.UNKNOWN}`);
+
   return (
     <div className="mas-body2">
       <div className="flex items-center justify-between">
@@ -182,8 +186,7 @@ export function FeesEstimation() {
       <div className="flex items-center justify-between">
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
-            // TODO: refactor so logic is outside of the component render + see if we can reuse it in a custom hook
-            name: chain ? chain.name : Intl.t(`general.${Blockchain.UNKNOWN}`),
+            name: chainName,
             network: Intl.t(`general.${evmNetwork}`),
           })}
         </p>

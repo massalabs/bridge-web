@@ -1,7 +1,6 @@
 import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { bsc, bscTestnet } from 'wagmi/chains';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
@@ -12,6 +11,7 @@ import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
+import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import { useLock } from '@/custom/bridge/useLock';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import { Status } from '@/store/globalStatusesStore';
@@ -33,7 +33,7 @@ export function Index() {
 
   const massaToEvm = isMassaToEvm();
 
-  const { address: evmAddress, chain } = useAccount();
+  const { address: evmAddress } = useAccount();
 
   const { allowance: allowanceEVM, tokenBalance: tokenBalanceEVM } =
     useEvmToken();
@@ -53,11 +53,10 @@ export function Index() {
   const isBlurred = isOperationPending ? 'blur-md' : '';
   const isMainnet = getIsMainnet();
 
-  // TODO: this is duplicate logic, see if I can put it in a custom hook
-  const isBnbchain = chain?.id === bsc.id || chain?.id === bscTestnet.id;
+  const isBscConnected = useIsBscConnected();
 
   const isButtonDisabled =
-    isBnbchain ||
+    isBscConnected ||
     isFetching ||
     !connectedAccount ||
     wrongNetwork ||
@@ -81,7 +80,6 @@ export function Index() {
     if (box === Status.None) closeLoadingBox();
   }, [box, closeLoadingBox]);
 
-  // TODO: refactor this
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     // validate amount to transact

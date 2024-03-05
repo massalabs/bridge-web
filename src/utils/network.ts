@@ -16,7 +16,6 @@ export function validateEvmNetwork(
   isMainnet: boolean,
   chainId?: number,
 ): boolean {
-  // TODO: Extract logic in hook
   if (isMainnet) {
     return chainId === mainnet.id || chainId === bsc.id;
   } else {

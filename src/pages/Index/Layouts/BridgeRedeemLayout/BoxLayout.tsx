@@ -17,6 +17,7 @@ import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, MASSA_TOKEN, SupportedTokens } from '@/const';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import useEvmToken from '@/custom/bridge/useEvmToken';
+import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -63,8 +64,10 @@ function EVMHeader() {
   const chainName = chain?.name || undefined;
   const chainSymbol = chain?.nativeCurrency.symbol || undefined;
 
+  const isBscConnected = useIsBscConnected();
+
   function getCurrentChainInfo(): ChainOptions {
-    if (!chainSymbol) {
+    if (!chainSymbol || isBscConnected) {
       return {
         icon: <FiAlertCircle size={32} />,
         item: Intl.t(`general.${Blockchain.INVALID_CHAIN}`),

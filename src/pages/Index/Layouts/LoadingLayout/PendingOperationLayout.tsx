@@ -74,7 +74,6 @@ export function PendingOperationLayout(props: LoadingBoxProps) {
       className="p-10 max-w-3/12 w-4/12 min-h-96 border border-tertiary rounded-2xl
               bg-secondary/50 text-f-primary"
     >
-      {/* TODO: refactor to make exit component */}
       {isNotProcessing ? (
         <div className="flex justify-end">
           <button
