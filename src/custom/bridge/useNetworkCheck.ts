@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 
 import { useAccount } from 'wagmi';
+import { useConnectorName } from './useConnectorName';
 import { validateEvmNetwork, validateMassaNetwork } from '../../utils/network';
-import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 export function useNetworkCheck() {
   const { connectedNetwork, currentProvider } = useAccountStore();
-  const { chain: evmConnectedChain, connector } = useAccount();
+  const { chain: evmConnectedChain } = useAccount();
   const {
     isMainnet: getIsMainnet,
     currentMode,
@@ -26,6 +26,8 @@ export function useNetworkCheck() {
 
   const [toastIdEvm, setToastIdEvm] = useState<string>('');
   const [toastIdMassa, setToastIdMassa] = useState<string>('');
+
+  const walletName = useConnectorName();
 
   useEffect(() => {
     // if not wallet is detected, do not show toast
@@ -46,8 +48,7 @@ export function useNetworkCheck() {
       setToastIdEvm(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
-            // TODO: extract logic
-            name: connector?.name || Intl.t(`general.${Blockchain.UNKNOWN}`),
+            name: walletName,
             network: evmNetwork.toLowerCase(),
           }),
           { id: 'evm' },
@@ -99,7 +100,6 @@ export function useNetworkCheck() {
     setToastIdEvm,
     setWrongNetwork,
     setToastIdMassa,
-    connector?.name,
   ]);
 
   return { wrongNetwork };
