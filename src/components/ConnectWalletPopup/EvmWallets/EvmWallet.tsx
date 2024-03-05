@@ -1,26 +1,27 @@
 import { useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
-import { bsc, bscTestnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import EvmConnectButton from './EvmConnectButton';
 import { MetamaskNotInstalled } from './MetamaskNotInstalled';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
+import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import Intl from '@/i18n/i18n';
 
 const ConnectEvmWallet = () => {
-  const { isConnected, chainId } = useAccount();
+  const { isConnected } = useAccount();
 
   // This is not necessary if we decide to adopt multiwallet support
   const isMetamaskInstalled = window.ethereum?.isMetaMask;
 
+  const isBscConnected = useIsBscConnected();
+
   useEffect(() => {
-    // TODO: create isBnbChain hook
-    if ((isConnected && chainId === bsc.id) || chainId === bscTestnet.id) {
+    if (isBscConnected) {
       toast(Intl.t('maker-dao.dao-toast'));
     }
-  }, [isConnected, chainId]);
+  }, [isBscConnected]);
 
   const walletName = useConnectorName();
 

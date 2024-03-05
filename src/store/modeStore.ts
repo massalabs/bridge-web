@@ -24,9 +24,10 @@ const modeStore = (
   massaNetwork: () =>
     get().isMainnet() ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET,
 
-  // TODO: rename to "bridgeNetwork"
   evmNetwork: () =>
     get().isMainnet() ? Blockchain.EVM_MAINNET : Blockchain.EVM_TESTNET,
+
+  // TODO: Add new BNB network
 
   setCurrentMode: (mode: BridgeMode) => {
     const previousMode = get().currentMode;
