@@ -3,12 +3,13 @@ import { toast } from '@massalabs/react-ui-kit';
 
 import { useAccount } from 'wagmi';
 import { validateEvmNetwork, validateMassaNetwork } from '../../utils/network';
+import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 export function useNetworkCheck() {
   const { connectedNetwork, currentProvider } = useAccountStore();
-  const { chain: evmConnectedChain } = useAccount();
+  const { chain: evmConnectedChain, connector } = useAccount();
   const {
     isMainnet: getIsMainnet,
     currentMode,
@@ -45,8 +46,9 @@ export function useNetworkCheck() {
       setToastIdEvm(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
-            name: 'evm',
-            network: evmNetwork,
+            // TODO: extract logic
+            name: connector?.name || Intl.t(`general.${Blockchain.UNKNOWN}`),
+            network: evmNetwork.toLowerCase(),
           }),
           { id: 'evm' },
         ),

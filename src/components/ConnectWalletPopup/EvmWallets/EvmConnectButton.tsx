@@ -59,7 +59,6 @@ export default function EvmConnectButton(): JSX.Element {
                     <div>
                       {Intl.t(
                         'connect-wallet.connect-metamask.invalid-network',
-                        { network: isMainnet ? 'Mainnet' : 'Sepolia' },
                       )}
                     </div>
                     <Button

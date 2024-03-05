@@ -2,7 +2,7 @@ import {
   MAINNET as web3Mainnet,
   BUILDNET as web3Buildnet,
 } from '@massalabs/massa-web3';
-import { mainnet, sepolia } from 'wagmi/chains';
+import { mainnet, sepolia, bsc, bscTestnet } from 'wagmi/chains';
 
 export const MassaNetworks = {
   mainnet: web3Mainnet.toLowerCase(),
@@ -12,12 +12,13 @@ export const MassaNetworks = {
 // function that validate the connected network is the right one
 export function validateEvmNetwork(
   isMainnet: boolean,
-  evmChainId?: number,
+  chainId?: number,
 ): boolean {
+  // TODO: Extract logic in hook
   if (isMainnet) {
-    return evmChainId === mainnet.id;
+    return chainId === mainnet.id || chainId === bsc.id;
   } else {
-    return evmChainId === sepolia.id;
+    return chainId === sepolia.id || chainId === bscTestnet.id;
   }
 }
 
