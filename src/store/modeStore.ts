@@ -30,8 +30,6 @@ const modeStore = (
   bscNetwork: () =>
     get().isMainnet() ? Blockchain.BSC_MAINNET : Blockchain.BSC_TESTNET,
 
-  // TODO: Add new BNB network
-
   setCurrentMode: (mode: BridgeMode) => {
     const previousMode = get().currentMode;
     set({ currentMode: mode });

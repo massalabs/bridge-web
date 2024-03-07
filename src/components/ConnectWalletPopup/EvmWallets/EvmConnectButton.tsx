@@ -2,7 +2,7 @@ import { Button } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
+import { bsc, bscTestnet, mainnet, sepolia } from 'wagmi/chains';
 
 import { MetaMaskSvg } from '@/assets';
 import {
@@ -28,6 +28,20 @@ export default function EvmConnectButton(): JSX.Element {
   const { data: balanceData } = useBalance({
     address,
   });
+
+  function getChainToSwitch() {
+    if (isMainnet) {
+      if (wrongNetworkEvm) {
+        return mainnet.id;
+      }
+      return bsc.id;
+    } else {
+      if (wrongNetworkEvm) {
+        return sepolia.id;
+      }
+      return bscTestnet.id;
+    }
+  }
 
   return (
     <ConnectButton.Custom>
@@ -69,9 +83,8 @@ export default function EvmConnectButton(): JSX.Element {
                       variant="secondary"
                       customClass="h-14"
                       onClick={() =>
-                        // TODO: improve this switch network
                         switchChain?.({
-                          chainId: isMainnet ? mainnet.id : sepolia.id,
+                          chainId: getChainToSwitch(),
                         })
                       }
                     >
