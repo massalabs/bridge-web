@@ -1,12 +1,9 @@
-import { useEffect } from 'react';
-import { toast } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
 import { EvmConnectButton } from './EvmConnectButton';
 import { MetamaskNotInstalled } from './MetamaskNotInstalled';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain } from '@/const';
+import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
-import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import Intl from '@/i18n/i18n';
 
 export function ConnectEvmWallet() {
@@ -17,15 +14,7 @@ export function ConnectEvmWallet() {
 
   const walletName = useConnectorName();
 
-  const isBscConnected = useIsBscConnected();
-
-  useEffect(() => {
-    if (isBscConnected) {
-      toast(Intl.t('dao-maker.dao-toast'));
-    }
-  }, [isBscConnected]);
-
-  const currentChain = isBscConnected ? Blockchain.BSC : Blockchain.ETHEREUM;
+  const currentChain = useConnectedEvmChain();
 
   return (
     <>

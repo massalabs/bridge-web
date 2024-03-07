@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { SVGProps } from './svgInterface';
-=======
-import { SVGProps } from './BNBSvg';
->>>>>>> e7155e8 (Self-Review)
-=======
-import { SVGProps } from './svgInterface';
->>>>>>> 5ded27c (Clarify Svg Interface)
 
 export function WMasSvg(props: SVGProps) {
   const { size } = props;

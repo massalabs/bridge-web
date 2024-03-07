@@ -3,39 +3,40 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { bsc, bscTestnet, mainnet, sepolia } from 'wagmi/chains';
-
 import { MetaMaskSvg } from '@/assets';
-import {
-  useWrongNetworkBsc,
-  useWrongNetworkEVM,
-} from '@/custom/bridge/useWrongNetwork';
+
+import { Blockchain } from '@/const';
+import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
+import { isEvmNetworkValid } from '@/utils/networkValidation';
 import { formatAmount } from '@/utils/parseAmount';
 
 export function EvmConnectButton(): JSX.Element {
-  const { wrongNetwork: wrongNetworkEvm } = useWrongNetworkEVM();
-  const { wrongNetwork: wrongNetworkBsc } = useWrongNetworkBsc();
-
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
   const { switchChain } = useSwitchChain();
 
-  const { address } = useAccount();
+  const { address, chain } = useAccount();
 
   const { data: balanceData } = useBalance({
     address,
   });
 
-  function getChainToSwitch() {
-    if (isMainnet) {
-      return wrongNetworkEvm ? mainnet.id : bsc.id;
-    } else {
-      return wrongNetworkEvm ? sepolia.id : bscTestnet.id;
+  const connectedChain = useConnectedEvmChain();
+
+  // Determines what chain to switch to if user is connected to the wrong network
+  function getChainToSwitch(): number {
+    if (connectedChain === Blockchain.BSC) {
+      return isMainnet ? bsc.id : bscTestnet.id;
     }
+    return isMainnet ? mainnet.id : sepolia.id;
   }
+
+  const isValidEVMNetwork = isEvmNetworkValid(isMainnet, chain?.id);
+
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openConnectModal, mounted }) => {
@@ -64,7 +65,7 @@ export function EvmConnectButton(): JSX.Element {
                 );
               }
 
-              if (wrongNetworkEvm || wrongNetworkBsc) {
+              if (!isValidEVMNetwork) {
                 return (
                   <>
                     <div>

@@ -11,9 +11,8 @@ import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
-import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
+import { useIndexNetworkCheck } from '@/custom/bridge/useIndexNetworkCheck';
 import { useLock } from '@/custom/bridge/useLock';
-import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -43,9 +42,7 @@ export function Index() {
   const { box, setBox, setLock, setApprove, reset, setAmountError } =
     useGlobalStatusesStore();
 
-  const { wrongNetwork } = useNetworkCheck();
-
-  const isBscConnected = useIsBscConnected();
+  const { wrongIndexNetwork } = useIndexNetworkCheck();
 
   const { write: writeEvmApprove } = useEvmApprove();
 
@@ -56,10 +53,9 @@ export function Index() {
   const isMainnet = getIsMainnet();
 
   const isButtonDisabled =
-    isBscConnected ||
     isFetching ||
     !connectedAccount ||
-    wrongNetwork ||
+    wrongIndexNetwork ||
     isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);

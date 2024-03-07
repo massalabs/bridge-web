@@ -6,8 +6,8 @@ import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { PAGES } from '@/const';
 import {
-  useWrongNetworkEVM,
-  useWrongNetworkMASSA,
+  useEthNetworkValidation,
+  useMassaNetworkValidation,
 } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
@@ -29,16 +29,16 @@ export function Navbar(props: NavbarProps) {
   const { accounts, isFetching, connectedAccount } = useAccountStore();
 
   const { setTheme } = useConfigStore();
-  const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
-  const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
+  const { isValidEthNetwork } = useEthNetworkValidation();
+  const { isValidMassaNetwork } = useMassaNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
 
   const hasAccounts = (accounts || []).length > 0;
   const showPingAnimation =
     !isConnectedEVM ||
-    wrongNetworkEVM ||
-    wrongNetworkMassa ||
+    !isValidEthNetwork ||
+    !isValidMassaNetwork ||
     !connectedAccount;
 
   function ConnectedWallet() {

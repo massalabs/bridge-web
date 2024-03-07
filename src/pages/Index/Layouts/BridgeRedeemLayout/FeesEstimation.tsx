@@ -16,8 +16,8 @@ import {
   PAGES,
 } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
+import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import useEvmToken from '@/custom/bridge/useEvmToken';
-import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -95,7 +95,7 @@ export function FeesEstimation() {
 
   const { connectedAccount } = useAccountStore();
 
-  const isBscConnected = useIsBscConnected();
+  const currentEvmChain = useConnectedEvmChain();
 
   useEffect(() => {
     const setFeesETHWithCheck = (fees: bigint) => {
@@ -153,7 +153,7 @@ export function FeesEstimation() {
     ? chain.name
     : Intl.t(`general.${Blockchain.UNKNOWN}`);
 
-  if (isBscConnected) {
+  if (currentEvmChain === Blockchain.BSC) {
     return (
       <div className="text-s-warning">
         {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
