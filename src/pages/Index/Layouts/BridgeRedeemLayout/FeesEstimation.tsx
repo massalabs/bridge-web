@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
@@ -12,9 +13,11 @@ import {
   forwardBurnFees,
   increaseAllowanceFee,
   MASSA_TOKEN,
+  PAGES,
 } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
+import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -92,6 +95,8 @@ export function FeesEstimation() {
 
   const { connectedAccount } = useAccountStore();
 
+  const isBscConnected = useIsBscConnected();
+
   useEffect(() => {
     const setFeesETHWithCheck = (fees: bigint) => {
       if (fees === 0n) {
@@ -148,50 +153,60 @@ export function FeesEstimation() {
     ? chain.name
     : Intl.t(`general.${Blockchain.UNKNOWN}`);
 
-  return (
-    <div className="mas-body2">
-      <div className="flex items-center justify-between">
-        <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
-        <div className="flex items-center">
-          1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
-          <span className="mx-1">
-            {isMainnet() ? <EthSvg size={20} /> : <SepoliaSvg size={20} />}
-          </span>{' '}
-          = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
-          <span className="ml-1">
-            <MassaLogo size={20} />
-          </span>
-        </div>
+  if (isBscConnected) {
+    return (
+      <div className="text-s-warning">
+        {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
+        <Link to={PAGES.DAO}>
+          <u>{Intl.t('dao-maker.page-name')} </u>
+        </Link>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
+    );
+  } else
+    return (
+      <div className="mas-body2">
+        <div className="flex items-center justify-between">
+          <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
+          <div className="flex items-center">
+            1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
+            <span className="mx-1">
+              {isMainnet() ? <EthSvg size={20} /> : <SepoliaSvg size={20} />}
+            </span>{' '}
+            = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
+            <span className="ml-1">
+              <MassaLogo size={20} />
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <p>
+              {Intl.t('index.fee-estimate.network-fees', {
+                name: Intl.t(`general.${Blockchain.MASSA}`),
+                network: Intl.t(`general.${massaNetwork}`),
+              })}
+            </p>
+            {feesMAS && feesMAS !== '0' && (
+              <Tooltip
+                body={Intl.t('index.fee-estimate.tooltip-massa', {
+                  fees: feesMAS,
+                })}
+              >
+                <FiInfo size={18} />
+              </Tooltip>
+            )}
+          </div>
+          <EstimatedAmount amount={feesMAS} symbol={MASSA_TOKEN} />
+        </div>
+        <div className="flex items-center justify-between">
           <p>
             {Intl.t('index.fee-estimate.network-fees', {
-              name: Intl.t(`general.${Blockchain.MASSA}`),
-              network: Intl.t(`general.${massaNetwork}`),
+              name: chainName,
+              network: Intl.t(`general.${evmNetwork}`),
             })}
           </p>
-          {feesMAS && feesMAS !== '0' && (
-            <Tooltip
-              body={Intl.t('index.fee-estimate.tooltip-massa', {
-                fees: feesMAS,
-              })}
-            >
-              <FiInfo size={18} />
-            </Tooltip>
-          )}
+          <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
         </div>
-        <EstimatedAmount amount={feesMAS} symbol={MASSA_TOKEN} />
       </div>
-      <div className="flex items-center justify-between">
-        <p>
-          {Intl.t('index.fee-estimate.network-fees', {
-            name: chainName,
-            network: Intl.t(`general.${evmNetwork}`),
-          })}
-        </p>
-        <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
-      </div>
-    </div>
-  );
+    );
 }
