@@ -93,14 +93,14 @@ export function HistoryPage() {
   }
 
   return (
-    <div className="flex w-screen h-fit p-10 items-center justify-center">
+    <div className="flex h-fit w-screen items-center justify-center p-10">
       <div
-        className="flex flex-col w-[80%] px-16 py-12 bg-secondary/50 
-        backdrop-blur-lg text-f-primary border border-tertiary rounded-2xl"
+        className="bg-secondary/50 text-f-primary border-tertiary flex w-[80%] flex-col
+        rounded-2xl border px-16 py-12 backdrop-blur-lg"
       >
         <div
-          className="mas-subtitle flex 
-          justify-center mb-12"
+          className="mas-subtitle mb-12
+          flex justify-center"
         >
           {Intl.t('history.title')}
         </div>
@@ -109,10 +109,10 @@ export function HistoryPage() {
         <Categories />
         <Hr />
 
-        <div className="flex flex-col gap-8 py-4 mt-8 mb-8">
+        <div className="mb-8 mt-8 flex flex-col gap-8 py-4">
           {renderHistory()}
         </div>
-        <div className="flex gap-12 items-center justify-center">
+        <div className="flex items-center justify-center gap-12">
           <Button
             customClass="w-64"
             disabled={pageStep <= 0}
