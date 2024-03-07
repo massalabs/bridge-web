@@ -1,8 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react';
-
-export interface SVGProps extends ComponentPropsWithoutRef<'div'> {
-  size?: number;
-}
+import { SVGProps } from './BNBSvg';
 
 export function EthSvg(props: SVGProps) {
   let { size } = props;

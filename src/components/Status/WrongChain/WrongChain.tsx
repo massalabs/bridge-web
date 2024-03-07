@@ -27,9 +27,7 @@ export function WrongChain(props: WrongChainProps) {
     ) {
       transKey = 'index.tag.wrong-chain-bearby-tooltip';
     }
-  } else if (blockchain === Blockchain.ETHEREUM) {
-    transKey = 'connect-wallet.connect-metamask.invalid-network';
-  } else if (blockchain === Blockchain.BSC) {
+  } else {
     transKey = 'connect-wallet.connect-metamask.invalid-network';
   }
 

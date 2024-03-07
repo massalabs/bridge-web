@@ -14,7 +14,7 @@ import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingCompon
 import { useBridgeModeStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
-export default function EvmConnectButton(): JSX.Element {
+export function EvmConnectButton(): JSX.Element {
   const { wrongNetwork: wrongNetworkEvm } = useWrongNetworkEVM();
   const { wrongNetwork: wrongNetworkBsc } = useWrongNetworkBsc();
 
@@ -30,18 +30,11 @@ export default function EvmConnectButton(): JSX.Element {
 
   function getChainToSwitch() {
     if (isMainnet) {
-      if (wrongNetworkEvm) {
-        return mainnet.id;
-      }
-      return bsc.id;
+      return wrongNetworkEvm ? mainnet.id : bsc.id;
     } else {
-      if (wrongNetworkEvm) {
-        return sepolia.id;
-      }
-      return bscTestnet.id;
+      return wrongNetworkEvm ? sepolia.id : bscTestnet.id;
     }
   }
-
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openConnectModal, mounted }) => {

@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
-import { ComponentPropsWithoutRef } from 'react';
 
-export interface SVGProps extends ComponentPropsWithoutRef<'div'> {
+export interface SVGProps {
   size?: number;
 }
 

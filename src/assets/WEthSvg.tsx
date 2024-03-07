@@ -1,4 +1,4 @@
-import { SVGProps } from './EthSvg';
+import { SVGProps } from './BNBSvg';
 
 /* eslint-disable max-len */
 export function WEthSvg(props: SVGProps) {
