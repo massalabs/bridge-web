@@ -12,6 +12,8 @@ import {
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
+// TODO: merge with useNetworkCheck.ts with useWrongNetwork.ts
+
 export function useNetworkCheck() {
   const { connectedNetwork, currentProvider } = useAccountStore();
   const { chain } = useAccount();

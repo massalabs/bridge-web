@@ -3,15 +3,12 @@ import { SyntheticEvent, useState } from 'react';
 import { Button, Money } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';
 import { GetTokensPopUpModal } from '@/components';
-import { PAGES } from '@/const';
 import useEvmToken from '@/custom/bridge/useEvmToken';
-import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -75,8 +72,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     setAmount('');
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
-
-  const isBscConnected = useIsBscConnected();
 
   // Money component formats amount without decimals
   return (
@@ -186,16 +181,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               : Intl.t('index.button.bridge')}
           </Button>
         </div>
-        {isBscConnected ? (
-          <div className="text-s-warning">
-            {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
-            <Link to={PAGES.DAO}>
-              <u>{Intl.t('dao-maker.page-name')} </u>
-            </Link>
-          </div>
-        ) : (
-          <FeesEstimation />
-        )}
+        <FeesEstimation />
       </div>
 
       {openTokensModal && (
