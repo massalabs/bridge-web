@@ -6,9 +6,9 @@ import { useAccount } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { EthSvg } from '@/assets/EthSvg';
+import { SepoliaDaiSvg } from '@/assets/SepoliaDaiSvg';
 import { SepoliaSvg } from '@/assets/SepoliaSVG';
-import sepoliaDaiSvg from '@/assets/SVG/sepolia_dai.svg';
-import sepoliaWethSvg from '@/assets/SVG/sepolia_weth.svg';
+import { SepoliaWethSvg } from '@/assets/SepoliaWethSvg';
 import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
@@ -203,8 +203,8 @@ function TokenOptions(props: TokenOptionsProps) {
       };
     }
     return {
-      tDAI: <img src={sepoliaDaiSvg} />,
-      WETH: <img src={sepoliaWethSvg} />,
+      tDAI: <SepoliaDaiSvg />,
+      WETH: <SepoliaWethSvg />,
     };
   }
 
