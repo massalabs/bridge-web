@@ -46,7 +46,7 @@ export function Navbar(props: NavbarProps) {
 
   useEffect(() => {
     if (isBscConnected) {
-      toast(Intl.t('maker-dao.dao-toast'));
+      toast(Intl.t('dao-maker.dao-toast'));
     }
   }, [isBscConnected]);
 
@@ -111,7 +111,7 @@ export function Navbar(props: NavbarProps) {
             </p>
           ) : null}
           <p className="mas-menu-default text-neutral h-fit">
-            <Link to={`/${PAGES.DAO}`}>{Intl.t('navbar.maker-dao')}</Link>
+            <Link to={`/${PAGES.DAO}`}>{Intl.t('navbar.dao-maker')}</Link>
           </p>
           {areBothWalletsConnected ? (
             <p className="mas-menu-default text-neutral h-fit">
