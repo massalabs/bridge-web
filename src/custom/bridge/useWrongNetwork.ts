@@ -47,6 +47,7 @@ export function useWrongNetworkMASSA() {
 export function useWrongNetworkBsc() {
   const isBscConnected = useIsBscConnected();
   const { chain } = useAccount();
+
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
@@ -55,7 +56,7 @@ export function useWrongNetworkBsc() {
   useEffect(() => {
     if (!isBscConnected) return;
     setWrongNetwork(!validateBscNetwork(isMainnet, chain?.id));
-  }, [isMainnet, isBscConnected]);
+  }, [isMainnet, isBscConnected, chain]);
 
   return {
     wrongNetwork,

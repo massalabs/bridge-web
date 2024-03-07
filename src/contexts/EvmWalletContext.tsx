@@ -16,6 +16,8 @@ export function EvmWalletContext({ children }: PropsWithChildren<unknown>) {
   const isMainnet = getIsMainnet();
   const rainbowkitTheme = theme === 'theme-dark' ? darkTheme : lightTheme;
 
+  // From a UX perspective it's not great to have the initichain set to sepolia or eth
+  // now that we have a bsc support... but since it's temp we can leave it like this
   return (
     <WagmiProvider config={config}>
       <RainbowKitProvider
