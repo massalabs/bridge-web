@@ -1,6 +1,12 @@
 /* eslint-disable max-len */
 
+<<<<<<< HEAD
 import { SVGProps } from './svgInterface';
+=======
+export interface SVGProps {
+  size?: number;
+}
+>>>>>>> e7155e8 (Self-Review)
 
 export function BNBSvg(props: SVGProps) {
   let { size } = props;

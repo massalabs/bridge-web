@@ -13,7 +13,7 @@ import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 
-const MassaWallet = () => {
+export function MassaWallet() {
   const { currentProvider, providers, setCurrentProvider, isFetching } =
     useAccountStore();
 
@@ -95,6 +95,4 @@ const MassaWallet = () => {
       {renderWallet()}
     </>
   );
-};
-
-export default MassaWallet;
+}

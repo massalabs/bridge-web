@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { SVGProps } from './svgInterface';
+=======
+import { SVGProps } from './BNBSvg';
+>>>>>>> e7155e8 (Self-Review)
 
 export function EthSvg(props: SVGProps) {
   let { size } = props;
