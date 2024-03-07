@@ -188,9 +188,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
         </div>
         {isBscConnected ? (
           <div className="text-s-warning">
-            {Intl.t('maker-dao.dao-bridge-redeem-warning')}{' '}
+            {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
             <Link to={PAGES.DAO}>
-              <u>{Intl.t('maker-dao.page-name')} </u>
+              <u>{Intl.t('dao-maker.page-name')} </u>
             </Link>
           </div>
         ) : (

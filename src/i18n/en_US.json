@@ -18,7 +18,7 @@
     "bridge": "Bridge",
     "claim": "Claim",
     "faq": "FAQ",
-    "maker-dao": "makerDao Claim"
+    "dao-maker": "DAO maker Claim"
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -357,9 +357,9 @@
     "show-previous": "Show previous",
     "no-history": "No history found for {address}"
   },
-  "maker-dao": {
-    "page-name": "makerDao claim page",
+  "dao-maker": {
+    "page-name": "DAO maker claim page",
     "dao-bridge-redeem-warning": "If you are trying to bridge from BNB chain in the context of DAO Maker sale, navigate to : ",
-    "dao-toast": "If you're looking to brigde from maker dao public sale navigate to makerDao claim page"
+    "dao-toast": "If you're looking to bridge from DAO maker public sale navigate to DAO maker claim page"
   }
 }
