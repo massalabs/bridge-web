@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-import { ComponentPropsWithoutRef } from 'react';
 
 import { SVGProps } from './svgInterface';
 
