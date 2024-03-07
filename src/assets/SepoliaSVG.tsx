@@ -1,4 +1,4 @@
-import { SVGProps } from './BNBSvg';
+import { SVGProps } from './svgInterface';
 
 export function SepoliaSvg(props: SVGProps) {
   let { size } = props;

@@ -1,4 +1,4 @@
-import { SVGProps } from './BNBSvg';
+import { SVGProps } from './svgInterface';
 
 export function WEthMassaSvg(props: SVGProps) {
   const { size } = props;
