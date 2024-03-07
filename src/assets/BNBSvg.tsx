@@ -1,9 +1,7 @@
 /* eslint-disable max-len */
 import { ComponentPropsWithoutRef } from 'react';
 
-export interface SVGProps extends ComponentPropsWithoutRef<'div'> {
-  size?: number;
-}
+import { SVGProps } from './svgInterface';
 
 export function BNBSvg(props: SVGProps) {
   let { size } = props;

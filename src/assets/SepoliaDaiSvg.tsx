@@ -1,5 +1,5 @@
-import { SVGProps } from './BNBSvg';
 import sepoliaDaiSvg from './SVG/sepolia_dai.svg';
+import { SVGProps } from './svgInterface';
 
 export function SepoliaDaiSvg(props: SVGProps) {
   const { size } = props;
