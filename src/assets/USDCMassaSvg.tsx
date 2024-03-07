@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { SVGProps } from './svgInterface';
-=======
-import { SVGProps } from './BNBSvg';
->>>>>>> e7155e8 (Self-Review)
 
 /* eslint-disable max-len */
 export function USDCMassaSvg(props: SVGProps) {
