@@ -1,10 +1,11 @@
 import { useAccount } from 'wagmi';
 import { Connected, Disconnected, WrongChain } from '.';
 import { Blockchain } from '@/const';
+import { useIsBnbConnected } from '@/custom/bridge/useIsBnbConnected';
 import {
-  useWrongNetworkBsc,
-  useWrongNetworkEVM,
-  useWrongNetworkMASSA,
+  useBnbNetworkValidation,
+  useEthNetworkValidation,
+  useMassaNetworkValidation,
 } from '@/custom/bridge/useWrongNetwork';
 import { useAccountStore } from '@/store/store';
 
@@ -15,12 +16,23 @@ interface ChainStatusProps {
 export function ChainStatus(props: ChainStatusProps) {
   const { blockchain } = props;
 
-  const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
   const { connectedAccount, currentProvider } = useAccountStore();
 
-  const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
-  const { wrongNetwork: wrongNetworkBsc } = useWrongNetworkBsc();
+  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const { isValidEthNetwork } = useEthNetworkValidation();
+  const { isValidBnbNetwork } = useBnbNetworkValidation();
   const { isConnected: isConnectedEVM } = useAccount();
+
+  const isBnbConnected = useIsBnbConnected();
+
+  function getIsInvalidNetwork() {
+    if (isBnbConnected) {
+      return !isValidBnbNetwork;
+    }
+    return !isValidEthNetwork;
+  }
+
+  const isInvalidNetwork = getIsInvalidNetwork();
 
   if (blockchain === Blockchain.MASSA) {
     const isConnectMassa = !!connectedAccount;
@@ -28,10 +40,10 @@ export function ChainStatus(props: ChainStatusProps) {
     return (
       <>
         {isConnectMassa && !!currentProvider ? (
-          wrongNetworkMassa ? (
-            <WrongChain blockchain={blockchain} />
-          ) : (
+          isValidMassaNetwork ? (
             <Connected />
+          ) : (
+            <WrongChain blockchain={blockchain} />
           )
         ) : (
           <Disconnected />
@@ -43,7 +55,7 @@ export function ChainStatus(props: ChainStatusProps) {
   return (
     <>
       {isConnectedEVM ? (
-        wrongNetworkEVM || wrongNetworkBsc ? (
+        isInvalidNetwork ? (
           <WrongChain blockchain={blockchain} />
         ) : (
           <Connected />

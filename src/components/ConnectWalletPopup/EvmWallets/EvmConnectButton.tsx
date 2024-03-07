@@ -5,9 +5,10 @@ import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { bsc, bscTestnet, mainnet, sepolia } from 'wagmi/chains';
 
 import { MetaMaskSvg } from '@/assets';
+import { useIsBnbConnected } from '@/custom/bridge/useIsBnbConnected';
 import {
-  useWrongNetworkBsc,
-  useWrongNetworkEVM,
+  useBnbNetworkValidation,
+  useEthNetworkValidation,
 } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
@@ -15,8 +16,8 @@ import { useBridgeModeStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 
 export function EvmConnectButton(): JSX.Element {
-  const { wrongNetwork: wrongNetworkEvm } = useWrongNetworkEVM();
-  const { wrongNetwork: wrongNetworkBsc } = useWrongNetworkBsc();
+  const { isValidEthNetwork } = useEthNetworkValidation();
+  const { isValidBnbNetwork } = useBnbNetworkValidation();
 
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
@@ -28,13 +29,25 @@ export function EvmConnectButton(): JSX.Element {
     address,
   });
 
-  function getChainToSwitch() {
-    if (isMainnet) {
-      return wrongNetworkEvm ? mainnet.id : bsc.id;
-    } else {
-      return wrongNetworkEvm ? sepolia.id : bscTestnet.id;
+  const isBnbConnected = useIsBnbConnected();
+
+  function getChainToSwitch(): number {
+    if (isBnbConnected) {
+      return isMainnet ? bsc.id : bscTestnet.id;
     }
+    return isMainnet ? mainnet.id : sepolia.id;
   }
+
+  // TODO: create hook for the duplicate logic
+  function getIsInvalidNetwork() {
+    if (isBnbConnected) {
+      return !isValidBnbNetwork;
+    }
+    return !isValidEthNetwork;
+  }
+
+  const isInvalidNetwork = getIsInvalidNetwork();
+
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openConnectModal, mounted }) => {
@@ -63,7 +76,7 @@ export function EvmConnectButton(): JSX.Element {
                 );
               }
 
-              if (wrongNetworkEvm || wrongNetworkBsc) {
+              if (isInvalidNetwork) {
                 return (
                   <>
                     <div>

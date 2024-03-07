@@ -6,7 +6,7 @@ import { MetamaskNotInstalled } from './MetamaskNotInstalled';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
-import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
+import { useIsBnbConnected } from '@/custom/bridge/useIsBnbConnected';
 import Intl from '@/i18n/i18n';
 
 export function ConnectEvmWallet() {
@@ -17,7 +17,7 @@ export function ConnectEvmWallet() {
 
   const walletName = useConnectorName();
 
-  const isBscConnected = useIsBscConnected();
+  const isBscConnected = useIsBnbConnected();
 
   useEffect(() => {
     if (isBscConnected) {

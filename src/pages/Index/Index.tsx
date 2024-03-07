@@ -11,7 +11,7 @@ import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
-import { useIsBscConnected } from '@/custom/bridge/useIsBscConnected';
+import { useIsBnbConnected } from '@/custom/bridge/useIsBnbConnected';
 import { useLock } from '@/custom/bridge/useLock';
 import { useNetworkCheck } from '@/custom/bridge/useNetworkCheck';
 import { Status } from '@/store/globalStatusesStore';
@@ -45,7 +45,7 @@ export function Index() {
 
   const { wrongNetwork } = useNetworkCheck();
 
-  const isBscConnected = useIsBscConnected();
+  const isBscConnected = useIsBnbConnected();
 
   const { write: writeEvmApprove } = useEvmApprove();
 

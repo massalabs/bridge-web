@@ -3,16 +3,18 @@ import { toast } from '@massalabs/react-ui-kit';
 
 import { useAccount } from 'wagmi';
 import { useConnectorName } from './useConnectorName';
-import { useIsBscConnected } from './useIsBscConnected';
+import { useIsBnbConnected } from './useIsBnbConnected';
 import {
-  validateBscNetwork,
-  validateEvmNetwork,
-  validateMassaNetwork,
-} from '../../utils/network';
+  isBnbNetworkValid,
+  isEthNetworkValid,
+  isMassaNetworkValid,
+} from '../../utils/networkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 // TODO: merge with useNetworkCheck.ts with useWrongNetwork.ts
+
+// This is only used in the index page... maybe can be refactored
 
 export function useNetworkCheck() {
   const { connectedNetwork, currentProvider } = useAccountStore();
@@ -38,7 +40,7 @@ export function useNetworkCheck() {
   const [toastIdBsc, setToastIdBsc] = useState<string>('');
   const walletName = useConnectorName();
 
-  const isBscConnected = useIsBscConnected();
+  const isBscConnected = useIsBnbConnected();
 
   useEffect(() => {
     // if not wallet is detected, do not show toast
@@ -52,7 +54,7 @@ export function useNetworkCheck() {
 
     // Check and toast EVM
     let evmOk = false;
-    if (chain && !isBscConnected && !validateEvmNetwork(isMainnet, chain.id)) {
+    if (chain && !isBscConnected && !isEthNetworkValid(isMainnet, chain.id)) {
       setToastIdEvm(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
@@ -70,10 +72,7 @@ export function useNetworkCheck() {
 
     // Check and toast Massa
     let massaOk = false;
-    if (
-      connectedNetwork &&
-      !validateMassaNetwork(isMainnet, connectedNetwork)
-    ) {
+    if (connectedNetwork && !isMassaNetworkValid(isMainnet, connectedNetwork)) {
       setToastIdMassa(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
@@ -96,7 +95,7 @@ export function useNetworkCheck() {
 
     // Check and toast BSC
     let bscOk = false;
-    if (chain && isBscConnected && !validateBscNetwork(isMainnet, chain.id)) {
+    if (chain && isBscConnected && !isBnbNetworkValid(isMainnet, chain.id)) {
       setToastIdBsc(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
