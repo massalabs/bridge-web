@@ -13,7 +13,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { findClaimable } from '@/utils/lambdaApi';
+import { getClaimableById } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -96,12 +96,13 @@ export function ClaimRedeem() {
           burnTxId
         ) {
           try {
-            const operationToRedeem = await findClaimable(evmAddress, burnTxId);
+            const operationToRedeem = await getClaimableById(
+              evmAddress,
+              burnTxId,
+            );
             if (operationToRedeem) {
               updateCurrentRedeemOperation({
-                signatures: operationToRedeem.signatures.map(
-                  (s) => s.signature,
-                ),
+                signatures: operationToRedeem.signatures,
               });
               updateCurrentRedeemOperation({
                 claimState: ClaimState.READY_TO_CLAIM,

@@ -2,18 +2,15 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
-import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import { Status } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
-import { useOperationStore } from '@/store/store';
+import { useGlobalStatusesStore, useOperationStore } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { getRedeemOperation } from '@/utils/lambdaApi';
+import { getBurnById, getClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
-  const {
-    burnRedeemOperations,
-    setBurnRedeemOperations,
-    getCurrentRedeemOperation,
-  } = useOperationStore();
+  const { burnTxId, burnRedeemOperations, setBurnRedeemOperations } =
+    useOperationStore();
   const { address: evmAddress } = useAccount();
   const { setBox } = useGlobalStatusesStore();
 
@@ -25,36 +22,25 @@ export function ClaimPage() {
 
   useEffect(() => {
     if (!evmAddress) return;
-    getRedeemOperation(evmAddress).then((newOps) => {
+    getClaimableOperations(evmAddress).then((newOps) => {
       setBurnRedeemOperations(newOps);
-      if (!redeemableOperationIds.length) {
-        setRedeemableOperationIds(
-          newOps
-            .filter((op) => op.claimState === ClaimState.READY_TO_CLAIM)
-            .map((op) => op.inputId),
-        );
-      }
-
-      // Close the loading box if the current redeem operation is successful
-      const currentRedeemOperation = getCurrentRedeemOperation();
-      if (currentRedeemOperation) {
-        const newCurrentRedeemOperation = newOps.find(
-          (op) => op.inputId === currentRedeemOperation.inputId,
-        );
-        if (
-          newCurrentRedeemOperation &&
-          newCurrentRedeemOperation.claimState === ClaimState.SUCCESS
-        ) {
-          setBox(Status.None);
-        }
+      if (!redeemableOperationIds.length && newOps.length) {
+        setRedeemableOperationIds(newOps.map((op) => op.inputId));
       }
     });
+    if (burnTxId) {
+      getBurnById(evmAddress, burnTxId).then((op) => {
+        if (op && op.claimState === ClaimState.SUCCESS) {
+          setBox(Status.None);
+        }
+      });
+    }
   }, [
     evmAddress,
     redeemableOperationIds,
+    burnTxId,
     setRedeemableOperationIds,
     setBurnRedeemOperations,
-    getCurrentRedeemOperation,
     setBox,
   ]);
 

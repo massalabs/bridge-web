@@ -47,31 +47,17 @@ export interface Signatures {
   relayerId: number;
 }
 
+export enum Entities {
+  Burn = 'burn',
+  Lock = 'lock',
+  ReleaseMAS = 'releaseMAS',
+}
+
 export interface LambdaAPIResponse {
   data: { locked: Locked[]; burned: Burned[] };
 }
 
 export const lambdaEndpoint = 'bridge-getHistory-prod';
-
-async function getBurnedByEvmAddress(
-  evmAddress: `0x${string}`,
-): Promise<Burned[]> {
-  const { currentMode } = useBridgeModeStore.getState();
-
-  let response: LambdaAPIResponse;
-  if (!evmAddress) return [];
-  try {
-    response = await axios.get(config[currentMode].lambdaUrl + lambdaEndpoint, {
-      params: {
-        evmAddress,
-      },
-    });
-  } catch (error: any) {
-    console.warn('Error getting burned by evm address', error?.response?.data);
-    return [];
-  }
-  return response.data.burned;
-}
 
 enum apiOperationStates {
   new = 'new',
@@ -81,35 +67,125 @@ enum apiOperationStates {
   finalizing = 'finalizing',
 }
 
-export async function findClaimable(
-  userEvmAddress: `0x${string}`,
+export async function getBurnById(
+  evmAddress: `0x${string}`,
   burnOpId: string,
-): Promise<Burned | undefined> {
-  const burnedOpList = await getBurnedByEvmAddress(userEvmAddress);
+): Promise<BurnRedeemOperation | undefined> {
+  const { currentMode } = useBridgeModeStore.getState();
 
-  const claimableOp = burnedOpList.find(
-    (item) =>
-      item.outputTxId === null &&
-      item.state === apiOperationStates.processing &&
-      item.inputOpId === burnOpId,
-  );
+  let burnedOpList: Burned[] = [];
+  let response: LambdaAPIResponse;
+  if (!evmAddress) {
+    burnedOpList = [];
+  } else {
+    try {
+      response = await axios.get(
+        config[currentMode].lambdaUrl + lambdaEndpoint,
+        {
+          params: {
+            evmAddress,
+            // entities: [Entities.Burn],
+            inputOpId: burnOpId,
+            state: apiOperationStates.processing,
+          },
+        },
+      );
+      burnedOpList = response.data.burned;
+    } catch (error: any) {
+      console.warn(
+        'Error getting burned by evm address and inputOpId',
+        error?.response?.data,
+      );
+      burnedOpList = [];
+    }
+  }
+
+  if (!burnedOpList.length) return;
+
+  return burnOpApiToDTO(burnedOpList[0]);
+}
+
+export async function getClaimableById(
+  evmAddress: `0x${string}`,
+  burnOpId: string,
+): Promise<BurnRedeemOperation | undefined> {
+  const { currentMode } = useBridgeModeStore.getState();
+
+  let burnedOpList: Burned[] = [];
+  let response: LambdaAPIResponse;
+  if (!evmAddress) {
+    burnedOpList = [];
+  } else {
+    try {
+      response = await axios.get(
+        config[currentMode].lambdaUrl + lambdaEndpoint,
+        {
+          params: {
+            evmAddress,
+            // entities: [Entities.Burn],
+            inputOpId: burnOpId,
+            state: apiOperationStates.processing,
+          },
+        },
+      );
+      burnedOpList = response.data.burned;
+    } catch (error: any) {
+      console.warn(
+        'Error getting burned by evm address and inputOpId',
+        error?.response?.data,
+      );
+      burnedOpList = [];
+    }
+  }
+
+  const claimableOp = burnedOpList.find((item) => item.outputTxId === null);
 
   if (!claimableOp) return;
 
-  claimableOp.signatures = sortSignatures(claimableOp.signatures || []);
-
-  return claimableOp;
+  return burnOpApiToDTO(claimableOp);
 }
 
 function sortSignatures(signatures: Signatures[]): Signatures[] {
   return signatures.sort((a, b) => a.relayerId - b.relayerId);
 }
 
-export async function getRedeemOperation(
+export async function getClaimableOperations(
   evmAddress: `0x${string}`,
 ): Promise<BurnRedeemOperation[]> {
-  const burnedOpList = await getBurnedByEvmAddress(evmAddress);
+  const { currentMode } = useBridgeModeStore.getState();
 
+  let burnedOpList: Burned[] = [];
+  let response: LambdaAPIResponse;
+  if (!evmAddress) {
+    burnedOpList = [];
+  } else {
+    try {
+      response = await axios.get(
+        config[currentMode].lambdaUrl + lambdaEndpoint,
+        {
+          params: {
+            evmAddress,
+            // entities: [Entities.Burn],
+            state: apiOperationStates.processing,
+          },
+        },
+      );
+      burnedOpList = response.data.burned;
+    } catch (error: any) {
+      console.warn(
+        'Error getting burned by evm address',
+        error?.response?.data,
+      );
+      burnedOpList = [];
+    }
+  }
+
+  return burnedOpList
+    .filter((op) => !op.outputTxId) // keep only the ones that are not claimed
+    .map((opToClaim) => burnOpApiToDTO(opToClaim));
+}
+
+function burnOpApiToDTO(burn: Burned): BurnRedeemOperation {
   const statesCorrespondence = {
     // Relayer are adding signatures
     [apiOperationStates.new]: ClaimState.RETRIEVING_INFO,
@@ -131,38 +207,23 @@ export async function getRedeemOperation(
     [apiOperationStates.error]: ClaimState.ERROR,
   };
 
-  return burnedOpList.map((opToClaim) => {
-    const op = {
-      claimState: statesCorrespondence[opToClaim.state],
-      emitter: opToClaim.emitter,
-      recipient: opToClaim.recipient,
-      amount: opToClaim.amount,
-      inputId: opToClaim.inputOpId,
-      signatures: sortSignatures(opToClaim.signatures).map((s) => s.signature),
-      evmToken: opToClaim.evmToken,
-      massaToken: opToClaim.massaToken,
-      outputTxId: undefined,
-    };
+  const op = {
+    claimState: statesCorrespondence[burn.state],
+    emitter: burn.emitter,
+    recipient: burn.recipient,
+    amount: burn.amount,
+    inputId: burn.inputOpId,
+    signatures: sortSignatures(burn.signatures).map((s) => s.signature),
+    evmToken: burn.evmToken,
+    massaToken: burn.massaToken,
+    outputTxId: undefined,
+  };
 
-    // The operation state given by the lambda is processing but the operation may be already claimed
-    // if the outputTxId is set, so in this case we set the claimState to SUCCESS
-    if (
-      opToClaim.state === apiOperationStates.processing &&
-      opToClaim.outputTxId
-    ) {
-      op.claimState = ClaimState.SUCCESS;
-    }
+  // The operation state given by the lambda is processing but the operation may be already claimed
+  // if the outputTxId is set, so in this case we set the claimState to SUCCESS
+  if (burn.state === apiOperationStates.processing && burn.outputTxId) {
+    op.claimState = ClaimState.SUCCESS;
+  }
 
-    return op;
-  });
-}
-
-export async function getClaimableOperations(
-  evmAddress: `0x${string}`,
-): Promise<BurnRedeemOperation[]> {
-  const redeemOperations = await getRedeemOperation(evmAddress);
-
-  return redeemOperations.filter(
-    (op) => op.claimState === ClaimState.READY_TO_CLAIM,
-  );
+  return op;
 }
