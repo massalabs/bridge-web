@@ -86,7 +86,6 @@ export async function getBurnById(
             evmAddress,
             // entities: [Entities.Burn],
             inputOpId: burnOpId,
-            state: apiOperationStates.processing,
           },
         },
       );
