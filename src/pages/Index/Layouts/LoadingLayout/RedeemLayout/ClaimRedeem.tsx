@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { Button, toast } from '@massalabs/react-ui-kit';
+import { Button } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { config } from '@/const';
@@ -18,9 +18,9 @@ import {
 import { LambdaHookHistory } from '@/utils/bridgeHistory';
 import { ClaimState } from '@/utils/const';
 import {
+  ApiOperationStates,
   Entities,
   burnOpApiToDTO,
-  getClaimableById,
   lambdaEndpoint,
 } from '@/utils/lambdaApi';
 
@@ -38,12 +38,61 @@ function useCloseLoadingBoxOnSuccess() {
   // Close the loading box if the operation is already claimed in the claim page
   useEffect(() => {
     if (lambdaResponse?.burned.length) {
-      const op = burnOpApiToDTO(lambdaResponse?.burned[0]);
+      const op = burnOpApiToDTO(lambdaResponse.burned[0]);
       if (op && op.claimState === ClaimState.SUCCESS) {
         setBox(Status.None);
       }
     }
   }, [lambdaResponse, setBox]);
+}
+
+function useFetchSignatures() {
+  const { burnTxId, getCurrentRedeemOperation, updateBurnRedeemOperationById } =
+    useOperationStore();
+  const { setBox } = useGlobalStatusesStore();
+  const { currentMode } = useBridgeModeStore();
+  const { address: evmAddress } = useAccount();
+
+  const state = ApiOperationStates.processing;
+  const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}&state=${state}`;
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
+
+  const { data: lambdaResponse, refetch } =
+    useResource<LambdaHookHistory>(lambdaUrl);
+
+  useEffect(() => {
+    if (!burnTxId) return;
+    if (!lambdaResponse?.burned.length) return;
+
+    // find the operation
+    const claimableOp = lambdaResponse.burned.find(
+      (item) => item.outputTxId === null,
+    );
+    if (!claimableOp) return;
+
+    // update the store
+    const op = burnOpApiToDTO(claimableOp);
+    updateBurnRedeemOperationById(burnTxId, {
+      signatures: op.signatures,
+    });
+    if (
+      getCurrentRedeemOperation()?.claimState === ClaimState.RETRIEVING_INFO
+    ) {
+      updateBurnRedeemOperationById(burnTxId, {
+        claimState: ClaimState.READY_TO_CLAIM,
+      });
+    }
+  }, [
+    burnTxId,
+    lambdaResponse,
+    setBox,
+    getCurrentRedeemOperation,
+    updateBurnRedeemOperationById,
+  ]);
+
+  return {
+    refetch,
+  };
 }
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
@@ -62,6 +111,7 @@ export function ClaimRedeem() {
   const { write, error, isSuccess, hash, isPending } = useClaim();
 
   useCloseLoadingBoxOnSuccess();
+  const { refetch } = useFetchSignatures();
 
   const currentRedeemOperation = getCurrentRedeemOperation();
 
@@ -121,45 +171,9 @@ export function ClaimRedeem() {
   // Polls api to see if the server has the operation to claim with the signatures
   useEffect(() => {
     if (burn === Status.Success && !currentRedeemOperation?.signatures.length) {
-      const launchClaim = async () => {
-        if (
-          burn === Status.Success &&
-          !currentRedeemOperation?.signatures.length &&
-          evmAddress &&
-          burnTxId
-        ) {
-          try {
-            const operationToRedeem = await getClaimableById(
-              evmAddress,
-              burnTxId,
-            );
-            if (operationToRedeem) {
-              updateCurrentRedeemOperation({
-                signatures: operationToRedeem.signatures,
-              });
-              updateCurrentRedeemOperation({
-                claimState: ClaimState.READY_TO_CLAIM,
-              });
-              return;
-            }
-          } catch (error: any) {
-            console.error('Error fetching claim api', error.toString());
-            toast.error(Intl.t('index.claim.error.unknown'));
-            setLoadingToError();
-          }
-          setTimeout(launchClaim, 1000);
-        }
-      };
-      launchClaim();
+      setTimeout(refetch, 1000);
     }
-  }, [
-    burn,
-    currentRedeemOperation,
-    evmAddress,
-    burnTxId,
-    setLoadingToError,
-    updateCurrentRedeemOperation,
-  ]);
+  }, [burn, currentRedeemOperation, refetch]);
 
   // Event handler for claim button
   async function handleRedeem() {

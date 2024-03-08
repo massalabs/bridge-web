@@ -11,7 +11,7 @@ export interface Locked {
   massaToken: `AS${string}`;
   inputTxId: `0x${string}`;
   recipient: string;
-  state: apiOperationStates;
+  state: ApiOperationStates;
   error: null | ApiError;
   emitter: `0x${string}`;
   outputOpId: string;
@@ -32,7 +32,7 @@ export interface Burned {
   massaToken: `AS${string}`;
   evmChainId: number;
   recipient: `0x${string}`;
-  state: apiOperationStates;
+  state: ApiOperationStates;
   error: null | ApiError;
   emitter: string;
   inputOpId: string;
@@ -59,52 +59,12 @@ export interface LambdaAPIResponse {
 
 export const lambdaEndpoint = 'bridge-getHistory-prod';
 
-enum apiOperationStates {
+export enum ApiOperationStates {
   new = 'new',
   processing = 'processing',
   done = 'done',
   error = 'error',
   finalizing = 'finalizing',
-}
-
-export async function getClaimableById(
-  evmAddress: `0x${string}`,
-  burnOpId: string,
-): Promise<BurnRedeemOperation | undefined> {
-  const { currentMode } = useBridgeModeStore.getState();
-
-  let burnedOpList: Burned[] = [];
-  let response: LambdaAPIResponse;
-  if (!evmAddress) {
-    burnedOpList = [];
-  } else {
-    try {
-      response = await axios.get(
-        config[currentMode].lambdaUrl + lambdaEndpoint,
-        {
-          params: {
-            evmAddress,
-            // entities: [Entities.Burn],
-            inputOpId: burnOpId,
-            state: apiOperationStates.processing,
-          },
-        },
-      );
-      burnedOpList = response.data.burned;
-    } catch (error: any) {
-      console.warn(
-        'Error getting burned by evm address and inputOpId',
-        error?.response?.data,
-      );
-      burnedOpList = [];
-    }
-  }
-
-  const claimableOp = burnedOpList.find((item) => item.outputTxId === null);
-
-  if (!claimableOp) return;
-
-  return burnOpApiToDTO(claimableOp);
 }
 
 function sortSignatures(signatures: Signatures[]): Signatures[] {
@@ -128,7 +88,7 @@ export async function getClaimableOperations(
           params: {
             evmAddress,
             // entities: [Entities.Burn],
-            state: apiOperationStates.processing,
+            state: ApiOperationStates.processing,
           },
         },
       );
@@ -150,23 +110,23 @@ export async function getClaimableOperations(
 export function burnOpApiToDTO(burn: Burned): BurnRedeemOperation {
   const statesCorrespondence = {
     // Relayer are adding signatures
-    [apiOperationStates.new]: ClaimState.RETRIEVING_INFO,
+    [ApiOperationStates.new]: ClaimState.RETRIEVING_INFO,
 
     // Signatures are added, user can claim, user may have claim, tx may be in a fork
     // if outputTxId is set, we are waiting for evm confirmations
     // it can be ClaimState.AWAITING_SIGNATURE but we can't know from the lambda
     // it can be ClaimState.PENDING but we can't know from the lambda
     // it can be ClaimState.SUCCESS if the outputTxId is set (see bellow)
-    [apiOperationStates.processing]: ClaimState.READY_TO_CLAIM,
+    [ApiOperationStates.processing]: ClaimState.READY_TO_CLAIM,
 
     // Relayer are deleting burn log in massa smart contract, we have enough evm confirmations
-    [apiOperationStates.finalizing]: ClaimState.SUCCESS,
+    [ApiOperationStates.finalizing]: ClaimState.SUCCESS,
 
     // Relayer have deleted burn log in massa smart contract, we have enough evm confirmations
-    [apiOperationStates.done]: ClaimState.SUCCESS,
+    [ApiOperationStates.done]: ClaimState.SUCCESS,
 
     // Error in the process
-    [apiOperationStates.error]: ClaimState.ERROR,
+    [ApiOperationStates.error]: ClaimState.ERROR,
   };
 
   const op = {
@@ -183,7 +143,7 @@ export function burnOpApiToDTO(burn: Burned): BurnRedeemOperation {
 
   // The operation state given by the lambda is processing but the operation may be already claimed
   // if the outputTxId is set, so in this case we set the claimState to SUCCESS
-  if (burn.state === apiOperationStates.processing && burn.outputTxId) {
+  if (burn.state === ApiOperationStates.processing && burn.outputTxId) {
     op.claimState = ClaimState.SUCCESS;
   }
 
