@@ -4,7 +4,7 @@ import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
-import { getClaimableOperations } from '@/utils/lambdaApi';
+import { useClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
   const { burnRedeemOperations, setBurnRedeemOperations } = useOperationStore();
@@ -16,16 +16,15 @@ export function ClaimPage() {
     string[]
   >([]);
 
+  const { claimableOperations } = useClaimableOperations();
+
   useEffect(() => {
-    if (!evmAddress) return;
-    getClaimableOperations(evmAddress).then((newOps) => {
-      setBurnRedeemOperations(newOps);
-      if (!redeemableOperationIds.length && newOps.length) {
-        setRedeemableOperationIds(newOps.map((op) => op.inputId));
-      }
-    });
+    setBurnRedeemOperations(claimableOperations);
+    if (!redeemableOperationIds.length && claimableOperations.length) {
+      setRedeemableOperationIds(claimableOperations.map((op) => op.inputId));
+    }
   }, [
-    evmAddress,
+    claimableOperations,
     redeemableOperationIds,
     setRedeemableOperationIds,
     setBurnRedeemOperations,

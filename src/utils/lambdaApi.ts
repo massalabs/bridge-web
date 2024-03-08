@@ -1,7 +1,10 @@
-import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
+import { LambdaHookHistory } from './bridgeHistory';
 import { ClaimState } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
+import { useResource } from '@/custom/api';
 import { BurnRedeemOperation } from '@/store/operationStore';
 
 export interface Locked {
@@ -71,40 +74,32 @@ function sortSignatures(signatures: Signatures[]): Signatures[] {
   return signatures.sort((a, b) => a.relayerId - b.relayerId);
 }
 
-export async function getClaimableOperations(
-  evmAddress: `0x${string}`,
-): Promise<BurnRedeemOperation[]> {
+export function useClaimableOperations() {
+  const { address: evmAddress } = useAccount();
   const { currentMode } = useBridgeModeStore.getState();
 
-  let burnedOpList: Burned[] = [];
-  let response: LambdaAPIResponse;
-  if (!evmAddress) {
-    burnedOpList = [];
-  } else {
-    try {
-      response = await axios.get(
-        config[currentMode].lambdaUrl + lambdaEndpoint,
-        {
-          params: {
-            evmAddress,
-            // entities: [Entities.Burn],
-            state: ApiOperationStates.processing,
-          },
-        },
-      );
-      burnedOpList = response.data.burned;
-    } catch (error: any) {
-      console.warn(
-        'Error getting burned by evm address',
-        error?.response?.data,
-      );
-      burnedOpList = [];
-    }
-  }
+  const state = ApiOperationStates.processing;
+  const queryParams = `?evmAddress=${evmAddress}&entities=${Entities.Burn}&state=${state}`;
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
+  const [claimableOperations, setClaimableOperations] = useState<
+    BurnRedeemOperation[]
+  >([]);
 
-  return burnedOpList
-    .filter((op) => !op.outputTxId) // keep only the ones that are not claimed
-    .map((opToClaim) => burnOpApiToDTO(opToClaim));
+  const { data: lambdaResponse } = useResource<LambdaHookHistory>(lambdaUrl);
+
+  useEffect(() => {
+    if (!lambdaResponse?.burned.length) return;
+
+    setClaimableOperations(
+      lambdaResponse.burned
+        .filter((op) => !op.outputTxId) // keep only the ones that are not claimed
+        .map((opToClaim) => burnOpApiToDTO(opToClaim)),
+    );
+  }, [lambdaResponse]);
+
+  return {
+    claimableOperations,
+  };
 }
 
 export function burnOpApiToDTO(burn: Burned): BurnRedeemOperation {
