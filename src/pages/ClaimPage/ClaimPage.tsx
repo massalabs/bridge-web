@@ -34,6 +34,8 @@ export function ClaimPage() {
             .map((op) => op.inputId),
         );
       }
+
+      // Close the loading box if the current redeem operation is successful
       const currentRedeemOperation = getCurrentRedeemOperation();
       if (currentRedeemOperation) {
         const newCurrentRedeemOperation = newOps.find(
