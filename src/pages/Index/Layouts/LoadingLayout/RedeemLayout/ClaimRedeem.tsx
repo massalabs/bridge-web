@@ -13,7 +13,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import { getClaimableById } from '@/utils/lambdaApi';
+import { getBurnById, getClaimableById } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -127,6 +127,17 @@ export function ClaimRedeem() {
     setLoadingToError,
     updateCurrentRedeemOperation,
   ]);
+
+  // Close the loading box if the operation is already claimed in the claim page
+  useEffect(() => {
+    if (evmAddress && burnTxId) {
+      getBurnById(evmAddress, burnTxId).then((op) => {
+        if (op && op.claimState === ClaimState.SUCCESS) {
+          setBox(Status.None);
+        }
+      });
+    }
+  }, [burnTxId, evmAddress, setBox]);
 
   // Event handler for claim button
   async function handleRedeem() {
