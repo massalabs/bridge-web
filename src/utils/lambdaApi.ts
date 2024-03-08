@@ -67,43 +67,6 @@ enum apiOperationStates {
   finalizing = 'finalizing',
 }
 
-export async function getBurnById(
-  evmAddress: `0x${string}`,
-  burnOpId: string,
-): Promise<BurnRedeemOperation | undefined> {
-  const { currentMode } = useBridgeModeStore.getState();
-
-  let burnedOpList: Burned[] = [];
-  let response: LambdaAPIResponse;
-  if (!evmAddress) {
-    burnedOpList = [];
-  } else {
-    try {
-      response = await axios.get(
-        config[currentMode].lambdaUrl + lambdaEndpoint,
-        {
-          params: {
-            evmAddress,
-            // entities: [Entities.Burn],
-            inputOpId: burnOpId,
-          },
-        },
-      );
-      burnedOpList = response.data.burned;
-    } catch (error: any) {
-      console.warn(
-        'Error getting burned by evm address and inputOpId',
-        error?.response?.data,
-      );
-      burnedOpList = [];
-    }
-  }
-
-  if (!burnedOpList.length) return;
-
-  return burnOpApiToDTO(burnedOpList[0]);
-}
-
 export async function getClaimableById(
   evmAddress: `0x${string}`,
   burnOpId: string,
@@ -184,7 +147,7 @@ export async function getClaimableOperations(
     .map((opToClaim) => burnOpApiToDTO(opToClaim));
 }
 
-function burnOpApiToDTO(burn: Burned): BurnRedeemOperation {
+export function burnOpApiToDTO(burn: Burned): BurnRedeemOperation {
   const statesCorrespondence = {
     // Relayer are adding signatures
     [apiOperationStates.new]: ClaimState.RETRIEVING_INFO,

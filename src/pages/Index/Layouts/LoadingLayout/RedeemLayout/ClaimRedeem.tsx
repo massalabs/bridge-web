@@ -2,18 +2,49 @@ import { useCallback, useEffect } from 'react';
 import { Button, toast } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import { config } from '@/const';
+import { useResource } from '@/custom/api';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import {
+  useBridgeModeStore,
   useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
+import { LambdaHookHistory } from '@/utils/bridgeHistory';
 import { ClaimState } from '@/utils/const';
-import { getBurnById, getClaimableById } from '@/utils/lambdaApi';
+import {
+  Entities,
+  burnOpApiToDTO,
+  getClaimableById,
+  lambdaEndpoint,
+} from '@/utils/lambdaApi';
+
+function useCloseLoadingBoxOnSuccess() {
+  const { address: evmAddress } = useAccount();
+  const { burnTxId } = useOperationStore();
+  const { setBox } = useGlobalStatusesStore();
+  const { currentMode } = useBridgeModeStore();
+
+  const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}`;
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
+
+  const { data: lambdaResponse } = useResource<LambdaHookHistory>(lambdaUrl);
+
+  // Close the loading box if the operation is already claimed in the claim page
+  useEffect(() => {
+    if (lambdaResponse?.burned.length) {
+      const op = burnOpApiToDTO(lambdaResponse?.burned[0]);
+      if (op && op.claimState === ClaimState.SUCCESS) {
+        setBox(Status.None);
+      }
+    }
+  }, [lambdaResponse, setBox]);
+}
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -29,6 +60,8 @@ export function ClaimRedeem() {
   } = useOperationStore();
 
   const { write, error, isSuccess, hash, isPending } = useClaim();
+
+  useCloseLoadingBoxOnSuccess();
 
   const currentRedeemOperation = getCurrentRedeemOperation();
 
@@ -127,17 +160,6 @@ export function ClaimRedeem() {
     setLoadingToError,
     updateCurrentRedeemOperation,
   ]);
-
-  // Close the loading box if the operation is already claimed in the claim page
-  useEffect(() => {
-    if (evmAddress && burnTxId) {
-      getBurnById(evmAddress, burnTxId).then((op) => {
-        if (op && op.claimState === ClaimState.SUCCESS) {
-          setBox(Status.None);
-        }
-      });
-    }
-  }, [burnTxId, evmAddress, setBox]);
 
   // Event handler for claim button
   async function handleRedeem() {
