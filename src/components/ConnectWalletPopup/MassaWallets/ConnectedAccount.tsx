@@ -2,12 +2,7 @@ import { Clipboard } from '@massalabs/react-ui-kit';
 import { useAccountStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
 
-interface ConnectedAccountProps {
-  maskLength?: number;
-}
-
-export function ConnectedAccount(props: ConnectedAccountProps) {
-  const { maskLength } = props;
+export function ConnectedAccount() {
   const { connectedAccount } = useAccountStore();
 
   return (
@@ -15,10 +10,7 @@ export function ConnectedAccount(props: ConnectedAccountProps) {
       <Clipboard
         customClass="h-14 rounded-lg text-center !mas-body"
         rawContent={connectedAccount?.address() ?? ''}
-        displayedContent={maskAddress(
-          connectedAccount?.address() ?? '',
-          maskLength ?? 15,
-        )}
+        displayedContent={maskAddress(connectedAccount?.address() ?? '')}
       />
     </div>
   );
