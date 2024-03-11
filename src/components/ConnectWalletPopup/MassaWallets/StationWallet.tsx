@@ -100,7 +100,7 @@ export default function StationWallet() {
           <StationSelectAccount />
         </div>
         <div className="w-1/2">
-          <ConnectedAccount maskLength={5} />
+          <ConnectedAccount />
         </div>
       </div>
       <MASBalance />
