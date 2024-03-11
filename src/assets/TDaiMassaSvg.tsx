@@ -1,4 +1,4 @@
-import { SVGProps } from './EthSvg';
+import { SVGProps } from './svgInterface';
 
 /* eslint-disable max-len */
 export function TDaiMassaSvg(props: SVGProps) {
