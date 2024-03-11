@@ -4,6 +4,7 @@ import { WalletError } from './WalletError';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { BEARBY_INSTALL } from '@/utils/const';
+import { addressCharLimit } from '@/utils/massaFormat';
 
 export default function BearbyWallet() {
   const { connectedAccount } = useAccountStore();
@@ -11,7 +12,7 @@ export default function BearbyWallet() {
   if (connectedAccount) {
     return (
       <div className="flex flex-col gap-4 mas-body">
-        <ConnectedAccount />
+        <ConnectedAccount maskLength={addressCharLimit} />
         <MASBalance />
       </div>
     );

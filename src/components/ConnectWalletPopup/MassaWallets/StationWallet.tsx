@@ -17,6 +17,7 @@ import {
   MASSA_STATION_STORE,
   MASSA_WALLET_CREATE_ACCOUNT,
 } from '@/utils/const';
+import { addressCharLimit } from '@/utils/massaFormat';
 
 export default function StationWallet() {
   const { accounts } = useAccountStore();
@@ -100,7 +101,7 @@ export default function StationWallet() {
           <StationSelectAccount />
         </div>
         <div className="w-1/2">
-          <ConnectedAccount maskLength={5} />
+          <ConnectedAccount maskLength={addressCharLimit} />
         </div>
       </div>
       <MASBalance />

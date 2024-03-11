@@ -5,6 +5,8 @@
  * @returns The masked address.
  */
 
+export const addressCharLimit = 8;
+
 export function maskAddress(str: string, length = 4, mask = '...'): string {
   const start = length;
   const end = str?.length - length;
