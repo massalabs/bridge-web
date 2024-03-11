@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-import {
-  BurnState,
-  ClaimState,
-  LockState,
-  MintState,
-  SIDE,
-} from '@/utils/const';
+import { BurnState, ClaimState, SIDE } from '@/utils/const';
 
 interface Operation {
   amount: string;
@@ -21,11 +15,6 @@ export interface BurnRedeemOperation extends Operation {
   burnState?: BurnState;
   claimState: ClaimState;
   signatures: string[];
-}
-
-export interface LockMintOperation extends Operation {
-  lockState?: LockState;
-  mintState: MintState;
 }
 
 export interface OperationStoreState {
