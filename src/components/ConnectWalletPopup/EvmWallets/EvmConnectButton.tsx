@@ -9,6 +9,7 @@ import { useWrongNetworkEVM } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
+import { maskAddress } from '@/utils/massaFormat';
 import { formatAmount } from '@/utils/parseAmount';
 
 export default function EvmConnectButton(): JSX.Element {
@@ -85,7 +86,7 @@ export default function EvmConnectButton(): JSX.Element {
                       className="bg-secondary rounded-lg hover:bg-tertiary h-14 gap-5 w-full"
                       posIcon={<FiEdit size={14} />}
                     >
-                      {account.displayName}
+                      {maskAddress(account.address)}
                     </Button>
                   </div>
                   <div className="flex gap-2 mas-body">

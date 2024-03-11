@@ -6,7 +6,7 @@ import {
   MASSA_EXPLO_URL,
   SIDE,
 } from '@/utils/const';
-import { maskAddress } from '@/utils/massaFormat';
+import { TX_CHAR_LIMIT, maskAddress } from '@/utils/massaFormat';
 
 interface TxLinkToExplorersProps {
   outputId?: string;
@@ -37,7 +37,7 @@ export function TxLinkToExplorers(props: TxLinkToExplorersProps) {
 
   return (
     <a className="flex gap-2 items-center" href={explorerUrl} target="_blank">
-      <u>{maskAddress(outputId)}</u>
+      <u>{maskAddress(outputId, TX_CHAR_LIMIT)}</u>
     </a>
   );
 }
