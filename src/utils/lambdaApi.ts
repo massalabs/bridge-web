@@ -92,6 +92,18 @@ export function useClaimableOperations() {
 export function burnOpApiToDTO(
   burn: OperationHistoryItem,
 ): BurnRedeemOperation {
+  const op = {
+    ...burn,
+    claimState: getClaimState(burn.serverState, burn.outputId),
+  };
+
+  return op;
+}
+
+function getClaimState(
+  serverState: BridgingState,
+  outputId?: string,
+): ClaimState {
   const statesCorrespondence = {
     // Relayer are adding signatures
     [BridgingState.new]: ClaimState.RETRIEVING_INFO,
@@ -113,23 +125,13 @@ export function burnOpApiToDTO(
     [BridgingState.error]: ClaimState.ERROR,
   };
 
-  const op = {
-    claimState: statesCorrespondence[burn.serverState],
-    emitter: burn.emitter,
-    recipient: burn.recipient,
-    amount: burn.amount,
-    inputId: burn.inputId,
-    signatures: burn.signatures || [],
-    evmToken: burn.evmToken as `0x${string}`,
-    massaToken: burn.massaToken as `AS${string}`,
-    outputTxId: burn.outputId,
-  };
+  const claimState = statesCorrespondence[serverState];
 
   // The operation state given by the lambda is processing but the operation may be already claimed
   // if the outputTxId is set, so in this case we set the claimState to SUCCESS
-  if (burn.serverState === BridgingState.processing && burn.outputId) {
-    op.claimState = ClaimState.SUCCESS;
+  if (serverState === BridgingState.processing && outputId) {
+    return ClaimState.SUCCESS;
   }
 
-  return op;
+  return claimState;
 }

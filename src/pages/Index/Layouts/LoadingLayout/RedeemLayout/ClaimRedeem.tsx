@@ -169,7 +169,10 @@ export function ClaimRedeem() {
 
   // Polls api to see if the server has the operation to claim with the signatures
   useEffect(() => {
-    if (burn === Status.Success && !currentRedeemOperation?.signatures.length) {
+    if (
+      burn === Status.Success &&
+      !currentRedeemOperation?.signatures?.length
+    ) {
       setTimeout(refetch, 1000);
     }
   }, [burn, currentRedeemOperation, refetch]);
@@ -182,7 +185,8 @@ export function ClaimRedeem() {
       !selectedToken ||
       !burnTxId ||
       !currentRedeemOperation ||
-      currentRedeemOperation.signatures.length === 0
+      !currentRedeemOperation.signatures ||
+      currentRedeemOperation.signatures?.length === 0
     )
       return;
 
