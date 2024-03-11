@@ -6,7 +6,7 @@ export const config = createConfig({
   storage: createStorage({ storage: window.localStorage }),
   transports: {
     [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [sepolia.id]: http('https://rpc2.sepolia.org'),
     [bsc.id]: http(),
     [bscTestnet.id]: http(),
   },
