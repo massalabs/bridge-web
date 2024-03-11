@@ -4,20 +4,19 @@ import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
-import { getClaimableOperations } from '@/utils/lambdaApi';
+import { useClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
-  const { address: evmAddress, chain: evmConnectedChain } = useAccount();
+  const { chain: evmConnectedChain } = useAccount();
   const { currentMode } = useBridgeModeStore();
 
   const [renderButton, setRenderButton] = useState(false);
 
+  const { claimableOperations } = useClaimableOperations();
+
   useEffect(() => {
-    if (!evmAddress) return;
-    getClaimableOperations(evmAddress).then((pendingOperations) => {
-      setRenderButton(!!pendingOperations.length);
-    });
-  }, [evmAddress, currentMode]);
+    setRenderButton(!!claimableOperations.length);
+  }, [claimableOperations, currentMode]);
 
   function ClaimButton() {
     const evmChainName = evmConnectedChain?.name;

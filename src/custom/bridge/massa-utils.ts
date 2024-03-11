@@ -119,15 +119,13 @@ export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
       });
 
     const mintEvent = events.find((e) => isTokenMintedEvent(e, lockTxId));
-    if (mintEvent) {
+    if (mintEvent && mintEvent.context.origin_operation_id) {
+      setMintTxId(mintEvent.context.origin_operation_id);
       try {
         await checkForOperationStatus(
           massaClient,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          mintEvent.context.origin_operation_id!,
+          mintEvent.context.origin_operation_id,
         );
-        if (mintEvent.context.origin_operation_id)
-          setMintTxId(mintEvent.context.origin_operation_id);
       } catch (err) {
         console.error(err);
         return false;
