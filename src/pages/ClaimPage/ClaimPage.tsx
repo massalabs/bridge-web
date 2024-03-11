@@ -2,20 +2,13 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
-import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
-import { ClaimState } from '@/utils/const';
-import { getRedeemOperation } from '@/utils/lambdaApi';
+import { useClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
-  const {
-    burnRedeemOperations,
-    setBurnRedeemOperations,
-    getCurrentRedeemOperation,
-  } = useOperationStore();
+  const { burnRedeemOperations, setBurnRedeemOperations } = useOperationStore();
   const { address: evmAddress } = useAccount();
-  const { setBox } = useGlobalStatusesStore();
 
   // Keep the list of operation IDs to claim in the first call to getRedeemOperation,
   // to be able to see only the success state of them, and not the whole list of previous success operations.
@@ -23,37 +16,18 @@ export function ClaimPage() {
     string[]
   >([]);
 
+  const { claimableOperations } = useClaimableOperations();
+
   useEffect(() => {
-    if (!evmAddress) return;
-    getRedeemOperation(evmAddress).then((newOps) => {
-      setBurnRedeemOperations(newOps);
-      if (!redeemableOperationIds.length) {
-        setRedeemableOperationIds(
-          newOps
-            .filter((op) => op.claimState === ClaimState.READY_TO_CLAIM)
-            .map((op) => op.inputId),
-        );
-      }
-      const currentRedeemOperation = getCurrentRedeemOperation();
-      if (currentRedeemOperation) {
-        const newCurrentRedeemOperation = newOps.find(
-          (op) => op.inputId === currentRedeemOperation.inputId,
-        );
-        if (
-          newCurrentRedeemOperation &&
-          newCurrentRedeemOperation.claimState === ClaimState.SUCCESS
-        ) {
-          setBox(Status.None);
-        }
-      }
-    });
+    setBurnRedeemOperations(claimableOperations);
+    if (!redeemableOperationIds.length && claimableOperations.length) {
+      setRedeemableOperationIds(claimableOperations.map((op) => op.inputId));
+    }
   }, [
-    evmAddress,
+    claimableOperations,
     redeemableOperationIds,
     setRedeemableOperationIds,
     setBurnRedeemOperations,
-    getCurrentRedeemOperation,
-    setBox,
   ]);
 
   const burnOperations = burnRedeemOperations.filter((op) =>
