@@ -2,11 +2,8 @@ import { Button } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
-import { bsc, bscTestnet, mainnet, sepolia } from 'wagmi/chains';
+import { mainnet, sepolia } from 'wagmi/chains';
 import { MetaMaskSvg } from '@/assets';
-
-import { Blockchain } from '@/const';
-import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
@@ -24,16 +21,6 @@ export function EvmConnectButton(): JSX.Element {
   const { data: balanceData } = useBalance({
     address,
   });
-
-  const connectedChain = useConnectedEvmChain();
-
-  // Determines what chain to switch to if user is connected to the wrong network
-  function getChainToSwitch(): number {
-    if (connectedChain === Blockchain.BSC) {
-      return isMainnet ? bsc.id : bscTestnet.id;
-    }
-    return isMainnet ? mainnet.id : sepolia.id;
-  }
 
   const isValidEVMNetwork = isEvmNetworkValid(isMainnet, chain?.id);
 
@@ -78,7 +65,7 @@ export function EvmConnectButton(): JSX.Element {
                       customClass="h-14"
                       onClick={() =>
                         switchChain?.({
-                          chainId: getChainToSwitch(),
+                          chainId: isMainnet ? mainnet.id : sepolia.id,
                         })
                       }
                     >

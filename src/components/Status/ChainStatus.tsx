@@ -22,31 +22,25 @@ export function ChainStatus(props: ChainStatusProps) {
 
   const isValidEvmNetwork = isEvmNetworkValid(isMainnet, chain?.id);
 
-  if (blockchain === Blockchain.MASSA) {
-    const isConnectMassa = !!connectedAccount;
+  const blockchainIsMassa = blockchain === Blockchain.MASSA;
 
-    return (
-      <>
-        {isConnectMassa && !!currentProvider ? (
-          isValidMassaNetwork ? (
-            <Connected />
-          ) : (
-            <WrongChain blockchain={blockchain} />
-          )
-        ) : (
-          <Disconnected />
-        )}
-      </>
-    );
-  }
+  const isConnectMassa = !!connectedAccount;
+
+  const isConnected = blockchainIsMassa
+    ? isConnectMassa && !!currentProvider
+    : isConnectedEVM;
+
+  const networkIsValid = blockchainIsMassa
+    ? isValidMassaNetwork
+    : isValidEvmNetwork;
 
   return (
     <>
-      {isConnectedEVM ? (
-        !isValidEvmNetwork ? (
-          <WrongChain blockchain={blockchain} />
-        ) : (
+      {isConnected ? (
+        networkIsValid ? (
           <Connected />
+        ) : (
+          <WrongChain blockchain={blockchain} />
         )
       ) : (
         <Disconnected />

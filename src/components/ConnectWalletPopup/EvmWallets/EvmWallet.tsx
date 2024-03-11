@@ -14,7 +14,7 @@ export function ConnectEvmWallet() {
 
   const walletName = useConnectorName();
 
-  const currentChain = useConnectedEvmChain();
+  const connectedEvmChain = useConnectedEvmChain();
 
   return (
     <>
@@ -24,7 +24,7 @@ export function ConnectEvmWallet() {
             ? walletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        <ChainStatus blockchain={currentChain} />
+        <ChainStatus blockchain={connectedEvmChain} />
       </div>
       <div className="w-full">
         {isMetamaskInstalled ? <EvmConnectButton /> : <MetamaskNotInstalled />}

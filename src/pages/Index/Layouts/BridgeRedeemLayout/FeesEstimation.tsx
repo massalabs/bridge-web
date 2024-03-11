@@ -162,51 +162,51 @@ export function FeesEstimation() {
         </Link>
       </div>
     );
-  } else
-    return (
-      <div className="mas-body2">
-        <div className="flex items-center justify-between">
-          <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
-          <div className="flex items-center">
-            1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
-            <span className="mx-1">
-              {isMainnet() ? <EthSvg size={20} /> : <SepoliaSvg size={20} />}
-            </span>{' '}
-            = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
-            <span className="ml-1">
-              <MassaLogo size={20} />
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <p>
-              {Intl.t('index.fee-estimate.network-fees', {
-                name: Intl.t(`general.${Blockchain.MASSA}`),
-                network: Intl.t(`general.${massaNetwork}`),
-              })}
-            </p>
-            {feesMAS && feesMAS !== '0' && (
-              <Tooltip
-                body={Intl.t('index.fee-estimate.tooltip-massa', {
-                  fees: feesMAS,
-                })}
-              >
-                <FiInfo size={18} />
-              </Tooltip>
-            )}
-          </div>
-          <EstimatedAmount amount={feesMAS} symbol={MASSA_TOKEN} />
-        </div>
-        <div className="flex items-center justify-between">
-          <p>
-            {Intl.t('index.fee-estimate.network-fees', {
-              name: chainName,
-              network: Intl.t(`general.${evmNetwork}`),
-            })}
-          </p>
-          <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
+  }
+  return (
+    <div className="mas-body2">
+      <div className="flex items-center justify-between">
+        <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
+        <div className="flex items-center">
+          1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
+          <span className="mx-1">
+            {isMainnet() ? <EthSvg size={20} /> : <SepoliaSvg size={20} />}
+          </span>{' '}
+          = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
+          <span className="ml-1">
+            <MassaLogo size={20} />
+          </span>
         </div>
       </div>
-    );
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <p>
+            {Intl.t('index.fee-estimate.network-fees', {
+              name: Intl.t(`general.${Blockchain.MASSA}`),
+              network: Intl.t(`general.${massaNetwork}`),
+            })}
+          </p>
+          {feesMAS && feesMAS !== '0' && (
+            <Tooltip
+              body={Intl.t('index.fee-estimate.tooltip-massa', {
+                fees: feesMAS,
+              })}
+            >
+              <FiInfo size={18} />
+            </Tooltip>
+          )}
+        </div>
+        <EstimatedAmount amount={feesMAS} symbol={MASSA_TOKEN} />
+      </div>
+      <div className="flex items-center justify-between">
+        <p>
+          {Intl.t('index.fee-estimate.network-fees', {
+            name: chainName,
+            network: Intl.t(`general.${evmNetwork}`),
+          })}
+        </p>
+        <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
+      </div>
+    </div>
+  );
 }

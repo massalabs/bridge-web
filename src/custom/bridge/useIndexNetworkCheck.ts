@@ -11,8 +11,9 @@ import {
 } from '@/utils/networkValidation';
 
 export function useIndexNetworkCheck() {
-  const { connectedNetwork, currentProvider } = useAccountStore();
   const { chain } = useAccount();
+
+  const { connectedNetwork, currentProvider } = useAccountStore();
   const {
     isMainnet: getIsMainnet,
     currentMode,
@@ -23,13 +24,12 @@ export function useIndexNetworkCheck() {
   const isMainnet = getIsMainnet();
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
+  const walletName = useConnectorName();
 
   // state to dismiss toast
   const [wrongIndexNetwork, setWrongIndexNetwork] = useState<boolean>(false);
-
   const [toastIdEvm, setToastIdEvm] = useState<string>('');
   const [toastIdMassa, setToastIdMassa] = useState<string>('');
-  const walletName = useConnectorName();
 
   useEffect(() => {
     // if not wallet is detected, do not show toast
@@ -95,6 +95,7 @@ export function useIndexNetworkCheck() {
     setToastIdEvm,
     setWrongIndexNetwork,
     setToastIdMassa,
+    walletName,
   ]);
 
   return { wrongIndexNetwork };
