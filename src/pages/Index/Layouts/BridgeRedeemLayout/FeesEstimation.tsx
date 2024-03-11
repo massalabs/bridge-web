@@ -182,9 +182,7 @@ export function FeesEstimation() {
       <div className="flex items-center justify-between">
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
-            name: chain
-              ? Intl.t(`general.${chain.name}`)
-              : Intl.t(`general.${Blockchain.ETHEREUM}`),
+            name: chain ? chain.name : Intl.t(`general.${Blockchain.ETHEREUM}`),
             network: Intl.t(`general.${evmNetwork}`),
           })}
         </p>
