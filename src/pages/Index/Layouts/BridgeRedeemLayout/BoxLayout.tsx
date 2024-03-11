@@ -204,7 +204,7 @@ function TokenOptions(props: TokenOptionsProps) {
       tDAI: getTokenIcons().tDAI,
       WETH: getTokenIcons().WETH,
     };
-    return icons[token.symbol as SupportedTokens];
+    return icons[token.symbolEVM as SupportedTokens];
   }
 
   return (
@@ -214,7 +214,7 @@ function TokenOptions(props: TokenOptionsProps) {
       size="md"
       options={tokens.map((token: IToken) => {
         return {
-          item: isMassaToEvm ? token.symbol : token.symbolEVM,
+          item: nativeToken ? token.symbol : token.symbolEVM,
           icon: getIcon(token),
           onClick: () => setSelectedToken(token),
         };
