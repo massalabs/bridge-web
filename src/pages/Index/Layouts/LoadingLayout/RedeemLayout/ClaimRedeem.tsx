@@ -3,7 +3,7 @@ import { Button } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { config } from '@/const';
-import { useResource } from '@/custom/api';
+import { useResource } from '@/custom/api/useResource';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';

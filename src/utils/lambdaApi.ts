@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 import { ClaimState } from './const';
 import { config } from '../const';
 import { useBridgeModeStore } from '../store/store';
-import { useResource } from '@/custom/api';
+import { useResource } from '@/custom/api/useResource';
 import { BurnRedeemOperation } from '@/store/operationStore';
 
 export enum HistoryOperationStatus {

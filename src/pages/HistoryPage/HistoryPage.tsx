@@ -6,7 +6,7 @@ import { Categories } from './Categories';
 import { Operation, OperationSkeleton } from './Operation';
 import { Hr } from '@/components/Hr';
 import { config } from '@/const';
-import { useResource } from '@/custom/api';
+import { useResource } from '@/custom/api/useResource';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 
