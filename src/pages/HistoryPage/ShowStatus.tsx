@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ErrorCheck, Spinner, SuccessCheck } from '@/components';
 import Intl from '@/i18n/i18n';
-import { HistoryOperationStatus } from '@/utils/bridgeHistory';
+import { HistoryOperationStatus } from '@/utils/lambdaApi';
 
 interface ShowStatusProps {
   status: HistoryOperationStatus;
