@@ -5,7 +5,14 @@
  * @returns The masked address.
  */
 
-export function maskAddress(str: string, length = 4, mask = '...'): string {
+export const TX_CHAR_LIMIT = 4;
+export const DEFAULT_ADDRESS_CHAR_LIMIT = 8;
+
+export function maskAddress(
+  str: string,
+  length = DEFAULT_ADDRESS_CHAR_LIMIT,
+  mask = '...',
+): string {
   const start = length;
   const end = str?.length - length;
 
