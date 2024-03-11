@@ -4,16 +4,17 @@ import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiAlertCircle } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
+import { BNBSvg } from '@/assets/BNBSvg';
 import { EthSvg } from '@/assets/EthSvg';
+import { SepoliaDaiSvg } from '@/assets/SepoliaDaiSvg';
 import { SepoliaSvg } from '@/assets/SepoliaSVG';
-import sepoliaDaiSvg from '@/assets/SVG/sepolia_dai.svg';
-import sepoliaWethSvg from '@/assets/SVG/sepolia_weth.svg';
+import { SepoliaWethSvg } from '@/assets/SepoliaWethSvg';
 import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
 import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain, SUPPORTED_MASSA_WALLETS, SupportedTokens } from '@/const';
+import { Blockchain, MASSA_TOKEN, SupportedTokens } from '@/const';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import {
@@ -37,10 +38,13 @@ interface IconsNetworks {
   [key: string]: JSX.Element;
 }
 
+// TODO: Refacto to use chain.symbol instead of full chain name
 export const iconsNetworks: IconsNetworks = {
-  MASSASTATION: <MassaLogo size={40} />,
-  ETHEREUM: <EthSvg size={40} />,
-  SEPOLIA: <SepoliaSvg size={40} />,
+  MAS: <MassaLogo size={40} />,
+  ETH: <EthSvg size={40} />,
+  SEP: <SepoliaSvg size={40} />,
+  BNB: <BNBSvg size={40} />,
+  tBNB: <BNBSvg size={40} />,
 };
 
 interface ChainOptions {
@@ -58,22 +62,23 @@ function EVMHeader() {
   const isMainnet = getIsMainnet();
 
   const chainName = chain?.name || undefined;
+  const chainSymbol = chain?.nativeCurrency.symbol || undefined;
 
   const evmWalletName = connector?.name || Blockchain.UNKNOWN;
   function getCurrentChainInfo(): ChainOptions {
-    if (!chainName) {
+    if (!chainSymbol) {
       return {
         icon: <FiAlertCircle size={32} />,
         item: Intl.t(`general.${Blockchain.CONNECT_WALLET}`),
       };
     } else if (isMainnet) {
       return {
-        icon: iconsNetworks.ETHEREUM,
-        item: `${Blockchain.ETHEREUM} ${Intl.t(`general.${evmNetwork}`)}`,
+        icon: iconsNetworks[chainSymbol],
+        item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
       };
     }
     return {
-      icon: iconsNetworks[chainName.toUpperCase()],
+      icon: iconsNetworks[chainSymbol],
       item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
     };
   }
@@ -114,7 +119,7 @@ function MassaHeader() {
               item: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
                 `general.${massaNetwork}`,
               )}`,
-              icon: iconsNetworks[SUPPORTED_MASSA_WALLETS.MASSASTATION],
+              icon: iconsNetworks[MASSA_TOKEN],
             },
           ]}
         />
@@ -198,8 +203,8 @@ function TokenOptions(props: TokenOptionsProps) {
       };
     }
     return {
-      tDAI: <img src={sepoliaDaiSvg} />,
-      WETH: <img src={sepoliaWethSvg} />,
+      tDAI: <SepoliaDaiSvg />,
+      WETH: <SepoliaWethSvg />,
     };
   }
 

@@ -1,4 +1,4 @@
-import { SVGProps } from './EthSvg';
+import { SVGProps } from './svgInterface';
 
 export function WMasSvg(props: SVGProps) {
   const { size } = props;
