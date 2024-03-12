@@ -32,6 +32,9 @@ export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
 
+export const W_MASS_ADDRESS =
+  '0x733676a533cb12668C4184A5e2E2a34743e2b933' as `0x${string}`;
+
 export enum BridgeMode {
   mainnet = 'mainnet',
   testnet = 'testnet',
