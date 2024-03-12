@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
-import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { EthSvg } from '@/assets/EthSvg';
 import { SepoliaDaiSvg } from '@/assets/SepoliaDaiSvg';
@@ -17,6 +16,7 @@ import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
+import { FetchingLine } from '@/pages';
 import {
   useAccountStore,
   useBridgeModeStore,

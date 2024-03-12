@@ -8,7 +8,7 @@ import { FiHelpCircle } from 'react-icons/fi';
 import { fetchMASBalance } from '@/bridge';
 import { MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
-import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
+import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { formatAmount } from '@/utils/parseAmount';
 

@@ -5,7 +5,7 @@ import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { MetaMaskSvg } from '@/assets';
 import Intl from '@/i18n/i18n';
-import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
+import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
 import { isEvmNetworkValid } from '@/utils/networkValidation';
