@@ -278,7 +278,7 @@
     "empty-balance": "You’ll receive 0.002 MAS!",
     "empty-balance-description": "It seems you wish to bridge tokens to a new wallet account that has 0.00 MAS on it. Your account is eligible for allocation of 0.002 MAS for storage costs and gas fees of a few future transfers. We’ll send it to you at the same time of the bridge transfer.",
     "card-destination": {
-      "from": "Web3 Wallet",
+      "from": "EVM Wallet",
       "to": "Massa wallet",
       "non-massa-wallet": "Switch accounts directly within your wallet.",
       "switch": "switch wallet",

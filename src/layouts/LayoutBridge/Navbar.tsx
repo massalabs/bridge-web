@@ -6,7 +6,6 @@ import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { PAGES } from '@/const';
 import {
-  useBnbNetworkValidation,
   useEthNetworkValidation,
   useMassaNetworkValidation,
 } from '@/custom/bridge/useWrongNetwork';
@@ -32,7 +31,6 @@ export function Navbar(props: NavbarProps) {
   const { setTheme } = useConfigStore();
   const { isValidEthNetwork } = useEthNetworkValidation();
   const { isValidMassaNetwork } = useMassaNetworkValidation();
-  const { isValidBnbNetwork } = useBnbNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
 
@@ -41,7 +39,6 @@ export function Navbar(props: NavbarProps) {
     !isConnectedEVM ||
     !isValidEthNetwork ||
     !isValidMassaNetwork ||
-    !isValidBnbNetwork ||
     !connectedAccount;
 
   function ConnectedWallet() {
