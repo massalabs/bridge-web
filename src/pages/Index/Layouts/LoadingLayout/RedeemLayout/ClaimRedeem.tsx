@@ -3,7 +3,7 @@ import { Button } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { config } from '@/const';
-import { useResource } from '@/custom/api';
+import { useResource } from '@/custom/api/useResource';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
@@ -15,11 +15,11 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { LambdaHookHistory } from '@/utils/bridgeHistory';
 import { ClaimState } from '@/utils/const';
 import {
-  ApiOperationStates,
+  BridgingState,
   Entities,
+  OperationHistoryItem,
   burnOpApiToDTO,
   lambdaEndpoint,
 } from '@/utils/lambdaApi';
@@ -33,17 +33,18 @@ function useCloseLoadingBoxOnSuccess() {
   const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
 
-  const { data: lambdaResponse } = useResource<LambdaHookHistory>(lambdaUrl);
+  const { data: burnOperations } =
+    useResource<OperationHistoryItem[]>(lambdaUrl);
 
   // Close the loading box if the operation is already claimed in the claim page
   useEffect(() => {
-    if (lambdaResponse?.burned.length) {
-      const op = burnOpApiToDTO(lambdaResponse.burned[0]);
+    if (burnOperations?.length) {
+      const op = burnOpApiToDTO(burnOperations[0]);
       if (op && op.claimState === ClaimState.SUCCESS) {
         setBox(Status.None);
       }
     }
-  }, [lambdaResponse, setBox]);
+  }, [burnOperations, setBox]);
 }
 
 function useFetchSignatures() {
@@ -53,21 +54,19 @@ function useFetchSignatures() {
   const { currentMode } = useBridgeModeStore();
   const { address: evmAddress } = useAccount();
 
-  const state = ApiOperationStates.processing;
+  const state = BridgingState.processing;
   const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}&state=${state}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
 
-  const { data: lambdaResponse, refetch } =
-    useResource<LambdaHookHistory>(lambdaUrl);
+  const { data: burnOperations, refetch } =
+    useResource<OperationHistoryItem[]>(lambdaUrl);
 
   useEffect(() => {
     if (!burnTxId) return;
-    if (!lambdaResponse?.burned.length) return;
+    if (!burnOperations?.length) return;
 
     // find the operation
-    const claimableOp = lambdaResponse.burned.find(
-      (item) => item.outputTxId === null,
-    );
+    const claimableOp = burnOperations.find((item) => item.outputId === null);
     if (!claimableOp) return;
 
     // update the store
@@ -84,7 +83,7 @@ function useFetchSignatures() {
     }
   }, [
     burnTxId,
-    lambdaResponse,
+    burnOperations,
     setBox,
     getCurrentRedeemOperation,
     updateBurnRedeemOperationById,
@@ -170,7 +169,10 @@ export function ClaimRedeem() {
 
   // Polls api to see if the server has the operation to claim with the signatures
   useEffect(() => {
-    if (burn === Status.Success && !currentRedeemOperation?.signatures.length) {
+    if (
+      burn === Status.Success &&
+      !currentRedeemOperation?.signatures?.length
+    ) {
       setTimeout(refetch, 1000);
     }
   }, [burn, currentRedeemOperation, refetch]);
@@ -183,7 +185,8 @@ export function ClaimRedeem() {
       !selectedToken ||
       !burnTxId ||
       !currentRedeemOperation ||
-      currentRedeemOperation.signatures.length === 0
+      !currentRedeemOperation.signatures ||
+      currentRedeemOperation.signatures?.length === 0
     )
       return;
 

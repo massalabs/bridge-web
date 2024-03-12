@@ -16,6 +16,11 @@ import {
   isRejectedByUser,
   isWalletTimeoutError,
 } from '@/utils/error';
+import {
+  BridgingState,
+  Entities,
+  HistoryOperationStatus,
+} from '@/utils/lambdaApi';
 
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
@@ -71,9 +76,15 @@ async function initiateBurn({
     claimState: ClaimState.RETRIEVING_INFO,
     amount: parseUnits(amount, selectedToken.decimals).toString(),
     recipient,
-    evmToken: selectedToken.evmToken as `0x${string}`,
-    massaToken: selectedToken.massaToken as `AS${string}`,
+    evmToken: selectedToken.evmToken,
+    massaToken: selectedToken.massaToken,
     emitter: connectedAccount?.address() || '',
+    createdAt: new Date().toISOString(),
+    serverState: BridgingState.new,
+    historyStatus: HistoryOperationStatus.Unknown,
+    entity: Entities.Burn,
+    evmChainId: selectedToken.chainId,
+    isConfirmed: false,
   });
   setBurnState(BurnState.SUCCESS);
 }
