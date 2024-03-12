@@ -37,7 +37,7 @@ function useCloseLoadingBoxOnSuccess() {
 
   // Close the loading box if the operation is already claimed in the claim page
   useEffect(() => {
-    if (lambdaResponse?.burned.length) {
+    if (lambdaResponse?.burned?.length) {
       const op = burnOpApiToDTO(lambdaResponse.burned[0]);
       if (op && op.claimState === ClaimState.SUCCESS) {
         setBox(Status.None);
@@ -62,7 +62,7 @@ function useFetchSignatures() {
 
   useEffect(() => {
     if (!burnTxId) return;
-    if (!lambdaResponse?.burned.length) return;
+    if (!lambdaResponse?.burned?.length) return;
 
     // find the operation
     const claimableOp = lambdaResponse.burned.find(

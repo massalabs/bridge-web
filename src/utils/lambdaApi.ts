@@ -88,7 +88,7 @@ export function useClaimableOperations() {
   const { data: lambdaResponse } = useResource<LambdaHookHistory>(lambdaUrl);
 
   useEffect(() => {
-    if (!lambdaResponse?.burned.length) return;
+    if (!lambdaResponse?.burned?.length) return;
 
     setClaimableOperations(
       lambdaResponse.burned
