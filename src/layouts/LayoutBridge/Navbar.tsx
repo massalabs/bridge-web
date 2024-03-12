@@ -89,6 +89,9 @@ export function Navbar(props: NavbarProps) {
           <p className="mas-menu-default text-neutral h-fit">
             <Link to={`/${PAGES.INDEX}`}>{Intl.t('navbar.bridge')}</Link>
           </p>
+          <p className="mas-menu-default text-neutral h-fit">
+            <Link to={`/DAO`}>DAO</Link>
+          </p>
           {isConnectedEVM ? (
             <p className="mas-menu-default text-neutral h-fit">
               <Link to={`/${PAGES.CLAIM}`}>{Intl.t('navbar.claim')}</Link>

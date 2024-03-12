@@ -14,6 +14,7 @@ import './index.css';
 
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
+import { DaoBridge } from './pages/DaoBridge/DaoBridge';
 import { Base } from '@/components';
 import { PAGES } from '@/const/pages/pages';
 import {
@@ -55,6 +56,7 @@ const router = createBrowserRouter(
         <Route path={PAGES.CLAIM} element={<ClaimPage />} />
         <Route path={PAGES.HISTORY} element={<HistoryPage />} />
         <Route path={PAGES.FAQ} element={<FAQ />} />
+        <Route path={'/DAO'} element={<DaoBridge />} />
 
         {/* routes for errors */}
         <Route path="error" element={<Error />} />
