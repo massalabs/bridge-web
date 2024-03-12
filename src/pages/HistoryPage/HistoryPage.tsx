@@ -70,6 +70,8 @@ export function HistoryPage() {
     .fill(0)
     .map((_, index) => <OperationSkeleton key={index} />);
 
+  if (!evmAddress) return skeleton;
+
   function renderHistory() {
     if (isFetching) {
       return skeleton;

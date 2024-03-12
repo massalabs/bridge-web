@@ -37,7 +37,7 @@ export function Operation(props: OperationProps) {
   return (
     <div className="grid grid-cols-6 mas-body2">
       <EmitterOrRecipient isMassaToEvm={isMassaToEvm} />
-      <EmitterOrRecipient isMassaToEvm={isMassaToEvm} />
+      <EmitterOrRecipient isMassaToEvm={!isMassaToEvm} />
       <div className="flex items-center">
         {formatApiCreationTime(op.createdAt)}
       </div>
