@@ -1,11 +1,10 @@
 import { useAccount } from 'wagmi';
 import { Connected, Disconnected, WrongChain } from '.';
 import { Blockchain } from '@/const';
-import {
-  useWrongNetworkEVM,
-  useWrongNetworkMASSA,
-} from '@/custom/bridge/useWrongNetwork';
-import { useAccountStore } from '@/store/store';
+
+import { useMassaNetworkValidation } from '@/custom/bridge/useWrongNetwork';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import { isEvmNetworkValid } from '@/utils/networkValidation';
 
 interface ChainStatusProps {
   blockchain: Blockchain;
@@ -14,37 +13,34 @@ interface ChainStatusProps {
 export function ChainStatus(props: ChainStatusProps) {
   const { blockchain } = props;
 
-  const { wrongNetwork: wrongNetworkMassa } = useWrongNetworkMASSA();
   const { connectedAccount, currentProvider } = useAccountStore();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const { isConnected: isConnectedEVM, chain } = useAccount();
 
-  const { wrongNetwork: wrongNetworkEVM } = useWrongNetworkEVM();
-  const { isConnected: isConnectedEVM } = useAccount();
+  const isMainnet = getIsMainnet();
 
-  if (blockchain === Blockchain.MASSA) {
-    const isConnectMassa = !!connectedAccount;
+  const isValidEvmNetwork = isEvmNetworkValid(isMainnet, chain?.id);
 
-    return (
-      <>
-        {isConnectMassa && !!currentProvider ? (
-          wrongNetworkMassa ? (
-            <WrongChain blockchain={blockchain} />
-          ) : (
-            <Connected />
-          )
-        ) : (
-          <Disconnected />
-        )}
-      </>
-    );
-  }
+  const blockchainIsMassa = blockchain === Blockchain.MASSA;
+
+  const isConnectMassa = !!connectedAccount;
+
+  const isConnected = blockchainIsMassa
+    ? isConnectMassa && !!currentProvider
+    : isConnectedEVM;
+
+  const networkIsValid = blockchainIsMassa
+    ? isValidMassaNetwork
+    : isValidEvmNetwork;
 
   return (
     <>
-      {isConnectedEVM ? (
-        wrongNetworkEVM ? (
-          <WrongChain blockchain={blockchain} />
-        ) : (
+      {isConnected ? (
+        networkIsValid ? (
           <Connected />
+        ) : (
+          <WrongChain blockchain={blockchain} />
         )
       ) : (
         <Disconnected />

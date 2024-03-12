@@ -3,7 +3,7 @@ import { Tag, Tooltip } from '@massalabs/react-ui-kit';
 import { FiHelpCircle } from 'react-icons/fi';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import { useAccountStore } from '@/store/store';
 import { tagTypes } from '@/utils/const';
 
 interface WrongChainProps {
@@ -12,20 +12,13 @@ interface WrongChainProps {
 
 export function WrongChain(props: WrongChainProps) {
   const { blockchain } = props;
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMainnet = getIsMainnet();
   const { currentProvider } = useAccountStore();
 
-  let network = '';
   let transKey = '';
   if (blockchain === Blockchain.MASSA && currentProvider) {
     // currentProvider is always defined when blockchain is MASSA
     const providerName = currentProvider.name();
-    if (isMainnet) {
-      network = 'Mainnet';
-    } else {
-      network = 'Buildnet';
-    }
+
     if (providerName === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
       transKey = 'index.tag.wrong-chain-massa-station-tooltip';
     } else if (
@@ -34,13 +27,8 @@ export function WrongChain(props: WrongChainProps) {
     ) {
       transKey = 'index.tag.wrong-chain-bearby-tooltip';
     }
-  } else if (blockchain === Blockchain.ETHEREUM) {
+  } else {
     transKey = 'connect-wallet.connect-metamask.invalid-network';
-    if (isMainnet) {
-      network = 'Mainnet';
-    } else {
-      network = 'Sepolia';
-    }
   }
 
   return (
@@ -49,7 +37,7 @@ export function WrongChain(props: WrongChainProps) {
         <Tooltip
           className="w-fit p-0 hover:cursor-pointer"
           customClass="p-0 mas-caption w-fit whitespace-nowrap"
-          body={Intl.t(transKey, { network })}
+          body={Intl.t(transKey)}
         >
           <div className="flex items-center">
             <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>

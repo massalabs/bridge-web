@@ -9,7 +9,7 @@ import { ConnectedAccount } from './ConnectedAccount';
 import { MASBalance } from './MASBalance';
 import { StationSelectAccount } from './StationSelectAccount';
 import { WalletError } from './WalletError';
-import { useWrongNetworkMASSA } from '@/custom/bridge/useWrongNetwork';
+import { useMassaNetworkValidation } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import {
@@ -37,7 +37,7 @@ export default function StationWallet() {
     });
   });
 
-  const { wrongNetwork } = useWrongNetworkMASSA();
+  const { isValidMassaNetwork } = useMassaNetworkValidation();
 
   if (stationIsOn === false) {
     return (
@@ -63,7 +63,7 @@ export default function StationWallet() {
     );
   }
 
-  if (wrongNetwork) {
+  if (!isValidMassaNetwork) {
     return (
       <Button
         variant="secondary"

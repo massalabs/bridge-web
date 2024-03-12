@@ -5,4 +5,5 @@ export const PAGES = {
   CLAIM: 'claim',
   HISTORY: 'history',
   FAQ: 'faq',
+  DAO: 'dao-maker-claim',
 };
