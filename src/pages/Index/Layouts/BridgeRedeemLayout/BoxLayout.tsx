@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
-
 import { Dropdown, MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
-import { FiAlertCircle } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { BNBSvg } from '@/assets/BNBSvg';
@@ -47,40 +45,23 @@ export const iconsNetworks: IconsNetworks = {
   tBNB: <BNBSvg size={40} />,
 };
 
-interface ChainOptions {
-  icon: JSX.Element | undefined;
-  item: string;
-}
-
 function EVMHeader() {
   const { isConnected } = useAccount();
   const { evmNetwork: getEvmNetwork, isMainnet: getIsMainnet } =
     useBridgeModeStore();
-  const { chain } = useAccount();
 
   const evmNetwork = getEvmNetwork();
   const isMainnet = getIsMainnet();
 
-  const chainName = chain?.name || undefined;
-  const chainSymbol = chain?.nativeCurrency.symbol || undefined;
+  const ethChainAndNetwork = `${Intl.t(
+    `general.${Blockchain.ETHEREUM}`,
+  )} ${Intl.t(`general.${evmNetwork}`)}`;
+  const sepChainAndNetwork = `${Intl.t(`general.Sepolia`)} ${Intl.t(
+    `general.${evmNetwork}`,
+  )}`;
 
-  function getCurrentChainInfo(): ChainOptions {
-    if (!chainSymbol) {
-      return {
-        icon: <FiAlertCircle size={32} />,
-        item: Intl.t(`general.${Blockchain.INVALID_CHAIN}`),
-      };
-    } else if (isMainnet) {
-      return {
-        icon: iconsNetworks[chainSymbol],
-        item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
-      };
-    }
-    return {
-      icon: iconsNetworks[chainSymbol],
-      item: `${chainName} ${Intl.t(`general.${evmNetwork}`)}`,
-    };
-  }
+  const defaultIcon = isMainnet ? iconsNetworks['ETH'] : iconsNetworks['SEP'];
+  const defaultNetwork = isMainnet ? ethChainAndNetwork : sepChainAndNetwork;
 
   const walletName = useConnectorName();
   const currentEvmChain = useConnectedEvmChain();
@@ -88,7 +69,15 @@ function EVMHeader() {
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
-        <Dropdown readOnly={true} options={[getCurrentChainInfo()]} />
+        <Dropdown
+          readOnly={true}
+          options={[
+            {
+              icon: defaultIcon,
+              item: defaultNetwork,
+            },
+          ]}
+        />
       </div>
       <div className="flex items-center gap-3">
         <p className="mas-body">
