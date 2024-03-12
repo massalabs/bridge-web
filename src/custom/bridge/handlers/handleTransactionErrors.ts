@@ -32,6 +32,7 @@ export function handleEvmApproveError(error: Error) {
 }
 
 export function handleEvmClaimError(error: Error): ClaimState {
+  console.error(error);
   if (isRejectedByUser(error)) {
     toast.error(Intl.t('claim.rejected'), { id: error.message });
     return ClaimState.REJECTED;
