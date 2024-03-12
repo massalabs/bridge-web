@@ -9,18 +9,8 @@ import { formatAmount } from '@/utils/parseAmount';
 
 function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
-  return dateObject.toLocaleString('fr-FR', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZone: 'UTC',
-  });
+  return dateObject.toLocaleString(navigator.language);
 }
-
 interface OperationProps {
   operation: OperationHistoryItem;
 }
