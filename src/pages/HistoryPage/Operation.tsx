@@ -21,7 +21,7 @@ export function Operation(props: OperationProps) {
   const { tokens } = useTokenStore();
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
   const symbol = tokens.find((t) => t.evmToken === op.evmToken)?.symbolEVM;
-  const isMassaToEvm = [Entities.Lock, Entities.ReleaseMAS].includes(op.entity);
+  const isMassaToEvm = op.entity === Entities.Burn;
   const side = isMassaToEvm ? SIDE.MASSA_TO_EVM : SIDE.EVM_TO_MASSA;
 
   return (
