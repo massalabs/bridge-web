@@ -51,8 +51,10 @@ export function InitClaim(props: InitClaimProps) {
       amount: operation.amount,
       recipient: operation.recipient,
       inputOpId: operation.inputId,
-      evmToken: operation.evmToken,
-      signatures: operation.signatures,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      evmToken: operation.evmToken!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      signatures: operation.signatures!,
     });
   }
 

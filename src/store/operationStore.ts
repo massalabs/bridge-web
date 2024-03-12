@@ -1,31 +1,9 @@
 import { create } from 'zustand';
-import {
-  BurnState,
-  ClaimState,
-  LockState,
-  MintState,
-  SIDE,
-} from '@/utils/const';
+import { ClaimState, SIDE } from '@/utils/const';
+import { OperationHistoryItem } from '@/utils/lambdaApi';
 
-interface Operation {
-  amount: string;
-  emitter: string;
-  recipient: string;
-  inputId: string;
-  outputId?: string;
-  evmToken: `0x${string}`;
-  massaToken: `AS${string}`;
-}
-
-export interface BurnRedeemOperation extends Operation {
-  burnState?: BurnState;
+export interface BurnRedeemOperation extends OperationHistoryItem {
   claimState: ClaimState;
-  signatures: string[];
-}
-
-export interface LockMintOperation extends Operation {
-  lockState?: LockState;
-  mintState: MintState;
 }
 
 export interface OperationStoreState {
