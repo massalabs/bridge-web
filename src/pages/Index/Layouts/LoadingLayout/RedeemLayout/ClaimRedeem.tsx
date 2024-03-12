@@ -15,6 +15,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
+import { LambdaHookHistory } from '@/utils/bridgeHistory';
 import { ClaimState } from '@/utils/const';
 import {
   BridgingState,

@@ -49,6 +49,7 @@ function EVMHeader() {
   const { isConnected } = useAccount();
   const { evmNetwork: getEvmNetwork, isMainnet: getIsMainnet } =
     useBridgeModeStore();
+  const { chain, connector } = useAccount();
 
   const evmNetwork = getEvmNetwork();
   const isMainnet = getIsMainnet();
