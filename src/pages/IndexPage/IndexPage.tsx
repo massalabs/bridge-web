@@ -23,7 +23,7 @@ import {
 } from '@/store/store';
 import { BurnState } from '@/utils/const';
 
-export function Index() {
+export function IndexPage() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
