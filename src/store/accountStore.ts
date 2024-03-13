@@ -65,7 +65,7 @@ const accountStore = (
           chainId = LABNET_CHAIN_ID;
           break;
         default:
-          console.error('unknown network name');
+          console.warn('unknown network name');
           return;
       }
       set({ chainId });
@@ -83,7 +83,7 @@ const accountStore = (
       }
       if (!currentProvider) {
         set({
-          currentProvider,
+          currentProvider: undefined,
           connectedAccount: undefined,
           accounts: undefined,
         });
@@ -148,12 +148,10 @@ const accountStore = (
         return;
       }
 
-      set({ currentProvider });
-
       currentProvider
         .accounts()
         .then((accounts) => {
-          set({ accounts });
+          set({ currentProvider, accounts });
 
           const selectedAccount =
             accounts.find((account) => account.address() === lastUsedAccount) ||
@@ -161,6 +159,7 @@ const accountStore = (
           get().setConnectedAccount(selectedAccount);
         })
         .catch((error) => {
+          set({ currentProvider });
           console.warn('error getting accounts from provider', error);
         });
     } finally {
