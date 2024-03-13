@@ -14,17 +14,18 @@ import './index.css';
 
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
+import { DaoPage } from './pages/DaoPage';
 import { Base } from '@/components';
 import { PAGES } from '@/const/pages/pages';
 import {
   Error,
   NotFound,
-  Index,
   Unavailable,
   SCDeploy,
   FAQ,
   HistoryPage,
   ClaimPage,
+  IndexPage,
 } from '@/pages/index';
 
 const baseENV = import.meta.env.VITE_ENV;
@@ -51,10 +52,11 @@ const router = createBrowserRouter(
       <Route path={PAGES.UNAVAILABLE} element={<Unavailable />} />
       <Route element={<Base />}>
         {/* routes for pages */}
-        <Route path={PAGES.INDEX} element={<Index />} />
+        <Route path={PAGES.INDEX} element={<IndexPage />} />
         <Route path={PAGES.CLAIM} element={<ClaimPage />} />
         <Route path={PAGES.HISTORY} element={<HistoryPage />} />
         <Route path={PAGES.FAQ} element={<FAQ />} />
+        <Route path={PAGES.DAO} element={<DaoPage />} />
 
         {/* routes for errors */}
         <Route path="error" element={<Error />} />

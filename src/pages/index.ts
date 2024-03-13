@@ -1,5 +1,5 @@
-export * from './Index/Index';
 export * from './FAQ';
+export * from './IndexPage';
 export * from './HistoryPage';
 export * from './ClaimPage';
 export * from './Unavailable/Unavailable';
