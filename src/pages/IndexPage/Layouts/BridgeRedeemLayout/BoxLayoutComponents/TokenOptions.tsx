@@ -30,12 +30,7 @@ export function TokenOptions(props: TokenOptionsProps) {
   const isMainnet = getIsMainnet();
   const isMassaToEvm = getIsMassaToEvm();
 
-  let readOnlyDropdown;
-  if (isMassaToEvm) {
-    readOnlyDropdown = !isMassaToEvm || isFetching;
-  } else {
-    readOnlyDropdown = isMassaToEvm || isFetching;
-  }
+  let readOnlyDropdown = isFetching;
 
   function getTokenIcons() {
     if (!nativeToken) {

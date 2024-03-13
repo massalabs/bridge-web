@@ -16,8 +16,8 @@ export function DaoPage() {
 
   return (
     <div
-      className={`p-10 max-w-3xl w-full border border-tertiary rounded-2xl
-            bg-secondary/50 text-f-primary mb-5`}
+      className="p-10 max-w-3xl w-full border border-tertiary rounded-2xl
+            bg-secondary/50 text-f-primary mb-5"
     >
       <EVMHeader />
       <Money
