@@ -39,11 +39,14 @@ export function useEvmApprove() {
   });
 
   useEffect(() => {
-    if (isSuccess && approve === Status.Loading && amount) {
+    if (approve !== Status.Loading) {
+      return;
+    }
+    if (isSuccess && amount) {
       setApprove(Status.Success);
       setLock(Status.Loading);
       writeLock();
-    } else if (error && approve === Status.Loading) {
+    } else if (error) {
       handleEvmApproveError(error);
       setBox(Status.Error);
       setApprove(Status.Error);
