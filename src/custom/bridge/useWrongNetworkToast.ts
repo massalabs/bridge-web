@@ -30,18 +30,15 @@ export function useWrongNetworkToast() {
   const [toastIdEvm, setToastIdEvm] = useState<string>('');
   const [toastIdMassa, setToastIdMassa] = useState<string>('');
 
+  // If wrong network is detected, show a toast
+  // In toast, show opposite of current network
+
   useEffect(() => {
-    // if not wallet is detected, do not show toast
-    // useful when switching between wallets
-    if (!currentProvider) {
-      toast.dismiss(toastIdMassa);
+    if (!chain) {
+      toast.dismiss(toastIdEvm);
       return;
     }
-    // If wrong network is detected, show a toast
-    // in toast, show opposite of current network
-
-    // Check and toast EVM
-    if (chain && !isEthNetworkValid(isMainnet, chain.id)) {
+    if (!isEthNetworkValid(isMainnet, chain.id)) {
       setToastIdEvm(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
@@ -54,37 +51,39 @@ export function useWrongNetworkToast() {
     } else {
       toast.dismiss(toastIdEvm);
     }
+  }, [currentMode, walletName, evmNetwork, toastIdEvm, chain, isMainnet]);
 
-    // Check and toast Massa
-    if (chainId && !isMassaNetworkValid(isMainnet, chainId)) {
-      setToastIdMassa(
-        toast.error(
-          Intl.t('connect-wallet.wrong-chain', {
-            name: currentProvider
-              ? Intl.t(`connect-wallet.${currentProvider.name()}`)
-              : '',
-            network: massaNetwork,
-          }),
-          {
-            id: 'massa',
-          },
-        ),
-      );
-    } else {
+  useEffect(() => {
+    if (!chainId) return;
+    if (!currentProvider) {
+      // if not wallet is detected, do not show toast
+      // useful when switching between wallets
       toast.dismiss(toastIdMassa);
+    } else {
+      if (!isMassaNetworkValid(isMainnet, chainId)) {
+        setToastIdMassa(
+          toast.error(
+            Intl.t('connect-wallet.wrong-chain', {
+              name: currentProvider
+                ? Intl.t(`connect-wallet.${currentProvider.name()}`)
+                : '',
+              network: massaNetwork,
+            }),
+            {
+              id: 'massa',
+            },
+          ),
+        );
+      } else {
+        toast.dismiss(toastIdMassa);
+      }
     }
   }, [
     currentMode,
-    chain,
+    currentProvider,
+    massaNetwork,
+    toastIdMassa,
     chainId,
     isMainnet,
-    toastIdEvm,
-    toastIdMassa,
-    currentProvider,
-    evmNetwork,
-    massaNetwork,
-    setToastIdEvm,
-    setToastIdMassa,
-    walletName,
   ]);
 }
