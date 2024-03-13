@@ -30,7 +30,12 @@ export function TokenOptions(props: TokenOptionsProps) {
   const isMainnet = getIsMainnet();
   const isMassaToEvm = getIsMassaToEvm();
 
-  let readOnlyDropdown = isFetching;
+  let readOnlyDropdown;
+  if (isMassaToEvm) {
+    readOnlyDropdown = !isMassaToEvm || isFetching;
+  } else {
+    readOnlyDropdown = isMassaToEvm || isFetching;
+  }
 
   function getTokenIcons() {
     if (!nativeToken) {
@@ -55,7 +60,7 @@ export function TokenOptions(props: TokenOptionsProps) {
       tDAI: getTokenIcons().tDAI,
       WETH: getTokenIcons().WETH,
     };
-    return icons[token.symbol as SupportedTokens];
+    return icons[token.symbolEVM as SupportedTokens];
   }
 
   return (
@@ -65,7 +70,7 @@ export function TokenOptions(props: TokenOptionsProps) {
       size="md"
       options={tokens.map((token: IToken) => {
         return {
-          item: isMassaToEvm ? token.symbol : token.symbolEVM,
+          item: nativeToken ? token.symbol : token.symbolEVM,
           icon: getIcon(token),
           onClick: () => setSelectedToken(token),
         };

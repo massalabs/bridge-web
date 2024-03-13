@@ -43,10 +43,7 @@ export function MassaHeader() {
 }
 
 export function MassaMiddle() {
-  const [isFetching, connectedAccount] = useAccountStore((state) => [
-    state.isFetching,
-    state.connectedAccount,
-  ]);
+  const { isFetching, connectedAccount } = useAccountStore();
 
   return (
     <div className="mt-4 mb-4 flex items-center gap-2">
