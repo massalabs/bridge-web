@@ -54,8 +54,7 @@ export function useWrongNetworkToast() {
   }, [currentMode, walletName, evmNetwork, toastIdEvm, chain, isMainnet]);
 
   useEffect(() => {
-    if (!chainId) return;
-    if (!currentProvider) {
+    if (!currentProvider || !chainId) {
       // if not wallet is detected, do not show toast
       // useful when switching between wallets
       toast.dismiss(toastIdMassa);
