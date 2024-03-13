@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import {
   isBnbNetworkValid,
@@ -16,7 +15,9 @@ export function useEthNetworkValidation() {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
-  const [isValidEthNetwork, setIsValidEthNetwork] = useState<boolean>(false);
+  const [isValidEthNetwork, setIsValidEthNetwork] = useState<boolean>(
+    chain ? isEthNetworkValid(isMainnet, chain.id) : true,
+  );
 
   useEffect(() => {
     if (chain) {
@@ -35,11 +36,14 @@ export function useMassaNetworkValidation() {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
-  const [isValidMassaNetwork, setIsValidNetwork] = useState<boolean>(false);
+  const [isValidMassaNetwork, setIsValidNetwork] = useState<boolean>(
+    chainId ? isMassaNetworkValid(isMainnet, chainId) : true,
+  );
 
   useEffect(() => {
-    if (!chainId) return;
-    setIsValidNetwork(isMassaNetworkValid(isMainnet, chainId));
+    if (chainId) {
+      setIsValidNetwork(isMassaNetworkValid(isMainnet, chainId));
+    }
   }, [isMainnet, chainId]);
 
   return {
@@ -54,10 +58,14 @@ export function useBnbNetworkValidation() {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
-  const [isValidBnbNetwork, setIsValidBnbNetwork] = useState<boolean>(false);
+  const [isValidBnbNetwork, setIsValidBnbNetwork] = useState<boolean>(
+    chain ? isBnbNetworkValid(isMainnet, chain.id) : true,
+  );
 
   useEffect(() => {
-    if (chain) setIsValidBnbNetwork(isBnbNetworkValid(isMainnet, chain.id));
+    if (chain) {
+      setIsValidBnbNetwork(isBnbNetworkValid(isMainnet, chain.id));
+    }
   }, [isMainnet, chain]);
 
   return {
