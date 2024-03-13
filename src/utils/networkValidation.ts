@@ -1,5 +1,5 @@
+import { BUILDNET_CHAIN_ID, MAINNET_CHAIN_ID } from '@massalabs/massa-web3';
 import { mainnet, sepolia, bsc, bscTestnet } from 'wagmi/chains';
-import { Blockchain } from '@/const';
 
 // Three functions that check if the  user's current chainID
 // is the same as the expected chainID compared to the selected network mode
@@ -38,11 +38,11 @@ export function isBnbNetworkValid(
 
 export function isMassaNetworkValid(
   isMainnet: boolean,
-  massaNetwork?: string,
+  massaNetwork: bigint,
 ): boolean {
   if (isMainnet) {
-    return massaNetwork === Blockchain.MASSA_MAINNET;
+    return massaNetwork === MAINNET_CHAIN_ID;
   } else {
-    return massaNetwork === Blockchain.MASSA_BUILDNET.toLowerCase();
+    return massaNetwork === BUILDNET_CHAIN_ID;
   }
 }

@@ -31,16 +31,16 @@ export function useEthNetworkValidation() {
 
 export function useMassaNetworkValidation() {
   // Used in the context of bridge/redeem
-  const { connectedNetwork } = useAccountStore();
+  const { chainId } = useAccountStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
   const [isValidMassaNetwork, setIsValidNetwork] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!connectedNetwork) return;
-    setIsValidNetwork(isMassaNetworkValid(isMainnet, connectedNetwork));
-  }, [isMainnet, connectedNetwork]);
+    if (!chainId) return;
+    setIsValidNetwork(isMassaNetworkValid(isMainnet, chainId));
+  }, [isMainnet, chainId]);
 
   return {
     isValidMassaNetwork,

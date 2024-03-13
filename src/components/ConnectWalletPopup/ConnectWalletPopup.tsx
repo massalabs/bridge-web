@@ -10,6 +10,7 @@ import { useBridgeModeStore } from '@/store/store';
 interface ConnectWalletPopupProps {
   setOpen: (open: boolean) => void;
 }
+
 export function ConnectWalletPopup(props: ConnectWalletPopupProps) {
   const { setOpen } = props;
 

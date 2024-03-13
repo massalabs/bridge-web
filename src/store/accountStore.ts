@@ -1,4 +1,10 @@
-import { Client, ClientFactory } from '@massalabs/massa-web3';
+import {
+  BUILDNET_CHAIN_ID,
+  Client,
+  ClientFactory,
+  LABNET_CHAIN_ID,
+  MAINNET_CHAIN_ID,
+} from '@massalabs/massa-web3';
 import { IAccount, IProvider } from '@massalabs/wallet-provider';
 import { useTokenStore } from './tokenStore';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
@@ -22,7 +28,7 @@ export interface AccountStoreState {
   networkObserver?: {
     unsubscribe: () => void;
   };
-  connectedNetwork?: string;
+  chainId?: bigint;
 
   setCurrentProvider: (provider?: IProvider) => void;
   setProviders: (providers: IProvider[]) => void;
@@ -43,9 +49,28 @@ const accountStore = (
   currentProvider: undefined,
   providers: [],
   isFetching: false,
-  connectedNetwork: undefined,
+  chainId: undefined,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
+    function setChainId(networkName: string) {
+      let chainId;
+      switch (networkName) {
+        case 'mainnet':
+          chainId = MAINNET_CHAIN_ID;
+          break;
+        case 'buildnet':
+          chainId = BUILDNET_CHAIN_ID;
+          break;
+        case 'labnet':
+          chainId = LABNET_CHAIN_ID;
+          break;
+        default:
+          console.error('unknown network name');
+          return;
+      }
+      set({ chainId });
+    }
+
     try {
       set({ isFetching: true });
 
@@ -78,7 +103,7 @@ const accountStore = (
         const networkObserver = currentProvider.listenNetworkChanges(
           (newNetwork: string) => {
             get().refreshMassaClient();
-            set({ connectedNetwork: newNetwork });
+            setChainId(newNetwork);
           },
         );
         set({ networkObserver });
@@ -92,7 +117,7 @@ const accountStore = (
             currentProvider
               .getNetwork()
               .then((network) => {
-                set({ connectedNetwork: network });
+                setChainId(network);
               })
               .catch((error) => {
                 console.warn('error getting network from bearby', error);

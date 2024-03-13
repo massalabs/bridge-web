@@ -13,7 +13,7 @@ import {
 export function useIndexNetworkCheck() {
   const { chain } = useAccount();
 
-  const { connectedNetwork, currentProvider } = useAccountStore();
+  const { chainId, currentProvider } = useAccountStore();
   const {
     isMainnet: getIsMainnet,
     currentMode,
@@ -61,7 +61,7 @@ export function useIndexNetworkCheck() {
 
     // Check and toast Massa
     let massaOk = false;
-    if (connectedNetwork && !isMassaNetworkValid(isMainnet, connectedNetwork)) {
+    if (chainId && !isMassaNetworkValid(isMainnet, chainId)) {
       setToastIdMassa(
         toast.error(
           Intl.t('connect-wallet.wrong-chain', {
@@ -85,7 +85,7 @@ export function useIndexNetworkCheck() {
   }, [
     currentMode,
     chain,
-    connectedNetwork,
+    chainId,
     isMainnet,
     toastIdEvm,
     toastIdMassa,
