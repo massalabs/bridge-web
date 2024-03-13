@@ -10,7 +10,7 @@ import {
   isMassaNetworkValid,
 } from '@/utils/networkValidation';
 
-export function useIndexNetworkCheck() {
+export function useWrongNetworkToast() {
   const { chain } = useAccount();
 
   const { chainId, currentProvider } = useAccountStore();
@@ -27,7 +27,6 @@ export function useIndexNetworkCheck() {
   const walletName = useConnectorName();
 
   // state to dismiss toast
-  const [wrongIndexNetwork, setWrongIndexNetwork] = useState<boolean>(false);
   const [toastIdEvm, setToastIdEvm] = useState<string>('');
   const [toastIdMassa, setToastIdMassa] = useState<string>('');
 
@@ -42,7 +41,6 @@ export function useIndexNetworkCheck() {
     // in toast, show opposite of current network
 
     // Check and toast EVM
-    let evmOk = false;
     if (chain && !isEthNetworkValid(isMainnet, chain.id)) {
       setToastIdEvm(
         toast.error(
@@ -53,14 +51,11 @@ export function useIndexNetworkCheck() {
           { id: 'evm' },
         ),
       );
-      setWrongIndexNetwork(true);
     } else {
       toast.dismiss(toastIdEvm);
-      evmOk = true;
     }
 
     // Check and toast Massa
-    let massaOk = false;
     if (chainId && !isMassaNetworkValid(isMainnet, chainId)) {
       setToastIdMassa(
         toast.error(
@@ -75,13 +70,9 @@ export function useIndexNetworkCheck() {
           },
         ),
       );
-
-      setWrongIndexNetwork(true);
     } else {
       toast.dismiss(toastIdMassa);
-      massaOk = true;
     }
-    setWrongIndexNetwork(!massaOk || !evmOk);
   }, [
     currentMode,
     chain,
@@ -93,10 +84,7 @@ export function useIndexNetworkCheck() {
     evmNetwork,
     massaNetwork,
     setToastIdEvm,
-    setWrongIndexNetwork,
     setToastIdMassa,
     walletName,
   ]);
-
-  return { wrongIndexNetwork };
 }
