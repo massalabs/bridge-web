@@ -3,10 +3,10 @@ import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { DaoProcessing } from '.';
 import { DaoInit } from './DaoInit/DaoInit';
-import { W_MASS_ADDRESS } from '@/const';
+import { config } from '@/const';
 import { useBurnWMAS } from '@/custom/bridge/useBurnWmas';
 import Intl from '@/i18n/i18n';
-import { useAccountStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 // Might not need to hardcode as balance fetch can give me this info
 export const wmasDecimals = 9;
@@ -27,10 +27,11 @@ export function DaoPage() {
   const { address: evmAddress } = useAccount();
   const { write, isBurnSuccess, burnHash } = useBurnWMAS();
   const { connectedAccount } = useAccountStore();
+  const { currentMode } = useBridgeModeStore();
   const massaAddress = connectedAccount?.address();
   const { data: wmasBalance, isFetching: fetchingBalance } = useBalance({
     address: evmAddress,
-    token: W_MASS_ADDRESS,
+    token: config[currentMode].wmas_address,
   });
 
   const [amount, setAmount] = useState('');

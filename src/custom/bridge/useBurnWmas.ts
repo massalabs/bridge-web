@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { W_MASS_ADDRESS } from '@/const';
+import { config } from '@/const';
+import { useBridgeModeStore } from '@/store/store';
 
 export function useBurnWMAS() {
   const { data: hash, writeContract, error } = useWriteContract();
+  const { currentMode } = useBridgeModeStore();
 
   const [isBurnSuccess, setIsBurnSuccess] = useState<boolean>(false);
   const [burnHash, setBurnHash] = useState<`0x${string}` | undefined>(
     undefined,
   );
+
+  const W_MASS_ADDRESS = config[currentMode].wmas_address;
 
   const write = useCallback(
     (amount: bigint, massaAddress: string) => {

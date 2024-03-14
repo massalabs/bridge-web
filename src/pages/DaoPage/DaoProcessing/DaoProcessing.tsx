@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import { ReleaseMasStatus } from '../DaoPage';
 import { handleWMASBridge } from '@/custom/bridge/handlers/handleWmasBridge';
 import Intl from '@/i18n/i18n';
@@ -21,7 +22,10 @@ export function DaoProcessing(props: DaoProcessingProps) {
     releaseMasStatus,
   } = props;
 
-  const { currentMode } = useBridgeModeStore();
+  const { address } = useAccount();
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+
+  const isMainnet = getIsMainnet();
 
   useEffect(() => {
     if (isBurnSuccess) {
@@ -29,14 +33,16 @@ export function DaoProcessing(props: DaoProcessingProps) {
       updateReleaseMasStep(ReleaseMasStatus.burnSuccess);
 
       // trigger lambda polling function
-      handleWMASBridge(burnTxHash);
+      handleWMASBridge(burnTxHash, address);
 
       // still not sure about this
       updateReleaseMasStep(ReleaseMasStatus.releasing);
     }
   }, [isBurnSuccess]);
 
-  const explorerUrl = `https://${currentMode}.bscscan.com/tx/${burnTxHash}`;
+  const explorerUrl = `https://${
+    isMainnet ? '' : 'testnet.'
+  }bscscan.com/tx/${burnTxHash}`;
 
   return (
     <div className="flex flex-col gap-6">
