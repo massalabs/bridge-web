@@ -128,7 +128,7 @@ const accountStore = (
       currentProvider
         .accounts()
         .then((accounts) => {
-          set({ currentProvider, accounts });
+          set({ accounts });
 
           const selectedAccount =
             accounts.find((account) => account.address() === lastUsedAccount) ||
