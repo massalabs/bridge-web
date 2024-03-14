@@ -62,8 +62,8 @@ export function IndexPage() {
   const isButtonDisabled =
     isFetching ||
     !connectedAccount ||
-    isValidEthNetwork ||
-    isValidMassaNetwork ||
+    !isValidEthNetwork ||
+    !isValidMassaNetwork ||
     isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
