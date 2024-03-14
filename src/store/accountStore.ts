@@ -148,6 +148,8 @@ const accountStore = (
         return;
       }
 
+      set({ currentProvider });
+
       currentProvider
         .accounts()
         .then((accounts) => {
@@ -159,7 +161,6 @@ const accountStore = (
           get().setConnectedAccount(selectedAccount);
         })
         .catch((error) => {
-          set({ currentProvider });
           console.warn('error getting accounts from provider', error);
         });
     } finally {
