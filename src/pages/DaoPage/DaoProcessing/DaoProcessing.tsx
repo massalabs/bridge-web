@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { FiX } from 'react-icons/fi';
 import { ReleaseMasStatus } from '../DaoPage';
-import { handleWMASBridge } from '@/custom/bridge/handlers/handleWmasBridge';
+import { useFetchBurnedWmasTx } from '@/custom/bridge/useFetchBurnedWmas';
 import Intl from '@/i18n/i18n';
 import { LoadingState, ShowLinkToExplorers } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
@@ -22,23 +22,35 @@ export function DaoProcessing(props: DaoProcessingProps) {
     releaseMasStatus,
   } = props;
 
-  const { address } = useAccount();
+  // lambdaReponse is an [], returning the object directly caused some problems
+  // because ts doesn't evaluate {} as falsy
+  const { lambdaResponse } = useFetchBurnedWmasTx({
+    burnTxHash,
+  });
+
+  useEffect(() => {
+    if (!isBurnSuccess) return;
+
+    if (lambdaResponse === undefined || lambdaResponse.length === 0) return;
+
+    if (lambdaResponse[0].isConfirmed === false) {
+      // TBD: iF states can be simplified
+      updateReleaseMasStep(ReleaseMasStatus.releasing);
+    } else {
+      updateReleaseMasStep(ReleaseMasStatus.releaseSuccess);
+    }
+  }, [lambdaResponse, updateReleaseMasStep, isBurnSuccess]);
+
+  useEffect(() => {
+    // Can be replaced if status is set directly in useBurnWMAS
+    if (isBurnSuccess && releaseMasStatus === ReleaseMasStatus.burning) {
+      updateReleaseMasStep(ReleaseMasStatus.burnSuccess);
+    }
+  }, [isBurnSuccess, updateReleaseMasStep]);
+
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
 
   const isMainnet = getIsMainnet();
-
-  useEffect(() => {
-    if (isBurnSuccess) {
-      // still not sure about this
-      updateReleaseMasStep(ReleaseMasStatus.burnSuccess);
-
-      // trigger lambda polling function
-      handleWMASBridge(burnTxHash, address);
-
-      // still not sure about this
-      updateReleaseMasStep(ReleaseMasStatus.releasing);
-    }
-  }, [isBurnSuccess]);
 
   const explorerUrl = `https://${
     isMainnet ? '' : 'testnet.'
@@ -46,6 +58,14 @@ export function DaoProcessing(props: DaoProcessingProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {releaseMasStatus === ReleaseMasStatus.releaseSuccess && (
+        <div className="flex w-full justify-end cursor-pointer">
+          <FiX
+            className="w-5 h-5"
+            onClick={() => updateReleaseMasStep(ReleaseMasStatus.init)}
+          />
+        </div>
+      )}
       <div className="flex justify-between mb-6 ">
         <p className="mas-body-2">{Intl.t('dao-maker.burn')}</p>
         {/* Quick loading states, will implement proper logic once flow is complete */}
@@ -56,14 +76,21 @@ export function DaoProcessing(props: DaoProcessingProps) {
       <div className="flex justify-between mb-6 ">
         <p className="mas-body-2">{Intl.t('dao-maker.release')}</p>
         {/* Quick loading states, will implement proper logic once flow is complete */}
+        {/* Here I can pass serverState as additional info for user */}
         <LoadingState
-          state={
-            releaseMasStatus === ReleaseMasStatus.releasing
-              ? Status.Loading
-              : Status.None
-          }
+          state={(() => {
+            switch (releaseMasStatus) {
+              case ReleaseMasStatus.releasing:
+                return Status.Loading;
+              case ReleaseMasStatus.releaseSuccess:
+                return Status.Success;
+              default:
+                return Status.None;
+            }
+          })()}
         />
       </div>
+      {/* TODO: update hash for when we have outputOpId */}
       <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxHash} />
     </div>
   );

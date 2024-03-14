@@ -41,6 +41,7 @@ export function DaoHead(props: DaoHeadProps) {
   const isMainnet = getIsMainnet();
 
   const wmasBalance = data?.[0].status === 'success' ? data[0].result : 0n;
+
   return (
     <>
       <div className="flex flex-col p-6 gap-6 bg-primary rounded-2xl mb-5">

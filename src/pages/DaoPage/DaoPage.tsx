@@ -8,10 +8,12 @@ import { useBurnWMAS } from '@/custom/bridge/useBurnWmas';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
-// Might not need to hardcode as balance fetch can give me this info
 export const wmasDecimals = 9;
 export const wmasSymbol = 'WMAS';
 
+// TODO: add network check and autoswitch
+
+// I feel like these can be simplified
 export enum ReleaseMasStatus {
   init = 'initialising',
   burning = 'burning',
@@ -19,9 +21,6 @@ export enum ReleaseMasStatus {
   releasing = 'releasing',
   releaseSuccess = 'releaseSuccess',
 }
-
-// TODO: complete processing success logic
-// Keeping comments as reference
 
 export function DaoPage() {
   const { address: evmAddress } = useAccount();
@@ -49,16 +48,19 @@ export function DaoPage() {
     setReleaseMasStatus(ReleaseMasStatus.burning);
   }
 
-  // still not sure about this
+  // Pretty sure it's better to directly pass setReleaseMasStatus()
+  // as param instead of duplicating a useState logic
   function updateReleaseMasStep(step: ReleaseMasStatus) {
     setReleaseMasStatus(step);
   }
 
+  // I feel like these can be simplified
   function renderReleaseMasStatus(status: ReleaseMasStatus) {
     switch (status) {
       case ReleaseMasStatus.burning:
       case ReleaseMasStatus.burnSuccess:
       case ReleaseMasStatus.releasing:
+      case ReleaseMasStatus.releaseSuccess:
         return (
           <DaoProcessing
             updateReleaseMasStep={updateReleaseMasStep}
@@ -79,8 +81,6 @@ export function DaoPage() {
             />
           </>
         );
-      // case ReleaseMasStatus.releaseSuccess:
-      //   return <DaoSuccessLayout />;
     }
   }
 

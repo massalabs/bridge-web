@@ -11,7 +11,6 @@ export function useBurnWMAS() {
   const [burnHash, setBurnHash] = useState<`0x${string}` | undefined>(
     undefined,
   );
-
   const W_MASS_ADDRESS = config[currentMode].wmas_address;
 
   const write = useCallback(
@@ -39,21 +38,24 @@ export function useBurnWMAS() {
     [writeContract, W_MASS_ADDRESS],
   );
 
-  const { isSuccess } = useWaitForTransactionReceipt({
+  const { isSuccess, data } = useWaitForTransactionReceipt({
     hash,
   });
 
+  // Add rejection handling
   useEffect(() => {
     if (hash) {
       setBurnHash(hash);
     }
-    if (isSuccess) {
+    if (isSuccess && data) {
+      // Would it be acceptable to call the updateReleaseMasStep()
+      // directly here instead of depending on another useEffect ?
       setIsBurnSuccess(true);
     }
     if (error) {
       console.error(error);
     }
-  }, [isSuccess, error, hash, setIsBurnSuccess, setBurnHash]);
+  }, [isSuccess, error, hash, setIsBurnSuccess, setBurnHash, data]);
 
   return { write, isBurnSuccess, burnHash };
 }
