@@ -1,10 +1,4 @@
-import {
-  BUILDNET_CHAIN_ID,
-  Client,
-  ClientFactory,
-  LABNET_CHAIN_ID,
-  MAINNET_CHAIN_ID,
-} from '@massalabs/massa-web3';
+import { Client, ClientFactory } from '@massalabs/massa-web3';
 import { IAccount, IProvider } from '@massalabs/wallet-provider';
 import { useTokenStore } from './tokenStore';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
@@ -52,25 +46,6 @@ const accountStore = (
   chainId: undefined,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
-    function setChainId(networkName: string) {
-      let chainId;
-      switch (networkName) {
-        case 'mainnet':
-          chainId = MAINNET_CHAIN_ID;
-          break;
-        case 'buildnet':
-          chainId = BUILDNET_CHAIN_ID;
-          break;
-        case 'labnet':
-          chainId = LABNET_CHAIN_ID;
-          break;
-        default:
-          console.warn('unknown network name');
-          return;
-      }
-      set({ chainId });
-    }
-
     try {
       set({ isFetching: true });
 
@@ -101,9 +76,9 @@ const accountStore = (
 
       if (!get().networkObserver) {
         const networkObserver = currentProvider.listenNetworkChanges(
-          (newNetwork: string) => {
+          async () => {
             get().refreshMassaClient();
-            setChainId(newNetwork);
+            set({ chainId: await currentProvider.getChainId() });
           },
         );
         set({ networkObserver });
@@ -115,9 +90,9 @@ const accountStore = (
           .then(() => {
             // get current network
             currentProvider
-              .getNetwork()
-              .then((network) => {
-                setChainId(network);
+              .getChainId()
+              .then((chainId) => {
+                set({ chainId });
               })
               .catch((error) => {
                 console.warn('error getting network from bearby', error);
