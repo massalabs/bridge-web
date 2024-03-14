@@ -1,4 +1,4 @@
-import { IAccount } from '@massalabs/massa-web3';
+import { BUILDNET_CHAIN_ID, IAccount } from '@massalabs/massa-web3';
 import { massaClientMock } from './mocks';
 import { AccountStoreState } from '../../src/store/accountStore';
 import { useAccountStore } from '../../src/store/store';
@@ -19,7 +19,7 @@ export const initAccountStoreMock = () => {
         isFetching: false,
         accountObserver: undefined,
         networkObserver: undefined,
-        connectedNetwork: 'buildnet',
+        chainId: BUILDNET_CHAIN_ID,
         setProviders: jest.fn(),
       } as any as AccountStoreState),
   );

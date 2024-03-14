@@ -22,7 +22,7 @@ export interface AccountStoreState {
   networkObserver?: {
     unsubscribe: () => void;
   };
-  connectedNetwork?: string;
+  chainId?: bigint;
 
   setCurrentProvider: (provider?: IProvider) => void;
   setProviders: (providers: IProvider[]) => void;
@@ -43,7 +43,7 @@ const accountStore = (
   currentProvider: undefined,
   providers: [],
   isFetching: false,
-  connectedNetwork: undefined,
+  chainId: undefined,
 
   setCurrentProvider: (currentProvider?: IProvider) => {
     try {
@@ -58,7 +58,7 @@ const accountStore = (
       }
       if (!currentProvider) {
         set({
-          currentProvider,
+          currentProvider: undefined,
           connectedAccount: undefined,
           accounts: undefined,
         });
@@ -76,9 +76,9 @@ const accountStore = (
 
       if (!get().networkObserver) {
         const networkObserver = currentProvider.listenNetworkChanges(
-          (newNetwork: string) => {
+          async () => {
             get().refreshMassaClient();
-            set({ connectedNetwork: newNetwork });
+            set({ chainId: await currentProvider.getChainId() });
           },
         );
         set({ networkObserver });
@@ -90,9 +90,9 @@ const accountStore = (
           .then(() => {
             // get current network
             currentProvider
-              .getNetwork()
-              .then((network) => {
-                set({ connectedNetwork: network });
+              .getChainId()
+              .then((chainId) => {
+                set({ chainId });
               })
               .catch((error) => {
                 console.warn('error getting network from bearby', error);

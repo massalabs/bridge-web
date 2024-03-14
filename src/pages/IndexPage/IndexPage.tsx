@@ -11,8 +11,12 @@ import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
-import { useIndexNetworkCheck } from '@/custom/bridge/useIndexNetworkCheck';
 import { useLock } from '@/custom/bridge/useLock';
+import {
+  useEthNetworkValidation,
+  useMassaNetworkValidation,
+} from '@/custom/bridge/useWrongNetwork';
+import { useWrongNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
 import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -42,7 +46,10 @@ export function IndexPage() {
   const { box, setBox, setLock, setApprove, reset, setAmountError } =
     useGlobalStatusesStore();
 
-  const { wrongIndexNetwork } = useIndexNetworkCheck();
+  useWrongNetworkToast();
+
+  const { isValidEthNetwork } = useEthNetworkValidation();
+  const { isValidMassaNetwork } = useMassaNetworkValidation();
 
   const { write: writeEvmApprove } = useEvmApprove();
 
@@ -55,7 +62,8 @@ export function IndexPage() {
   const isButtonDisabled =
     isFetching ||
     !connectedAccount ||
-    wrongIndexNetwork ||
+    !isValidEthNetwork ||
+    !isValidMassaNetwork ||
     isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);

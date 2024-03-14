@@ -299,9 +299,6 @@
     "connected-cards": {
       "wallet-balance": "Balance: "
     },
-    "connect-massa": {
-      "unsupported-net": "Switch to 'buildnet' in top-right corner of Station's homepage"
-    },
     "wrong-chain": "Wrong wallet network. Please, switch to a supported {network} in your {name} wallet settings.",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
