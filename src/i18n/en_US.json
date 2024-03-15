@@ -247,8 +247,6 @@
     },
     "bridge": {
       "error": {
-        "general": "Something went wrong! Please, try again!",
-        "sign-timeout": "Burn (signature timeout)",
         "invalid-amount": "Invalid amount",
         "insufficient-funds": "Insufficient balance"
       },
