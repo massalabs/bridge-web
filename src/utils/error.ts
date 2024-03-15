@@ -22,6 +22,7 @@ const CONTRACT_REJECTED =
   'ContractFunctionExecutionError: The contract function "redeem" reverted with the following reason:';
 
 const BALANCE_ERROR = 'does not have enough balance to pay';
+const BEARBY_REJECTED_ERROR = 'Error: User rejected';
 
 export const regexErr = new RegExp(ERRORS_MESSAGES.join('|'), 'i');
 export const regexWarn = new RegExp(WARNING_MESSAGE, 'i');
@@ -29,7 +30,10 @@ export const regexParam = new RegExp(PARAMETER_ERROR, 'i');
 export const regexOperation = new RegExp(CONTRACT_REJECTED, 'i');
 
 export function isRejectedByUser(error: Error): boolean {
-  return regexErr.test(error.toString());
+  return (
+    regexErr.test(error.toString()) ||
+    error.toString() === BEARBY_REJECTED_ERROR
+  );
 }
 
 export function isWalletTimeoutError(error: Error): boolean {
