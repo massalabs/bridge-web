@@ -82,7 +82,8 @@ export function FeesEstimation() {
   const { allowance } = useEvmToken();
 
   const [feesETH, setFeesETH] = useState<string>();
-  const [feesMAS, setFeesMAS] = useState<string>();
+  const [storageMAS, setStorageMAS] = useState<bigint>();
+  const [feesMAS, setFeesMAS] = useState<bigint>();
 
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
     useFeeEstimation();
@@ -109,30 +110,34 @@ export function FeesEstimation() {
     if (massaToEvm) {
       if (!selectedToken) {
         setFeesMAS(undefined);
+        setStorageMAS(undefined);
         return;
       }
       const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
-      let storageFeesMAS = forwardBurnFees.coins;
+      let storageCostMAS = forwardBurnFees.coins;
+      let feesCostMAS = forwardBurnFees.fee;
       if (selectedToken.allowance < amountInBigInt) {
-        storageFeesMAS += increaseAllowanceFee.coins;
+        storageCostMAS += increaseAllowanceFee.coins;
+        feesCostMAS += increaseAllowanceFee.fee;
       }
-      setFeesMAS(toMAS(storageFeesMAS).toString());
+      setStorageMAS(storageCostMAS);
+      setFeesMAS(feesCostMAS);
       setFeesETHWithCheck(estimateClaimFees());
     } else {
-      setFeesMAS('0');
+      setFeesMAS(0n);
+      setStorageMAS(0n);
       if (!selectedToken) {
         setFeesETH(undefined);
         return;
       }
       const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
-      Promise.all([
-        allowance < amountInBigInt
-          ? estimateApproveFees()
-          : Promise.resolve(0n),
-        estimateLockFees(),
-      ]).then(([approveFees, lockFees]) => {
+      const lockFees = estimateLockFees();
+      if (allowance < amountInBigInt) {
+        const approveFees = estimateApproveFees();
         setFeesETHWithCheck(approveFees + lockFees);
-      });
+      } else {
+        setFeesETHWithCheck(lockFees);
+      }
     }
   }, [
     massaToEvm,
@@ -163,6 +168,12 @@ export function FeesEstimation() {
       </div>
     );
   }
+
+  const storageMASString = storageMAS ? toMAS(storageMAS).toString() : '';
+  const totalCostMASString = toMAS(
+    (storageMAS ?? 0n) + (feesMAS ?? 0n),
+  ).toString();
+
   return (
     <div className="mas-body2">
       <div className="flex items-center justify-between">
@@ -186,17 +197,17 @@ export function FeesEstimation() {
               network: Intl.t(`general.${massaNetwork}`),
             })}
           </p>
-          {feesMAS && feesMAS !== '0' && (
+          {storageMASString !== '0' && (
             <Tooltip
               body={Intl.t('index.fee-estimate.tooltip-massa', {
-                fees: feesMAS,
+                fees: storageMASString,
               })}
             >
               <FiInfo size={18} />
             </Tooltip>
           )}
         </div>
-        <EstimatedAmount amount={feesMAS} symbol={MASSA_TOKEN} />
+        <EstimatedAmount amount={totalCostMASString} symbol={MASSA_TOKEN} />
       </div>
       <div className="flex items-center justify-between">
         <p>
