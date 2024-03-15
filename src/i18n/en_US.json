@@ -233,7 +233,8 @@
       "error": {
         "rejected": "Burn rejected by user",
         "wrong-allowance": "Allowance is too low. Try again.",
-        "timeout": "Burn signature timed out.",
+        "timeout": "Burn operation timed out.",
+        "timeout-signature": "You failed to sign the operation before timeout. Please try again.",
         "unknown": "Unknown error, Try again."
       }
     },
