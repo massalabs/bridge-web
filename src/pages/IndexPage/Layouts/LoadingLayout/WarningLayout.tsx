@@ -1,4 +1,5 @@
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
+import { METAMASK } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 
@@ -13,7 +14,9 @@ export function WarningLayout() {
       <p>{Intl.t('index.loading-box.warning-description')}</p>
       <p>
         {Intl.t('index.loading-box.warning-expect', {
-          wallet: massaToEvm ? 'Metamask' : 'Massa Wallet',
+          wallet: massaToEvm
+            ? METAMASK
+            : Intl.t('index.faq.mainnet.massa-wallet'),
         })}
       </p>
       <p className="mas-menu font-bold">
