@@ -1,11 +1,12 @@
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
-import { METAMASK } from '@/const';
+import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 
 export function WarningLayout() {
   const { isMassaToEvm } = useOperationStore();
   const massaToEvm = isMassaToEvm();
+  const evmWalletName = useConnectorName();
 
   const currentTxID = undefined;
 
@@ -15,7 +16,7 @@ export function WarningLayout() {
       <p>
         {Intl.t('index.loading-box.warning-expect', {
           wallet: massaToEvm
-            ? METAMASK
+            ? evmWalletName
             : Intl.t('index.faq.mainnet.massa-wallet'),
         })}
       </p>

@@ -26,7 +26,7 @@ export const faqURL = {
     },
   },
   mainnet: {
-    addtokens: {
+    addTokens: {
       addToMassa: `?section=addTokens&category=${FAQcategories.addToMassa}`,
     },
   },

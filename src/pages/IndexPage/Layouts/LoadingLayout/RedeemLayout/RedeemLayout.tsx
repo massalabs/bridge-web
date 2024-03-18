@@ -3,7 +3,7 @@ import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
-import { METAMASK } from '@/const';
+import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
@@ -22,6 +22,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
+  const evmWalletName = useConnectorName();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
@@ -55,7 +56,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
             {claimState === ClaimState.PENDING && (
               <Tooltip
                 body={Intl.t('index.loading-box.claim-pending-tooltip', {
-                  wallet: METAMASK,
+                  wallet: evmWalletName,
                 })}
               />
             )}
