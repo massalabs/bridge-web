@@ -1,7 +1,9 @@
+import { Tooltip } from '@massalabs/react-ui-kit';
 import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
+import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
@@ -20,6 +22,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
+  const evmWalletName = useConnectorName();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
@@ -28,6 +31,7 @@ export function RedeemLayout(props: LoadingBoxProps) {
   const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${burnTxId}${MASSA_EXPLO_EXTENSION}`;
   const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${burnTxId}`;
   const explorerUrl = isMainnet ? mainnetExplorerUrl : buildnetExplorerUrl;
+  const claimState = getCurrentRedeemOperation()?.claimState;
 
   return (
     <>
@@ -45,13 +49,18 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">
-          <p className="mas-body-2">
+          <div className="mas-body-2 flex items-center">
             {Intl.t('index.loading-box.claim-label', {
-              state: getClaimStateTranslation(
-                getCurrentRedeemOperation()?.claimState,
-              ),
+              state: getClaimStateTranslation(claimState),
             })}
-          </p>
+            {claimState === ClaimState.PENDING && (
+              <Tooltip
+                body={Intl.t('index.loading-box.claim-pending-tooltip', {
+                  wallet: evmWalletName,
+                })}
+              />
+            )}
+          </div>
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <ClaimRedeem />}

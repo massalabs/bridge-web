@@ -174,6 +174,7 @@
       "claim-label-retrieving-info": "(retrieving info...)",
       "claim-label-awaiting-signature": "(awaiting signature...)",
       "claim-label-claiming": "(claiming...)",
+      "claim-pending-tooltip": "If you leave, you will see the status of Claim in your {wallet} wallet.",
       "claim-label-rejected": "(rejected by user)",
       "claim-label-error": "(unknown error)",
       "burned": "Burn was successful",
@@ -233,7 +234,8 @@
       "error": {
         "rejected": "Burn rejected by user",
         "wrong-allowance": "Allowance is too low. Try again.",
-        "timeout": "Burn signature timed out.",
+        "timeout": "Burn operation timed out.",
+        "timeout-signature": "You failed to sign the operation before timeout. Please try again.",
         "unknown": "Unknown error, Try again."
       }
     },
@@ -246,8 +248,6 @@
     },
     "bridge": {
       "error": {
-        "general": "Something went wrong! Please, try again!",
-        "sign-timeout": "Burn (signature timeout)",
         "invalid-amount": "Invalid amount",
         "insufficient-funds": "Insufficient balance"
       },

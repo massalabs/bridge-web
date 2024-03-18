@@ -2,8 +2,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
-import { Blockchain, BridgeMode, METAMASK, PAGES } from '@/const';
+import { Blockchain, BridgeMode, PAGES } from '@/const';
 import { faqURL } from '@/const/faq';
+import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import {
   useBridgeModeStore,
@@ -27,6 +28,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const isMainnet = getIsMainnet();
   const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();
+  const evmWalletName = useConnectorName();
 
   const location = useLocation();
 
@@ -65,7 +67,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   function getFaqUrl(): string {
     if (currentMode === BridgeMode.mainnet) {
-      return `${href}${PAGES.FAQ}${faqURL.mainnet.addtokens.addToMassa}`;
+      return `${href}${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
     } else {
       return `${href}${PAGES.FAQ}${faqURL.buildnet.addTokens.addToMassa}`;
     }
@@ -93,7 +95,9 @@ export function SuccessLayout(props: LoadingBoxProps) {
       />
       <p className="mb-1">
         {Intl.t('index.loading-box.check', {
-          name: massaToEvm ? METAMASK : Blockchain.MASSA,
+          name: massaToEvm
+            ? evmWalletName
+            : Intl.t('index.faq.mainnet.massa-wallet'),
         })}
       </p>
       {!massaToEvm && (
