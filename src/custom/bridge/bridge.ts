@@ -26,7 +26,7 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
 
   const opId = await massaClient.smartContracts().callSmartContract({
     targetAddress: selectedToken.massaToken,
-    functionName: 'increaseAllowance',
+    targetFunction: 'increaseAllowance',
     parameter: new Args()
       .addString(config[currentMode].massaBridgeContract)
       .addU256(amount)
@@ -62,7 +62,7 @@ export async function forwardBurn(
 
   const opId = await massaClient.smartContracts().callSmartContract({
     targetAddress: config[currentMode].massaBridgeContract,
-    functionName: 'forwardBurn',
+    targetFunction: 'forwardBurn',
     parameter: new Args().addSerializable(request).serialize(),
     ...forwardBurnFees,
   });
