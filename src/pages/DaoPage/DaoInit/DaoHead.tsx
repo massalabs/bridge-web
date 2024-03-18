@@ -1,10 +1,10 @@
 import { Dropdown, Money } from '@massalabs/react-ui-kit';
-import { erc20Abi, formatUnits } from 'viem';
-import { useAccount, useReadContracts } from 'wagmi';
+import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { WMasSvg } from '@/assets/WMasSvg';
-import { Blockchain, config } from '@/const';
+import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages';
 import { useBridgeModeStore } from '@/store/store';
@@ -13,34 +13,17 @@ interface DaoHeadProps {
   amount: string;
   setAmount: (value: string) => void;
   amountError: string | undefined;
+  wmasBalance: bigint;
+  fetchingBalance: boolean;
 }
 
 export function DaoHead(props: DaoHeadProps) {
-  const { amount, setAmount, amountError } = props;
+  const { amount, setAmount, amountError, wmasBalance, fetchingBalance } =
+    props;
   const { address: evmAddress } = useAccount();
-  const { isMainnet: getIsMainnet, currentMode } = useBridgeModeStore();
-
-  const tokenContract = {
-    address: config[currentMode].wmas_address,
-    abi: erc20Abi,
-  };
-
-  const { data, isFetched } = useReadContracts({
-    contracts: [
-      {
-        ...tokenContract,
-        functionName: 'balanceOf',
-        args: [evmAddress!],
-      },
-    ],
-    query: {
-      enabled: !!evmAddress,
-    },
-  });
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
 
   const isMainnet = getIsMainnet();
-
-  const wmasBalance = data?.[0].status === 'success' ? data[0].result : 0n;
 
   return (
     <>
@@ -85,7 +68,7 @@ export function DaoHead(props: DaoHeadProps) {
         <div>
           <div className="w-full flex justify-end items-center gap-2">
             <div>{Intl.t('dao-maker.balance')}</div>
-            {isFetched && wmasBalance ? (
+            {!fetchingBalance ? (
               <>
                 {formatUnits(wmasBalance, wmasDecimals)} {wmasSymbol}
               </>

@@ -11,17 +11,26 @@ interface DaoInitProps {
   amountError: string | undefined;
   fetchingBalance: boolean;
   handleSubmit: (e: SyntheticEvent) => void;
+  wmasBalance: bigint;
 }
 
 export function DaoInit(props: DaoInitProps) {
-  const { amount, setAmount, amountError, fetchingBalance, handleSubmit } =
-    props;
+  const {
+    amount,
+    setAmount,
+    amountError,
+    fetchingBalance,
+    handleSubmit,
+    wmasBalance,
+  } = props;
   return (
     <>
       <DaoHead
         amount={amount}
         setAmount={setAmount}
         amountError={amountError}
+        wmasBalance={wmasBalance}
+        fetchingBalance={fetchingBalance}
       />
       <DaoMiddle amount={amount} />
       <Button

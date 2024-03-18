@@ -1,6 +1,6 @@
 import { useState, SyntheticEvent } from 'react';
-import { parseUnits } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { erc20Abi, parseUnits } from 'viem';
+import { useAccount, useReadContracts } from 'wagmi';
 import { DaoProcessing } from '.';
 import { DaoInit } from './DaoInit/DaoInit';
 import { config } from '@/const';
@@ -28,10 +28,25 @@ export function DaoPage() {
   const { connectedAccount } = useAccountStore();
   const { currentMode } = useBridgeModeStore();
   const massaAddress = connectedAccount?.address();
-  const { data: wmasBalance, isFetching: fetchingBalance } = useBalance({
-    address: evmAddress,
-    token: config[currentMode].wmas_address,
+  const tokenContract = {
+    address: config[currentMode].wmas_address,
+    abi: erc20Abi,
+  };
+
+  const { data, isFetching } = useReadContracts({
+    contracts: [
+      {
+        ...tokenContract,
+        functionName: 'balanceOf',
+        args: [evmAddress!],
+      },
+    ],
+    query: {
+      enabled: !!evmAddress,
+    },
   });
+
+  const wmasBalance = data?.[0].status === 'success' ? data[0].result : 0n;
 
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState<string | undefined>('');
@@ -42,8 +57,7 @@ export function DaoPage() {
   function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!wmasBalance || !massaAddress) return;
-    if (!validateWmas(amount, wmasBalance.value, setAmountError) || !amount)
-      return;
+    if (!validateWmas(amount, wmasBalance, setAmountError) || !amount) return;
     write(parseUnits(amount, wmasDecimals), massaAddress);
     setReleaseMasStatus(ReleaseMasStatus.burning);
   }
@@ -76,7 +90,8 @@ export function DaoPage() {
               amount={amount}
               amountError={amountError}
               setAmount={setAmount}
-              fetchingBalance={fetchingBalance}
+              fetchingBalance={isFetching}
+              wmasBalance={wmasBalance}
               handleSubmit={handleSubmit}
             />
           </>

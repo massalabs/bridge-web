@@ -15,8 +15,6 @@ export function useBurnWMAS() {
 
   const write = useCallback(
     (amount: bigint, massaAddress: string) => {
-      const functionName = 'burn';
-
       writeContract({
         abi: [
           {
@@ -24,14 +22,14 @@ export function useBurnWMAS() {
               { internalType: 'uint256', name: 'amount', type: 'uint256' },
               { internalType: 'string', name: 'massaAddress', type: 'string' },
             ],
-            name: functionName,
+            name: 'burn',
             outputs: [],
             stateMutability: 'nonpayable',
             type: 'function',
           },
         ],
         address: W_MASS_ADDRESS,
-        functionName,
+        functionName: 'burn',
         args: [amount, massaAddress],
       });
     },

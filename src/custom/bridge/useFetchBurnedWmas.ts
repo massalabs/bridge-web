@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
 import { config } from '@/const';
 import { useResource } from '@/custom/api/useResource';
 import { useBridgeModeStore } from '@/store/store';
-import {
-  Entities,
-  OperationHistoryItem,
-  lambdaEndpoint,
-} from '@/utils/lambdaApi';
+import { OperationHistoryItem, lambdaEndpoint } from '@/utils/lambdaApi';
 
 interface FetchBurnedWmasTxProps {
   burnTxHash: `0x${string}` | undefined;
@@ -19,9 +14,8 @@ export function useFetchBurnedWmasTx(props: FetchBurnedWmasTxProps) {
   const [enableRefetch, setEnableRefetch] = useState<boolean>(true);
 
   const { currentMode } = useBridgeModeStore();
-  const { address } = useAccount();
   /* eslint-disable max-len */
-  const queryParams = `?evmAddress=${address}&inputTxId=${burnTxHash}&entities=${Entities.ReleaseMAS}`;
+  const queryParams = `?&inputTxId=${burnTxHash}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
 
   // enableRefetch can be refactored direclty into a function that returns bool
@@ -37,9 +31,7 @@ export function useFetchBurnedWmasTx(props: FetchBurnedWmasTxProps) {
       console.warn('Unexpected: multiple burned operations', data.length);
     }
 
-    data[0].isConfirmed === false
-      ? setEnableRefetch(true)
-      : setEnableRefetch(false);
+    setEnableRefetch(!data[0].isConfirmed);
   }, [data]);
 
   return {
