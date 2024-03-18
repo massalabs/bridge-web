@@ -162,7 +162,7 @@ export function FeesEstimation() {
     return (
       <div className="text-s-warning">
         {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
-        <Link to={PAGES.DAO}>
+        <Link to={`/${PAGES.DAO}`}>
           <u>{Intl.t('dao-maker.page-name')} </u>
         </Link>
       </div>

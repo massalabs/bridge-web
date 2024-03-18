@@ -11,8 +11,6 @@ import { useAccountStore, useBridgeModeStore } from '@/store/store';
 export const wmasDecimals = 9;
 export const wmasSymbol = 'WMAS';
 
-// TODO: add network check and autoswitch
-
 // I feel like these can be simplified
 export enum ReleaseMasStatus {
   init = 'initialising',
