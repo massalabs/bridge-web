@@ -5,7 +5,7 @@ import { FiPauseCircle } from 'react-icons/fi';
 import { Spinner, ErrorCheck, WarningCheck, SuccessCheck } from '@/components';
 import { Status } from '@/store/globalStatusesStore';
 
-interface Loading {
+export interface Loading {
   loading: ReactNode;
   error: ReactNode;
   warning: ReactNode;

@@ -1,6 +1,5 @@
 import currency from 'currency.js';
 import { parseUnits } from 'viem';
-import { IToken } from '@/store/tokenStore';
 
 export interface FormattedAmount {
   amountFormattedPreview: string;
@@ -95,16 +94,16 @@ export function roundDecimalPartToOneSignificantDigit(
 
 export function formatAmountToDisplay(
   amount: string,
-  token: IToken | undefined,
+  tokenDecimal: number,
 ): FormattedAmount {
-  if (!token || !amount) {
+  if (!tokenDecimal || !amount) {
     return {
       amountFormattedFull: '0',
       amountFormattedPreview: '0',
     };
   }
   // parsing to Bigint to get correct amount
-  const amt = parseUnits(amount, token.decimals);
+  const amt = parseUnits(amount, tokenDecimal);
   // formatting it to string for display
-  return formatAmount(amt.toString(), token.decimals);
+  return formatAmount(amt.toString(), tokenDecimal);
 }

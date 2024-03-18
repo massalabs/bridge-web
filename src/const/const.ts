@@ -9,6 +9,7 @@ export enum Blockchain {
   MASSA_BUILDNET = 'Buildnet',
   MASSA_MAINNET = 'Mainnet',
   BSC = 'Binance smart chain',
+  TBSC = 'BSC Testnet',
   BSC_MAINNET = 'Mainnet',
   BSC_TESTNET = 'Testnet',
   INVALID_CHAIN = 'Invalid-chain',
@@ -42,6 +43,7 @@ export const config = {
     evmBridgeContract: '' as `0x${string}`,
     massaBridgeContract: '',
     lambdaUrl: '',
+    wmas_address: '' as `0x${string}`,
   },
   [BridgeMode.testnet]: {
     evmBridgeContract:
@@ -49,6 +51,7 @@ export const config = {
     massaBridgeContract: 'AS1f8RX7HUg78NG8rgLhqZbes2upE3JUHLKPdWMN2SJFWqFnUBJC',
     lambdaUrl:
       'https://6sul7w7nqer7pd5mf7cl6l2muy0isblj.lambda-url.eu-west-3.on.aws/default/',
+    wmas_address: '0x733676a533cb12668C4184A5e2E2a34743e2b933' as `0x${string}`,
   },
 };
 

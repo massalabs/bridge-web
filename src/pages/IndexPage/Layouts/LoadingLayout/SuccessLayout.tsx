@@ -41,7 +41,10 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const massaToEvm = isMassaToEvm();
   const currentRedeemOperation = getCurrentRedeemOperation();
-  const { amountFormattedPreview } = formatAmountToDisplay(amount, token);
+  const { amountFormattedPreview } = formatAmountToDisplay(
+    amount,
+    token.decimals,
+  );
 
   const massaChainAndNetwork = `${Blockchain.MASSA} ${massaNetwork}`;
 
