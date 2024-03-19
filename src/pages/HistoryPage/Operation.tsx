@@ -3,10 +3,10 @@ import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
 import { TxLinkToExplorers } from './TxLinkToExplorers';
-import { wmasDecimals } from '../DaoPage';
+import { wmasDecimals, wmasSymbol } from '../DaoPage';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
-import { FormattedAmount, formatAmount } from '@/utils/parseAmount';
+import { formatAmount } from '@/utils/parseAmount';
 
 function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
@@ -21,17 +21,21 @@ export function Operation(props: OperationProps) {
 
   const { tokens } = useTokenStore();
 
-  function getFormattedAmount(): FormattedAmount {
+  function getTokenInfo() {
     if (op.entity === Entities.ReleaseMAS) {
-      return formatAmount(op.amount, wmasDecimals);
+      return { symbol: wmasSymbol, tokenDecimals: wmasDecimals };
     }
-    // Default is 18 decimals
-    return formatAmount(op.amount);
+    const token = tokens.find((t) => t.evmToken === op.evmToken);
+
+    return { symbol: token?.symbolEVM, tokenDecimals: token?.decimals };
   }
 
-  let { amountFormattedFull, amountFormattedPreview } = getFormattedAmount();
+  const { symbol, tokenDecimals } = getTokenInfo();
 
-  const symbol = tokens.find((t) => t.evmToken === op.evmToken)?.symbolEVM;
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
+    op.amount,
+    tokenDecimals,
+  );
 
   return (
     <div className="grid grid-cols-6 mas-body2">
@@ -41,7 +45,8 @@ export function Operation(props: OperationProps) {
         {formatApiCreationTime(op.createdAt)}
       </div>
       <div className="flex items-center">
-        {amountFormattedPreview} {symbol} <Tooltip body={amountFormattedFull} />
+        {amountFormattedPreview} {symbol}{' '}
+        <Tooltip body={`${amountFormattedFull} ${symbol}`} />
       </div>
       <ShowStatus status={op.historyStatus} />
       <TxLinkToExplorers operation={op} />
