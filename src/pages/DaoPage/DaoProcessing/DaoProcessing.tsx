@@ -10,7 +10,7 @@ import { useBridgeModeStore } from '@/store/store';
 interface DaoProcessingProps {
   isBurnSuccess: boolean;
   burnHash: `0x${string}` | undefined;
-  updateReleaseMasStep: (step: ReleaseMasStatus) => void;
+  setReleaseMasStatus: (step: ReleaseMasStatus) => void;
   releaseMasStatus: ReleaseMasStatus;
 }
 
@@ -18,7 +18,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
   const {
     isBurnSuccess,
     burnHash: burnTxHash,
-    updateReleaseMasStep,
+    setReleaseMasStatus,
     releaseMasStatus,
   } = props;
 
@@ -35,18 +35,18 @@ export function DaoProcessing(props: DaoProcessingProps) {
 
     if (lambdaResponse[0].isConfirmed === false) {
       // TBD: iF states can be simplified
-      updateReleaseMasStep(ReleaseMasStatus.releasing);
+      setReleaseMasStatus(ReleaseMasStatus.releasing);
     } else {
-      updateReleaseMasStep(ReleaseMasStatus.releaseSuccess);
+      setReleaseMasStatus(ReleaseMasStatus.releaseSuccess);
     }
-  }, [lambdaResponse, updateReleaseMasStep, isBurnSuccess]);
+  }, [lambdaResponse, setReleaseMasStatus, isBurnSuccess]);
 
   useEffect(() => {
     // Can be replaced if status is set directly in useBurnWMAS
     if (isBurnSuccess && releaseMasStatus === ReleaseMasStatus.burning) {
-      updateReleaseMasStep(ReleaseMasStatus.burnSuccess);
+      setReleaseMasStatus(ReleaseMasStatus.burnSuccess);
     }
-  }, [isBurnSuccess, updateReleaseMasStep]);
+  }, [isBurnSuccess, setReleaseMasStatus]);
 
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
 
@@ -62,7 +62,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
         <div className="flex w-full justify-end cursor-pointer">
           <FiX
             className="w-5 h-5"
-            onClick={() => updateReleaseMasStep(ReleaseMasStatus.init)}
+            onClick={() => setReleaseMasStatus(ReleaseMasStatus.init)}
           />
         </div>
       )}

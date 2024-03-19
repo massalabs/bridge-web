@@ -62,12 +62,6 @@ export function DaoPage() {
     setReleaseMasStatus(ReleaseMasStatus.burning);
   }
 
-  // Pretty sure it's better to directly pass setReleaseMasStatus()
-  // as param instead of duplicating a useState logic
-  function updateReleaseMasStep(step: ReleaseMasStatus) {
-    setReleaseMasStatus(step);
-  }
-
   // I feel like these can be simplified
   function renderReleaseMasStatus(status: ReleaseMasStatus) {
     switch (status) {
@@ -77,7 +71,7 @@ export function DaoPage() {
       case ReleaseMasStatus.releaseSuccess:
         return (
           <DaoProcessing
-            updateReleaseMasStep={updateReleaseMasStep}
+            setReleaseMasStatus={setReleaseMasStatus}
             isBurnSuccess={isBurnSuccess}
             burnHash={burnHash}
             releaseMasStatus={releaseMasStatus}
