@@ -46,7 +46,10 @@ export function IndexPage() {
   const { box, setBox, setLock, setApprove, reset, setAmountError } =
     useGlobalStatusesStore();
 
+  // TODO: add network toast in network check
   useWrongNetworkToast();
+
+  // TODO : unify these two checks
 
   const { isValidEthNetwork } = useEthNetworkValidation();
   const { isValidMassaNetwork } = useMassaNetworkValidation();
