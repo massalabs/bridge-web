@@ -1,15 +1,16 @@
-import { Dropdown, Money, Tag } from '@massalabs/react-ui-kit';
+import { ReactElement } from 'react';
+import { Dropdown, Money } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { WMasSvg } from '@/assets/WMasSvg';
+import { Connected, Disconnected, WrongChain } from '@/components';
 import { Blockchain } from '@/const';
 import { useBnbNetworkCheck } from '@/custom/bridge/useBnbNetworkCheck';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages';
 import { useBridgeModeStore } from '@/store/store';
-import { tagTypes } from '@/utils/const';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface DaoHeadProps {
@@ -30,26 +31,15 @@ export function DaoHead(props: DaoHeadProps) {
 
   const isBnbNetworkValid = useBnbNetworkCheck();
 
-  function getChainStatus(): { content: string; type: string } {
+  function getChainStatus(): ReactElement {
     if (!isConnected) {
-      return {
-        content: Intl.t('index.tag.not-connected'),
-        type: tagTypes.error,
-      };
+      return <Disconnected />;
     }
     if (isBnbNetworkValid) {
-      return {
-        content: Intl.t('index.tag.connected'),
-        type: tagTypes.success,
-      };
+      return <Connected />;
     }
-    return {
-      content: Intl.t('index.tag.wrong-chain'),
-      type: tagTypes.warning,
-    };
+    return <WrongChain blockchain={Blockchain.BSC} />;
   }
-
-  const { content, type } = getChainStatus();
 
   return (
     <>
@@ -59,8 +49,12 @@ export function DaoHead(props: DaoHeadProps) {
             <div className="mas-menu-active">{Intl.t('dao-maker.from')}</div>
             <br />
             <div className="flex items-center gap-2">
-              {maskAddress(evmAddress as string)}
-              <Tag type={type}>{content}</Tag>
+              {evmAddress ? (
+                maskAddress(evmAddress as string)
+              ) : (
+                <div>Address not found</div>
+              )}
+              {getChainStatus()}
             </div>
           </div>
           <div className="w-1/2">
