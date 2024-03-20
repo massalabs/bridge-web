@@ -52,7 +52,7 @@ export function DaoHead(props: DaoHeadProps) {
               {evmAddress ? (
                 maskAddress(evmAddress as string)
               ) : (
-                <div>Address not found</div>
+                <div>{Intl.t('dao-maker.address-not-found')}</div>
               )}
               {getChainStatus()}
             </div>

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { bsc, bscTestnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
@@ -14,17 +15,23 @@ export function useBnbNetworkCheck(): boolean | undefined {
   const targetChainId = isMainnet ? bsc.id : bscTestnet.id;
   const isValidChain = chain?.id === targetChainId;
 
+  const [isBnbChainValid, setIsBnbChainValid] = useState<boolean>();
   const bnbToastID = 'BNB';
-  if (!isValidChain) {
-    toast.error(
-      Intl.t('dao-maker.wrong-chain', {
-        name: walletName,
-        network: isMainnet ? bsc.name : bscTestnet.name,
-      }),
-      { id: bnbToastID },
-    );
-    return false;
-  }
-  toast.dismiss(bnbToastID);
-  return true;
+
+  useEffect(() => {
+    if (!isValidChain) {
+      toast.error(
+        Intl.t('dao-maker.wrong-chain', {
+          name: walletName,
+          network: isMainnet ? bsc.name : bscTestnet.name,
+        }),
+        { id: bnbToastID },
+      );
+      setIsBnbChainValid(false);
+    }
+    setIsBnbChainValid(true);
+    toast.dismiss(bnbToastID);
+  }, [isValidChain, isMainnet, walletName]);
+
+  return isBnbChainValid;
 }
