@@ -66,7 +66,7 @@ export function useWrongNetworkToast() {
               name: currentProvider
                 ? Intl.t(`connect-wallet.${currentProvider.name()}`)
                 : '',
-              network: massaNetwork,
+              network: Intl.t(`general.${massaNetwork}`),
             }),
             {
               id: 'massa',

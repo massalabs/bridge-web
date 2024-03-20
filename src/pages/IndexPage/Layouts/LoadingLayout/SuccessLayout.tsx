@@ -46,7 +46,9 @@ export function SuccessLayout(props: LoadingBoxProps) {
     token.decimals,
   );
 
-  const massaChainAndNetwork = `${Blockchain.MASSA} ${massaNetwork}`;
+  const massaChainAndNetwork = `${Blockchain.MASSA} ${Intl.t(
+    `general.${massaNetwork}`,
+  )}`;
 
   const evmChainAndNetwork = `${chain.name} ${evmNetwork}`;
 
