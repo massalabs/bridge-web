@@ -1,13 +1,17 @@
+import { ReactElement } from 'react';
 import { Dropdown, Money } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { WMasSvg } from '@/assets/WMasSvg';
+import { Connected, Disconnected, WrongChain } from '@/components';
 import { Blockchain } from '@/const';
+import { useBnbNetworkCheck } from '@/custom/bridge/useBnbNetworkCheck';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages';
 import { useBridgeModeStore } from '@/store/store';
+import { maskAddress } from '@/utils/massaFormat';
 
 interface DaoHeadProps {
   amount: string;
@@ -20,18 +24,39 @@ interface DaoHeadProps {
 export function DaoHead(props: DaoHeadProps) {
   const { amount, setAmount, amountError, wmasBalance, fetchingBalance } =
     props;
-  const { address: evmAddress } = useAccount();
+  const { address: evmAddress, isConnected } = useAccount();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
 
   const isMainnet = getIsMainnet();
 
+  const isBnbNetworkValid = useBnbNetworkCheck();
+
+  function getChainStatus(): ReactElement {
+    if (!isConnected) {
+      return <Disconnected />;
+    }
+    if (isBnbNetworkValid) {
+      return <Connected />;
+    }
+    return <WrongChain blockchain={Blockchain.BSC} />;
+  }
+
   return (
     <>
       <div className="flex flex-col p-6 gap-6 bg-primary rounded-2xl mb-5">
-        <div className="flex">
-          <p className="mas-body2">
-            {Intl.t('dao-maker.from', { address: evmAddress as string })}
-          </p>
+        <div className="flex justify-between">
+          <div className="mas-body2">
+            <div className="mas-menu-active">{Intl.t('dao-maker.from')}</div>
+            <br />
+            <div className="flex items-center gap-2">
+              {evmAddress ? (
+                maskAddress(evmAddress as string)
+              ) : (
+                <div>{Intl.t('dao-maker.address-not-found')}</div>
+              )}
+              {getChainStatus()}
+            </div>
+          </div>
           <div className="w-1/2">
             <Dropdown
               readOnly={true}

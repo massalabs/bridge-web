@@ -11,8 +11,6 @@ import { useAccountStore, useBridgeModeStore } from '@/store/store';
 export const wmasDecimals = 9;
 export const wmasSymbol = 'WMAS';
 
-// TODO: add network check and autoswitch
-
 // I feel like these can be simplified
 export enum ReleaseMasStatus {
   init = 'initialising',
@@ -95,7 +93,7 @@ export function DaoPage() {
 
   return (
     <div
-      className={`flex flex-col gap-4 p-10 max-w-3xl 
+      className={`flex flex-col gap-4 p-10 max-w-[800px] 
             w-full border border-tertiary rounded-2xl
             bg-secondary/50 text-f-primary mb-5`}
     >
