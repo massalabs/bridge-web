@@ -168,7 +168,7 @@
       "burn-label-success": "(final)",
       "burn-label-rejected": "(rejected)",
       "burn-label-error": "(unknown error)",
-      "burn-label-signature-timeout": "Burn (signature timeout)",
+      "burn-label-signature-timeout": "(signature timeout)",
       "rejected-by-user": "You have rejected the transaction, please try again by clicking below.",
       "inconsistent-not-found": "Burn (inconsistent or not found)",
       "claim-label": "Claim {state}",
