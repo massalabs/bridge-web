@@ -4,6 +4,7 @@ import { MetamaskNotInstalled } from './MetamaskNotInstalled';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
+import { ChainContext } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 
 export function ConnectEvmWallet() {
@@ -24,7 +25,10 @@ export function ConnectEvmWallet() {
             ? walletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        <ChainStatus blockchain={connectedEvmChain} />
+        <ChainStatus
+          context={ChainContext.CONNECT}
+          blockchain={connectedEvmChain}
+        />
       </div>
       <div className="w-full">
         {isMetamaskInstalled ? <EvmConnectButton /> : <MetamaskNotInstalled />}

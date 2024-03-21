@@ -1,13 +1,12 @@
-import { ReactElement } from 'react';
 import { Dropdown, Money } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { WMasSvg } from '@/assets/WMasSvg';
-import { Connected, Disconnected, WrongChain } from '@/components';
+import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
-import { useBnbNetworkCheck } from '@/custom/bridge/useBnbNetworkCheck';
+import { ChainContext } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages';
 import { useBridgeModeStore } from '@/store/store';
@@ -24,22 +23,10 @@ interface DaoHeadProps {
 export function DaoHead(props: DaoHeadProps) {
   const { amount, setAmount, amountError, wmasBalance, fetchingBalance } =
     props;
-  const { address: evmAddress, isConnected } = useAccount();
+  const { address: evmAddress } = useAccount();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
 
   const isMainnet = getIsMainnet();
-
-  const isBnbNetworkValid = useBnbNetworkCheck();
-
-  function getChainStatus(): ReactElement {
-    if (!isConnected) {
-      return <Disconnected />;
-    }
-    if (isBnbNetworkValid) {
-      return <Connected />;
-    }
-    return <WrongChain blockchain={Blockchain.BSC} />;
-  }
 
   return (
     <>
@@ -54,7 +41,12 @@ export function DaoHead(props: DaoHeadProps) {
               ) : (
                 <div>{Intl.t('dao-maker.address-not-found')}</div>
               )}
-              {getChainStatus()}
+              {
+                <ChainStatus
+                  context={ChainContext.DAO}
+                  blockchain={Blockchain.BSC}
+                />
+              }
             </div>
           </div>
           <div className="w-1/2">

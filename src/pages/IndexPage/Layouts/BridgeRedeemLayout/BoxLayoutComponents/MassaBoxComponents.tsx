@@ -3,6 +3,7 @@ import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import { iconsNetworks } from '../BoxLayout';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, MASSA_TOKEN } from '@/const';
+import { ChainContext } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
@@ -36,7 +37,10 @@ export function MassaHeader() {
             ? Intl.t(`connect-wallet.${currentProvider.name()}`)
             : Intl.t('connect-wallet.card-destination.to')}
         </p>
-        <ChainStatus blockchain={Blockchain.MASSA} />
+        <ChainStatus
+          context={ChainContext.BRIDGE}
+          blockchain={Blockchain.MASSA}
+        />
       </div>
     </div>
   );

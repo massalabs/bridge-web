@@ -1,42 +1,42 @@
 import { useAccount } from 'wagmi';
 import { Connected, Disconnected, WrongChain } from '.';
 import { Blockchain } from '@/const';
-
-import { useMassaNetworkValidation } from '@/custom/bridge/useWrongNetwork';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
-import { isEvmNetworkValid } from '@/utils/networkValidation';
+import {
+  ChainContext,
+  useEvmChainValidation,
+  useMassaNetworkValidation,
+} from '@/custom/bridge/useWrongNetwork';
+import { useAccountStore } from '@/store/store';
 
 interface ChainStatusProps {
   blockchain: Blockchain;
+  context: ChainContext;
 }
 
 export function ChainStatus(props: ChainStatusProps) {
-  const { blockchain } = props;
+  const { blockchain, context } = props;
 
   const { connectedAccount, currentProvider } = useAccountStore();
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { isValidMassaNetwork } = useMassaNetworkValidation();
-  const { isConnected: isConnectedEVM, chain } = useAccount();
+  const { isConnected: isConnectedEVM } = useAccount();
 
-  const isMainnet = getIsMainnet();
+  // Evm chain validation
+  const isValidEvmNetwork = useEvmChainValidation(context);
 
-  const isValidEvmNetwork = isEvmNetworkValid(isMainnet, chain?.id);
+  // Massa Chain Validation
+  const isMassaChain = blockchain === Blockchain.MASSA;
+  const isMassaChainConnected = !!connectedAccount && !!currentProvider;
 
-  const blockchainIsMassa = blockchain === Blockchain.MASSA;
-
-  const isConnectMassa = !!connectedAccount;
-
-  const isConnected = blockchainIsMassa
-    ? isConnectMassa && !!currentProvider
+  // verifies that bolth chains are connected
+  const isEvmAndMassaConnected = isMassaChain
+    ? isMassaChainConnected
     : isConnectedEVM;
 
-  const networkIsValid = blockchainIsMassa
-    ? isValidMassaNetwork
-    : isValidEvmNetwork;
+  const networkIsValid = isMassaChain ? isValidMassaNetwork : isValidEvmNetwork;
 
   return (
     <>
-      {isConnected ? (
+      {isEvmAndMassaConnected ? (
         networkIsValid ? (
           <Connected />
         ) : (

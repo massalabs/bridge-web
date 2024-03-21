@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { bsc, bscTestnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
@@ -6,8 +6,8 @@ import { useConnectorName } from './useConnectorName';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 
-export function useBnbNetworkCheck(): boolean | undefined {
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+export function useBnbNetworkToast() {
+  const { isMainnet: getIsMainnet, currentMode } = useBridgeModeStore();
   const { chain } = useAccount();
   const isMainnet = getIsMainnet();
   const walletName = useConnectorName();
@@ -15,7 +15,6 @@ export function useBnbNetworkCheck(): boolean | undefined {
   const targetChainId = isMainnet ? bsc.id : bscTestnet.id;
   const isValidChain = chain?.id === targetChainId;
 
-  const [isBnbChainValid, setIsBnbChainValid] = useState<boolean>();
   const bnbToastID = 'BNB';
 
   useEffect(() => {
@@ -27,11 +26,8 @@ export function useBnbNetworkCheck(): boolean | undefined {
         }),
         { id: bnbToastID },
       );
-      setIsBnbChainValid(false);
+    } else {
+      toast.dismiss(bnbToastID);
     }
-    setIsBnbChainValid(true);
-    toast.dismiss(bnbToastID);
-  }, [isValidChain, isMainnet, walletName]);
-
-  return isBnbChainValid;
+  }, [isValidChain, isMainnet, walletName, chain, currentMode]);
 }
