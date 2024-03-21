@@ -1,10 +1,10 @@
+import { useLocation } from 'react-router-dom';
+import { bsc, bscTestnet, mainnet, sepolia } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Connected, Disconnected, WrongChain } from '.';
-import { Blockchain } from '@/const';
-
+import { Blockchain, PAGES } from '@/const';
 import { useMassaNetworkValidation } from '@/custom/bridge/useWrongNetwork';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
-import { isEvmNetworkValid } from '@/utils/networkValidation';
 
 interface ChainStatusProps {
   blockchain: Blockchain;
@@ -13,6 +13,7 @@ interface ChainStatusProps {
 export function ChainStatus(props: ChainStatusProps) {
   const { blockchain } = props;
 
+  const { pathname } = useLocation();
   const { connectedAccount, currentProvider } = useAccountStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { isValidMassaNetwork } = useMassaNetworkValidation();
@@ -20,23 +21,32 @@ export function ChainStatus(props: ChainStatusProps) {
 
   const isMainnet = getIsMainnet();
 
-  const isValidEvmNetwork = isEvmNetworkValid(isMainnet, chain?.id);
+  // Massa Chain Validation
+  const isMassaChain = blockchain === Blockchain.MASSA;
+  const isMassaChainConnected = !!connectedAccount && !!currentProvider;
 
-  const blockchainIsMassa = blockchain === Blockchain.MASSA;
+  // Evm chain validation
+  function evmChainValidation(): boolean {
+    if (pathname === `/${PAGES.DAO}`) {
+      const targetChainId = isMainnet ? bsc.id : bscTestnet.id;
+      return chain?.id === targetChainId;
+    }
+    const targetChainId = isMainnet ? mainnet.id : sepolia.id;
+    return chain?.id === targetChainId;
+  }
 
-  const isConnectMassa = !!connectedAccount;
-
-  const isConnected = blockchainIsMassa
-    ? isConnectMassa && !!currentProvider
+  // verifies that bolth chains are connected
+  const isEvmAndMassaConnected = isMassaChain
+    ? isMassaChainConnected
     : isConnectedEVM;
 
-  const networkIsValid = blockchainIsMassa
+  const networkIsValid = isMassaChain
     ? isValidMassaNetwork
-    : isValidEvmNetwork;
+    : evmChainValidation();
 
   return (
     <>
-      {isConnected ? (
+      {isEvmAndMassaConnected ? (
         networkIsValid ? (
           <Connected />
         ) : (

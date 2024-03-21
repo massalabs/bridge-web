@@ -6,7 +6,7 @@ import { useConnectorName } from './useConnectorName';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 
-export function useBnbNetworkCheck(): boolean | undefined {
+export function useBnbNetworkToast(): boolean | undefined {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
   const isMainnet = getIsMainnet();
