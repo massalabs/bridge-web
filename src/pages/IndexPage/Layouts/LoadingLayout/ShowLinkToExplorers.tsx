@@ -8,14 +8,14 @@ interface ShowLinkToExplorers {
   currentTxID: string | undefined;
 }
 
+export const isEVMTxID = /^0x/i;
+
+export const openInNewTab = (url: string) => {
+  window.open(url, '_blank', 'noreferrer');
+};
+
 export function ShowLinkToExplorers(props: ShowLinkToExplorers) {
   const { explorerUrl, currentTxID } = props;
-
-  const openInNewTab = (url: string) => {
-    window.open(url, '_blank', 'noreferrer');
-  };
-
-  const isEVMTxID = /^0x/i;
 
   const showLinkToExplorers = currentTxID && explorerUrl;
 

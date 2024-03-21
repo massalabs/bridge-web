@@ -1,11 +1,17 @@
 import { useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 import { ReleaseMasStatus } from '../DaoPage';
+import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
 import { useFetchBurnedWmasTx } from '@/custom/bridge/useFetchBurnedWmas';
 import Intl from '@/i18n/i18n';
-import { LoadingState, ShowLinkToExplorers } from '@/pages';
+import { LoadingState } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
 import { useBridgeModeStore } from '@/store/store';
+import {
+  MASSA_EXPLORER_URL,
+  MASSA_EXPLO_EXTENSION,
+  MASSA_EXPLO_URL,
+} from '@/utils/const';
 
 interface DaoProcessingProps {
   isBurnSuccess: boolean;
@@ -52,46 +58,69 @@ export function DaoProcessing(props: DaoProcessingProps) {
 
   const isMainnet = getIsMainnet();
 
-  const explorerUrl = `https://${
+  const burnExplorerUrl = `https://${
     isMainnet ? '' : 'testnet.'
   }bscscan.com/tx/${burnTxHash}`;
 
+  const releaseExplorerUrl = isMainnet
+    ? `${MASSA_EXPLORER_URL}${lambdaResponse && lambdaResponse[0]?.outputId}`
+    : `${MASSA_EXPLO_URL}${
+        lambdaResponse && lambdaResponse[0]?.outputId
+      }${MASSA_EXPLO_EXTENSION}`;
+
+  const isReleaseSuccess = releaseMasStatus === ReleaseMasStatus.releaseSuccess;
+
   return (
-    <div className="flex flex-col gap-6">
-      {releaseMasStatus === ReleaseMasStatus.releaseSuccess && (
-        <div className="flex w-full justify-end cursor-pointer">
-          <FiX
-            className="w-5 h-5"
-            onClick={() => setReleaseMasStatus(ReleaseMasStatus.init)}
+    <div className="flex flex-col gap-6 items-center">
+      <div className="flex w-full justify-end">
+        {isReleaseSuccess && (
+          <div className="w-fit cursor-pointer hover:bg-tertiary p-2 rounded-xl">
+            <FiX
+              className="w-5 h-5"
+              onClick={() => setReleaseMasStatus(ReleaseMasStatus.init)}
+            />
+          </div>
+        )}
+      </div>
+      <div className="flex justify-between w-full mb-6 items-center">
+        <p className="mas-body-2">{Intl.t('dao-maker.burn')}</p>
+        <div className="flex items-center gap-4">
+          {' '}
+          <MinimalLinkExplorer
+            explorerUrl={burnExplorerUrl}
+            currentTxID={burnTxHash}
+          />
+          {/* Quick loading states, will implement proper logic once flow is complete */}
+          <LoadingState
+            state={(isBurnSuccess && Status.Success) || Status.Loading}
           />
         </div>
-      )}
-      <div className="flex justify-between mb-6 ">
-        <p className="mas-body-2">{Intl.t('dao-maker.burn')}</p>
-        {/* Quick loading states, will implement proper logic once flow is complete */}
-        <LoadingState
-          state={(isBurnSuccess && Status.Success) || Status.Loading}
-        />
       </div>
-      <div className="flex justify-between mb-6 ">
+      <div className="flex w-full justify-between mb-6 items-center">
         <p className="mas-body-2">{Intl.t('dao-maker.release')}</p>
+
         {/* Quick loading states, will implement proper logic once flow is complete */}
         {/* Here I can pass serverState as additional info for user */}
-        <LoadingState
-          state={(() => {
-            switch (releaseMasStatus) {
-              case ReleaseMasStatus.releasing:
-                return Status.Loading;
-              case ReleaseMasStatus.releaseSuccess:
-                return Status.Success;
-              default:
-                return Status.None;
-            }
-          })()}
-        />
+        <div className="flex items-center gap-4">
+          <MinimalLinkExplorer
+            explorerUrl={releaseExplorerUrl}
+            currentTxID={lambdaResponse && lambdaResponse[0]?.outputId}
+          />
+          <LoadingState
+            state={(() => {
+              switch (releaseMasStatus) {
+                case ReleaseMasStatus.releasing:
+                  return Status.Loading;
+                case ReleaseMasStatus.releaseSuccess:
+                  return Status.Success;
+                default:
+                  return Status.None;
+              }
+            })()}
+          />
+        </div>
       </div>
-      {/* TODO: update hash for when we have outputOpId */}
-      <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxHash} />
+      {isReleaseSuccess && <div>{Intl.t('dao-maker.success')}</div>}
     </div>
   );
 }
