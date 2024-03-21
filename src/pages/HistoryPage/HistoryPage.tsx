@@ -108,6 +108,7 @@ export function HistoryPage() {
         </div>
         <div className="flex items-center justify-center gap-12">
           <Button
+            variant="secondary"
             customClass="w-64"
             disabled={pageStep <= 0}
             preIcon={<FiMinus />}
@@ -117,6 +118,7 @@ export function HistoryPage() {
           </Button>
           <Button
             customClass="w-64"
+            variant="secondary"
             posIcon={<FiPlus />}
             disabled={pageStep >= Math.ceil(operationList.length / 10 - 1)}
             onClick={loadOldest}
