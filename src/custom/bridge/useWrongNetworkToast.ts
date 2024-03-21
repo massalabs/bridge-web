@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 
 import { useAccount } from 'wagmi';
 import { useConnectorName } from './useConnectorName';
+import {
+  ChainContext,
+  useEvmChainValidation,
+  useMassaNetworkValidation,
+} from './useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
-import {
-  isEthNetworkValid,
-  isMassaNetworkValid,
-} from '@/utils/networkValidation';
 
 export function useWrongIndexNetworkToast() {
   const { chain } = useAccount();
@@ -26,27 +27,26 @@ export function useWrongIndexNetworkToast() {
   const massaNetwork = getMassaNetwork();
   const walletName = useConnectorName();
 
-  // state to dismiss toast
-  const [toastIdEvm, setToastIdEvm] = useState<string>('');
-  const [toastIdMassa, setToastIdMassa] = useState<string>('');
+  const isEthNetworkValid = useEvmChainValidation(ChainContext.BRIDGE);
+  const isMassaNetworkValid = useMassaNetworkValidation();
+  const toastIdEvm = 'evm';
+  const toastIdMassa = 'massa';
 
   // If wrong network is detected, show a toast
-  // In toast, show opposite of current network
-
   useEffect(() => {
     if (!chain) {
       toast.dismiss(toastIdEvm);
       return;
     }
-    if (!isEthNetworkValid(isMainnet, chain.id)) {
-      setToastIdEvm(
-        toast.error(
-          Intl.t('connect-wallet.wrong-chain', {
-            name: walletName,
-            network: evmNetwork.toLowerCase(),
-          }),
-          { id: 'evm' },
-        ),
+    if (!isEthNetworkValid) {
+      // In toast, show opposite of current network
+
+      toast.error(
+        Intl.t('connect-wallet.wrong-chain', {
+          name: walletName,
+          network: evmNetwork.toLowerCase(),
+        }),
+        { id: toastIdEvm },
       );
     } else {
       toast.dismiss(toastIdEvm);
@@ -59,19 +59,17 @@ export function useWrongIndexNetworkToast() {
       // useful when switching between wallets
       toast.dismiss(toastIdMassa);
     } else {
-      if (!isMassaNetworkValid(isMainnet, chainId)) {
-        setToastIdMassa(
-          toast.error(
-            Intl.t('connect-wallet.wrong-chain', {
-              name: currentProvider
-                ? Intl.t(`connect-wallet.${currentProvider.name()}`)
-                : '',
-              network: Intl.t(`general.${massaNetwork}`),
-            }),
-            {
-              id: 'massa',
-            },
-          ),
+      if (!isMassaNetworkValid) {
+        toast.error(
+          Intl.t('connect-wallet.wrong-chain', {
+            name: currentProvider
+              ? Intl.t(`connect-wallet.${currentProvider.name()}`)
+              : '',
+            network: Intl.t(`general.${massaNetwork}`),
+          }),
+          {
+            id: toastIdMassa,
+          },
         );
       } else {
         toast.dismiss(toastIdMassa);
