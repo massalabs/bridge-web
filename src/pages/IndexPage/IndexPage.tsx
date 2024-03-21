@@ -13,10 +13,11 @@ import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useLock } from '@/custom/bridge/useLock';
 import {
-  useEthNetworkValidation,
+  ChainContext,
+  useEvmChainValidation,
   useMassaNetworkValidation,
 } from '@/custom/bridge/useWrongNetwork';
-import { useWrongNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
+import { useWrongIndexNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
 import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -46,12 +47,10 @@ export function IndexPage() {
   const { box, setBox, setLock, setApprove, reset, setAmountError } =
     useGlobalStatusesStore();
 
-  // TODO: add network toast in network check
-  useWrongNetworkToast();
+  // Responsible for trigger index network toast
+  useWrongIndexNetworkToast();
 
-  // TODO : unify these two checks
-
-  const { isValidEthNetwork } = useEthNetworkValidation();
+  const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
   const { isValidMassaNetwork } = useMassaNetworkValidation();
 
   const { write: writeEvmApprove } = useEvmApprove();

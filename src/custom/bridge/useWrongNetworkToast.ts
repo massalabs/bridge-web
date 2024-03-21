@@ -10,7 +10,7 @@ import {
   isMassaNetworkValid,
 } from '@/utils/networkValidation';
 
-export function useWrongNetworkToast() {
+export function useWrongIndexNetworkToast() {
   const { chain } = useAccount();
 
   const { chainId, currentProvider } = useAccountStore();

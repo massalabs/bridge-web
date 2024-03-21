@@ -13,8 +13,6 @@ interface ChainStatusProps {
   context: ChainContext;
 }
 
-// TODO: rename to index chain status
-// TOODO: centralize chain logic check here
 export function ChainStatus(props: ChainStatusProps) {
   const { blockchain, context } = props;
 

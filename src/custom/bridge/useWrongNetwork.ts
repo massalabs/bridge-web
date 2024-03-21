@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react';
 import { bsc, bscTestnet, mainnet, sepolia } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
-import {
-  isBnbNetworkValid,
-  isEthNetworkValid,
-  isMassaNetworkValid,
-} from '@/utils/networkValidation';
+import { isMassaNetworkValid } from '@/utils/networkValidation';
 
 // These hooks are used to check if the user is connected to the right network
 
@@ -34,33 +30,12 @@ export function useEvmChainValidation(context: ChainContext): boolean {
   }
 }
 
-export function useEthNetworkValidation() {
-  // Used in the context of bridge/redeem
-  const { chain } = useAccount();
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMainnet = getIsMainnet();
-
-  const [isValidEthNetwork, setIsValidEthNetwork] = useState<boolean>(
-    chain ? isEthNetworkValid(isMainnet, chain.id) : true,
-  );
-
-  useEffect(() => {
-    if (chain) {
-      setIsValidEthNetwork(isEthNetworkValid(isMainnet, chain.id));
-    }
-  }, [isMainnet, chain]);
-
-  return {
-    isValidEthNetwork,
-  };
-}
-
 export function useMassaNetworkValidation() {
-  // Used in the context of bridge/redeem
   const { chainId } = useAccountStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
+  // TODO: see if it's possible to remove useState and useEffect
   const [isValidMassaNetwork, setIsValidNetwork] = useState<boolean>(
     chainId ? isMassaNetworkValid(isMainnet, chainId) : true,
   );
@@ -73,27 +48,5 @@ export function useMassaNetworkValidation() {
 
   return {
     isValidMassaNetwork,
-  };
-}
-
-export function useBnbNetworkValidation() {
-  // Use in context of dao maker
-  const { chain } = useAccount();
-
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMainnet = getIsMainnet();
-
-  const [isValidBnbNetwork, setIsValidBnbNetwork] = useState<boolean>(
-    chain ? isBnbNetworkValid(isMainnet, chain.id) : true,
-  );
-
-  useEffect(() => {
-    if (chain) {
-      setIsValidBnbNetwork(isBnbNetworkValid(isMainnet, chain.id));
-    }
-  }, [isMainnet, chain]);
-
-  return {
-    isValidBnbNetwork,
   };
 }
