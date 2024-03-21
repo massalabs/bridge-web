@@ -5,6 +5,7 @@ import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
 import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
+import { ChainContext } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 
@@ -48,7 +49,10 @@ export function EVMHeader() {
             ? walletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        <ChainStatus blockchain={currentEvmChain} />
+        <ChainStatus
+          context={ChainContext.BRIDGE}
+          blockchain={currentEvmChain}
+        />
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { BNBSvg } from '@/assets/BNBSvg';
 import { WMasSvg } from '@/assets/WMasSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
-import { useBnbNetworkToast } from '@/custom/bridge/useBnbNetworkCheck';
+import { ChainContext } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages';
 import { useBridgeModeStore } from '@/store/store';
@@ -28,9 +28,6 @@ export function DaoHead(props: DaoHeadProps) {
 
   const isMainnet = getIsMainnet();
 
-  // TODO refactor to toast only
-  useBnbNetworkToast();
-
   return (
     <>
       <div className="flex flex-col p-6 gap-6 bg-primary rounded-2xl mb-5">
@@ -44,7 +41,12 @@ export function DaoHead(props: DaoHeadProps) {
               ) : (
                 <div>{Intl.t('dao-maker.address-not-found')}</div>
               )}
-              {<ChainStatus blockchain={Blockchain.BSC} />}
+              {
+                <ChainStatus
+                  context={ChainContext.DAO}
+                  blockchain={Blockchain.BSC}
+                />
+              }
             </div>
           </div>
           <div className="w-1/2">
