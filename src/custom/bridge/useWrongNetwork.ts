@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { BUILDNET_CHAIN_ID, MAINNET_CHAIN_ID } from '@massalabs/massa-web3';
 import { bsc, bscTestnet, mainnet, sepolia } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
-import { isMassaNetworkValid } from '@/utils/networkValidation';
 
 // These hooks are used to check if the user is connected to the right network
 
@@ -30,23 +29,11 @@ export function useEvmChainValidation(context: ChainContext): boolean {
   }
 }
 
-export function useMassaNetworkValidation() {
+export function useMassaNetworkValidation(): boolean {
   const { chainId } = useAccountStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
 
-  // TODO: see if it's possible to remove useState and useEffect
-  const [isValidMassaNetwork, setIsValidNetwork] = useState<boolean>(
-    chainId ? isMassaNetworkValid(isMainnet, chainId) : true,
-  );
-
-  useEffect(() => {
-    if (chainId) {
-      setIsValidNetwork(isMassaNetworkValid(isMainnet, chainId));
-    }
-  }, [isMainnet, chainId]);
-
-  return {
-    isValidMassaNetwork,
-  };
+  const targetMassaChain = isMainnet ? MAINNET_CHAIN_ID : BUILDNET_CHAIN_ID;
+  return chainId === targetMassaChain;
 }

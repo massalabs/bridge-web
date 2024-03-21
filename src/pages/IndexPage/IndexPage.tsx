@@ -51,7 +51,7 @@ export function IndexPage() {
   useWrongIndexNetworkToast();
 
   const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
-  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const isValidMassaNetwork = useMassaNetworkValidation();
 
   const { write: writeEvmApprove } = useEvmApprove();
 

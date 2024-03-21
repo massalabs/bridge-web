@@ -37,7 +37,7 @@ export default function StationWallet() {
     });
   });
 
-  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const isValidMassaNetwork = useMassaNetworkValidation();
 
   if (stationIsOn === false) {
     return (

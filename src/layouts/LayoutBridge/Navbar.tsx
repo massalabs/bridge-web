@@ -31,7 +31,7 @@ export function Navbar(props: NavbarProps) {
 
   const { setTheme } = useConfigStore();
   const isValidEvmNetwork = useEvmChainValidation(ChainContext.CONNECT);
-  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const isValidMassaNetwork = useMassaNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
 
