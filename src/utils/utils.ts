@@ -1,3 +1,10 @@
+import {
+  MASSA_EXPLORER_URL,
+  MASSA_EXPLO_URL,
+  MASSA_EXPLO_EXTENSION,
+} from './const';
+import { useBridgeModeStore } from '@/store/store';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function safeJsonParse(str: string): any {
   try {
@@ -15,4 +22,14 @@ export function capitalize(str: string | null): string {
 export function stringToByteArray(input: string): Uint8Array {
   const utf8Encoder = new TextEncoder();
   return utf8Encoder.encode(input);
+}
+
+export function linkifyMassaOpIdToExplo(txId: string | `0x${string}`): string {
+  const { isMainnet: getIsMainnet } = useBridgeModeStore.getState();
+
+  const isMainnet = getIsMainnet();
+
+  return isMainnet
+    ? `${MASSA_EXPLORER_URL}${txId}`
+    : `${MASSA_EXPLO_URL}${txId}${MASSA_EXPLO_EXTENSION}`;
 }
