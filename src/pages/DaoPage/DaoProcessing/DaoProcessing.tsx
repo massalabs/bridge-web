@@ -7,11 +7,7 @@ import Intl from '@/i18n/i18n';
 import { LoadingState } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
 import { useBridgeModeStore } from '@/store/store';
-import {
-  MASSA_EXPLORER_URL,
-  MASSA_EXPLO_EXTENSION,
-  MASSA_EXPLO_URL,
-} from '@/utils/const';
+import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 interface DaoProcessingProps {
   isBurnSuccess: boolean;
@@ -62,11 +58,9 @@ export function DaoProcessing(props: DaoProcessingProps) {
     isMainnet ? '' : 'testnet.'
   }bscscan.com/tx/${burnTxHash}`;
 
-  const releaseExplorerUrl = isMainnet
-    ? `${MASSA_EXPLORER_URL}${lambdaResponse && lambdaResponse[0]?.outputId}`
-    : `${MASSA_EXPLO_URL}${
-        lambdaResponse && lambdaResponse[0]?.outputId
-      }${MASSA_EXPLO_EXTENSION}`;
+  const releaseOpId = (lambdaResponse && lambdaResponse[0].outputId) || '';
+
+  const releaseExplorerUrl = linkifyMassaOpIdToExplo(releaseOpId);
 
   const isReleaseSuccess = releaseMasStatus === ReleaseMasStatus.releaseSuccess;
 

@@ -6,31 +6,23 @@ import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useBridgeModeStore, useOperationStore } from '@/store/store';
-import {
-  MASSA_EXPLO_URL,
-  MASSA_EXPLO_EXTENSION,
-  MASSA_EXPLORER_URL,
-  ClaimState,
-  BurnState,
-} from '@/utils/const';
+import { useOperationStore } from '@/store/store';
+import { ClaimState, BurnState } from '@/utils/const';
+import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 export function RedeemLayout(props: LoadingBoxProps) {
   const { burnState } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMainnet = getIsMainnet();
   const evmWalletName = useConnectorName();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessful = burn === Status.Success;
 
-  const buildnetExplorerUrl = `${MASSA_EXPLO_URL}${burnTxId}${MASSA_EXPLO_EXTENSION}`;
-  const mainnetExplorerUrl = `${MASSA_EXPLORER_URL}${burnTxId}`;
-  const explorerUrl = isMainnet ? mainnetExplorerUrl : buildnetExplorerUrl;
+  const explorerUrl = linkifyMassaOpIdToExplo(burnTxId as string);
+
   const claimState = getCurrentRedeemOperation()?.claimState;
 
   return (
