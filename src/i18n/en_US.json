@@ -334,7 +334,7 @@
   },
   "terms-of-service": {
     "title": "Accept the Terms of Service",
-    "description": "You must accept the terms of service to continue, to proceed with the Massa Bridge.",
+    "description": "You must accept the terms of service to proceed with the Massa Bridge.",
     "subtitle": "Terms of service",
     "cta": "Accept"
   },
