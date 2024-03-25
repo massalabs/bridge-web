@@ -196,7 +196,8 @@
       "success": "Success!",
       "error-something": "Something went wrong!",
       "error-drop": "Please, drop us a message at:",
-      "link-to-instructions": "Instructions"
+      "link-to-instructions": "Instructions",
+      "received-tokens": "You received {amount} in your wallet."
     },
     "input": {
       "placeholder": {

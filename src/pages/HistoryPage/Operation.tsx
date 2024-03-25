@@ -22,11 +22,12 @@ export function Operation(props: OperationProps) {
   const { tokens } = useTokenStore();
 
   function getTokenInfo() {
+    const token = tokens.find((t) => t.evmToken === op.evmToken);
     if (op.entity === Entities.ReleaseMAS) {
       return { symbol: wmasSymbol, tokenDecimals: wmasDecimals };
+    } else if (op.entity === Entities.Lock) {
+      return { symbol: token?.symbol, tokenDecimals: token?.decimals };
     }
-    const token = tokens.find((t) => t.evmToken === op.evmToken);
-
     return { symbol: token?.symbolEVM, tokenDecimals: token?.decimals };
   }
 

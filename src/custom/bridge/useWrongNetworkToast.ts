@@ -51,7 +51,15 @@ export function useWrongIndexNetworkToast() {
     } else {
       toast.dismiss(toastIdEvm);
     }
-  }, [currentMode, walletName, evmNetwork, toastIdEvm, chain, isMainnet]);
+  }, [
+    currentMode,
+    walletName,
+    evmNetwork,
+    toastIdEvm,
+    chain,
+    isMainnet,
+    isEthNetworkValid,
+  ]);
 
   useEffect(() => {
     if (!currentProvider || !chainId) {
@@ -82,5 +90,6 @@ export function useWrongIndexNetworkToast() {
     toastIdMassa,
     chainId,
     isMainnet,
+    isMassaNetworkValid,
   ]);
 }
