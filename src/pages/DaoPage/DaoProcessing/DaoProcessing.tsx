@@ -48,7 +48,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
     if (isBurnSuccess && releaseMasStatus === ReleaseMasStatus.burning) {
       setReleaseMasStatus(ReleaseMasStatus.burnSuccess);
     }
-  }, [isBurnSuccess, setReleaseMasStatus]);
+  }, [isBurnSuccess, setReleaseMasStatus, releaseMasStatus]);
 
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
 

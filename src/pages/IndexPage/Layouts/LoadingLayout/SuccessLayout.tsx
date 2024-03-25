@@ -73,7 +73,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   return (
     <div className="flex flex-col gap-6 mas-body2 text-center">
-      <div className="mb-1">
+      <div className="mb-1 flex flex-col gap-2">
         {massaToEvm
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
@@ -84,6 +84,13 @@ export function SuccessLayout(props: LoadingBoxProps) {
           {Intl.t('index.loading-box.from-to', {
             from: emitter,
             to: recipient,
+          })}
+        </div>
+        <div>
+          {Intl.t('index.loading-box.received-tokens', {
+            amount: `${amountFormattedPreview} ${
+              massaToEvm ? token.symbolEVM : token.symbol
+            }`,
           })}
         </div>
       </div>
