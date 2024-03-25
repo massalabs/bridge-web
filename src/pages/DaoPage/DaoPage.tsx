@@ -19,11 +19,12 @@ export enum ReleaseMasStatus {
   burnSuccess = 'burnSuccess',
   releasing = 'releasing',
   releaseSuccess = 'releaseSuccess',
+  error = 'error',
 }
 
 export function DaoPage() {
   const { address: evmAddress } = useAccount();
-  const { write, isBurnSuccess, burnHash } = useBurnWMAS();
+  const { write, isBurnSuccess, burnHash, isBurnWriteError } = useBurnWMAS();
   const { connectedAccount } = useAccountStore();
   const { currentMode } = useBridgeModeStore();
   const massaAddress = connectedAccount?.address();
@@ -74,6 +75,7 @@ export function DaoPage() {
           <DaoProcessing
             setReleaseMasStatus={setReleaseMasStatus}
             isBurnSuccess={isBurnSuccess}
+            isBurnWriteError={isBurnWriteError}
             burnHash={burnHash}
             releaseMasStatus={releaseMasStatus}
           />

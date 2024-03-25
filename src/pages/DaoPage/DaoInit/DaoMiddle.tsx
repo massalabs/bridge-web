@@ -1,5 +1,5 @@
 import { MassaLogo } from '@massalabs/react-ui-kit';
-import { wmasDecimals } from '../DaoPage';
+import { wmasDecimals, wmasSymbol } from '../DaoPage';
 import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages';
@@ -20,7 +20,9 @@ export function DaoMiddle(props: DaoMiddleProps) {
     <div className="flex flex-col w-full gap-2">
       <div className="flex justify-between w-full">
         <div>{Intl.t('dao-maker.receive')}</div>
-        <div>{amountFormattedFull}</div>
+        <div>
+          {amountFormattedFull} {wmasSymbol}
+        </div>
       </div>
       <div className="flex justify-between w-full">
         <div>{Intl.t('history.to')}</div>

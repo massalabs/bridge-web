@@ -14,6 +14,7 @@ interface DaoProcessingProps {
   burnHash: `0x${string}` | undefined;
   setReleaseMasStatus: (step: ReleaseMasStatus) => void;
   releaseMasStatus: ReleaseMasStatus;
+  isBurnWriteError: boolean;
 }
 
 export function DaoProcessing(props: DaoProcessingProps) {
@@ -22,13 +23,29 @@ export function DaoProcessing(props: DaoProcessingProps) {
     burnHash: burnTxHash,
     setReleaseMasStatus,
     releaseMasStatus,
+    isBurnWriteError,
   } = props;
+
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+
+  const isMainnet = getIsMainnet();
 
   // lambdaReponse is an [], returning the object directly caused some problems
   // because ts doesn't evaluate {} as falsy
   const { lambdaResponse } = useFetchBurnedWmasTx({
     burnTxHash,
   });
+
+  const releaseOpId = (lambdaResponse && lambdaResponse[0]?.outputId) || '';
+
+  const releaseExplorerUrl = linkifyMassaOpIdToExplo(releaseOpId);
+
+  // TODO: Implement into a function
+  const burnExplorerUrl = `https://${
+    isMainnet ? '' : 'testnet.'
+  }bscscan.com/tx/${burnTxHash}`;
+
+  const isReleaseSuccess = releaseMasStatus === ReleaseMasStatus.releaseSuccess;
 
   useEffect(() => {
     if (!isBurnSuccess) return;
@@ -44,25 +61,14 @@ export function DaoProcessing(props: DaoProcessingProps) {
   }, [lambdaResponse, setReleaseMasStatus, isBurnSuccess]);
 
   useEffect(() => {
-    // Can be replaced if status is set directly in useBurnWMAS
+    // handles burn success/reject status
     if (isBurnSuccess && releaseMasStatus === ReleaseMasStatus.burning) {
       setReleaseMasStatus(ReleaseMasStatus.burnSuccess);
     }
-  }, [isBurnSuccess, setReleaseMasStatus, releaseMasStatus]);
-
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-
-  const isMainnet = getIsMainnet();
-
-  const burnExplorerUrl = `https://${
-    isMainnet ? '' : 'testnet.'
-  }bscscan.com/tx/${burnTxHash}`;
-
-  const releaseOpId = (lambdaResponse && lambdaResponse[0].outputId) || '';
-
-  const releaseExplorerUrl = linkifyMassaOpIdToExplo(releaseOpId);
-
-  const isReleaseSuccess = releaseMasStatus === ReleaseMasStatus.releaseSuccess;
+    if (isBurnWriteError) {
+      setReleaseMasStatus(ReleaseMasStatus.error);
+    }
+  }, [isBurnSuccess, setReleaseMasStatus, releaseMasStatus, isBurnWriteError]);
 
   return (
     <div className="flex flex-col gap-6 items-center">
@@ -79,7 +85,6 @@ export function DaoProcessing(props: DaoProcessingProps) {
       <div className="flex justify-between w-full mb-6 items-center">
         <p className="mas-body-2">{Intl.t('dao-maker.burn')}</p>
         <div className="flex items-center gap-4">
-          {' '}
           <MinimalLinkExplorer
             explorerUrl={burnExplorerUrl}
             currentTxID={burnTxHash}

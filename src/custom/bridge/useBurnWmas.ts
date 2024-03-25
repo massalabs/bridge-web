@@ -1,10 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from '@massalabs/react-ui-kit';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { config } from '@/const';
+import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
+import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export function useBurnWMAS() {
-  const { data: hash, writeContract, error } = useWriteContract();
+  const {
+    data: hash,
+    writeContract,
+    error: burnWriteError,
+    isError: isBurnWriteError,
+  } = useWriteContract();
   const { currentMode } = useBridgeModeStore();
 
   const [isBurnSuccess, setIsBurnSuccess] = useState<boolean>(false);
@@ -46,14 +54,19 @@ export function useBurnWMAS() {
       setBurnHash(hash);
     }
     if (isSuccess && data) {
-      // Would it be acceptable to call the updateReleaseMasStep()
-      // directly here instead of depending on another useEffect ?
       setIsBurnSuccess(true);
     }
-    if (error) {
-      console.error(error);
-    }
-  }, [isSuccess, error, hash, setIsBurnSuccess, setBurnHash, data]);
 
-  return { write, isBurnSuccess, burnHash };
+    if (burnWriteError) {
+      const typedError = burnWriteError as CustomError;
+      if (isRejectedByUser(typedError)) {
+        toast.error(Intl.t('index.burn.error.rejected'));
+      } else {
+        toast.error(Intl.t('index.burn.error.unknown'));
+        console.error(burnWriteError);
+      }
+    }
+  }, [isSuccess, burnWriteError, hash, setIsBurnSuccess, setBurnHash, data]);
+
+  return { write, isBurnSuccess, burnHash, isBurnWriteError };
 }
