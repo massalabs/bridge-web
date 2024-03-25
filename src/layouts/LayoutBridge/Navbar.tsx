@@ -6,7 +6,8 @@ import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { PAGES } from '@/const';
 import {
-  useEthNetworkValidation,
+  ChainContext,
+  useEvmChainValidation,
   useMassaNetworkValidation,
 } from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
@@ -29,15 +30,15 @@ export function Navbar(props: NavbarProps) {
   const { accounts, isFetching, connectedAccount } = useAccountStore();
 
   const { setTheme } = useConfigStore();
-  const { isValidEthNetwork } = useEthNetworkValidation();
-  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const isValidEvmNetwork = useEvmChainValidation(ChainContext.CONNECT);
+  const isValidMassaNetwork = useMassaNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
 
   const hasAccounts = (accounts || []).length > 0;
   const showPingAnimation =
     !isConnectedEVM ||
-    !isValidEthNetwork ||
+    !isValidEvmNetwork ||
     !isValidMassaNetwork ||
     !connectedAccount;
 

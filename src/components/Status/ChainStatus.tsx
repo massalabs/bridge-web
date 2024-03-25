@@ -17,7 +17,7 @@ export function ChainStatus(props: ChainStatusProps) {
   const { blockchain, context } = props;
 
   const { connectedAccount, currentProvider } = useAccountStore();
-  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const isValidMassaNetwork = useMassaNetworkValidation();
   const { isConnected: isConnectedEVM } = useAccount();
 
   // Evm chain validation
@@ -27,8 +27,8 @@ export function ChainStatus(props: ChainStatusProps) {
   const isMassaChain = blockchain === Blockchain.MASSA;
   const isMassaChainConnected = !!connectedAccount && !!currentProvider;
 
-  // verifies that bolth chains are connected
-  const isEvmAndMassaConnected = isMassaChain
+  // verifies that target chain is connected
+  const isTargetChainConnected = isMassaChain
     ? isMassaChainConnected
     : isConnectedEVM;
 
@@ -36,7 +36,7 @@ export function ChainStatus(props: ChainStatusProps) {
 
   return (
     <>
-      {isEvmAndMassaConnected ? (
+      {isTargetChainConnected ? (
         networkIsValid ? (
           <Connected />
         ) : (

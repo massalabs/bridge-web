@@ -4,11 +4,14 @@ import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { MetaMaskSvg } from '@/assets';
+import {
+  ChainContext,
+  useEvmChainValidation,
+} from '@/custom/bridge/useWrongNetwork';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { useBridgeModeStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
-import { isEvmNetworkValid } from '@/utils/networkValidation';
 import { formatAmount } from '@/utils/parseAmount';
 
 export function EvmConnectButton(): JSX.Element {
@@ -16,13 +19,13 @@ export function EvmConnectButton(): JSX.Element {
   const isMainnet = getIsMainnet();
   const { switchChain } = useSwitchChain();
 
-  const { address, chain } = useAccount();
+  const { address } = useAccount();
 
   const { data: balanceData } = useBalance({
     address,
   });
 
-  const isValidEVMNetwork = isEvmNetworkValid(isMainnet, chain?.id);
+  const isValidEVMNetwork = useEvmChainValidation(ChainContext.CONNECT);
 
   return (
     <ConnectButton.Custom>
