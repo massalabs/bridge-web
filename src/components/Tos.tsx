@@ -9,13 +9,13 @@ export function Tos() {
     <>
       {!areTosValid && (
         <PopupModal
-          customClass="flex justify-center text-s-info"
+          customClass="flex justify-center text-neutral"
           customClassNested="w-1/2 py-10"
           fullMode={true}
         >
           <PopupModalContent>
             <div className=" flex flex-col justify-center gap-4">
-              <div className="mas-title">
+              <div className="mas-title text-neutral">
                 {Intl.t('terms-of-service.title')}
               </div>
               <div>{Intl.t('terms-of-service.description')}</div>
