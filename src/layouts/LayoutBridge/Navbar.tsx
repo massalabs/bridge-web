@@ -6,8 +6,8 @@ import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { PAGES } from '@/const';
 import {
-  ChainContext,
   useEvmChainValidation,
+  useGetChainValidationContext,
   useMassaNetworkValidation,
 } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
@@ -30,7 +30,8 @@ export function Navbar(props: NavbarProps) {
   const { accounts, isFetching, connectedAccount } = useAccountStore();
 
   const { setTheme } = useConfigStore();
-  const isValidEvmNetwork = useEvmChainValidation(ChainContext.CONNECT);
+  const { context } = useGetChainValidationContext();
+  const isValidEvmNetwork = useEvmChainValidation(context);
   const isValidMassaNetwork = useMassaNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
