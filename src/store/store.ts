@@ -7,10 +7,7 @@ import configStore, {
 } from './configStore';
 import modeStore, { ModeStoreState } from './modeStore';
 import { useTokenStore } from './tokenStore';
-import {
-  LAST_USED_ACCOUNT,
-  _getFromStorage,
-} from '../utils/storage';
+import { LAST_USED_ACCOUNT, _getFromStorage } from '../utils/storage';
 import { updateProviders } from '@/store/helpers/massaProviders';
 
 export { useTokenStore } from './tokenStore';
