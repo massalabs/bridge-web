@@ -301,7 +301,7 @@
     "connected-cards": {
       "wallet-balance": "Balance: "
     },
-    "wrong-chain": "Wrong wallet network. Please, switch to a supported {network} in your {name} wallet settings.",
+    "wrong-chain": "Wrong wallet network. Please, switch network in \"connected wallets\" popup.",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
       "invalid-network": "Current network is not supported. Please, switch to supported network.",
