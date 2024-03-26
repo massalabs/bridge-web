@@ -43,13 +43,7 @@ export function useWrongNetworkToast() {
     if (!isEvmNetworkValid) {
       // In toast, show opposite of current network
 
-      toast.error(
-        Intl.t('connect-wallet.wrong-chain', {
-          name: walletName,
-          network: evmNetwork.toLowerCase(),
-        }),
-        { id: toastIdEvm },
-      );
+      toast.error(Intl.t('connect-wallet.wrong-chain-evm'), { id: toastIdEvm });
     } else {
       toast.dismiss(toastIdEvm);
     }
@@ -71,7 +65,7 @@ export function useWrongNetworkToast() {
     } else {
       if (!isMassaNetworkValid) {
         toast.error(
-          Intl.t('connect-wallet.wrong-chain', {
+          Intl.t('connect-wallet.wrong-chain-massa', {
             name: currentProvider
               ? Intl.t(`connect-wallet.${currentProvider.name()}`)
               : '',
