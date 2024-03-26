@@ -17,7 +17,6 @@ import {
   useEvmChainValidation,
   useMassaNetworkValidation,
 } from '@/custom/bridge/useNetworkValidation';
-import { useWrongIndexNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
 import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -46,9 +45,6 @@ export function IndexPage() {
 
   const { box, setBox, setLock, setApprove, reset, setAmountError } =
     useGlobalStatusesStore();
-
-  // Responsible for trigger index network toast
-  useWrongIndexNetworkToast();
 
   const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
   const isValidMassaNetwork = useMassaNetworkValidation();

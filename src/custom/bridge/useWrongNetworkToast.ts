@@ -4,14 +4,14 @@ import { toast } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
 import { useConnectorName } from './useConnectorName';
 import {
-  ChainContext,
   useEvmChainValidation,
+  useGetChainValidationContext,
   useMassaNetworkValidation,
 } from './useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
-export function useWrongIndexNetworkToast() {
+export function useWrongNetworkToast() {
   const { chain } = useAccount();
 
   const { chainId, currentProvider } = useAccountStore();
@@ -27,7 +27,9 @@ export function useWrongIndexNetworkToast() {
   const massaNetwork = getMassaNetwork();
   const walletName = useConnectorName();
 
-  const isEthNetworkValid = useEvmChainValidation(ChainContext.BRIDGE);
+  const { context } = useGetChainValidationContext();
+
+  const isEvmNetworkValid = useEvmChainValidation(context);
   const isMassaNetworkValid = useMassaNetworkValidation();
   const toastIdEvm = 'evm';
   const toastIdMassa = 'massa';
@@ -38,7 +40,7 @@ export function useWrongIndexNetworkToast() {
       toast.dismiss(toastIdEvm);
       return;
     }
-    if (!isEthNetworkValid) {
+    if (!isEvmNetworkValid) {
       // In toast, show opposite of current network
 
       toast.error(
@@ -58,7 +60,7 @@ export function useWrongIndexNetworkToast() {
     toastIdEvm,
     chain,
     isMainnet,
-    isEthNetworkValid,
+    isEvmNetworkValid,
   ]);
 
   useEffect(() => {

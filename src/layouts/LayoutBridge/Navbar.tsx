@@ -10,6 +10,7 @@ import {
   useGetChainValidationContext,
   useMassaNetworkValidation,
 } from '@/custom/bridge/useNetworkValidation';
+import { useWrongNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
 import Intl from '@/i18n/i18n';
 import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import {
@@ -42,6 +43,9 @@ export function Navbar(props: NavbarProps) {
     !isValidEvmNetwork ||
     !isValidMassaNetwork ||
     !connectedAccount;
+
+  // Responsible for trigger index network toast
+  useWrongNetworkToast();
 
   function ConnectedWallet() {
     return (
