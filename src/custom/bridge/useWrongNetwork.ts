@@ -1,6 +1,8 @@
 import { BUILDNET_CHAIN_ID, MAINNET_CHAIN_ID } from '@massalabs/massa-web3';
+import { useLocation } from 'react-router-dom';
 import { bsc, bscTestnet, mainnet, sepolia } from 'viem/chains';
 import { useAccount } from 'wagmi';
+import { PAGES } from '@/const';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 // These hooks are used to check if the user is connected to the right network
@@ -11,14 +13,45 @@ export enum ChainContext {
   CONNECT = 'CONNECT',
 }
 
-// Evm chain validation
-export function useEvmChainValidation(context: ChainContext): boolean {
-  const { chain } = useAccount();
+export function useGetTargetBnbChainId(): number {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
+  return isMainnet ? bsc.id : bscTestnet.id;
+}
+export function useGetTargetEthChainId(): number {
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
+  return isMainnet ? mainnet.id : sepolia.id;
+}
+
+interface getChainValidationContext {
+  targetChainId: number;
+  context: ChainContext;
+}
+
+// Get context for chain validation depending on url
+export function useGetChainValidationContext(): getChainValidationContext {
+  const { pathname } = useLocation();
+  const targetBnbChainId = useGetTargetBnbChainId();
+  const targetEthChainId = useGetTargetEthChainId();
+  if (pathname === `/${PAGES.DAO}`) {
+    return {
+      targetChainId: targetBnbChainId,
+      context: ChainContext.DAO,
+    };
+  }
+  return {
+    targetChainId: targetEthChainId,
+    context: ChainContext.BRIDGE,
+  };
+}
+
+// Validates evm chain depending on supplied context (DAO, BRIDGE, CONNECT)
+export function useEvmChainValidation(context: ChainContext): boolean {
+  const { chain } = useAccount();
+  const targetBnbChainId = useGetTargetBnbChainId();
+  const targetEthChainId = useGetTargetEthChainId();
   if (!chain) return false;
-  const targetBnbChainId = isMainnet ? bsc.id : bscTestnet.id;
-  const targetEthChainId = isMainnet ? mainnet.id : sepolia.id;
 
   if (context === ChainContext.DAO) {
     return chain.id === targetBnbChainId;
