@@ -56,5 +56,5 @@ export const EVM_EXPLORER = {
   [BridgeMode.testnet]: 'https://sepolia.etherscan.io/',
 };
 
-export const lockMinConfirmations = 5;
-export const burnMinConfirmations = 10;
+export const ethMinConfirmations = 5;
+export const bscMinConfirmations = 10;
