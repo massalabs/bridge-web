@@ -4,7 +4,7 @@ import { MetamaskNotInstalled } from './MetamaskNotInstalled';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
-import { ChainContext } from '@/custom/bridge/useWrongNetwork';
+import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 
 export function ConnectEvmWallet() {

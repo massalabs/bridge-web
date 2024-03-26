@@ -9,7 +9,7 @@ import {
   ChainContext,
   useEvmChainValidation,
   useMassaNetworkValidation,
-} from '@/custom/bridge/useWrongNetwork';
+} from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import {

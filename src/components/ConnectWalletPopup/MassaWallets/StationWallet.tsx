@@ -9,7 +9,7 @@ import { ConnectedAccount } from './ConnectedAccount';
 import { MASBalance } from './MASBalance';
 import { StationSelectAccount } from './StationSelectAccount';
 import { WalletError } from './WalletError';
-import { useMassaNetworkValidation } from '@/custom/bridge/useWrongNetwork';
+import { useMassaNetworkValidation } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import {

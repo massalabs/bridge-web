@@ -6,7 +6,7 @@ import { MetaMaskSvg } from '@/assets';
 import {
   useEvmChainValidation,
   useGetChainValidationContext,
-} from '@/custom/bridge/useWrongNetwork';
+} from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { maskAddress } from '@/utils/massaFormat';

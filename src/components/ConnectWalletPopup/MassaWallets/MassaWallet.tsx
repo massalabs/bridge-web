@@ -10,7 +10,7 @@ import SwitchWalletButton from './SwitchWalletButton';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
-import { ChainContext } from '@/custom/bridge/useWrongNetwork';
+import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 

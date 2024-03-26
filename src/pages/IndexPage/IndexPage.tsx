@@ -16,7 +16,7 @@ import {
   ChainContext,
   useEvmChainValidation,
   useMassaNetworkValidation,
-} from '@/custom/bridge/useWrongNetwork';
+} from '@/custom/bridge/useNetworkValidation';
 import { useWrongIndexNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
 import { Status } from '@/store/globalStatusesStore';
 import {

@@ -7,7 +7,7 @@ import {
   ChainContext,
   useEvmChainValidation,
   useMassaNetworkValidation,
-} from './useWrongNetwork';
+} from './useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
