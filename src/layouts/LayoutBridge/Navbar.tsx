@@ -6,10 +6,11 @@ import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { PAGES } from '@/const';
 import {
-  ChainContext,
   useEvmChainValidation,
+  useGetChainValidationContext,
   useMassaNetworkValidation,
-} from '@/custom/bridge/useWrongNetwork';
+} from '@/custom/bridge/useNetworkValidation';
+import { useWrongNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
 import Intl from '@/i18n/i18n';
 import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import {
@@ -30,7 +31,8 @@ export function Navbar(props: NavbarProps) {
   const { accounts, isFetching, connectedAccount } = useAccountStore();
 
   const { setTheme } = useConfigStore();
-  const isValidEvmNetwork = useEvmChainValidation(ChainContext.CONNECT);
+  const { context } = useGetChainValidationContext();
+  const isValidEvmNetwork = useEvmChainValidation(context);
   const isValidMassaNetwork = useMassaNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
@@ -41,6 +43,9 @@ export function Navbar(props: NavbarProps) {
     !isValidEvmNetwork ||
     !isValidMassaNetwork ||
     !connectedAccount;
+
+  // Responsible for trigger wrong network toast accross Dapp
+  useWrongNetworkToast();
 
   function ConnectedWallet() {
     return (

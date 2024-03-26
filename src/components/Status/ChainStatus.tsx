@@ -5,7 +5,7 @@ import {
   ChainContext,
   useEvmChainValidation,
   useMassaNetworkValidation,
-} from '@/custom/bridge/useWrongNetwork';
+} from '@/custom/bridge/useNetworkValidation';
 import { useAccountStore } from '@/store/store';
 
 interface ChainStatusProps {

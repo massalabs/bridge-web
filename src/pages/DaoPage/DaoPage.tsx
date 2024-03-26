@@ -4,7 +4,6 @@ import { useAccount, useReadContracts } from 'wagmi';
 import { DaoProcessing } from '.';
 import { DaoInit } from './DaoInit/DaoInit';
 import { config } from '@/const';
-import { useBnbNetworkToast } from '@/custom/bridge/useBnbNetworkToast';
 import { useBurnWMAS } from '@/custom/bridge/useBurnWmas';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -32,8 +31,6 @@ export function DaoPage() {
     address: config[currentMode].wmas_address,
     abi: erc20Abi,
   };
-
-  useBnbNetworkToast();
 
   const { data, isFetching } = useReadContracts({
     contracts: [
