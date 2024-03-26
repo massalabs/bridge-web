@@ -4,6 +4,7 @@ import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { config } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
+import { bscMinConfirmations } from '@/utils/const';
 import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export function useBurnWMAS() {
@@ -46,6 +47,7 @@ export function useBurnWMAS() {
 
   const { isSuccess, data } = useWaitForTransactionReceipt({
     hash,
+    confirmations: bscMinConfirmations,
   });
 
   // Add rejection handling

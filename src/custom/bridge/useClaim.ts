@@ -3,6 +3,7 @@ import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
 import { useBridgeModeStore } from '@/store/store';
+import { ethMinConfirmations } from '@/utils/const';
 
 interface ClaimArguments {
   amount: string;
@@ -39,6 +40,7 @@ export function useClaim() {
 
   const { isSuccess } = useWaitForTransactionReceipt({
     hash,
+    confirmations: ethMinConfirmations,
   });
 
   return { isPending, isSuccess, error, write, hash };
