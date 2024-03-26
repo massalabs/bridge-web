@@ -116,7 +116,10 @@ export function FeesEstimation() {
       const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
       let storageCostMAS = forwardBurnFees.coins;
       let feesCostMAS = forwardBurnFees.fee;
-      if (selectedToken.allowance < amountInBigInt) {
+      if (
+        selectedToken.allowance === 0n ||
+        selectedToken.allowance < amountInBigInt
+      ) {
         storageCostMAS += increaseAllowanceFee.coins;
         feesCostMAS += increaseAllowanceFee.fee;
       }
@@ -147,6 +150,7 @@ export function FeesEstimation() {
     estimateLockFees,
     estimateClaimFees,
     selectedToken,
+    connectedAccount, // update the estimation when account change to take into account the new allowance
   ]);
 
   if (!selectedToken || !isEvmWalletConnected || !connectedAccount) return null;
@@ -197,7 +201,7 @@ export function FeesEstimation() {
               network: Intl.t(`general.${massaNetwork}`),
             })}
           </p>
-          {storageMASString !== '0' && (
+          {storageMAS !== 0n && (
             <Tooltip
               body={Intl.t('index.fee-estimate.tooltip-massa', {
                 fees: storageMASString,
