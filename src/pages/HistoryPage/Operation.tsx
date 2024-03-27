@@ -1,6 +1,5 @@
 import { Amount } from './Amount';
 import { Emitter } from './Emitter';
-import { numberOfCols } from './HistoryPage';
 import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
 import { TxLinkToExplorers } from './TxLinkToExplorers';
@@ -53,7 +52,7 @@ export function Operation(props: OperationProps) {
   );
 
   return (
-    <div className={`grid grid-cols-${numberOfCols} mas-body2`}>
+    <div className={`grid grid-cols-7 mas-body2`}>
       <Emitter operation={op} />
       <Recipient operation={op} />
       <div className="flex items-center">
