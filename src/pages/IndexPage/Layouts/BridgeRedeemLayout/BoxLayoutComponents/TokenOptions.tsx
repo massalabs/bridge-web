@@ -1,8 +1,10 @@
 import { Dropdown } from '@massalabs/react-ui-kit';
+import { ETHUSDCSvg } from '@/assets/ETHUSDCSvg';
 import { SepoliaDaiSvg } from '@/assets/SepoliaDaiSvg';
 import { SepoliaWethSvg } from '@/assets/SepoliaWethSvg';
 import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
+import { USDCSvg } from '@/assets/USDCSvg';
 import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
 import { WEthSvg } from '@/assets/WEthSvg';
 import { SupportedTokens } from '@/const';
@@ -42,16 +44,19 @@ export function TokenOptions(props: TokenOptionsProps) {
       return {
         tDAI: <TDaiSvg />,
         WETH: <WEthSvg />,
+        USDC: <USDCSvg />,
       };
     } else if (isMainnet) {
       return {
         tDAI: <TDaiMassaSvg />,
         WETH: <WEthMassaSvg />,
+        USDC: <ETHUSDCSvg />,
       };
     }
     return {
       tDAI: <SepoliaDaiSvg />,
       WETH: <SepoliaWethSvg />,
+      USDC: <USDCSvg />,
     };
   }
 
@@ -59,6 +64,7 @@ export function TokenOptions(props: TokenOptionsProps) {
     const icons = {
       tDAI: getTokenIcons().tDAI,
       WETH: getTokenIcons().WETH,
+      USDC: getTokenIcons().USDC,
     };
     return icons[token.symbolEVM as SupportedTokens];
   }

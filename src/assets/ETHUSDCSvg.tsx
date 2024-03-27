@@ -1,7 +1,7 @@
 import { SVGProps } from './svgInterface';
 
 /* eslint-disable max-len */
-export function USDCMassaSvg(props: SVGProps) {
+export function ETHUSDCSvg(props: SVGProps) {
   const { size } = props;
   return (
     <svg
