@@ -13,7 +13,6 @@ import { useBridgeModeStore } from '@/store/store';
 import { OperationHistoryItem, lambdaEndpoint } from '@/utils/lambdaApi';
 
 export const itemsInPage = 8;
-export const numberOfCols = '7';
 
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
