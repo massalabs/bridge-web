@@ -8,6 +8,13 @@ export const massaClientMock = {
   smartContracts() {
     return smartContractsMock;
   },
+  publicApi() {
+    return {
+      getAddresses: jest
+        .fn()
+        .mockResolvedValue([{ candidate_datastore_keys: [] }]),
+    };
+  },
 };
 
 export class Utils {
