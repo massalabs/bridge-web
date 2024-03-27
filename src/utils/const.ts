@@ -58,3 +58,5 @@ export const EVM_EXPLORER = {
 
 export const ethMinConfirmations = 5;
 export const bscMinConfirmations = 10;
+
+export const AIRDROP_AMOUNT = '1';

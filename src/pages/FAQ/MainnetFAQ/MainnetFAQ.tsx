@@ -10,6 +10,7 @@ import {
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
 import { useTokenStore } from '@/store/tokenStore';
+import { AIRDROP_AMOUNT } from '@/utils/const';
 
 export function MainnetFAQ() {
   const query = useQuery();
@@ -40,7 +41,11 @@ export function MainnetFAQ() {
       </div>
       <Accordion title={Intl.t('index.faq.mainnet.airdrop-title')}>
         <AccordionContent>
-          <p>{Intl.t('index.faq.mainnet.airdrop-desc')}</p>
+          <p>
+            {Intl.t('index.faq.mainnet.airdrop-desc', {
+              amount: AIRDROP_AMOUNT,
+            })}
+          </p>
         </AccordionContent>
       </Accordion>
 
@@ -119,7 +124,9 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.what-token-title')}>
         <AccordionContent>
           <p>
-            {Intl.t('index.faq.mainnet.what-token-desc')}
+            {Intl.t('index.faq.mainnet.what-token-desc', {
+              amount: AIRDROP_AMOUNT,
+            })}
 
             <a href="https://docs.massa.net/docs/learn/storage-costs">
               <u> {Intl.t('index.faq.mainnet.massa-documentation')}</u>
