@@ -34,16 +34,22 @@ export function useGetChainValidationContext(): getChainValidationContext {
   const { pathname } = useLocation();
   const targetBnbChainId = useGetTargetBnbChainId();
   const targetEthChainId = useGetTargetEthChainId();
-  if (pathname === `/${PAGES.DAO}`) {
+  if (pathname.includes(PAGES.DAO)) {
     return {
       targetChainId: targetBnbChainId,
       context: ChainContext.DAO,
     };
+  } else if (pathname.includes(PAGES.INDEX)) {
+    return {
+      targetChainId: targetEthChainId,
+      context: ChainContext.BRIDGE,
+    };
+  } else {
+    return {
+      targetChainId: targetEthChainId,
+      context: ChainContext.CONNECT,
+    };
   }
-  return {
-    targetChainId: targetEthChainId,
-    context: ChainContext.BRIDGE,
-  };
 }
 
 // Validates evm chain depending on supplied context (DAO, BRIDGE, CONNECT)
