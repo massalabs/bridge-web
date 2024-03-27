@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
+import { useLocation } from 'react-router-dom';
 
 import { useAccount } from 'wagmi';
 import { useConnectorName } from './useConnectorName';
 import {
+  ChainContext,
   useEvmChainValidation,
   useGetChainValidationContext,
   useMassaNetworkValidation,
@@ -12,7 +14,8 @@ import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 export function useWrongNetworkToast() {
-  const { chain } = useAccount();
+  const { pathname } = useLocation();
+  const { chain, isConnected } = useAccount();
 
   const { chainId, currentProvider } = useAccountStore();
   const {
@@ -36,11 +39,7 @@ export function useWrongNetworkToast() {
 
   // If wrong network is detected, show a toast
   useEffect(() => {
-    if (!chain) {
-      toast.dismiss(toastIdEvm);
-      return;
-    }
-    if (!isEvmNetworkValid) {
+    if (!isEvmNetworkValid && context !== ChainContext.CONNECT && isConnected) {
       // In toast, show opposite of current network
 
       toast.error(Intl.t('connect-wallet.wrong-chain-evm'), { id: toastIdEvm });
@@ -55,6 +54,9 @@ export function useWrongNetworkToast() {
     chain,
     isMainnet,
     isEvmNetworkValid,
+    context,
+    pathname,
+    isConnected,
   ]);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export function useWrongNetworkToast() {
       // useful when switching between wallets
       toast.dismiss(toastIdMassa);
     } else {
-      if (!isMassaNetworkValid) {
+      if (!isMassaNetworkValid && context !== ChainContext.CONNECT) {
         toast.error(
           Intl.t('connect-wallet.wrong-chain-massa', {
             name: currentProvider
@@ -87,5 +89,7 @@ export function useWrongNetworkToast() {
     chainId,
     isMainnet,
     isMassaNetworkValid,
+    context,
+    pathname,
   ]);
 }
