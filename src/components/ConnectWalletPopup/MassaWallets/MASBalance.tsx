@@ -59,14 +59,14 @@ export function CustomInfoTag() {
       className="flex hover:cursor-pointer"
     >
       <Tag type="info" customClass="flex items-center gap-2">
-        {Intl.t(`connect-wallet.empty-balance`, {
+        {Intl.t('connect-wallet.empty-balance', {
           amount: AIRDROP_AMOUNT,
         })}
         {showTooltip && (
           <div
             className={`w-96 left-[480px] top-[515px] z-10 absolute bg-tertiary p-3 rounded-lg text-neutral ml-2`}
           >
-            {Intl.t(`connect-wallet.empty-balance-description`, {
+            {Intl.t('connect-wallet.empty-balance-description', {
               amount: AIRDROP_AMOUNT,
             })}
           </div>
