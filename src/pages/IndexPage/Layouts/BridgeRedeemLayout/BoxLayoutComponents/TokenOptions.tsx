@@ -1,6 +1,7 @@
 import { Dropdown } from '@massalabs/react-ui-kit';
-import { ETHUSDCSvg } from '@/assets/ETHUSDCSvg';
+import { USDCMassaSvg } from '@/assets/ETHUSDCSvg';
 import { SepoliaDaiSvg } from '@/assets/SepoliaDaiSvg';
+import { SepoliaUSDCSvg } from '@/assets/SepoliaUSDCSvg';
 import { SepoliaWethSvg } from '@/assets/SepoliaWethSvg';
 import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
 import { TDaiSvg } from '@/assets/TDaiSvg';
@@ -50,13 +51,13 @@ export function TokenOptions(props: TokenOptionsProps) {
       return {
         tDAI: <TDaiMassaSvg />,
         WETH: <WEthMassaSvg />,
-        USDC: <ETHUSDCSvg />,
+        USDC: <USDCMassaSvg />,
       };
     }
     return {
       tDAI: <SepoliaDaiSvg />,
       WETH: <SepoliaWethSvg />,
-      USDC: <USDCSvg />,
+      USDC: <SepoliaUSDCSvg />,
     };
   }
 
