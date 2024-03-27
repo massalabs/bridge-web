@@ -347,6 +347,8 @@
     "time": "Time",
     "amount": "Amount",
     "status": "Status",
+    "sent": "Sent",
+    "received": "Received",
     "transaction-id": "Transaction ID",
     "operation-status": {
       "pending": "Pending",
