@@ -65,7 +65,6 @@ export const forwardBurnFees = {
 
 export const increaseAllowanceFee = {
   fee: 0n,
-  coins: 15_100_000n,
 };
 
 export enum SupportedTokens {

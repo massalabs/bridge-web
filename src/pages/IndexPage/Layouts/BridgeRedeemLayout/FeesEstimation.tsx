@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
@@ -8,6 +8,7 @@ import { useAccount, useBalance } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { EthSvg } from '@/assets/EthSvg';
 import { SepoliaSvg } from '@/assets/SepoliaSVG';
+import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
 import {
   Blockchain,
   forwardBurnFees,
@@ -26,6 +27,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 
+import { IToken } from '@/store/tokenStore';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface FeesEstimationProps {
@@ -98,6 +100,24 @@ export function FeesEstimation() {
 
   const currentEvmChain = useConnectedEvmChain();
 
+  const estimateFeesMassa = useCallback(
+    async (selectedToken: IToken, amount?: string) => {
+      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
+      let storageCostMAS = forwardBurnFees.coins;
+      let feesCostMAS = forwardBurnFees.fee;
+      if (
+        selectedToken.allowance === 0n ||
+        selectedToken.allowance < amountInBigInt
+      ) {
+        storageCostMAS += await increaseAllowanceStorageCost();
+        feesCostMAS += increaseAllowanceFee.fee;
+      }
+      setStorageMAS(storageCostMAS);
+      setFeesMAS(feesCostMAS);
+    },
+    [],
+  );
+
   useEffect(() => {
     const setFeesETHWithCheck = (fees: bigint) => {
       if (fees === 0n) {
@@ -113,18 +133,7 @@ export function FeesEstimation() {
         setStorageMAS(undefined);
         return;
       }
-      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
-      let storageCostMAS = forwardBurnFees.coins;
-      let feesCostMAS = forwardBurnFees.fee;
-      if (
-        selectedToken.allowance === 0n ||
-        selectedToken.allowance < amountInBigInt
-      ) {
-        storageCostMAS += increaseAllowanceFee.coins;
-        feesCostMAS += increaseAllowanceFee.fee;
-      }
-      setStorageMAS(storageCostMAS);
-      setFeesMAS(feesCostMAS);
+      estimateFeesMassa(selectedToken, amount);
       setFeesETHWithCheck(estimateClaimFees());
     } else {
       setFeesMAS(0n);
@@ -149,6 +158,7 @@ export function FeesEstimation() {
     estimateApproveFees,
     estimateLockFees,
     estimateClaimFees,
+    estimateFeesMassa,
     selectedToken,
     connectedAccount, // update the estimation when account change to take into account the new allowance
   ]);

@@ -14,6 +14,7 @@ import {
 } from '../../store/store';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
+import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
 import { config, forwardBurnFees, increaseAllowanceFee } from '@/const';
 
 export async function increaseAllowance(amount: bigint): Promise<string> {
@@ -31,7 +32,8 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
       .addString(config[currentMode].massaBridgeContract)
       .addU256(amount)
       .serialize(),
-    ...increaseAllowanceFee,
+    fee: increaseAllowanceFee.fee,
+    coins: await increaseAllowanceStorageCost(),
   });
 
   await waitIncludedOperation(opId);
