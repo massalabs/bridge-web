@@ -1,9 +1,11 @@
-import { Tooltip } from '@massalabs/react-ui-kit';
+import { Amount } from './Amount';
 import { Emitter } from './Emitter';
+import { numberOfCols } from './HistoryPage';
 import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
 import { TxLinkToExplorers } from './TxLinkToExplorers';
 import { wmasDecimals, wmasSymbol } from '../DaoPage';
+import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
@@ -24,14 +26,26 @@ export function Operation(props: OperationProps) {
   function getTokenInfo() {
     const token = tokens.find((t) => t.evmToken === op.evmToken);
     if (op.entity === Entities.ReleaseMAS) {
-      return { symbol: wmasSymbol, tokenDecimals: wmasDecimals };
+      return {
+        sentSymbol: wmasSymbol,
+        receivedSymbol: MASSA_TOKEN,
+        tokenDecimals: wmasDecimals,
+      };
     } else if (op.entity === Entities.Lock) {
-      return { symbol: token?.symbol, tokenDecimals: token?.decimals };
+      return {
+        sentSymbol: token?.symbolEVM,
+        receivedSymbol: token?.symbol,
+        tokenDecimals: token?.decimals,
+      };
     }
-    return { symbol: token?.symbolEVM, tokenDecimals: token?.decimals };
+    return {
+      sentSymbol: token?.symbol,
+      receivedSymbol: token?.symbolEVM,
+      tokenDecimals: token?.decimals,
+    };
   }
 
-  const { symbol, tokenDecimals } = getTokenInfo();
+  const { sentSymbol, receivedSymbol, tokenDecimals } = getTokenInfo();
 
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(
     op.amount,
@@ -39,16 +53,24 @@ export function Operation(props: OperationProps) {
   );
 
   return (
-    <div className="grid grid-cols-6 mas-body2">
+    <div className={`grid grid-cols-${numberOfCols} mas-body2`}>
       <Emitter operation={op} />
       <Recipient operation={op} />
       <div className="flex items-center">
         {formatApiCreationTime(op.createdAt)}
       </div>
-      <div className="flex items-center">
-        {amountFormattedPreview} {symbol}{' '}
-        <Tooltip body={`${amountFormattedFull} ${symbol}`} />
-      </div>
+      {/* sent */}
+      <Amount
+        amountFormattedFull={amountFormattedFull}
+        amountFormattedPreview={amountFormattedPreview}
+        symbol={sentSymbol}
+      />
+      {/* received */}
+      <Amount
+        amountFormattedFull={amountFormattedFull}
+        amountFormattedPreview={amountFormattedPreview}
+        symbol={receivedSymbol}
+      />
       <ShowStatus status={op.historyStatus} />
       <TxLinkToExplorers operation={op} />
     </div>
