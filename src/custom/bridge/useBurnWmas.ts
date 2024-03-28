@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { config } from '@/const';
@@ -9,17 +9,14 @@ import { CustomError, isRejectedByUser } from '@/utils/error';
 
 export function useBurnWMAS() {
   const {
-    data: hash,
+    data: burnHash,
     writeContract,
     error: burnWriteError,
     isError: isBurnWriteError,
+    reset: resetBurnWrite,
   } = useWriteContract();
   const { currentMode } = useBridgeModeStore();
 
-  const [isBurnSuccess, setIsBurnSuccess] = useState<boolean>(false);
-  const [burnHash, setBurnHash] = useState<`0x${string}` | undefined>(
-    undefined,
-  );
   const W_MASS_ADDRESS = config[currentMode].wmas_address;
 
   const write = useCallback(
@@ -45,20 +42,13 @@ export function useBurnWMAS() {
     [writeContract, W_MASS_ADDRESS],
   );
 
-  const { isSuccess, data } = useWaitForTransactionReceipt({
-    hash,
+  const { isSuccess: isBurnSuccess } = useWaitForTransactionReceipt({
+    hash: burnHash,
     confirmations: bscMinConfirmations,
   });
 
   // Add rejection handling
   useEffect(() => {
-    if (hash) {
-      setBurnHash(hash);
-    }
-    if (isSuccess && data) {
-      setIsBurnSuccess(true);
-    }
-
     if (burnWriteError) {
       const typedError = burnWriteError as CustomError;
       if (isRejectedByUser(typedError)) {
@@ -68,7 +58,7 @@ export function useBurnWMAS() {
         console.error(burnWriteError);
       }
     }
-  }, [isSuccess, burnWriteError, hash, setIsBurnSuccess, setBurnHash, data]);
+  }, [burnWriteError, resetBurnWrite]);
 
-  return { write, isBurnSuccess, burnHash, isBurnWriteError };
+  return { write, isBurnSuccess, burnHash, isBurnWriteError, resetBurnWrite };
 }

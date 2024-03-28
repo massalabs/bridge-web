@@ -18,7 +18,7 @@ export function useFetchBurnedWmasTx(props: FetchBurnedWmasTxProps) {
   const queryParams = `?&inputTxId=${burnTxHash}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
 
-  // enableRefetch can be refactored direclty into a function that returns bool
+  // enableRefetch can be refactored directly into a function that returns bool
   const { data } = useResource<OperationHistoryItem[]>(
     lambdaUrl,
     enableRefetch,

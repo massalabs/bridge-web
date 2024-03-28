@@ -367,11 +367,17 @@
     "from": "From: ",
     "balance": "Balance",
     "receive": "You will receive",
-    "burn": "Burn",
-    "release": "ReleaseMas",
+    "burn": "Burn WMAS {state}",
+    "release": "Release MASSA {state}",
     "wrong-chain": "Wrong BNB chain. Please, switch to {network} in your {name} wallet settings.",
     "address-not-found": "Address not found",
     "success": "You have successfully bridged WMAS!",
-    "wallet-not-connected": "Massa Wallet not connected"
+    "wallet-not-connected": "Massa Wallet not connected",
+    "final": "(final)",
+    "burn-including": "(awaiting inclusion...)",
+    "burn-included": "(included pending...)",
+    "burn-including-error": "(error during inclusion...)",
+    "burn-releasing": "(releasing...)",
+    "burn-releasing-error": "(error during release... )"
   }
 }
