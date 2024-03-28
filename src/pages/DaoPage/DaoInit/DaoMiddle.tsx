@@ -1,4 +1,5 @@
-import { MassaLogo } from '@massalabs/react-ui-kit';
+import { ReactElement } from 'react';
+import { MassaLogo, Tag } from '@massalabs/react-ui-kit';
 import { wmasDecimals } from '../DaoPage';
 import { Blockchain, MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
@@ -15,6 +16,15 @@ export function DaoMiddle(props: DaoMiddleProps) {
   const { amountFormattedFull } = formatAmountToDisplay(amount, wmasDecimals);
   const { connectedAccount } = useAccountStore();
   const massaAddress = connectedAccount?.address();
+
+  function getConnectedAddress(): ReactElement {
+    if (!connectedAccount) {
+      return <Tag type="error">{Intl.t('dao-maker.wallet-not-connected')}</Tag>;
+    } else if (!massaAddress) {
+      return <FetchingLine />;
+    }
+    return <>{maskAddress(massaAddress)}</>;
+  }
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex justify-between w-full">
@@ -25,7 +35,7 @@ export function DaoMiddle(props: DaoMiddleProps) {
       </div>
       <div className="flex justify-between w-full">
         <div>{Intl.t('history.to')}</div>
-        <div>{massaAddress ? maskAddress(massaAddress) : <FetchingLine />}</div>
+        <div>{getConnectedAddress()}</div>
       </div>
       <div className="flex justify-between w-full">
         <div>{Intl.t('general.network')}</div>
