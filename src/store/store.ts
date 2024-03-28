@@ -7,12 +7,7 @@ import configStore, {
 } from './configStore';
 import modeStore, { ModeStoreState } from './modeStore';
 import { useTokenStore } from './tokenStore';
-import {
-  BRIDGE_MODE_STORAGE_KEY,
-  LAST_USED_ACCOUNT,
-  _getFromStorage,
-} from '../utils/storage';
-import { BridgeMode } from '@/const';
+import { LAST_USED_ACCOUNT, _getFromStorage } from '../utils/storage';
 import { updateProviders } from '@/store/helpers/massaProviders';
 
 export { useTokenStore } from './tokenStore';
@@ -41,16 +36,6 @@ function initConfigStore() {
   }
 }
 
-async function initModeStore() {
-  let mode = _getFromStorage(BRIDGE_MODE_STORAGE_KEY) as BridgeMode;
-
-  if (!mode) {
-    mode = BridgeMode.mainnet;
-  }
-
-  useBridgeModeStore.getState().setCurrentMode(mode);
-}
-
 async function initAccountStore() {
   const providers = await updateProviders();
 
@@ -69,18 +54,11 @@ async function initAccountStore() {
 }
 
 async function initTokenStore() {
-  let mode = _getFromStorage(BRIDGE_MODE_STORAGE_KEY) as BridgeMode;
-
-  if (!mode) {
-    mode = BridgeMode.mainnet;
-  }
-
   useTokenStore.getState().getTokens();
 }
 
 async function initializeStores() {
   initConfigStore();
-  await initModeStore();
   await initAccountStore();
   await initTokenStore();
 }
