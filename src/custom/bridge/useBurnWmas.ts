@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { config } from '@/const';
