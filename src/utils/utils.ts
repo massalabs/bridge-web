@@ -33,3 +33,11 @@ export function linkifyMassaOpIdToExplo(txId: string | `0x${string}`): string {
     ? `${MASSA_EXPLORER_URL}${txId}`
     : `${MASSA_EXPLO_URL}${txId}${MASSA_EXPLO_EXTENSION}`;
 }
+
+export function linkifyBscTxIdToExplo(
+  burnTxHash: `0x${string}` | undefined,
+): string {
+  const { isMainnet: getIsMainnet } = useBridgeModeStore.getState();
+  const isMainnet = getIsMainnet();
+  return `https://${isMainnet ? '' : 'testnet.'}bscscan.com/tx/${burnTxHash}`;
+}
