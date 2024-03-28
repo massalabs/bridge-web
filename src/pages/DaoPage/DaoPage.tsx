@@ -11,11 +11,9 @@ import { useAccountStore, useBridgeModeStore } from '@/store/store';
 export const wmasDecimals = 9;
 export const wmasSymbol = 'WMAS';
 
-// I feel like these can be simplified
 export enum ReleaseMasStatus {
-  init = 'initialising',
+  init = 'init',
   burning = 'burning',
-  burnSuccess = 'burnSuccess',
   releasing = 'releasing',
   releaseSuccess = 'releaseSuccess',
   error = 'error',
@@ -23,7 +21,8 @@ export enum ReleaseMasStatus {
 
 export function DaoPage() {
   const { address: evmAddress } = useAccount();
-  const { write, isBurnSuccess, burnHash, isBurnWriteError } = useBurnWMAS();
+  const { write, isBurnSuccess, burnHash, isBurnWriteError, resetBurnWrite } =
+    useBurnWMAS();
   const { connectedAccount } = useAccountStore();
   const { currentMode } = useBridgeModeStore();
   const massaAddress = connectedAccount?.address();
@@ -37,7 +36,7 @@ export function DaoPage() {
       {
         ...tokenContract,
         functionName: 'balanceOf',
-        args: [evmAddress!],
+        args: [evmAddress || '0x'],
       },
     ],
     query: {
@@ -64,11 +63,11 @@ export function DaoPage() {
   function renderReleaseMasStatus(status: ReleaseMasStatus) {
     switch (status) {
       case ReleaseMasStatus.burning:
-      case ReleaseMasStatus.burnSuccess:
       case ReleaseMasStatus.releasing:
       case ReleaseMasStatus.releaseSuccess:
         return (
           <DaoProcessing
+            resetBurnWrite={resetBurnWrite}
             setReleaseMasStatus={setReleaseMasStatus}
             isBurnSuccess={isBurnSuccess}
             isBurnWriteError={isBurnWriteError}

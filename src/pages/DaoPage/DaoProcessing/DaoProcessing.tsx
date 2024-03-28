@@ -16,6 +16,7 @@ interface DaoProcessingProps {
   isBurnSuccess: boolean;
   burnHash: `0x${string}` | undefined;
   setReleaseMasStatus: (step: ReleaseMasStatus) => void;
+  resetBurnWrite: () => void;
   releaseMasStatus: ReleaseMasStatus;
   isBurnWriteError: boolean;
 }
@@ -25,6 +26,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
     isBurnSuccess,
     burnHash: burnTxHash,
     setReleaseMasStatus,
+    resetBurnWrite,
     releaseMasStatus,
     isBurnWriteError,
   } = props;
@@ -32,7 +34,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
   const [isReleaseSuccess, setIsReleaseSuccess] = useState(false);
   const [releaseOpId, setReleaseOpId] = useState<string>('');
 
-  // lambdaReponse is an [], returning the object directly caused some problems
+  // lambdaResponse is an [], returning the object directly caused some problems
   // because ts doesn't evaluate {} as falsy
   const { lambdaResponse } = useFetchBurnedWmasTx({
     burnTxHash,
@@ -46,7 +48,10 @@ export function DaoProcessing(props: DaoProcessingProps) {
     if (!isBurnSuccess) return;
     if (lambdaResponseIsEmpty) return;
     setReleaseOpId(lambdaResponse[0].outputId || '');
-    if (lambdaResponse[0].isConfirmed === true) {
+    if (
+      lambdaResponse[0].isConfirmed === true &&
+      releaseMasStatus === ReleaseMasStatus.releasing
+    ) {
       setReleaseMasStatus(ReleaseMasStatus.releaseSuccess);
       setIsReleaseSuccess(true);
     }
@@ -55,18 +60,25 @@ export function DaoProcessing(props: DaoProcessingProps) {
     setReleaseMasStatus,
     isBurnSuccess,
     lambdaResponseIsEmpty,
+    releaseMasStatus,
   ]);
 
   useEffect(() => {
     // Handles burn success/failure
     if (isBurnSuccess && releaseMasStatus === ReleaseMasStatus.burning) {
-      setReleaseMasStatus(ReleaseMasStatus.burnSuccess);
       setReleaseMasStatus(ReleaseMasStatus.releasing);
     }
     if (isBurnWriteError) {
       setReleaseMasStatus(ReleaseMasStatus.error);
     }
   }, [isBurnSuccess, setReleaseMasStatus, releaseMasStatus, isBurnWriteError]);
+
+  function reset() {
+    resetBurnWrite();
+    setReleaseMasStatus(ReleaseMasStatus.init);
+    setIsReleaseSuccess(false);
+    setReleaseOpId('');
+  }
 
   const releaseExplorerUrl = linkifyMassaOpIdToExplo(releaseOpId);
 
@@ -77,10 +89,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
       <div className="flex w-full justify-end">
         {isReleaseSuccess && (
           <div className="w-fit cursor-pointer hover:bg-tertiary p-2 rounded-xl">
-            <FiX
-              className="w-5 h-5"
-              onClick={() => setReleaseMasStatus(ReleaseMasStatus.init)}
-            />
+            <FiX className="w-5 h-5" onClick={reset} />
           </div>
         )}
       </div>
@@ -160,7 +169,7 @@ export function getReleaseStatus(
   lambdaResponse: OperationHistoryItem[] | undefined,
   isBurnSuccess: boolean,
 ): string {
-  if (!lambdaResponse || !isBurnSuccess) return '';
+  if (!lambdaResponse || !lambdaResponse.length || !isBurnSuccess) return '';
 
   const operation = lambdaResponse[0];
 
