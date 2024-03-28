@@ -145,15 +145,15 @@ export function getBurnedStatus(args: GetBurnedSuccessArgs): string {
 
   if (!isBurnSuccess) {
     if (burnTxHash === undefined) {
-      return '(awaiting inclusion... )';
+      return Intl.t('dao-maker.burn-including');
     } else if (isBurnWriteError) {
-      return '(error during inclusion...)';
+      return Intl.t('dao-maker.burn-including-error');
     } else {
-      return '(included pending... )';
+      return Intl.t('dao-maker.burn-included');
     }
   }
 
-  return '(final)';
+  return Intl.t('dao-maker.final');
 }
 
 export function getReleaseStatus(
@@ -166,12 +166,12 @@ export function getReleaseStatus(
 
   switch (operation.historyStatus) {
     case HistoryOperationStatus.Pending:
-      return '(releasing...)';
+      return Intl.t('dao-maker.burn-releasing');
     case HistoryOperationStatus.Done:
-      return '(final)';
+      return Intl.t('dao-maker.final');
     case HistoryOperationStatus.Error:
-      return '(error during release... )';
+      return Intl.t('dao-maker.burn-releasing-error');
     default:
-      return '(retrieving info...)';
+      return Intl.t('dao-maker.burn-releasing-info');
   }
 }
