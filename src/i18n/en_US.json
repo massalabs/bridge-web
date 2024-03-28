@@ -157,7 +157,7 @@
       "redeem-timeout": "Redeem timeout",
       "title-redeem-error": "Redeem failed",
       "subtitle": "(it can take up to 5 minutes)",
-      "approve": "Approval",
+      "approve": "Increase allowance",
       "bridge": "Bridge",
       "claim": "Claim",
       "lock": "Lock",
@@ -215,15 +215,15 @@
     "approve": {
       "error": {
         "general": "Something went wrong! Please, try again!",
-        "failed": "Approval failed. Try again.",
+        "failed": "Increase allowance failed. Try again.",
         "allowance-error": "Unknown error happened while increasing allowance. Try again.",
-        "rejected": "Approval rejected by user, try again",
-        "timeout": "Approval timeout. Try again.",
+        "rejected": "Increase allowance rejected by user, try again",
+        "timeout": "Increase allowance timeout. Try again.",
         "invalid-amount": "Invalid amount",
         "insufficient-funds": "Insufficient balance"
       },
-      "success": "Approval successfully granted",
-      "loading": "Processing approval..."
+      "success": "Allowance successfully increased",
+      "loading": "Processing allowance increase..."
     },
     "lock": {
       "error": {
