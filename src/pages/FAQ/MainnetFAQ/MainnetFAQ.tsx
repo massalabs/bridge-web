@@ -1,13 +1,14 @@
 import { useRef, useEffect } from 'react';
 import { Accordion, AccordionContent } from '@massalabs/react-ui-kit';
-import { PAGES } from '@/const';
 import {
   FAQsections,
+  addTokensToMassaLink,
   bridgeEmail,
   bridgeTutorialLink,
   bridgeUrl,
+  bridgeWmasPageLink,
   discordSupportChannel,
-  faqURL,
+  historyPageLink,
 } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
@@ -42,23 +43,9 @@ export function MainnetFAQ() {
     if (navigateToAddTokens && addTokensToMassaRef.current) {
       addTokensToMassaRef.current.scrollIntoView({ behavior: 'smooth' });
     } else if (navigateToBridgeWmas && bridgeWmasRef.current) {
-      console.log('bridge wmas is current');
       bridgeWmasRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }
-
-  // TODO: add this to function bc logic is duplicated
-
-  const { href } = new URL('.', window.origin + location.pathname);
-
-  const bridgeWmasFAQLink = `${href}${PAGES.FAQ}${faqURL.mainnet.bridgeWmas.bridgeWmas}`;
-  const bridgeWmasPageLink = `${href}${PAGES.DAO}`;
-  const historyPageLink = `${href}${PAGES.HISTORY}`;
-  const addTokensToMassaLink = `${href}${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
-
-  useEffect(() => {
-    console.log(bridgeWmasFAQLink);
-  }, []);
 
   return (
     <div className="w-1/2 flex flex-col gap-5 items-center">
@@ -123,7 +110,7 @@ export function MainnetFAQ() {
           <p>
             5. Navigate to{' '}
             <u>
-              <a href={bridgeWmasPageLink}> DAO maker</a>
+              <a href={bridgeWmasPageLink}> DAO Maker</a>
             </u>{' '}
             page on the bridge.
           </p>
@@ -326,9 +313,9 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.no-wap-title')}>
         <AccordionContent>
           <p>
-            {Intl.t('index.faq.mainnet.no-wap-desc')}
+            {Intl.t('index.faq.mainnet.no-wap-desc')}{' '}
             <a href="bridge.massa.net/index">
-              <u>{bridgeUrl} </u>
+              <u>{bridgeUrl}</u>
             </a>
             .
           </p>
