@@ -15,18 +15,30 @@ import { maskAddress } from '@/utils/massaFormat';
 interface DaoHeadProps {
   amount: string;
   setAmount: (value: string) => void;
+  setAmountError: (value: string) => void;
   amountError: string | undefined;
   wmasBalance: bigint;
   fetchingBalance: boolean;
 }
 
 export function DaoHead(props: DaoHeadProps) {
-  const { amount, setAmount, amountError, wmasBalance, fetchingBalance } =
-    props;
+  const {
+    amount,
+    setAmount,
+    amountError,
+    wmasBalance,
+    fetchingBalance,
+    setAmountError,
+  } = props;
   const { address: evmAddress } = useAccount();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
 
   const isMainnet = getIsMainnet();
+
+  function handleAmountChange(o: string) {
+    setAmount(o);
+    setAmountError('');
+  }
 
   return (
     <>
@@ -67,7 +79,7 @@ export function DaoHead(props: DaoHeadProps) {
             <Money
               name="amount"
               value={amount}
-              onValueChange={(o) => setAmount(o.value)}
+              onValueChange={(o) => handleAmountChange(o.value)}
               placeholder={Intl.t('index.input.placeholder.amount')}
               suffix=""
               decimalScale={wmasDecimals}

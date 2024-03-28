@@ -83,6 +83,7 @@ export function DaoPage() {
             <DaoInit
               amount={amount}
               amountError={amountError}
+              setAmountError={setAmountError}
               setAmount={setAmount}
               fetchingBalance={isFetching}
               wmasBalance={wmasBalance}
