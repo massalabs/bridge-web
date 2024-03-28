@@ -6,6 +6,10 @@ import { useFetchBurnedWmasTx } from '@/custom/bridge/useFetchBurnedWmas';
 import Intl from '@/i18n/i18n';
 import { LoadingState } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
+import {
+  HistoryOperationStatus,
+  OperationHistoryItem,
+} from '@/utils/lambdaApi';
 import { linkifyBscTxIdToExplo, linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 interface DaoProcessingProps {
@@ -34,16 +38,24 @@ export function DaoProcessing(props: DaoProcessingProps) {
     burnTxHash,
   });
 
+  const lambdaResponseIsEmpty =
+    lambdaResponse === undefined || lambdaResponse.length === 0;
+
   useEffect(() => {
     // Handles release success/failure
     if (!isBurnSuccess) return;
-    if (lambdaResponse === undefined || lambdaResponse.length === 0) return;
+    if (lambdaResponseIsEmpty) return;
     setReleaseOpId(lambdaResponse[0].outputId || '');
     if (lambdaResponse[0].isConfirmed === true) {
       setReleaseMasStatus(ReleaseMasStatus.releaseSuccess);
       setIsReleaseSuccess(true);
     }
-  }, [lambdaResponse, setReleaseMasStatus, isBurnSuccess]);
+  }, [
+    lambdaResponse,
+    setReleaseMasStatus,
+    isBurnSuccess,
+    lambdaResponseIsEmpty,
+  ]);
 
   useEffect(() => {
     // Handles burn success/failure
@@ -73,23 +85,31 @@ export function DaoProcessing(props: DaoProcessingProps) {
         )}
       </div>
       <div className="flex justify-between w-full mb-6 items-center">
-        <p className="mas-body-2">{Intl.t('dao-maker.burn')}</p>
+        <p className="mas-body-2">
+          {Intl.t('dao-maker.burn', {
+            state: getBurnedStatus({
+              isBurnSuccess,
+              isBurnWriteError,
+              burnTxHash,
+            }),
+          })}
+        </p>
         <div className="flex items-center gap-4">
           <MinimalLinkExplorer
             explorerUrl={burnExplorerUrl}
             currentTxID={burnTxHash}
           />
-          {/* Quick loading states, will implement proper logic once flow is complete */}
           <LoadingState
             state={(isBurnSuccess && Status.Success) || Status.Loading}
           />
         </div>
       </div>
       <div className="flex w-full justify-between mb-6 items-center">
-        <p className="mas-body-2">{Intl.t('dao-maker.release')}</p>
-
-        {/* Quick loading states, will implement proper logic once flow is complete */}
-        {/* Here I can pass serverState as additional info for user */}
+        <p className="mas-body-2">
+          {Intl.t('dao-maker.release', {
+            state: getReleaseStatus(lambdaResponse, isBurnSuccess),
+          })}
+        </p>
         <div className="flex items-center gap-4">
           <MinimalLinkExplorer
             explorerUrl={releaseExplorerUrl}
@@ -112,4 +132,46 @@ export function DaoProcessing(props: DaoProcessingProps) {
       {isReleaseSuccess && <div>{Intl.t('dao-maker.success')}</div>}
     </div>
   );
+}
+
+interface GetBurnedSuccessArgs {
+  isBurnSuccess: boolean;
+  isBurnWriteError: boolean;
+  burnTxHash: `0x${string}` | undefined;
+}
+
+export function getBurnedStatus(args: GetBurnedSuccessArgs): string {
+  const { isBurnSuccess, isBurnWriteError, burnTxHash } = args;
+
+  if (!isBurnSuccess) {
+    if (burnTxHash === undefined) {
+      return '(awaiting inclusion... )';
+    } else if (isBurnWriteError) {
+      return '(error during inclusion...)';
+    } else {
+      return '(included pending... )';
+    }
+  }
+
+  return '(final)';
+}
+
+export function getReleaseStatus(
+  lambdaResponse: OperationHistoryItem[] | undefined,
+  isBurnSuccess: boolean,
+): string {
+  if (!lambdaResponse || !isBurnSuccess) return '';
+
+  const operation = lambdaResponse[0];
+
+  switch (operation.historyStatus) {
+    case HistoryOperationStatus.Pending:
+      return '(releasing...)';
+    case HistoryOperationStatus.Done:
+      return '(final)';
+    case HistoryOperationStatus.Error:
+      return '(error during release... )';
+    default:
+      return '(retrieving info...)';
+  }
 }

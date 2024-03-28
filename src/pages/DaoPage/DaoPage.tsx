@@ -61,7 +61,6 @@ export function DaoPage() {
     setReleaseMasStatus(ReleaseMasStatus.burning);
   }
 
-  // I feel like these can be simplified
   function renderReleaseMasStatus(status: ReleaseMasStatus) {
     switch (status) {
       case ReleaseMasStatus.burning:
