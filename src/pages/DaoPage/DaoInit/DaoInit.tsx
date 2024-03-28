@@ -1,6 +1,7 @@
 import { SyntheticEvent } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
 import { FiArrowRight } from 'react-icons/fi';
+import { useAccount } from 'wagmi';
 import { DaoHead } from './DaoHead';
 import { DaoMiddle } from './DaoMiddle';
 import {
@@ -32,17 +33,20 @@ export function DaoInit(props: DaoInitProps) {
     setAmountError,
   } = props;
 
-  const { connectedAccount, isFetching } = useAccountStore();
+  const { connectedAccount, isFetching: isFetchingMassaAccount } =
+    useAccountStore();
+  const { isConnected: isEvmWalletConnected } = useAccount();
 
   const isValidEvmNetwork = useEvmChainValidation(ChainContext.DAO);
   const isValidMassaNetwork = useMassaNetworkValidation();
 
   const isButtonDisabled =
+    isFetchingMassaAccount ||
     fetchingBalance ||
+    !isEvmWalletConnected ||
     !connectedAccount ||
     !isValidEvmNetwork ||
-    !isValidMassaNetwork ||
-    isFetching;
+    !isValidMassaNetwork;
 
   return (
     <>
