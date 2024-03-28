@@ -1,22 +1,31 @@
 import { useRef, useEffect } from 'react';
 import { Accordion, AccordionContent } from '@massalabs/react-ui-kit';
+import { PAGES } from '@/const';
 import {
   FAQsections,
   bridgeEmail,
   bridgeTutorialLink,
   bridgeUrl,
   discordSupportChannel,
+  faqURL,
 } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
 import { useTokenStore } from '@/store/tokenStore';
-import { AIRDROP_AMOUNT } from '@/utils/const';
+import {
+  AIRDROP_AMOUNT,
+  MASSA_STATION_FAQ,
+  MASSA_STATION_INSTALL,
+  MASSA_WALLET_CREATE_ACCOUNT,
+  MASSA_WALLET_CREATE_ACCOUNT_FAQ,
+} from '@/utils/const';
 
 export function MainnetFAQ() {
   const query = useQuery();
   const { tokens } = useTokenStore();
 
-  const addTokensToMassa = useRef<HTMLDivElement | null>(null);
+  const addTokensToMassaRef = useRef<HTMLDivElement | null>(null);
+  const bridgeWmasRef = useRef<HTMLDivElement | null>(null);
 
   const sectionToNavigate: string | null = query.get('section');
 
@@ -26,13 +35,30 @@ export function MainnetFAQ() {
     }
   }, [sectionToNavigate]);
 
+  const navigateToAddTokens = sectionToNavigate === FAQsections.addTokens;
+  const navigateToBridgeWmas = sectionToNavigate === FAQsections.bridgeWmas;
+
   function scrollToFAQ() {
-    if (addTokensToMassa.current) {
-      addTokensToMassa.current.scrollIntoView({ behavior: 'smooth' });
+    if (navigateToAddTokens && addTokensToMassaRef.current) {
+      addTokensToMassaRef.current.scrollIntoView({ behavior: 'smooth' });
+    } else if (navigateToBridgeWmas && bridgeWmasRef.current) {
+      console.log('bridge wmas is current');
+      bridgeWmasRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
-  const showAddTokens = sectionToNavigate === FAQsections.addTokens;
+  // TODO: add this to function bc logic is duplicated
+
+  const { href } = new URL('.', window.origin + location.pathname);
+
+  const bridgeWmasFAQLink = `${href}${PAGES.FAQ}${faqURL.mainnet.bridgeWmas.bridgeWmas}`;
+  const bridgeWmasPageLink = `${href}${PAGES.DAO}`;
+  const historyPageLink = `${href}${PAGES.HISTORY}`;
+  const addTokensToMassaLink = `${href}${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
+
+  useEffect(() => {
+    console.log(bridgeWmasFAQLink);
+  }, []);
 
   return (
     <div className="w-1/2 flex flex-col gap-5 items-center">
@@ -46,6 +72,91 @@ export function MainnetFAQ() {
               amount: AIRDROP_AMOUNT,
             })}
           </p>
+        </AccordionContent>
+      </Accordion>
+
+      <div ref={bridgeWmasRef}></div>
+      <Accordion
+        title={'How to claim WMAS from DAO Maker sale'}
+        state={navigateToBridgeWmas}
+      >
+        <AccordionContent>
+          <p>
+            {' '}
+            1. Connect Metamask wallet using the connect wallet popup in the
+            upper right corner.
+          </p>
+          <p>
+            2. If you haven't, install{' '}
+            <u>
+              <a href={MASSA_STATION_INSTALL}> Massa Station</a>
+            </u>{' '}
+            and create a Massa Wallet{' '}
+            <u>
+              <a href={MASSA_WALLET_CREATE_ACCOUNT}>account</a>
+            </u>
+            .
+          </p>
+          <br />
+          <p>
+            If you have any doubts, questions or problems check Massa Station{' '}
+            <u>
+              <a href={MASSA_STATION_FAQ}>Massa Station FAQ</a>
+            </u>{' '}
+            and{' '}
+            <u>
+              <a href={MASSA_WALLET_CREATE_ACCOUNT_FAQ}>Massa Wallet FAQ</a>
+            </u>
+            .
+          </p>
+          <br />
+          3. Connect Massa Wallet using the connect wallet popup in the upper
+          right corner.
+          <p>
+            {' '}
+            4. Add tokens WMAS to to your Massa Wallet by following this{' '}
+            <u>
+              <a href={addTokensToMassaLink}>tutorial</a>
+            </u>
+            .
+          </p>
+          <p>
+            5. Navigate to{' '}
+            <u>
+              <a href={bridgeWmasPageLink}> DAO maker</a>
+            </u>{' '}
+            page on the bridge.
+          </p>
+          <p>
+            At this point you should have your Massa Wallet and Metamask
+            connected.
+          </p>
+          <p>
+            {' '}
+            6. In the DAO maker page, enter the desired amount in input field.
+          </p>
+          <p>6. Click "bridge" button.</p>
+          <p>
+            {' '}
+            7. Wait for bridge to be final, it can take a couple of minutes. Be
+            patient.{' '}
+          </p>
+          <br />
+          <p>
+            If you have any doubts on your transaction you can go to the{' '}
+            <u>
+              <a href={historyPageLink}>History page</a>
+            </u>
+            {''} {''}to verify your transaction's status.
+          </p>
+          <br />
+          {discordSupportChannel && (
+            <p>
+              If you encounter any techical problems during your bridge drop us
+              a message at our
+              <a href={discordSupportChannel}>Discord Support Channel</a>
+            </p>
+          )}
         </AccordionContent>
       </Accordion>
 
@@ -183,9 +294,9 @@ export function MainnetFAQ() {
         </AccordionContent>
       </Accordion>
 
-      <div ref={addTokensToMassa}></div>
+      <div ref={addTokensToMassaRef}></div>
       <Accordion
-        state={showAddTokens}
+        state={navigateToAddTokens}
         title={Intl.t('index.faq.mainnet.bridged-tokens-title')}
       >
         <AccordionContent>

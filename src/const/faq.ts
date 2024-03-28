@@ -1,6 +1,7 @@
 export enum FAQsections {
   getTokens = 'getTokens',
   addTokens = 'addTokens',
+  bridgeWmas = 'bridgeWmas',
 }
 
 export enum FAQcategories {
@@ -9,6 +10,7 @@ export enum FAQcategories {
   getMasOnMassa = 'getMasOnMassa',
   addToMassa = 'addToMassaWallet',
   addToMetamask = 'addToMetamask',
+  bridgeWmas = 'bridgeWmas',
 }
 
 export const faqURL = {
@@ -28,6 +30,9 @@ export const faqURL = {
   mainnet: {
     addTokens: {
       addToMassa: `?section=addTokens&category=${FAQcategories.addToMassa}`,
+    },
+    bridgeWmas: {
+      bridgeWmas: `?section=bridgeWmas&category=${FAQcategories.bridgeWmas}`,
     },
   },
 };
