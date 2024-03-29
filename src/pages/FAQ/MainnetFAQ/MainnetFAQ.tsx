@@ -14,6 +14,7 @@ import Intl from '@/i18n/i18n';
 import { useTokenStore } from '@/store/tokenStore';
 import {
   AIRDROP_AMOUNT,
+  BEARBY_INSTALL,
   MASSA_STATION_FAQ,
   MASSA_STATION_INSTALL,
   MASSA_WALLET_CREATE_ACCOUNT,
@@ -64,59 +65,74 @@ export function MainnetFAQ() {
       >
         <AccordionContent>
           <p>
-            1. Connect Metamask wallet using the connect wallet popup in the
-            upper right corner.
-          </p>
-          <p>
-            2. If you haven't, install{' '}
+            1. Navigate to the{' '}
             <u>
-              <a href={MASSA_STATION_INSTALL}> Massa Station</a>
+              <a href={bridgeWmasPageLink} target="_blank">
+                DAO Maker
+              </a>
             </u>{' '}
-            and create a Massa Wallet{' '}
-            <u>
-              <a href={MASSA_WALLET_CREATE_ACCOUNT}>account</a>
-            </u>
-            .
+            page. Make sure you’re on Mainnet mode in the upper-right corner.
           </p>
+          <p>2. Open the Connect Wallet popup from the upper-right corner.</p>
+          <p>
+            3. Connect the MetaMask wallet with WMAS balance, on the BSC
+            network.
+          </p>
+          <p>4. Connect a Massa wallet account:</p>
           <p className="ml-2">
-            If you have any doubts, questions or problems check Massa Station{' '}
+            Massa Station Wallet (recommended to use): If you haven't, install{' '}
             <u>
-              <a href={MASSA_STATION_FAQ}>Massa Station FAQ</a>
+              <a href={MASSA_STATION_INSTALL} target="_blank">
+                Massa Station
+              </a>
+            </u>{' '}
+            desktop app on your device and create a Massa Wallet account. If you
+            have any problems, check{' '}
+            <u>
+              <a href={MASSA_STATION_FAQ} target="_blank">
+                Massa Station FAQ
+              </a>
             </u>{' '}
             and{' '}
             <u>
-              <a href={MASSA_WALLET_CREATE_ACCOUNT_FAQ}>Massa Wallet FAQ</a>
+              <a href={MASSA_WALLET_CREATE_ACCOUNT_FAQ} target="_blank">
+                Massa Wallet FAQ
+              </a>
             </u>
             .
           </p>
-          3. Connect Massa Wallet using the connect wallet popup in the upper
-          right corner.
-          <p>
-            4. Navigate to{' '}
-            <u>
-              <a href={bridgeWmasPageLink}> DAO Maker</a>
-            </u>{' '}
-            page on the bridge.
-          </p>
           <p className="ml-2">
-            At this point you should have your Massa Wallet and Metamask
-            connected.
+            An alternative Massa wallet is a community-developed browser
+            extension{' '}
+            <u>
+              <a href={BEARBY_INSTALL} target="_blank">
+                Bearby
+              </a>
+            </u>
+            . However due bear in mind that the wallet has not been audited by
+            Massa team.
           </p>
           <p>
-            {' '}
-            5. In the DAO Maker page, enter the desired amount in input field.
+            5. In the DAO Maker page, enter the desired amount of WMAS to bridge
+            in the input field.
           </p>
-          <p>6. Click "Bridge" button.</p>
+          <p>6. Click "Bridge".</p>
           <p>
-            {' '}
-            7. Wait for bridge to be final, it can take a couple of minutes. Be
-            patient.{' '}
+            7. You will need to sign 2 transactions on BSC with your MetaMask
+            wallet, firstly to increase allowance and one to initiate the
+            transfer.
+          </p>
+          <p>
+            8. Wait for the transfer to be completed, it can take a couple of
+            minutes.
           </p>
           <br />
           <p>
             If you have any doubts on your transaction you can go to the{' '}
             <u>
-              <a href={historyPageLink}>History page</a>
+              <a href={historyPageLink} target="_blank">
+                History page
+              </a>
             </u>
             {''} {''}to verify your transaction's status.
           </p>
