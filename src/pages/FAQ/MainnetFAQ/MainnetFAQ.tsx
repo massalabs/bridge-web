@@ -30,22 +30,18 @@ export function MainnetFAQ() {
 
   const sectionToNavigate: string | null = query.get('section');
 
-  useEffect(() => {
-    if (sectionToNavigate) {
-      scrollToFAQ();
-    }
-  }, [sectionToNavigate]);
-
   const navigateToAddTokens = sectionToNavigate === FAQsections.addTokens;
   const navigateToBridgeWmas = sectionToNavigate === FAQsections.bridgeWmas;
 
-  function scrollToFAQ() {
-    if (navigateToAddTokens && addTokensToMassaRef.current) {
-      addTokensToMassaRef.current.scrollIntoView({ behavior: 'smooth' });
-    } else if (navigateToBridgeWmas && bridgeWmasRef.current) {
-      bridgeWmasRef.current.scrollIntoView({ behavior: 'smooth' });
+  useEffect(() => {
+    if (sectionToNavigate) {
+      if (navigateToAddTokens && addTokensToMassaRef.current) {
+        addTokensToMassaRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else if (navigateToBridgeWmas && bridgeWmasRef.current) {
+        bridgeWmasRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  }
+  }, [sectionToNavigate, navigateToAddTokens, navigateToBridgeWmas]);
 
   return (
     <div className="w-1/2 flex flex-col gap-5 items-center">
@@ -100,15 +96,7 @@ export function MainnetFAQ() {
           3. Connect Massa Wallet using the connect wallet popup in the upper
           right corner.
           <p>
-            {' '}
-            4. Add tokens WMAS to to your Massa Wallet by following this{' '}
-            <u>
-              <a href={addTokensToMassaLink}>tutorial</a>
-            </u>
-            .
-          </p>
-          <p>
-            5. Navigate to{' '}
+            4. Navigate to{' '}
             <u>
               <a href={bridgeWmasPageLink}> DAO Maker</a>
             </u>{' '}
@@ -120,9 +108,9 @@ export function MainnetFAQ() {
           </p>
           <p>
             {' '}
-            6. In the DAO maker page, enter the desired amount in input field.
+            5. In the DAO Maker page, enter the desired amount in input field.
           </p>
-          <p>6. Click "bridge" button.</p>
+          <p>6. Click "Bridge" button.</p>
           <p>
             {' '}
             7. Wait for bridge to be final, it can take a couple of minutes. Be
@@ -139,7 +127,7 @@ export function MainnetFAQ() {
           <br />
           {discordSupportChannel && (
             <p>
-              If you encounter any techical problems during your bridge drop us
+              If you encounter any technical problems during your bridge drop us
               a message at our
               <a href={discordSupportChannel}>Discord Support Channel</a>
             </p>
