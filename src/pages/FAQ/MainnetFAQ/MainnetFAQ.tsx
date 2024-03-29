@@ -2,7 +2,6 @@ import { useRef, useEffect } from 'react';
 import { Accordion, AccordionContent } from '@massalabs/react-ui-kit';
 import {
   FAQsections,
-  addTokensToMassaLink,
   bridgeEmail,
   bridgeTutorialLink,
   bridgeUrl,

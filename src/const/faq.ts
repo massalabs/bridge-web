@@ -58,8 +58,6 @@ export const historyPageLink = `${href}${PAGES.HISTORY}`;
 
 export const bridgeWmasFAQLink = `${href}${PAGES.FAQ}${faqURL.mainnet.bridgeWmas.bridgeWmas}`;
 
-export const addTokensToMassaLink = `${href}${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
-
 export const addTokensBuildnetLink = `${href}${PAGES.FAQ}${faqURL.buildnet.addTokens.addToMassa}`;
 
 export const addTokensMainnetLink = `${href}${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
