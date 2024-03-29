@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FiX } from 'react-icons/fi';
+import { ReleaseSuccess } from './ReleaseSuccess';
 import { ReleaseMasStatus } from '../DaoPage';
 import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
 import { useFetchBurnedWmasTx } from '@/custom/bridge/useFetchBurnedWmas';
@@ -13,6 +14,7 @@ import {
 import { linkifyBscTxIdToExplo, linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 interface DaoProcessingProps {
+  amount: string;
   isBurnSuccess: boolean;
   burnHash: `0x${string}` | undefined;
   setReleaseMasStatus: (step: ReleaseMasStatus) => void;
@@ -23,6 +25,7 @@ interface DaoProcessingProps {
 
 export function DaoProcessing(props: DaoProcessingProps) {
   const {
+    amount,
     isBurnSuccess,
     burnHash: burnTxHash,
     setReleaseMasStatus,
@@ -138,7 +141,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
           />
         </div>
       </div>
-      {isReleaseSuccess && <div>{Intl.t('dao-maker.success')}</div>}
+      {isReleaseSuccess && <ReleaseSuccess amount={amount} />}
     </div>
   );
 }

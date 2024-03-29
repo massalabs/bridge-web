@@ -217,8 +217,8 @@
         "general": "Something went wrong! Please, try again!",
         "failed": "Approval failed. Try again.",
         "allowance-error": "Unknown error happened while increasing allowance. Try again.",
-        "rejected": "Approval rejected by user",
-        "timeout": "Approval Timeout. Try again.",
+        "rejected": "Approval rejected by user, try again",
+        "timeout": "Approval timeout. Try again.",
         "invalid-amount": "Invalid amount",
         "insufficient-funds": "Insufficient balance"
       },
@@ -227,14 +227,14 @@
     },
     "lock": {
       "error": {
-        "rejected": "Lock rejected by user",
+        "rejected": "Lock rejected by user, try again",
         "wrong-allowance": "Allowance is too low. Try again.",
         "unknown": "Unknown error, Try again."
       }
     },
     "burn": {
       "error": {
-        "rejected": "Burn rejected by user",
+        "rejected": "Burn rejected by user, try again",
         "wrong-allowance": "Allowance is too low. Try again.",
         "timeout": "Burn operation timed out.",
         "timeout-signature": "You failed to sign the operation before timeout. Please try again.",
@@ -243,7 +243,7 @@
     },
     "claim": {
       "error": {
-        "rejected": "Claim rejected by user",
+        "rejected": "Claim rejected by user, try again",
         "timeout": "Claim timeout out.",
         "unknown": "Unknown error, Try again."
       }
@@ -371,7 +371,8 @@
     "release": "Release MASSA {state}",
     "wrong-chain": "Wrong BNB chain. Please, switch to {network} in your {name} wallet settings.",
     "address-not-found": "Address not found",
-    "success": "You have successfully bridged WMAS!",
+    "success": "You have successfully bridged:",
+    "success-received": "You received {amount} MAS in your wallet.",
     "wallet-not-connected": "Massa Wallet not connected",
     "final": "(final)",
     "burn-including": "(awaiting inclusion...)",

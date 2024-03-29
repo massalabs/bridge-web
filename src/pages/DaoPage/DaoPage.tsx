@@ -67,6 +67,7 @@ export function DaoPage() {
       case ReleaseMasStatus.releaseSuccess:
         return (
           <DaoProcessing
+            amount={amount}
             resetBurnWrite={resetBurnWrite}
             setReleaseMasStatus={setReleaseMasStatus}
             isBurnSuccess={isBurnSuccess}
