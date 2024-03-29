@@ -64,7 +64,6 @@ export function MainnetFAQ() {
       >
         <AccordionContent>
           <p>
-            {' '}
             1. Connect Metamask wallet using the connect wallet popup in the
             upper right corner.
           </p>
@@ -79,8 +78,7 @@ export function MainnetFAQ() {
             </u>
             .
           </p>
-          <br />
-          <p>
+          <p className="ml-2">
             If you have any doubts, questions or problems check Massa Station{' '}
             <u>
               <a href={MASSA_STATION_FAQ}>Massa Station FAQ</a>
@@ -91,7 +89,6 @@ export function MainnetFAQ() {
             </u>
             .
           </p>
-          <br />
           3. Connect Massa Wallet using the connect wallet popup in the upper
           right corner.
           <p>
@@ -101,7 +98,7 @@ export function MainnetFAQ() {
             </u>{' '}
             page on the bridge.
           </p>
-          <p>
+          <p className="ml-2">
             At this point you should have your Massa Wallet and Metamask
             connected.
           </p>
