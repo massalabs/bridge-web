@@ -23,12 +23,6 @@ export const TDAI_CONTRACT_ADDRESS =
 export const WETH_CONTRACT_ADDRESS =
   '0xf6E9FBff1CF908f6ebC1a274f15F5c0985291424';
 
-export const TDAI_MASSA_ADDRESS =
-  'AS128ZFWY6eph5h3fpaGifWcgEQwmHAiHP9LfnCYcMfqwgh2N3ebF';
-
-export const WETH_MASSA_ADDRESS =
-  'AS1RpApSuxXDThkuxdhvto9vxCjkpmSkZnKBtZrvaToznW5Jc1sA';
-
 export const U256_MAX = BigInt(
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 );
@@ -47,11 +41,11 @@ export const config = {
   },
   [BridgeMode.testnet]: {
     evmBridgeContract:
-      '0xc173B8354F7A774Ce7CE98693beB3008A7BD3B6F' as `0x${string}`,
-    massaBridgeContract: 'AS1f8RX7HUg78NG8rgLhqZbes2upE3JUHLKPdWMN2SJFWqFnUBJC',
+      '0xB06f330fbdfEA88F0e8b6926505226c981b324f6' as `0x${string}`,
+    massaBridgeContract: 'AS1Y1zNtZRUruRuqwN47YaYiEdD8gEoXjrEKKnA19X1BFypRGEqM',
     lambdaUrl:
       'https://6sul7w7nqer7pd5mf7cl6l2muy0isblj.lambda-url.eu-west-3.on.aws/default/',
-    wmas_address: '0x733676a533cb12668C4184A5e2E2a34743e2b933' as `0x${string}`,
+    wmas_address: '0x3C53552D3A54672fe1113e2FDDd2099d6E9E585D' as `0x${string}`,
   },
 };
 
