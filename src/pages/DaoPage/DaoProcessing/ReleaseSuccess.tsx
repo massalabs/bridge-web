@@ -11,17 +11,15 @@ interface ReleaseSuccessProps {
 export function ReleaseSuccess(props: ReleaseSuccessProps) {
   const { amount } = props;
   const { chain } = useAccount();
-  const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
-    useBridgeModeStore();
+  const { massaNetwork: getMassaNetwork } = useBridgeModeStore();
   const massaNetwork = getMassaNetwork();
-  const evmNetwork = getEvmNetwork();
 
   if (!chain) return null;
 
   const massaChainAndNetwork = `${Blockchain.MASSA} ${Intl.t(
     `general.${massaNetwork}`,
   )}`;
-  const evmChainAndNetwork = `${chain.name} ${evmNetwork}`;
+  const evmChainAndNetwork = `${chain.name}`;
 
   const emitter = evmChainAndNetwork;
   const recipient = massaChainAndNetwork;
