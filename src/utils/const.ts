@@ -15,6 +15,9 @@ export const MASSA_EXPLO_URL = 'https://massexplo.io/tx/';
 export const MASSA_EXPLO_EXTENSION = '?network=buildnet';
 export const MASSA_WALLET_CREATE_ACCOUNT =
   'http://station.massa/plugin/massa-labs/massa-wallet/web-app/account-create';
+export const MASSA_WALLET_CREATE_ACCOUNT_FAQ =
+  'https://docs.massa.net/docs/massaStation/massa-wallet/getting-started';
+export const MASSA_STATION_FAQ = 'https://docs.massa.net/docs/massaStation/faq';
 export const BEARBY_INSTALL = 'https://bearby.io';
 
 export const BRIDGE = 'bridge';

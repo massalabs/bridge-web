@@ -1,9 +1,9 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
-import { Blockchain, BridgeMode, PAGES } from '@/const';
-import { faqURL } from '@/const/faq';
+import { Blockchain } from '@/const';
+import { addTokensBuildnetLink, addTokensMainnetLink } from '@/const/faq';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import {
@@ -19,13 +19,12 @@ export function SuccessLayout(props: LoadingBoxProps) {
   const { onClose } = props;
   const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
-  const { currentMode } = useBridgeModeStore();
+  const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
   const { chain } = useAccount();
   const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();
   const evmWalletName = useConnectorName();
-
-  const location = useLocation();
+  const isMainnet = getIsMainnet();
 
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
@@ -59,15 +58,13 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   // https://reactrouter.com/en/main/components/link#relative
 
-  const { href } = new URL('.', window.origin + location.pathname);
-
   const redirectToFaq = getFaqUrl();
 
   function getFaqUrl(): string {
-    if (currentMode === BridgeMode.mainnet) {
-      return `${href}${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
+    if (isMainnet) {
+      return addTokensMainnetLink;
     } else {
-      return `${href}${PAGES.FAQ}${faqURL.buildnet.addTokens.addToMassa}`;
+      return addTokensBuildnetLink;
     }
   }
 
