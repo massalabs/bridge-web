@@ -48,16 +48,6 @@ export function MainnetFAQ() {
       <div>
         <p className="mas-title text-neutral">{Intl.t('navbar.faq')}</p>
       </div>
-      <Accordion title={Intl.t('index.faq.mainnet.airdrop-title')}>
-        <AccordionContent>
-          <p>
-            {Intl.t('index.faq.mainnet.airdrop-desc', {
-              amount: AIRDROP_AMOUNT,
-            })}
-          </p>
-        </AccordionContent>
-      </Accordion>
-
       <div ref={bridgeWmasRef}></div>
       <Accordion
         title={'How to claim WMAS from DAO Maker sale'}
@@ -144,6 +134,16 @@ export function MainnetFAQ() {
               <a href={discordSupportChannel}>Discord Support Channel</a>
             </p>
           )}
+        </AccordionContent>
+      </Accordion>
+
+      <Accordion title={Intl.t('index.faq.mainnet.airdrop-title')}>
+        <AccordionContent>
+          <p>
+            {Intl.t('index.faq.mainnet.airdrop-desc', {
+              amount: AIRDROP_AMOUNT,
+            })}
+          </p>
         </AccordionContent>
       </Accordion>
 
