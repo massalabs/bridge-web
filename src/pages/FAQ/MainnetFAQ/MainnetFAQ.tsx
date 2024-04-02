@@ -7,7 +7,6 @@ import {
   bridgeUrl,
   bridgeWmasPageLink,
   discordSupportChannel,
-  historyPageLink,
 } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
@@ -117,13 +116,8 @@ export function MainnetFAQ() {
           </p>
           <br />
           <p>
-            If you have any doubts on your transaction you can go to the{' '}
-            <u>
-              <a href={historyPageLink} target="_blank">
-                History page
-              </a>
-            </u>
-            {''} {''}to verify your transaction's status.
+            If you have any doubts on your transaction you can go to the History
+            page to verify your transaction's status.
           </p>
           <br />
           {discordSupportChannel && (
