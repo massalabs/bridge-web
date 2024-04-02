@@ -106,9 +106,8 @@ export function MainnetFAQ() {
           </p>
           <p>6. Click "Bridge".</p>
           <p>
-            7. You will need to sign 2 transactions on BSC with your MetaMask
-            wallet, firstly to increase allowance and one to initiate the
-            transfer.
+            7. You must sign a transaction on BSC network with your MetaMask
+            wallet to initiate the transfer.
           </p>
           <p>
             8. Wait for the transfer to be completed, it can take a couple of
@@ -280,21 +279,28 @@ export function MainnetFAQ() {
         title={Intl.t('index.faq.mainnet.bridged-tokens-title')}
       >
         <AccordionContent>
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-1')}</p>
+          <br />
           <p>
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-1')}
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-2')}
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-3')}
-            <br /> <br />
+            <br />
             {tokens.map((token, index) => (
               <p key={index}>
                 {token.symbol} - {token.massaToken}
               </p>
             ))}
-            <br /> <br />
+            <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-4')}
           </p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-2')}</p>
+          <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-5')}</p>
+          <br />
         </AccordionContent>
       </Accordion>
 
