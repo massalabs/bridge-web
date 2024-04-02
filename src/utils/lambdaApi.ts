@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimState } from './const';
 import { config } from '../const';
-import { useBridgeModeStore } from '../store/store';
+import { useBridgeModeStore, useGlobalStatusesStore } from '../store/store';
 import { useResource } from '@/custom/api/useResource';
-import { BurnRedeemOperation } from '@/store/operationStore';
+import { BurnRedeemOperation, useOperationStore } from '@/store/operationStore';
 
 export enum HistoryOperationStatus {
   Claimable = 'claimable',
@@ -134,4 +134,51 @@ function getClaimState(
   }
 
   return claimState;
+}
+
+export function useFetchSignatures() {
+  const { burnTxId, getCurrentRedeemOperation, updateBurnRedeemOperationById } =
+    useOperationStore();
+  const { setBox } = useGlobalStatusesStore();
+  const { currentMode } = useBridgeModeStore();
+  const { address: evmAddress } = useAccount();
+
+  const state = BridgingState.processing;
+  const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}&state=${state}`;
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
+  const [enableReftech, setEnableRefetch] = useState(true);
+
+  const { data: burnOperations } = useResource<OperationHistoryItem[]>(
+    lambdaUrl,
+    enableReftech,
+  );
+
+  useEffect(() => {
+    if (!burnTxId) return;
+    if (!burnOperations?.length) return;
+
+    // find the operation
+    const claimableOp = burnOperations.find((item) => item.outputId === null);
+    if (!claimableOp) return;
+
+    setEnableRefetch(false);
+    // update the store
+    const op = burnOpApiToDTO(claimableOp);
+    updateBurnRedeemOperationById(burnTxId, {
+      signatures: op.signatures,
+    });
+    if (
+      getCurrentRedeemOperation()?.claimState === ClaimState.RETRIEVING_INFO
+    ) {
+      updateBurnRedeemOperationById(burnTxId, {
+        claimState: ClaimState.READY_TO_CLAIM,
+      });
+    }
+  }, [
+    burnTxId,
+    burnOperations,
+    setBox,
+    getCurrentRedeemOperation,
+    updateBurnRedeemOperationById,
+  ]);
 }

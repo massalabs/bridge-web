@@ -17,89 +17,19 @@ import {
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
 import {
-  BridgingState,
   Entities,
   OperationHistoryItem,
   burnOpApiToDTO,
   lambdaEndpoint,
+  useFetchSignatures,
 } from '@/utils/lambdaApi';
-
-function useCloseLoadingBoxOnSuccess() {
-  const { address: evmAddress } = useAccount();
-  const { burnTxId } = useOperationStore();
-  const { setBox } = useGlobalStatusesStore();
-  const { currentMode } = useBridgeModeStore();
-
-  const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}`;
-  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
-
-  const { data: burnOperations } =
-    useResource<OperationHistoryItem[]>(lambdaUrl);
-
-  // Close the loading box if the operation is already claimed in the claim page
-  useEffect(() => {
-    if (burnOperations?.length) {
-      const op = burnOpApiToDTO(burnOperations[0]);
-      if (op && op.claimState === ClaimState.SUCCESS) {
-        setBox(Status.None);
-      }
-    }
-  }, [burnOperations, setBox]);
-}
-
-function useFetchSignatures() {
-  const { burnTxId, getCurrentRedeemOperation, updateBurnRedeemOperationById } =
-    useOperationStore();
-  const { setBox } = useGlobalStatusesStore();
-  const { currentMode } = useBridgeModeStore();
-  const { address: evmAddress } = useAccount();
-
-  const state = BridgingState.processing;
-  const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}&state=${state}`;
-  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
-
-  const { data: burnOperations, refetch } =
-    useResource<OperationHistoryItem[]>(lambdaUrl);
-
-  useEffect(() => {
-    if (!burnTxId) return;
-    if (!burnOperations?.length) return;
-
-    // find the operation
-    const claimableOp = burnOperations.find((item) => item.outputId === null);
-    if (!claimableOp) return;
-
-    // update the store
-    const op = burnOpApiToDTO(claimableOp);
-    updateBurnRedeemOperationById(burnTxId, {
-      signatures: op.signatures,
-    });
-    if (
-      getCurrentRedeemOperation()?.claimState === ClaimState.RETRIEVING_INFO
-    ) {
-      updateBurnRedeemOperationById(burnTxId, {
-        claimState: ClaimState.READY_TO_CLAIM,
-      });
-    }
-  }, [
-    burnTxId,
-    burnOperations,
-    setBox,
-    getCurrentRedeemOperation,
-    updateBurnRedeemOperationById,
-  ]);
-
-  return {
-    refetch,
-  };
-}
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
 export function ClaimRedeem() {
   const { address: evmAddress, chain } = useAccount();
   const { selectedToken, refreshBalances } = useTokenStore();
-  const { burn, setClaim, setBox } = useGlobalStatusesStore();
+  const { setClaim, setBox } = useGlobalStatusesStore();
   const {
     burnTxId,
     amount,
@@ -107,10 +37,11 @@ export function ClaimRedeem() {
     updateBurnRedeemOperationById,
   } = useOperationStore();
 
+  useFetchSignatures();
+
   const { write, error, isSuccess, hash, isPending } = useClaim();
 
   useCloseLoadingBoxOnSuccess();
-  const { refetch } = useFetchSignatures();
 
   const currentRedeemOperation = getCurrentRedeemOperation();
 
@@ -166,16 +97,6 @@ export function ClaimRedeem() {
     updateCurrentRedeemOperation,
     setLoadingToError,
   ]);
-
-  // Polls api to see if the server has the operation to claim with the signatures
-  useEffect(() => {
-    if (
-      burn === Status.Success &&
-      !currentRedeemOperation?.signatures?.length
-    ) {
-      setTimeout(refetch, 1000);
-    }
-  }, [burn, currentRedeemOperation, refetch]);
 
   // Event handler for claim button
   async function handleRedeem() {
@@ -245,4 +166,27 @@ export function ClaimRedeem() {
       ) : null}
     </div>
   );
+}
+
+export function useCloseLoadingBoxOnSuccess() {
+  const { address: evmAddress } = useAccount();
+  const { burnTxId } = useOperationStore();
+  const { setBox } = useGlobalStatusesStore();
+  const { currentMode } = useBridgeModeStore();
+
+  const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}`;
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
+
+  const { data: burnOperations } =
+    useResource<OperationHistoryItem[]>(lambdaUrl);
+
+  // Close the loading box if the operation is already claimed in the claim page
+  useEffect(() => {
+    if (burnOperations?.length) {
+      const op = burnOpApiToDTO(burnOperations[0]);
+      if (op && op.claimState === ClaimState.SUCCESS) {
+        setBox(Status.None);
+      }
+    }
+  }, [burnOperations, setBox]);
 }

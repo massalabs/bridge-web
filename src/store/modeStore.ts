@@ -32,6 +32,7 @@ const modeStore = (
   setCurrentMode: (mode: BridgeMode) => {
     const previousMode = get().currentMode;
     set({ currentMode: mode });
+    console.log('currentMode', mode);
 
     // if the mode has changed, we need to refresh the tokens
 
@@ -39,6 +40,7 @@ const modeStore = (
     // the first switch call is made, but when the response arrives and user is back on testnet that see no tokens
     // and the second call is not made
     if (previousMode !== mode) {
+      console.log('getting tokens');
       useTokenStore.getState().getTokens();
     }
   },
