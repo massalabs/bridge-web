@@ -4,7 +4,6 @@ import { useAccount } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
-import { Tos } from '@/components/Tos';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
@@ -139,7 +138,6 @@ export function IndexPage() {
         />
       )}
       {!isOperationPending && <ClaimTokensPopup />}
-      <Tos />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
+import { Tos } from '@/components/Tos';
 import { PAGES } from '@/const';
 import {
   useEvmChainValidation,
@@ -132,6 +133,7 @@ export function Navbar(props: NavbarProps) {
         </div>
       </div>
       <Banner>{Intl.t('index.top-banner.mainnet-coming-soon')}</Banner>
+      <Tos />
     </div>
   );
 }
