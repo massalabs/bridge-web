@@ -8,7 +8,7 @@ import { Hr } from '@/components/Hr';
 import { config } from '@/const';
 import { useResource } from '@/custom/api/useResource';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore } from '@/store/store';
+import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 import { OperationHistoryItem, lambdaEndpoint } from '@/utils/lambdaApi';
 
@@ -17,8 +17,10 @@ export const itemsInPage = 8;
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
   const { currentMode } = useBridgeModeStore();
-
-  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=${evmAddress}`;
+  const { connectedAccount } = useAccountStore();
+  const massaAddress = connectedAccount?.address();
+  /* eslint-disable max-len */
+  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=${evmAddress}?massaAddress=${massaAddress}`;
 
   const { data: lambdaResponse, isFetching } =
     useResource<OperationHistoryItem[]>(lambdaUrl);
