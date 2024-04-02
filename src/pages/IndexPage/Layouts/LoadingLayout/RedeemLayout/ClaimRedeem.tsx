@@ -2,27 +2,18 @@ import { useCallback, useEffect } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { config } from '@/const';
-import { useResource } from '@/custom/api/useResource';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import {
-  useBridgeModeStore,
   useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
-import {
-  Entities,
-  OperationHistoryItem,
-  burnOpApiToDTO,
-  lambdaEndpoint,
-  useFetchSignatures,
-} from '@/utils/lambdaApi';
+import { useFetchSignatures } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -40,8 +31,6 @@ export function ClaimRedeem() {
   useFetchSignatures();
 
   const { write, error, isSuccess, hash, isPending } = useClaim();
-
-  useCloseLoadingBoxOnSuccess();
 
   const currentRedeemOperation = getCurrentRedeemOperation();
 
@@ -166,27 +155,4 @@ export function ClaimRedeem() {
       ) : null}
     </div>
   );
-}
-
-export function useCloseLoadingBoxOnSuccess() {
-  const { address: evmAddress } = useAccount();
-  const { burnTxId } = useOperationStore();
-  const { setBox } = useGlobalStatusesStore();
-  const { currentMode } = useBridgeModeStore();
-
-  const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}`;
-  const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
-
-  const { data: burnOperations } =
-    useResource<OperationHistoryItem[]>(lambdaUrl);
-
-  // Close the loading box if the operation is already claimed in the claim page
-  useEffect(() => {
-    if (burnOperations?.length) {
-      const op = burnOpApiToDTO(burnOperations[0]);
-      if (op && op.claimState === ClaimState.SUCCESS) {
-        setBox(Status.None);
-      }
-    }
-  }, [burnOperations, setBox]);
 }
