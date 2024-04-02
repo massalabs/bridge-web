@@ -96,6 +96,13 @@ function isTokenMintedEvent(event: IEvent, lockTxId: string) {
     eventData?.eventName === 'TOKEN_MINTED' && eventData?.txId === lockTxId
   );
 }
+function findCurrentEvent(event: IEvent, lockTxId: string) {
+  const eventData = safeJsonParse(event.data);
+  if (!eventData) {
+    return false;
+  }
+  return eventData?.txId === lockTxId;
+}
 
 export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
   const start = Date.now();
@@ -118,9 +125,17 @@ export async function waitForMintEvent(lockTxId: string): Promise<boolean> {
         is_final: true,
       });
 
+    console.log(events);
+
+    const currentEvent = events.find((e) => findCurrentEvent(e, lockTxId));
+    if (currentEvent) {
+      console.log('currentEvent = ', currentEvent);
+      const eventData = safeJsonParse(currentEvent.data);
+      console.log('opid = ', eventData.txId);
+      setMintTxId(eventData.txId);
+    }
     const mintEvent = events.find((e) => isTokenMintedEvent(e, lockTxId));
     if (mintEvent && mintEvent.context.origin_operation_id) {
-      setMintTxId(mintEvent.context.origin_operation_id);
       try {
         await checkForOperationStatus(
           massaClient,

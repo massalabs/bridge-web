@@ -55,6 +55,7 @@ export function useLock() {
   });
 
   useEffect(() => {
+    setLockTxId(hash);
     if (lock !== Status.Loading) {
       return;
     }
@@ -62,7 +63,6 @@ export function useLock() {
       setLock(Status.Success);
       if (!hash) return;
       // Set lock id
-      setLockTxId(hash);
       if (!massaClient) return;
       handleMintBridge();
     }

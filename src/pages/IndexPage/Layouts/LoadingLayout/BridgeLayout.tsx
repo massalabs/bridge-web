@@ -1,14 +1,37 @@
+import { useEffect, useState } from 'react';
 import { LoadingState } from './LoadingState';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 import Intl from '@/i18n/i18n';
-import { useGlobalStatusesStore } from '@/store/globalStatusesStore';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { EVM_EXPLORER } from '@/utils/const';
 
 export function BridgeLayout() {
   const { approve, lock, mint } = useGlobalStatusesStore();
   const { currentMode } = useBridgeModeStore();
-  const { lockTxId } = useOperationStore();
+  const { lockTxId, mintTxId } = useOperationStore();
+
+  const [currentID, setCurrentID] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    console.log('lock', lock);
+    console.log('lockTxId', lockTxId);
+    console.log('mint', mint);
+    if (lock !== Status.None && mint === Status.None) {
+      console.log('lock', lock);
+      console.log('lockTxId', lockTxId);
+      setCurrentID(lockTxId);
+    }
+    // if (lock === Status.Success && mint !== Status.None) {
+    //   console.log('mintTxId', mintTxId);
+    //   console.log('mint', mint);
+    //   setCurrentID(mintTxId);
+    // }
+  }, [lockTxId, mintTxId, lock, mint]);
+
+  useEffect(() => {
+    console.log('currentID', currentID);
+  }, [currentID]);
 
   const explorerUrl = `${EVM_EXPLORER[currentMode]}tx/${lockTxId}`;
 
@@ -26,7 +49,7 @@ export function BridgeLayout() {
         <p className="mas-body-2">{Intl.t('index.loading-box.mint')}</p>
         <LoadingState state={mint} />
       </div>
-      <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={lockTxId} />
+      <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={currentID} />
     </div>
   );
 }
