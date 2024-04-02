@@ -8,8 +8,9 @@ import { FiHelpCircle } from 'react-icons/fi';
 import { fetchMASBalance } from '@/bridge';
 import { MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
-import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
+import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import { AIRDROP_AMOUNT } from '@/utils/const';
 import { formatAmount } from '@/utils/parseAmount';
 
 export function MASBalance() {
@@ -58,12 +59,16 @@ export function CustomInfoTag() {
       className="flex hover:cursor-pointer"
     >
       <Tag type="info" customClass="flex items-center gap-2">
-        {Intl.t(`connect-wallet.empty-balance`)}
+        {Intl.t('connect-wallet.empty-balance', {
+          amount: AIRDROP_AMOUNT,
+        })}
         {showTooltip && (
           <div
             className={`w-96 left-[480px] top-[515px] z-10 absolute bg-tertiary p-3 rounded-lg text-neutral ml-2`}
           >
-            {Intl.t(`connect-wallet.empty-balance-description`)}
+            {Intl.t('connect-wallet.empty-balance-description', {
+              amount: AIRDROP_AMOUNT,
+            })}
           </div>
         )}
         <FiHelpCircle className="text-s-info-1" />

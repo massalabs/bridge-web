@@ -2,27 +2,28 @@ import { Button } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
 import { MetaMaskSvg } from '@/assets';
+import {
+  useEvmChainValidation,
+  useGetChainValidationContext,
+} from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
-import { FetchingLine } from '@/pages/Index/Layouts/LoadingLayout/FetchingComponent';
-import { useBridgeModeStore } from '@/store/store';
+import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { maskAddress } from '@/utils/massaFormat';
-import { isEvmNetworkValid } from '@/utils/networkValidation';
 import { formatAmount } from '@/utils/parseAmount';
 
 export function EvmConnectButton(): JSX.Element {
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMainnet = getIsMainnet();
   const { switchChain } = useSwitchChain();
 
-  const { address, chain } = useAccount();
+  const { address } = useAccount();
 
   const { data: balanceData } = useBalance({
     address,
   });
 
-  const isValidEVMNetwork = isEvmNetworkValid(isMainnet, chain?.id);
+  const { targetChainId, context } = useGetChainValidationContext();
+
+  const isValidEVMNetwork = useEvmChainValidation(context);
 
   return (
     <ConnectButton.Custom>
@@ -65,7 +66,7 @@ export function EvmConnectButton(): JSX.Element {
                       customClass="h-14"
                       onClick={() =>
                         switchChain?.({
-                          chainId: isMainnet ? mainnet.id : sepolia.id,
+                          chainId: targetChainId,
                         })
                       }
                     >

@@ -15,12 +15,12 @@ export function useTosValidation() {
     '',
   );
 
-  function checkTosValid(acceptandDate: string): boolean {
+  function checkTosValid(acceptanceDate: string): boolean {
     // If the user has signed during the session, we don't need to recheck the TOS
     if (hasUserSignedDuringSession) return true;
     const oneHourInMs = 60 * 60 * 1000;
-    if (acceptandDate === '') return false;
-    const lastAcceptanceDate = new Date(acceptandDate);
+    if (acceptanceDate === '') return false;
+    const lastAcceptanceDate = new Date(acceptanceDate);
     const currentDate = new Date();
     const timeDifference = currentDate.getTime() - lastAcceptanceDate.getTime();
     const hoursDifference = timeDifference / oneHourInMs;

@@ -14,13 +14,14 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
+import { ethMinConfirmations } from '@/utils/const';
 
 export function useLock() {
   const { currentMode } = useBridgeModeStore();
   const { selectedToken } = useTokenStore();
   const { connectedAccount, massaClient } = useAccountStore();
   const { amount, setLockTxId } = useOperationStore();
-  const { setLock, setBox } = useGlobalStatusesStore();
+  const { setLock, setBox, lock } = useGlobalStatusesStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
 
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
@@ -50,9 +51,13 @@ export function useLock() {
 
   const { isSuccess } = useWaitForTransactionReceipt({
     hash,
+    confirmations: ethMinConfirmations,
   });
 
   useEffect(() => {
+    if (lock !== Status.Loading) {
+      return;
+    }
     if (isSuccess) {
       setLock(Status.Success);
       if (!hash) return;
@@ -66,7 +71,7 @@ export function useLock() {
       setBox(Status.Error);
       setLock(Status.Error);
     }
-  }, [isSuccess, error, hash, massaClient, setLock, setBox, setLockTxId]);
+  }, [isSuccess, error, hash, massaClient, lock, setLock, setBox, setLockTxId]);
 
   return { write };
 }

@@ -1,43 +1,38 @@
 import { useBridgeModeStore } from '@/store/store';
-import {
-  EVM_EXPLORER,
-  MASSA_EXPLORER_URL,
-  MASSA_EXPLO_EXTENSION,
-  MASSA_EXPLO_URL,
-  SIDE,
-} from '@/utils/const';
+import { EVM_EXPLORER } from '@/utils/const';
+import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
 import { TX_CHAR_LIMIT, maskAddress } from '@/utils/massaFormat';
+import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 interface TxLinkToExplorersProps {
-  outputId?: string;
-  side: string;
+  operation: OperationHistoryItem;
 }
 
 export function TxLinkToExplorers(props: TxLinkToExplorersProps) {
-  const { outputId, side } = props;
-  const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMassaToEvm = side === SIDE.MASSA_TO_EVM;
+  const { operation } = props;
+  const { currentMode } = useBridgeModeStore();
 
-  if (outputId === null || outputId === undefined) return;
+  if (operation.outputId === null || operation.outputId === undefined) return;
 
-  const isMainnet = getIsMainnet();
+  const evmExplorer = `${EVM_EXPLORER[currentMode]}tx/${operation.outputId}`;
 
-  const evmExplorer = `${EVM_EXPLORER[currentMode]}tx/${outputId}`;
+  const massaExplorer = linkifyMassaOpIdToExplo(operation.outputId);
 
   function getExplorerUrl() {
-    if (isMainnet) {
-      return isMassaToEvm ? evmExplorer : `${MASSA_EXPLORER_URL}${outputId}`;
+    switch (operation.entity) {
+      case Entities.ReleaseMAS:
+      case Entities.Lock:
+        return massaExplorer;
+      case Entities.Burn:
+        return evmExplorer;
     }
-    return isMassaToEvm
-      ? evmExplorer
-      : `${MASSA_EXPLO_URL}${outputId}${MASSA_EXPLO_EXTENSION}`;
   }
 
   const explorerUrl = getExplorerUrl();
 
   return (
     <a className="flex gap-2 items-center" href={explorerUrl} target="_blank">
-      <u>{maskAddress(outputId, TX_CHAR_LIMIT)}</u>
+      <u>{maskAddress(operation.outputId, TX_CHAR_LIMIT)}</u>
     </a>
   );
 }

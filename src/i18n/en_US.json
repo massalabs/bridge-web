@@ -11,14 +11,15 @@
     "Buildnet": "Buildnet",
     "Mainnet": "Mainnet",
     "Unknown": "Unknown",
-    "Invalid-chain": "Invalid chain"
+    "Invalid-chain": "Invalid chain",
+    "network": "Network"
   },
   "navbar": {
     "history": "History",
     "bridge": "Bridge",
     "claim": "Claim",
     "faq": "FAQ",
-    "dao-maker": "DAO maker Claim"
+    "dao-maker": "DAO Maker Claim"
   },
   "sc-deploy": {
     "title": "Bridge is under deployment!",
@@ -93,7 +94,7 @@
         "bearby-wallet": "Bearby Wallet",
         "massa-documentation": "Massa documentation.",
         "airdrop-title": "Is there an airdrop available for transactions on the Massa Bridge?",
-        "airdrop-desc": "There is no formal airdrop planned for bridge activity. However, if you are bridging tokens from Ethereum to a newly created Massa address or an address with a zero balance, you will receive 0.002 MAS to cover address allocation costs, known as storage fees on the Massa network, and a few future transaction costs.",
+        "airdrop-desc": "There is no formal airdrop planned for bridge activity. However, if you are bridging tokens from Ethereum to a newly created Massa address or an address with a zero balance, you will receive {amount} MAS to cover address allocation costs, known as storage fees on the Massa network, and a few future transaction costs.",
         "transfer-title": "How long does a transfer via Massa Bridge take on each network?",
         "transfer-desc-1": "Bridging assets from Ethereum to Massa involves three transactions: approving the bridge to spend tokens, locking the tokens on the Bridge contract, and minting tokens on the Massa network. The processing time for each transaction depends on Ethereum confirmation times, typically between fifteen seconds to five minutes. Once confirmed on Ethereum, it should take less than two minutes for the bridge to mint tokens on Massa.",
         "transfer-desc-2": "Transferring from Massa to Ethereum also consists of three transactions: allowing the bridge to burn your tokens, triggering the burn, and claiming your tokens on Ethereum. Each step on Massa usually takes less than two minutes. Ethereum claim transactions typically finalize in fifteen seconds to two minutes.",
@@ -112,11 +113,11 @@
         "speed-title": "Can I speed up an Ethereum transaction on the Massa Bridge?",
         "speed-desc": " If Ethereum network load implies long confirmation times, increase the transaction fee in your Metamask wallet for faster processing.",
         "what-token-title": "What token do I need to use to pay for transaction fees on the Massa network?",
-        "what-token-desc": " Massa network transactions require Massa’s native asset, the $MAS token. When bridging to a new Massa address, you’ll receive 0.002 $MAS for free, with 0.001 allocated for storing your address on the ledger and 0.001 for future transaction fees. Learn more about Massa storage costs in ",
+        "what-token-desc": " Massa network transactions require Massa’s native asset, the MAS token. When bridging to a new Massa address, you’ll receive {amount} MAS for free. Learn more about Massa storage costs in ",
         "zero-tx-fees-title": "Why are there zero transaction fees on the Massa network?",
         "zero-tx-fees-desc": "As Massa is a new network, chain activity is low enough to have zero transaction fees. Validator APY sufficiently incentivizes block production. In the future, as chain activity increases, transaction fees may also increase.",
         "storage-cost-title": "What is the storage cost on the Massa network?",
-        "storage-cost-desc": "The cost for allocating an address on the ledger for the first time on the Massa network, is 0.001 $MAS. For additional information please refer to ",
+        "storage-cost-desc": "The cost for allocating an address on the ledger for the first time on the Massa network, is 0.001 MAS. For additional information please refer to ",
         "service-fees-title": "Does Massa Bridge charge service fees?",
         "service-fees-desc": " As of now, Massa doesn’t charge service fees; only transaction costs. Massa Bridge reserves the rights to activate service fee in the future.",
         "claim-title": "Why do I need to claim a transaction when redeeming tokens to Ethereum?",
@@ -167,13 +168,14 @@
       "burn-label-success": "(final)",
       "burn-label-rejected": "(rejected)",
       "burn-label-error": "(unknown error)",
-      "burn-label-signature-timeout": "Burn (signature timeout)",
+      "burn-label-signature-timeout": "(signature timeout)",
       "rejected-by-user": "You have rejected the transaction, please try again by clicking below.",
       "inconsistent-not-found": "Burn (inconsistent or not found)",
       "claim-label": "Claim {state}",
       "claim-label-retrieving-info": "(retrieving info...)",
       "claim-label-awaiting-signature": "(awaiting signature...)",
       "claim-label-claiming": "(claiming...)",
+      "claim-pending-tooltip": "If you leave, you will see the status of Claim in your {wallet} wallet.",
       "claim-label-rejected": "(rejected by user)",
       "claim-label-error": "(unknown error)",
       "burned": "Burn was successful",
@@ -194,7 +196,8 @@
       "success": "Success!",
       "error-something": "Something went wrong!",
       "error-drop": "Please, drop us a message at:",
-      "link-to-instructions": "Instructions"
+      "link-to-instructions": "Instructions",
+      "received-tokens": "You received {amount} in your wallet."
     },
     "input": {
       "placeholder": {
@@ -214,8 +217,8 @@
         "general": "Something went wrong! Please, try again!",
         "failed": "Approval failed. Try again.",
         "allowance-error": "Unknown error happened while increasing allowance. Try again.",
-        "rejected": "Approval rejected by user",
-        "timeout": "Approval Timeout. Try again.",
+        "rejected": "Approval rejected by user, try again",
+        "timeout": "Approval timeout. Try again.",
         "invalid-amount": "Invalid amount",
         "insufficient-funds": "Insufficient balance"
       },
@@ -224,30 +227,29 @@
     },
     "lock": {
       "error": {
-        "rejected": "Lock rejected by user",
+        "rejected": "Lock rejected by user, try again",
         "wrong-allowance": "Allowance is too low. Try again.",
         "unknown": "Unknown error, Try again."
       }
     },
     "burn": {
       "error": {
-        "rejected": "Burn rejected by user",
+        "rejected": "Burn rejected by user, try again",
         "wrong-allowance": "Allowance is too low. Try again.",
-        "timeout": "Burn signature timed out.",
+        "timeout": "Burn operation timed out.",
+        "timeout-signature": "You failed to sign the operation before timeout. Please try again.",
         "unknown": "Unknown error, Try again."
       }
     },
     "claim": {
       "error": {
-        "rejected": "Claim rejected by user",
+        "rejected": "Claim rejected by user, try again",
         "timeout": "Claim timeout out.",
         "unknown": "Unknown error, Try again."
       }
     },
     "bridge": {
       "error": {
-        "general": "Something went wrong! Please, try again!",
-        "sign-timeout": "Burn (signature timeout)",
         "invalid-amount": "Invalid amount",
         "insufficient-funds": "Insufficient balance"
       },
@@ -275,8 +277,8 @@
     "description-mainnet": "Connect wallet to a supported mainnet and Massa Mainnet, to bridge tokens.",
     "description-buildnet": "Connect wallet to a supported testnet and Massa Buildnet, to bridge tokens.",
     "button": "Connect",
-    "empty-balance": "You’ll receive 0.002 MAS!",
-    "empty-balance-description": "It seems you wish to bridge tokens to a new wallet account that has 0.00 MAS on it. Your account is eligible for allocation of 0.002 MAS for storage costs and gas fees of a few future transfers. We’ll send it to you at the same time of the bridge transfer.",
+    "empty-balance": "You’ll receive {amount} MAS!",
+    "empty-balance-description": "It seems you wish to bridge tokens to a new wallet account that has 0.00 MAS on it. Your account is eligible for allocation of {amount} MAS for storage costs and gas fees of a few future transfers. We’ll send it to you at the same time of the bridge transfer.",
     "card-destination": {
       "from": "EVM Wallet",
       "to": "Massa wallet",
@@ -299,10 +301,8 @@
     "connected-cards": {
       "wallet-balance": "Balance: "
     },
-    "connect-massa": {
-      "unsupported-net": "Switch to 'buildnet' in top-right corner of Station's homepage"
-    },
-    "wrong-chain": "Wrong wallet network. Please, switch to a supported {network} in your {name} wallet settings.",
+    "wrong-chain-evm": "Wrong wallet network. Please, switch network in \"connected wallets\" popup.",
+    "wrong-chain-massa": "Wrong wallet network. Please, switch to a supported {network} in your {name} wallet settings",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
       "invalid-network": "Current network is not supported. Please, switch to supported network.",
@@ -336,7 +336,7 @@
   },
   "terms-of-service": {
     "title": "Accept the Terms of Service",
-    "description": "You must accept the terms of service to continue, to proceed with the Massa Bridge.",
+    "description": "You must accept the terms of service to proceed with the Massa Bridge.",
     "subtitle": "Terms of service",
     "cta": "Accept"
   },
@@ -347,6 +347,8 @@
     "time": "Time",
     "amount": "Amount",
     "status": "Status",
+    "sent": "Sent",
+    "received": "Received",
     "transaction-id": "Transaction ID",
     "operation-status": {
       "pending": "Pending",
@@ -359,8 +361,24 @@
     "no-history": "No history found for {address}"
   },
   "dao-maker": {
-    "page-name": "DAO maker claim page",
+    "page-name": "DAO Maker claim page",
     "dao-bridge-redeem-warning": "If you are trying to bridge from BNB chain in the context of DAO Maker sale, navigate to: ",
-    "dao-toast": "If you're looking to bridge from DAO maker public sale navigate to DAO maker claim page"
+    "dao-toast": "If you're looking to bridge from DAO Maker public sale navigate to DAO Maker claim page",
+    "from": "From: ",
+    "balance": "Balance",
+    "receive": "You will receive",
+    "burn": "Burn WMAS {state}",
+    "release": "Release MASSA {state}",
+    "wrong-chain": "Wrong BNB chain. Please, switch to {network} in your {name} wallet settings.",
+    "address-not-found": "Address not found",
+    "success": "You have successfully bridged:",
+    "success-received": "You received {amount} MAS in your wallet.",
+    "wallet-not-connected": "Massa Wallet not connected",
+    "final": "(final)",
+    "burn-including": "(awaiting inclusion...)",
+    "burn-included": "(included pending...)",
+    "burn-including-error": "(error during inclusion...)",
+    "burn-releasing": "(releasing...)",
+    "burn-releasing-error": "(error during release... )"
   }
 }

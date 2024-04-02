@@ -1,9 +1,11 @@
-import { Tooltip } from '@massalabs/react-ui-kit';
-import { EmitterOrRecipient } from './EmitterOrRecipient';
+import { Amount } from './Amount';
+import { Emitter } from './Emitter';
+import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
 import { TxLinkToExplorers } from './TxLinkToExplorers';
+import { wmasDecimals, wmasSymbol } from '../DaoPage';
+import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
-import { SIDE } from '@/utils/const';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
 import { formatAmount } from '@/utils/parseAmount';
 
@@ -19,23 +21,57 @@ export function Operation(props: OperationProps) {
   const { operation: op } = props;
 
   const { tokens } = useTokenStore();
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(op.amount);
-  const symbol = tokens.find((t) => t.evmToken === op.evmToken)?.symbolEVM;
-  const isMassaToEvm = [Entities.Lock, Entities.ReleaseMAS].includes(op.entity);
-  const side = isMassaToEvm ? SIDE.MASSA_TO_EVM : SIDE.EVM_TO_MASSA;
+
+  function getTokenInfo() {
+    const token = tokens.find((t) => t.evmToken === op.evmToken);
+    if (op.entity === Entities.ReleaseMAS) {
+      return {
+        sentSymbol: wmasSymbol,
+        receivedSymbol: MASSA_TOKEN,
+        tokenDecimals: wmasDecimals,
+      };
+    } else if (op.entity === Entities.Lock) {
+      return {
+        sentSymbol: token?.symbolEVM,
+        receivedSymbol: token?.symbol,
+        tokenDecimals: token?.decimals,
+      };
+    }
+    return {
+      sentSymbol: token?.symbol,
+      receivedSymbol: token?.symbolEVM,
+      tokenDecimals: token?.decimals,
+    };
+  }
+
+  const { sentSymbol, receivedSymbol, tokenDecimals } = getTokenInfo();
+
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
+    op.amount,
+    tokenDecimals,
+  );
 
   return (
-    <div className="grid grid-cols-6 mas-body2">
-      <EmitterOrRecipient isMassaToEvm={isMassaToEvm} />
-      <EmitterOrRecipient isMassaToEvm={!isMassaToEvm} />
+    <div className={`grid grid-cols-7 mas-body2`}>
+      <Emitter operation={op} />
+      <Recipient operation={op} />
       <div className="flex items-center">
         {formatApiCreationTime(op.createdAt)}
       </div>
-      <div className="flex items-center">
-        {amountFormattedPreview} {symbol} <Tooltip body={amountFormattedFull} />
-      </div>
+      {/* sent */}
+      <Amount
+        amountFormattedFull={amountFormattedFull}
+        amountFormattedPreview={amountFormattedPreview}
+        symbol={sentSymbol}
+      />
+      {/* received */}
+      <Amount
+        amountFormattedFull={amountFormattedFull}
+        amountFormattedPreview={amountFormattedPreview}
+        symbol={receivedSymbol}
+      />
       <ShowStatus status={op.historyStatus} />
-      <TxLinkToExplorers outputId={op.outputId} side={side} />
+      <TxLinkToExplorers operation={op} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
 import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
@@ -8,6 +8,7 @@ import { useAccount, useBalance } from 'wagmi';
 import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { EthSvg } from '@/assets/EthSvg';
 import { SepoliaSvg } from '@/assets/SepoliaSVG';
+import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
 import {
   Blockchain,
   forwardBurnFees,
@@ -26,6 +27,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 
+import { IToken } from '@/store/tokenStore';
 import { formatAmount } from '@/utils/parseAmount';
 
 interface FeesEstimationProps {
@@ -82,7 +84,8 @@ export function FeesEstimation() {
   const { allowance } = useEvmToken();
 
   const [feesETH, setFeesETH] = useState<string>();
-  const [feesMAS, setFeesMAS] = useState<string>();
+  const [storageMAS, setStorageMAS] = useState<bigint>();
+  const [feesMAS, setFeesMAS] = useState<bigint>();
 
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
     useFeeEstimation();
@@ -97,6 +100,24 @@ export function FeesEstimation() {
 
   const currentEvmChain = useConnectedEvmChain();
 
+  const estimateFeesMassa = useCallback(
+    async (selectedToken: IToken, amount?: string) => {
+      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
+      let storageCostMAS = forwardBurnFees.coins;
+      let feesCostMAS = forwardBurnFees.fee;
+      if (
+        selectedToken.allowance === 0n ||
+        selectedToken.allowance < amountInBigInt
+      ) {
+        storageCostMAS += await increaseAllowanceStorageCost();
+        feesCostMAS += increaseAllowanceFee.fee;
+      }
+      setStorageMAS(storageCostMAS);
+      setFeesMAS(feesCostMAS);
+    },
+    [],
+  );
+
   useEffect(() => {
     const setFeesETHWithCheck = (fees: bigint) => {
       if (fees === 0n) {
@@ -109,30 +130,26 @@ export function FeesEstimation() {
     if (massaToEvm) {
       if (!selectedToken) {
         setFeesMAS(undefined);
+        setStorageMAS(undefined);
         return;
       }
-      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
-      let storageFeesMAS = forwardBurnFees.coins;
-      if (selectedToken.allowance < amountInBigInt) {
-        storageFeesMAS += increaseAllowanceFee.coins;
-      }
-      setFeesMAS(toMAS(storageFeesMAS).toString());
+      estimateFeesMassa(selectedToken, amount);
       setFeesETHWithCheck(estimateClaimFees());
     } else {
-      setFeesMAS('0');
+      setFeesMAS(0n);
+      setStorageMAS(0n);
       if (!selectedToken) {
         setFeesETH(undefined);
         return;
       }
       const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
-      Promise.all([
-        allowance < amountInBigInt
-          ? estimateApproveFees()
-          : Promise.resolve(0n),
-        estimateLockFees(),
-      ]).then(([approveFees, lockFees]) => {
+      const lockFees = estimateLockFees();
+      if (allowance < amountInBigInt) {
+        const approveFees = estimateApproveFees();
         setFeesETHWithCheck(approveFees + lockFees);
-      });
+      } else {
+        setFeesETHWithCheck(lockFees);
+      }
     }
   }, [
     massaToEvm,
@@ -141,7 +158,9 @@ export function FeesEstimation() {
     estimateApproveFees,
     estimateLockFees,
     estimateClaimFees,
+    estimateFeesMassa,
     selectedToken,
+    connectedAccount, // update the estimation when account change to take into account the new allowance
   ]);
 
   if (!selectedToken || !isEvmWalletConnected || !connectedAccount) return null;
@@ -157,12 +176,18 @@ export function FeesEstimation() {
     return (
       <div className="text-s-warning">
         {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
-        <Link to={PAGES.DAO}>
+        <Link to={`/${PAGES.DAO}`}>
           <u>{Intl.t('dao-maker.page-name')} </u>
         </Link>
       </div>
     );
   }
+
+  const storageMASString = storageMAS ? toMAS(storageMAS).toString() : '';
+  const totalCostMASString = toMAS(
+    (storageMAS ?? 0n) + (feesMAS ?? 0n),
+  ).toString();
+
   return (
     <div className="mas-body2">
       <div className="flex items-center justify-between">
@@ -186,17 +211,17 @@ export function FeesEstimation() {
               network: Intl.t(`general.${massaNetwork}`),
             })}
           </p>
-          {feesMAS && feesMAS !== '0' && (
+          {storageMAS !== 0n && (
             <Tooltip
               body={Intl.t('index.fee-estimate.tooltip-massa', {
-                fees: feesMAS,
+                fees: storageMASString,
               })}
             >
               <FiInfo size={18} />
             </Tooltip>
           )}
         </div>
-        <EstimatedAmount amount={feesMAS} symbol={MASSA_TOKEN} />
+        <EstimatedAmount amount={totalCostMASString} symbol={MASSA_TOKEN} />
       </div>
       <div className="flex items-center justify-between">
         <p>

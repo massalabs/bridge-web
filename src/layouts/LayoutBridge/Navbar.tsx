@@ -4,11 +4,14 @@ import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
+import { Tos } from '@/components/Tos';
 import { PAGES } from '@/const';
 import {
-  useEthNetworkValidation,
+  useEvmChainValidation,
+  useGetChainValidationContext,
   useMassaNetworkValidation,
-} from '@/custom/bridge/useWrongNetwork';
+} from '@/custom/bridge/useNetworkValidation';
+import { useWrongNetworkToast } from '@/custom/bridge/useWrongNetworkToast';
 import Intl from '@/i18n/i18n';
 import { BRIDGE_THEME_STORAGE_KEY } from '@/store/configStore';
 import {
@@ -29,17 +32,21 @@ export function Navbar(props: NavbarProps) {
   const { accounts, isFetching, connectedAccount } = useAccountStore();
 
   const { setTheme } = useConfigStore();
-  const { isValidEthNetwork } = useEthNetworkValidation();
-  const { isValidMassaNetwork } = useMassaNetworkValidation();
+  const { context } = useGetChainValidationContext();
+  const isValidEvmNetwork = useEvmChainValidation(context);
+  const isValidMassaNetwork = useMassaNetworkValidation();
 
   const { isConnected: isConnectedEVM } = useAccount();
 
   const hasAccounts = (accounts || []).length > 0;
   const showPingAnimation =
     !isConnectedEVM ||
-    !isValidEthNetwork ||
+    !isValidEvmNetwork ||
     !isValidMassaNetwork ||
     !connectedAccount;
+
+  // Responsible for trigger wrong network toast accross Dapp
+  useWrongNetworkToast();
 
   function ConnectedWallet() {
     return (
@@ -94,7 +101,7 @@ export function Navbar(props: NavbarProps) {
               <Link to={`/${PAGES.CLAIM}`}>{Intl.t('navbar.claim')}</Link>
             </p>
           ) : null}
-          <p className="mas-menu-default text-neutral h-fit">
+          <p className="mas-menu-default text-brand h-fit">
             <Link to={`/${PAGES.DAO}`}>{Intl.t('navbar.dao-maker')}</Link>
           </p>
           {areBothWalletsConnected ? (
@@ -126,6 +133,7 @@ export function Navbar(props: NavbarProps) {
         </div>
       </div>
       <Banner>{Intl.t('index.top-banner.mainnet-coming-soon')}</Banner>
+      <Tos />
     </div>
   );
 }

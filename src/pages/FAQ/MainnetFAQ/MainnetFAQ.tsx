@@ -5,42 +5,138 @@ import {
   bridgeEmail,
   bridgeTutorialLink,
   bridgeUrl,
+  bridgeWmasPageLink,
   discordSupportChannel,
 } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
 import { useTokenStore } from '@/store/tokenStore';
+import {
+  AIRDROP_AMOUNT,
+  BEARBY_INSTALL,
+  MASSA_STATION_FAQ,
+  MASSA_STATION_INSTALL,
+  MASSA_WALLET_CREATE_ACCOUNT_FAQ,
+} from '@/utils/const';
 
 export function MainnetFAQ() {
   const query = useQuery();
   const { tokens } = useTokenStore();
 
-  const addTokensToMassa = useRef<HTMLDivElement | null>(null);
+  const addTokensToMassaRef = useRef<HTMLDivElement | null>(null);
+  const bridgeWmasRef = useRef<HTMLDivElement | null>(null);
 
   const sectionToNavigate: string | null = query.get('section');
 
+  const navigateToAddTokens = sectionToNavigate === FAQsections.addTokens;
+  const navigateToBridgeWmas = sectionToNavigate === FAQsections.bridgeWmas;
+
   useEffect(() => {
     if (sectionToNavigate) {
-      scrollToFAQ();
+      if (navigateToAddTokens && addTokensToMassaRef.current) {
+        addTokensToMassaRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else if (navigateToBridgeWmas && bridgeWmasRef.current) {
+        bridgeWmasRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  }, [sectionToNavigate]);
-
-  function scrollToFAQ() {
-    if (addTokensToMassa.current) {
-      addTokensToMassa.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-  const showAddTokens = sectionToNavigate === FAQsections.addTokens;
+  }, [sectionToNavigate, navigateToAddTokens, navigateToBridgeWmas]);
 
   return (
     <div className="w-1/2 flex flex-col gap-5 items-center">
       <div>
         <p className="mas-title text-neutral">{Intl.t('navbar.faq')}</p>
       </div>
+      <div ref={bridgeWmasRef}></div>
+      <Accordion
+        title={'How to claim WMAS from DAO Maker sale'}
+        state={navigateToBridgeWmas}
+      >
+        <AccordionContent>
+          <p>
+            1. Navigate to the{' '}
+            <u>
+              <a href={bridgeWmasPageLink} target="_blank">
+                DAO Maker
+              </a>
+            </u>{' '}
+            page. Make sure you’re on Mainnet mode in the upper-right corner.
+          </p>
+          <p>2. Open the Connect Wallet popup from the upper-right corner.</p>
+          <p>
+            3. Connect the MetaMask wallet with WMAS balance, on the BSC
+            network.
+          </p>
+          <p>4. Connect a Massa wallet account:</p>
+          <p className="ml-2">
+            Massa Station Wallet (recommended to use): If you haven't, install{' '}
+            <u>
+              <a href={MASSA_STATION_INSTALL} target="_blank">
+                Massa Station
+              </a>
+            </u>{' '}
+            desktop app on your device and create a Massa Wallet account. If you
+            have any problems, check{' '}
+            <u>
+              <a href={MASSA_STATION_FAQ} target="_blank">
+                Massa Station FAQ
+              </a>
+            </u>{' '}
+            and{' '}
+            <u>
+              <a href={MASSA_WALLET_CREATE_ACCOUNT_FAQ} target="_blank">
+                Massa Wallet FAQ
+              </a>
+            </u>
+            .
+          </p>
+          <p className="ml-2">
+            An alternative Massa wallet is a community-developed browser
+            extension{' '}
+            <u>
+              <a href={BEARBY_INSTALL} target="_blank">
+                Bearby
+              </a>
+            </u>
+            . However due bear in mind that the wallet has not been audited by
+            Massa team.
+          </p>
+          <p>
+            5. In the DAO Maker page, enter the desired amount of WMAS to bridge
+            in the input field.
+          </p>
+          <p>6. Click "Bridge".</p>
+          <p>
+            7. You will need to sign 2 transactions on BSC with your MetaMask
+            wallet, firstly to increase allowance and one to initiate the
+            transfer.
+          </p>
+          <p>
+            8. Wait for the transfer to be completed, it can take a couple of
+            minutes.
+          </p>
+          <br />
+          <p>
+            If you have any doubts on your transaction you can go to the History
+            page to verify your transaction's status.
+          </p>
+          <br />
+          {discordSupportChannel && (
+            <p>
+              If you encounter any technical problems during your bridge drop us
+              a message at our
+              <a href={discordSupportChannel}>Discord Support Channel</a>
+            </p>
+          )}
+        </AccordionContent>
+      </Accordion>
+
       <Accordion title={Intl.t('index.faq.mainnet.airdrop-title')}>
         <AccordionContent>
-          <p>{Intl.t('index.faq.mainnet.airdrop-desc')}</p>
+          <p>
+            {Intl.t('index.faq.mainnet.airdrop-desc', {
+              amount: AIRDROP_AMOUNT,
+            })}
+          </p>
         </AccordionContent>
       </Accordion>
 
@@ -119,7 +215,9 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.what-token-title')}>
         <AccordionContent>
           <p>
-            {Intl.t('index.faq.mainnet.what-token-desc')}
+            {Intl.t('index.faq.mainnet.what-token-desc', {
+              amount: AIRDROP_AMOUNT,
+            })}
 
             <a href="https://docs.massa.net/docs/learn/storage-costs">
               <u> {Intl.t('index.faq.mainnet.massa-documentation')}</u>
@@ -176,9 +274,9 @@ export function MainnetFAQ() {
         </AccordionContent>
       </Accordion>
 
-      <div ref={addTokensToMassa}></div>
+      <div ref={addTokensToMassaRef}></div>
       <Accordion
-        state={showAddTokens}
+        state={navigateToAddTokens}
         title={Intl.t('index.faq.mainnet.bridged-tokens-title')}
       >
         <AccordionContent>
@@ -208,9 +306,9 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.no-wap-title')}>
         <AccordionContent>
           <p>
-            {Intl.t('index.faq.mainnet.no-wap-desc')}
+            {Intl.t('index.faq.mainnet.no-wap-desc')}{' '}
             <a href="bridge.massa.net/index">
-              <u>{bridgeUrl} </u>
+              <u>{bridgeUrl}</u>
             </a>
             .
           </p>

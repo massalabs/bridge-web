@@ -4,15 +4,18 @@ import { useAccount } from 'wagmi';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
 import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
-import { Tos } from '@/components/Tos';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
-import { useIndexNetworkCheck } from '@/custom/bridge/useIndexNetworkCheck';
 import { useLock } from '@/custom/bridge/useLock';
+import {
+  ChainContext,
+  useEvmChainValidation,
+  useMassaNetworkValidation,
+} from '@/custom/bridge/useNetworkValidation';
 import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -23,7 +26,7 @@ import {
 } from '@/store/store';
 import { BurnState } from '@/utils/const';
 
-export function Index() {
+export function IndexPage() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
@@ -42,7 +45,8 @@ export function Index() {
   const { box, setBox, setLock, setApprove, reset, setAmountError } =
     useGlobalStatusesStore();
 
-  const { wrongIndexNetwork } = useIndexNetworkCheck();
+  const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
+  const isValidMassaNetwork = useMassaNetworkValidation();
 
   const { write: writeEvmApprove } = useEvmApprove();
 
@@ -55,7 +59,8 @@ export function Index() {
   const isButtonDisabled =
     isFetching ||
     !connectedAccount ||
-    wrongIndexNetwork ||
+    !isValidEthNetwork ||
+    !isValidMassaNetwork ||
     isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
@@ -133,7 +138,6 @@ export function Index() {
         />
       )}
       {!isOperationPending && <ClaimTokensPopup />}
-      <Tos />
     </div>
   );
 }

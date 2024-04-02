@@ -12,7 +12,7 @@ import { useBridgeModeStore } from '@/store/store';
 
 import { OperationHistoryItem, lambdaEndpoint } from '@/utils/lambdaApi';
 
-export const itemsInPage = 10;
+export const itemsInPage = 8;
 
 export function HistoryPage() {
   const { address: evmAddress } = useAccount();
@@ -89,7 +89,7 @@ export function HistoryPage() {
   return (
     <div className="flex h-fit w-screen items-center justify-center p-10">
       <div
-        className="bg-secondary/50 text-f-primary border-tertiary flex w-[80%] flex-col
+        className="bg-secondary/50 text-f-primary border-tertiary flex w-[90%] flex-col justify-between
         rounded-2xl border px-16 py-12 backdrop-blur-lg"
       >
         <div
@@ -103,11 +103,12 @@ export function HistoryPage() {
         <Categories />
         <Hr />
 
-        <div className="mb-8 mt-8 flex flex-col gap-8 py-4">
+        <div className="mb-4 mt-8 flex flex-col gap-8 py-4 h-[600px]">
           {renderHistory()}
         </div>
         <div className="flex items-center justify-center gap-12">
           <Button
+            variant="secondary"
             customClass="w-64"
             disabled={pageStep <= 0}
             preIcon={<FiMinus />}
@@ -117,6 +118,7 @@ export function HistoryPage() {
           </Button>
           <Button
             customClass="w-64"
+            variant="secondary"
             posIcon={<FiPlus />}
             disabled={pageStep >= Math.ceil(operationList.length / 10 - 1)}
             onClick={loadOldest}

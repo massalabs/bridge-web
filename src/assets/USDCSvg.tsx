@@ -5,14 +5,14 @@ export function USDCSvg(props: SVGProps) {
   const { size } = props;
   return (
     <svg
-      width={size ?? 40}
-      height={size ?? 40}
+      width={size ?? 44}
+      height={size ?? 44}
       viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_5187_4272)">
-        <g clip-path="url(#clip1_5187_4272)">
+      <g clipPath="url(#clip0_5187_4272)">
+        <g clipPath="url(#clip1_5187_4272)">
           <path
             d="M20 40C31.0834 40 40 31.0834 40 20C40 8.9166 31.0834 0 20 0C8.9166 0 0 8.9166 0 20C0 31.0834 8.9166 40 20 40Z"
             fill="#2775CA"

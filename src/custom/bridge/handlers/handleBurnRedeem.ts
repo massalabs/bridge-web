@@ -98,7 +98,7 @@ function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
     toast.error(Intl.t('index.burn.error.rejected'));
     setBurnState(BurnState.REJECTED);
   } else if (isWalletTimeoutError(typedError)) {
-    toast.error(Intl.t('index.burn.error.timeout'));
+    toast.error(Intl.t('index.burn.error.timeout-signature'));
     setBurnState(BurnState.SIGNATURE_TIMEOUT);
   } else if (isErrorTimeout) {
     // when waitIncludedOperation fails to wait operation finality
