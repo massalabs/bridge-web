@@ -61,18 +61,19 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
   getTokens: async () => {
     const { isMainnet: getIsMainnet } = useBridgeModeStore.getState();
 
-    const massaClient = await initMassaClient(getIsMainnet());
+    const publicClient = await initMassaClient(getIsMainnet());
 
     let tokenList: IToken[] = [];
     try {
-      const supportedTokens = await getSupportedTokensList(massaClient);
+      const supportedTokens = await getSupportedTokensList(publicClient);
+      if (!supportedTokens?.length) return;
 
       tokenList = await Promise.all(
         supportedTokens.map(async (tokenPair) => {
           const [name, symbol, decimals] = await Promise.all([
-            getMassaTokenName(tokenPair.massaToken, massaClient),
-            getMassaTokenSymbol(tokenPair.massaToken, massaClient),
-            getDecimals(tokenPair.massaToken, massaClient),
+            getMassaTokenName(tokenPair.massaToken, publicClient),
+            getMassaTokenSymbol(tokenPair.massaToken, publicClient),
+            getDecimals(tokenPair.massaToken, publicClient),
           ]);
           return {
             ...tokenPair,

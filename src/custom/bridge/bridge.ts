@@ -74,12 +74,20 @@ export async function forwardBurn(
 
 export async function getSupportedTokensList(
   publicClient: Client,
-): Promise<TokenPair[]> {
+): Promise<TokenPair[] | undefined> {
   const { currentMode } = useBridgeModeStore.getState();
+  const contractAddress = config[currentMode].massaBridgeContract;
+
+  if (!contractAddress) {
+    console.warn(
+      `Massa Bridge smart contract was not provided for: ${currentMode}`,
+    );
+    return undefined;
+  }
 
   const returnObject = await publicClient.smartContracts().readSmartContract({
     maxGas: MAX_GAS_CALL,
-    targetAddress: config[currentMode].massaBridgeContract,
+    targetAddress: contractAddress,
     targetFunction: 'supportedTokensList',
     parameter: [],
   } as IReadData);
