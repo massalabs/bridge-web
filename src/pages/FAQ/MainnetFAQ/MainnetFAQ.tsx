@@ -106,9 +106,8 @@ export function MainnetFAQ() {
           </p>
           <p>6. Click "Bridge".</p>
           <p>
-            7. You will need to sign 2 transactions on BSC with your MetaMask
-            wallet, firstly to increase allowance and one to initiate the
-            transfer.
+            7. You must sign a transaction on BSC network with your MetaMask
+            wallet to initiate the transfer.
           </p>
           <p>
             8. Wait for the transfer to be completed, it can take a couple of
@@ -124,7 +123,9 @@ export function MainnetFAQ() {
             <p>
               If you encounter any technical problems during your bridge drop us
               a message at our
-              <a href={discordSupportChannel}>Discord Support Channel</a>
+              <a target="_blank" href={discordSupportChannel}>
+                Discord Support Channel
+              </a>
             </p>
           )}
         </AccordionContent>
@@ -154,7 +155,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.not-visible-desc-1')}
-            <a href="mailto:support.bridge@massa.net">
+            <a target="_blank" href="mailto:support.bridge@massa.net">
               <u> {bridgeEmail} </u>
             </a>
             .
@@ -172,7 +173,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.exceed-desc')}
-            <a href="mailto:support.bridge@massa.net">
+            <a target="_blank" href="mailto:support.bridge@massa.net">
               <u>{bridgeEmail}</u>
             </a>
             .
@@ -190,7 +191,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {bridgeTutorialLink ? (
-              <a href={bridgeTutorialLink}>
+              <a target="_blank" href={bridgeTutorialLink}>
                 <u>{Intl.t('index.faq.mainnet.tutorial-desc')}</u>
               </a>
             ) : (
@@ -219,7 +220,10 @@ export function MainnetFAQ() {
               amount: AIRDROP_AMOUNT,
             })}
 
-            <a href="https://docs.massa.net/docs/learn/storage-costs">
+            <a
+              target="_blank"
+              href="https://docs.massa.net/docs/learn/storage-costs"
+            >
               <u> {Intl.t('index.faq.mainnet.massa-documentation')}</u>
             </a>
           </p>
@@ -237,7 +241,10 @@ export function MainnetFAQ() {
           <p>
             {Intl.t('index.faq.mainnet.storage-cost-desc')}
 
-            <a href="https://docs.massa.net/docs/learn/storage-costs">
+            <a
+              target="_blank"
+              href="https://docs.massa.net/docs/learn/storage-costs"
+            >
               <u>{Intl.t('index.faq.mainnet.massa-documentation')}</u>
             </a>
           </p>
@@ -259,13 +266,13 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.wallets-title')}>
         <AccordionContent>
           <p>
-            <a href="https://station.massa.net/">
+            <a target="_blank" href="https://station.massa.net/">
               <u> {Intl.t('index.faq.mainnet.massa-wallet')}</u>
             </a>
 
             {Intl.t('index.faq.mainnet.wallets-desc-1')}
             {Intl.t('index.faq.mainnet.wallets-desc-2')}
-            <a href="https://bearby.io/">
+            <a target="_blank" href="https://bearby.io/">
               {' '}
               <u>{Intl.t('index.faq.mainnet.bearby-wallet')}</u>
             </a>
@@ -280,21 +287,28 @@ export function MainnetFAQ() {
         title={Intl.t('index.faq.mainnet.bridged-tokens-title')}
       >
         <AccordionContent>
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-1')}</p>
+          <br />
           <p>
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-1')}
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-2')}
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-3')}
-            <br /> <br />
+            <br />
             {tokens.map((token, index) => (
               <p key={index}>
                 {token.symbol} - {token.massaToken}
               </p>
             ))}
-            <br /> <br />
+            <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-4')}
           </p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-2')}</p>
+          <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-5')}</p>
+          <br />
         </AccordionContent>
       </Accordion>
 
@@ -307,7 +321,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.no-wap-desc')}{' '}
-            <a href="bridge.massa.net/index">
+            <a target="_blank" href="bridge.massa.net/index">
               <u>{bridgeUrl}</u>
             </a>
             .
@@ -327,7 +341,7 @@ export function MainnetFAQ() {
             {discordSupportChannel ? (
               <>
                 {Intl.t('index.faq.mainnet.no-find-desc-1')}
-                <a href={discordSupportChannel}>
+                <a target="_blank" href={discordSupportChannel}>
                   <u>{discordSupportChannel} </u>
                 </a>
                 {Intl.t('index.faq.mainnet.no-find-desc-2')}
@@ -345,7 +359,7 @@ export function MainnetFAQ() {
             {discordSupportChannel ? (
               <>
                 {Intl.t('index.faq.mainnet.no-find-desc-1')}{' '}
-                <a href={discordSupportChannel}>
+                <a target="_blank" href={discordSupportChannel}>
                   <u>{discordSupportChannel}</u>
                 </a>
                 {Intl.t('index.faq.mainnet.no-find-desc-2')}
