@@ -23,8 +23,9 @@ export function HistoryPage() {
   /* eslint-disable max-len */
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}?evmAddress=${evmAddress}&massaAddress=${massaAddress}`;
 
-  const { data: lambdaResponse, isFetching } =
-    useResource<OperationHistoryItem[]>(lambdaUrl);
+  const { data: lambdaResponse, isFetchedAfterMount } = useResource<
+    OperationHistoryItem[]
+  >(lambdaUrl, true);
 
   // contains all operations to render
   const [operationList, setOperationList] = useState<OperationHistoryItem[]>(
@@ -76,7 +77,7 @@ export function HistoryPage() {
   if (!evmAddress) return skeleton;
 
   function renderHistory() {
-    if (isFetching) {
+    if (!isFetchedAfterMount) {
       return skeleton;
     }
     if (operationList.length === 0) {
