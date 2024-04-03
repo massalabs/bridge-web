@@ -71,7 +71,7 @@ export function IndexPage() {
 
   const closeLoadingBox = useCallback(() => {
     reset();
-    setAmount();
+    setAmount('');
     setBurnState(BurnState.INIT);
     // Reset all transaction id's
     resetTxIDs();
