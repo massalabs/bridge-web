@@ -123,7 +123,9 @@ export function MainnetFAQ() {
             <p>
               If you encounter any technical problems during your bridge drop us
               a message at our
-              <a href={discordSupportChannel}>Discord Support Channel</a>
+              <a target="_blank" href={discordSupportChannel}>
+                Discord Support Channel
+              </a>
             </p>
           )}
         </AccordionContent>
@@ -153,7 +155,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.not-visible-desc-1')}
-            <a href="mailto:support.bridge@massa.net">
+            <a target="_blank" href="mailto:support.bridge@massa.net">
               <u> {bridgeEmail} </u>
             </a>
             .
@@ -171,7 +173,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.exceed-desc')}
-            <a href="mailto:support.bridge@massa.net">
+            <a target="_blank" href="mailto:support.bridge@massa.net">
               <u>{bridgeEmail}</u>
             </a>
             .
@@ -189,7 +191,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {bridgeTutorialLink ? (
-              <a href={bridgeTutorialLink}>
+              <a target="_blank" href={bridgeTutorialLink}>
                 <u>{Intl.t('index.faq.mainnet.tutorial-desc')}</u>
               </a>
             ) : (
@@ -218,7 +220,10 @@ export function MainnetFAQ() {
               amount: AIRDROP_AMOUNT,
             })}
 
-            <a href="https://docs.massa.net/docs/learn/storage-costs">
+            <a
+              target="_blank"
+              href="https://docs.massa.net/docs/learn/storage-costs"
+            >
               <u> {Intl.t('index.faq.mainnet.massa-documentation')}</u>
             </a>
           </p>
@@ -236,7 +241,10 @@ export function MainnetFAQ() {
           <p>
             {Intl.t('index.faq.mainnet.storage-cost-desc')}
 
-            <a href="https://docs.massa.net/docs/learn/storage-costs">
+            <a
+              target="_blank"
+              href="https://docs.massa.net/docs/learn/storage-costs"
+            >
               <u>{Intl.t('index.faq.mainnet.massa-documentation')}</u>
             </a>
           </p>
@@ -258,13 +266,13 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.wallets-title')}>
         <AccordionContent>
           <p>
-            <a href="https://station.massa.net/">
+            <a target="_blank" href="https://station.massa.net/">
               <u> {Intl.t('index.faq.mainnet.massa-wallet')}</u>
             </a>
 
             {Intl.t('index.faq.mainnet.wallets-desc-1')}
             {Intl.t('index.faq.mainnet.wallets-desc-2')}
-            <a href="https://bearby.io/">
+            <a target="_blank" href="https://bearby.io/">
               {' '}
               <u>{Intl.t('index.faq.mainnet.bearby-wallet')}</u>
             </a>
@@ -313,7 +321,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.no-wap-desc')}{' '}
-            <a href="bridge.massa.net/index">
+            <a target="_blank" href="bridge.massa.net/index">
               <u>{bridgeUrl}</u>
             </a>
             .
@@ -333,7 +341,7 @@ export function MainnetFAQ() {
             {discordSupportChannel ? (
               <>
                 {Intl.t('index.faq.mainnet.no-find-desc-1')}
-                <a href={discordSupportChannel}>
+                <a target="_blank" href={discordSupportChannel}>
                   <u>{discordSupportChannel} </u>
                 </a>
                 {Intl.t('index.faq.mainnet.no-find-desc-2')}
@@ -351,7 +359,7 @@ export function MainnetFAQ() {
             {discordSupportChannel ? (
               <>
                 {Intl.t('index.faq.mainnet.no-find-desc-1')}{' '}
-                <a href={discordSupportChannel}>
+                <a target="_blank" href={discordSupportChannel}>
                   <u>{discordSupportChannel}</u>
                 </a>
                 {Intl.t('index.faq.mainnet.no-find-desc-2')}
