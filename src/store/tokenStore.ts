@@ -66,7 +66,10 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     let tokenList: IToken[] = [];
     try {
       const supportedTokens = await getSupportedTokensList(publicClient);
-      if (!supportedTokens?.length) return;
+      if (!supportedTokens?.length) {
+        set({ tokens: [] });
+        return;
+      }
 
       tokenList = await Promise.all(
         supportedTokens.map(async (tokenPair) => {
@@ -131,9 +134,8 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
 
     const { isMainnet: getIsMainnet, currentMode } =
       useBridgeModeStore.getState();
-    const isMainnet = getIsMainnet();
 
-    const massaClient = await initMassaClient(isMainnet);
+    const publicClient = await initMassaClient(getIsMainnet());
 
     const tokens = await Promise.all(
       supportedTokens.map(async (token) => {
@@ -141,10 +143,10 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
           getAllowance(
             config[currentMode].massaBridgeContract,
             token.massaToken,
-            massaClient,
+            publicClient,
             connectedAccount,
           ),
-          getBalance(token.massaToken, massaClient, connectedAccount),
+          getBalance(token.massaToken, publicClient, connectedAccount),
         ]);
         token.allowance = accountAllowance;
         token.balance = accountBalance;
