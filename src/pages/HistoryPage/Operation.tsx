@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Amount } from './Amount';
 import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
@@ -21,6 +22,10 @@ export function Operation(props: OperationProps) {
   const { operation: op } = props;
 
   const { tokens } = useTokenStore();
+
+  const memoizedStatusComponent = useMemo(() => {
+    return <ShowStatus status={op.historyStatus} />;
+  }, [op.historyStatus]);
 
   function getTokenInfo() {
     const token = tokens.find((t) => t.evmToken === op.evmToken);
@@ -70,7 +75,7 @@ export function Operation(props: OperationProps) {
         amountFormattedPreview={amountFormattedPreview}
         symbol={receivedSymbol}
       />
-      <ShowStatus status={op.historyStatus} />
+      {memoizedStatusComponent}
       <TxLinkToExplorers operation={op} />
     </div>
   );
