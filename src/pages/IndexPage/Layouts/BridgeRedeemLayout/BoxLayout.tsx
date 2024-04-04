@@ -9,7 +9,7 @@ import { TokenBalance } from './BoxLayoutComponents/TokenBalance';
 import { TokenOptions } from './BoxLayoutComponents/TokenOptions';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { EthSvg } from '@/assets/EthSvg';
-import { MassaTesnetLogo } from '@/assets/MassaTestnetLogo';
+import { MassaBuildnetLogo } from '@/assets/MassaBuildnetLogo';
 import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
@@ -26,7 +26,7 @@ interface IconsNetworks {
 }
 export const iconsNetworks: IconsNetworks = {
   MASMAIN: <MassaLogo size={40} />,
-  MASTEST: <MassaTesnetLogo size={40} />,
+  MASTEST: <MassaBuildnetLogo size={40} />,
   ETH: <EthSvg size={40} />,
   SEP: <SepoliaSvg size={40} />,
   BNB: <BNBSvg size={40} />,
