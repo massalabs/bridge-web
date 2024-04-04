@@ -48,7 +48,7 @@ async function initAccountStore() {
     }
   }
 
-  new ProvidersListener().subscribe((providers) => {
+  new ProvidersListener(2000).subscribe((providers) => {
     useAccountStore.getState().setProviders(providers);
   });
 }
