@@ -1,39 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
-import { useOperationStore } from '@/store/store';
+import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { useClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
   const { burnRedeemOperations, setBurnRedeemOperations } = useOperationStore();
   const { address: evmAddress } = useAccount();
-
-  // Keep the list of operation IDs to claim in the first call to getRedeemOperation,
-  // to be able to see only the success state of them, and not the whole list of previous success operations.
-  const [redeemableOperationIds, setRedeemableOperationIds] = useState<
-    string[]
-  >([]);
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
 
   const { claimableOperations } = useClaimableOperations();
 
   useEffect(() => {
     setBurnRedeemOperations(claimableOperations);
-    if (!redeemableOperationIds.length && claimableOperations.length) {
-      setRedeemableOperationIds(claimableOperations.map((op) => op.inputId));
-    }
-  }, [
-    claimableOperations,
-    redeemableOperationIds,
-    setRedeemableOperationIds,
-    setBurnRedeemOperations,
-  ]);
-
-  const burnOperations = burnRedeemOperations.filter((op) =>
-    redeemableOperationIds.includes(op.inputId),
-  );
-  const burnListIsNotEmpty = burnOperations.length;
+  }, [claimableOperations, setBurnRedeemOperations, isMainnet]);
 
   if (!evmAddress) {
     console.warn('EVM address not found');
@@ -42,8 +25,8 @@ export function ClaimPage() {
 
   return (
     <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
-      {burnListIsNotEmpty ? (
-        burnOperations.map((operation: BurnRedeemOperation) => (
+      {burnRedeemOperations.length ? (
+        burnRedeemOperations.map((operation: BurnRedeemOperation) => (
           <ClaimButton operation={operation} key={operation.inputId} />
         ))
       ) : (
