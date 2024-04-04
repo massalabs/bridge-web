@@ -36,9 +36,8 @@ export const config = {
   [BridgeMode.mainnet]: {
     evmBridgeContract: '' as `0x${string}`,
     massaBridgeContract: '',
-    lambdaUrl:
-      'https://gfltuhv4oouk5qs6jf7lv7tvp40vfwsj.lambda-url.eu-west-3.on.aws/',
-    wmas_address: '0xDc074966De429c92614769Dc6546A8E72E83175D' as `0x${string}`,
+    lambdaUrl: '',
+    wmas_address: '' as `0x${string}`,
   },
   [BridgeMode.testnet]: {
     evmBridgeContract:
