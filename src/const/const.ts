@@ -53,12 +53,12 @@ export const AVAILABLE_MODES = [BridgeMode.mainnet, BridgeMode.testnet];
 
 // Transaction fees
 export const forwardBurnFees = {
-  fee: 0n,
+  fee: 10_000_000n,
   coins: 0n,
 };
 
 export const increaseAllowanceFee = {
-  fee: 0n,
+  fee: 10_000_000n,
 };
 
 export enum SupportedTokens {
