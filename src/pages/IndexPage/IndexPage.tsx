@@ -34,7 +34,6 @@ export function IndexPage() {
   const { selectedToken } = useTokenStore();
   const { side, amount, setAmount, resetTxIDs, isMassaToEvm } =
     useOperationStore();
-  const { approve } = useGlobalStatusesStore();
 
   const massaToEvm = isMassaToEvm();
 
@@ -45,8 +44,16 @@ export function IndexPage() {
 
   const [burnState, setBurnState] = useState<BurnState>(BurnState.INIT);
 
-  const { box, setBox, setLock, setApprove, reset, setAmountError } =
-    useGlobalStatusesStore();
+  const {
+    approve,
+    setMint,
+    box,
+    setBox,
+    setLock,
+    setApprove,
+    reset,
+    setAmountError,
+  } = useGlobalStatusesStore();
 
   const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
   const isValidMassaNetwork = useMassaNetworkValidation();
@@ -101,13 +108,22 @@ export function IndexPage() {
     }
     if (isLockSuccess) {
       setLock(Status.Success);
+      setMint(Status.Loading);
     }
     if (lockError) {
       handleLockError(lockError);
       setBox(Status.Error);
       setLock(Status.Error);
     }
-  }, [isLockSuccess, lockHash, lockError, setBox, setLock, setLockTxId]);
+  }, [
+    isLockSuccess,
+    lockHash,
+    lockError,
+    setBox,
+    setLock,
+    setLockTxId,
+    setMint,
+  ]);
 
   // Submit logic handler
   async function handleSubmit(e: SyntheticEvent) {
@@ -154,7 +170,6 @@ export function IndexPage() {
     }
   }
 
-  // Sanitize functions
   const closeLoadingBox = useCallback(() => {
     reset();
     setAmount('');
