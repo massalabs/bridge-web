@@ -7,8 +7,11 @@ export function MassaBuildnetLogo(props: SVGProps) {
 
   const { theme } = useConfigStore();
 
-  const fillColor = theme === 'theme-dark' ? 'white' : '#151A26';
-  const detailColor = theme === 'theme-dark' ? '#151A26' : 'white';
+  const white = 'white';
+  const dark = '#151A26';
+
+  const fillColor = theme === 'theme-dark' ? white : dark;
+  const detailColor = theme === 'theme-dark' ? dark : white;
   return (
     <svg
       width={size ?? 44}
