@@ -44,12 +44,10 @@ export function BridgeLayout() {
 
   useEffect(() => {
     if (lockTxId && lock !== Status.Success) {
-      console.log('lockTxId', lockTxId);
       setCurrentIdTODisplay(lockTxId);
       setCurrentExplorerUrl(`${EVM_EXPLORER[currentMode]}tx/${lockTxId}`);
     }
     if (lock === Status.Success && mintTxId) {
-      console.log('mintTxId', mintTxId);
       setCurrentIdTODisplay(mintTxId);
       setCurrentExplorerUrl(linkifyMassaOpIdToExplo(mintTxId));
     }
