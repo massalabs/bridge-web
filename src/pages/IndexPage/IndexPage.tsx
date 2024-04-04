@@ -7,6 +7,10 @@ import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
 import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
+import {
+  handleEvmApproveError,
+  handleLockError,
+} from '@/custom/bridge/handlers/handleTransactionErrors';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
 import useEvmToken from '@/custom/bridge/useEvmToken';
@@ -30,6 +34,7 @@ export function IndexPage() {
   const { selectedToken } = useTokenStore();
   const { side, amount, setAmount, resetTxIDs, isMassaToEvm } =
     useOperationStore();
+  const { approve } = useGlobalStatusesStore();
 
   const massaToEvm = isMassaToEvm();
 
@@ -46,7 +51,11 @@ export function IndexPage() {
   const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
   const isValidMassaNetwork = useMassaNetworkValidation();
 
-  const { write: writeEvmApprove } = useEvmApprove();
+  const {
+    write: writeEvmApprove,
+    isSuccess: approveSuccess,
+    error: approveError,
+  } = useEvmApprove();
 
   const { write: writeLock } = useLock();
 
@@ -62,21 +71,45 @@ export function IndexPage() {
     (REDEEM_OFF && massaToEvm);
 
   useEffect(() => {
-    setAmountError('');
-  }, [amount, side, selectedToken?.name, setAmountError]);
+    if (approve !== Status.Loading) {
+      return;
+    }
+    if (approveSuccess && amount) {
+      setApprove(Status.Success);
+      setLock(Status.Loading);
+      writeLock();
+    } else if (approveError) {
+      handleEvmApproveError(approveError);
+      setBox(Status.Error);
+      setApprove(Status.Error);
+    }
+  }, [
+    approve,
+    approveSuccess,
+    approveError,
+    amount,
+    setApprove,
+    setLock,
+    setBox,
+    writeLock,
+  ]);
 
-  const closeLoadingBox = useCallback(() => {
-    reset();
-    setAmount('');
-    setBurnState(BurnState.INIT);
-    // Reset all transaction id's
-    resetTxIDs();
-  }, [reset, setAmount, resetTxIDs]);
-
+  // Lock operation information is set here in parent component
   useEffect(() => {
-    if (box === Status.None) closeLoadingBox();
-  }, [box, closeLoadingBox]);
+    if (lockHash) {
+      setLockTxId(lockHash);
+    }
+    if (isLockSuccess) {
+      setLock(Status.Success);
+    }
+    if (lockError) {
+      handleLockError(lockError);
+      setBox(Status.Error);
+      setLock(Status.Error);
+    }
+  }, [isLockSuccess, lockHash, lockError, setBox, setLock, setLockTxId]);
 
+  // Submit logic handler
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     // validate amount to transact
@@ -104,19 +137,53 @@ export function IndexPage() {
       if (!selectedToken) {
         return;
       }
+      // Init bridge approval
       setApprove(Status.Loading);
       let parsedAmount = parseUnits(amount, selectedToken.decimals);
       const needApproval = allowanceEVM < parsedAmount;
 
       if (needApproval) {
+        // writing bridge approval
         writeEvmApprove();
         return;
       }
+      // Bridge does not need approval : writing lock
       setApprove(Status.Success);
-      setLock(Status.Loading);
       writeLock();
+      setLock(Status.Loading);
     }
   }
+
+  // Sanitize functions
+  const closeLoadingBox = useCallback(() => {
+    reset();
+    setAmount('');
+    setBurnState(BurnState.INIT);
+    // Reset all transaction id's
+    resetTxIDs();
+  }, [reset, setAmount, resetTxIDs]);
+
+  useEffect(() => {
+    if (box === Status.None) closeLoadingBox();
+  }, [box, closeLoadingBox]);
+
+  useEffect(() => {
+    setAmountError('');
+  }, [amount, side, selectedToken?.name, setAmountError]);
+
+  // Submit button disable parameters
+  const isButtonDisabled =
+    isFetching ||
+    !connectedAccount ||
+    !isValidEthNetwork ||
+    !isValidMassaNetwork ||
+    isMainnet ||
+    (BRIDGE_OFF && !massaToEvm) ||
+    (REDEEM_OFF && massaToEvm);
+
+  // Index render logic & style
+  const isOperationPending = box !== Status.None;
+  const isBlurred = isOperationPending ? 'blur-md' : '';
 
   return (
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">

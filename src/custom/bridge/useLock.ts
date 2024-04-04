@@ -1,16 +1,12 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseUnits } from 'viem';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { handleMintBridge } from './handlers/handleMintBridge';
-import { handleLockError } from './handlers/handleTransactionErrors';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
-import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
   useBridgeModeStore,
-  useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
@@ -19,9 +15,8 @@ import { ethMinConfirmations } from '@/utils/const';
 export function useLock() {
   const { currentMode } = useBridgeModeStore();
   const { selectedToken } = useTokenStore();
-  const { connectedAccount, massaClient } = useAccountStore();
-  const { amount, setLockTxId } = useOperationStore();
-  const { setLock, setBox, lock } = useGlobalStatusesStore();
+  const { connectedAccount } = useAccountStore();
+  const { amount } = useOperationStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
 
   const bridgeContractAddr = config[currentMode].evmBridgeContract;
@@ -54,24 +49,5 @@ export function useLock() {
     confirmations: ethMinConfirmations,
   });
 
-  useEffect(() => {
-    if (lock !== Status.Loading) {
-      return;
-    }
-    if (isSuccess) {
-      setLock(Status.Success);
-      if (!hash) return;
-      // Set lock id
-      setLockTxId(hash);
-      if (!massaClient) return;
-      handleMintBridge();
-    }
-    if (error) {
-      handleLockError(error);
-      setBox(Status.Error);
-      setLock(Status.Error);
-    }
-  }, [isSuccess, error, hash, massaClient, lock, setLock, setBox, setLockTxId]);
-
-  return { write };
+  return { write, hash, isSuccess, error };
 }
