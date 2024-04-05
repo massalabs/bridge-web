@@ -19,6 +19,7 @@ export const MASSA_WALLET_CREATE_ACCOUNT_FAQ =
   'https://docs.massa.net/docs/massaStation/massa-wallet/getting-started';
 export const MASSA_STATION_FAQ = 'https://docs.massa.net/docs/massaStation/faq';
 export const BEARBY_INSTALL = 'https://bearby.io';
+export const MASSA_STATION_PLUGIN = 'https://station.massa/plugin-manager';
 
 export const BRIDGE = 'bridge';
 export const APPROVE = 'approve';

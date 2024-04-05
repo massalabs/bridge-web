@@ -1,7 +1,7 @@
 import { Dropdown } from '@massalabs/react-ui-kit';
 import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import { iconsNetworks } from '../BoxLayout';
-import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateWarning';
+import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, MASSA_TOKEN } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
