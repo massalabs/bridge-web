@@ -1,8 +1,7 @@
 import { BUILDNET_CHAIN_ID, MAINNET_CHAIN_ID } from '@massalabs/massa-web3';
-import { useLocation } from 'react-router-dom';
 import { bsc, bscTestnet, mainnet, sepolia } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import { PAGES } from '@/const';
+import { useIsPageBridge, useIsPageDAOMaker } from './location';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 // These hooks are used to check if the user is connected to the right network
@@ -31,15 +30,16 @@ interface getChainValidationContext {
 
 // Get context for chain validation depending on url
 export function useGetChainValidationContext(): getChainValidationContext {
-  const { pathname } = useLocation();
+  const isPageDAOMaker = useIsPageDAOMaker();
+  const isPageBridge = useIsPageBridge();
   const targetBnbChainId = useGetTargetBnbChainId();
   const targetEthChainId = useGetTargetEthChainId();
-  if (pathname.includes(PAGES.DAO)) {
+  if (isPageDAOMaker) {
     return {
       targetChainId: targetBnbChainId,
       context: ChainContext.DAO,
     };
-  } else if (pathname.includes(PAGES.INDEX)) {
+  } else if (isPageBridge) {
     return {
       targetChainId: targetEthChainId,
       context: ChainContext.BRIDGE,

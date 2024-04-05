@@ -7,6 +7,7 @@ import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 import { FiHelpCircle } from 'react-icons/fi';
 import { fetchMASBalance } from '@/bridge';
 import { MASSA_TOKEN } from '@/const';
+import { useIsPageDAOMaker } from '@/custom/bridge/location';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -18,6 +19,7 @@ export function MASBalance() {
 
   const { connectedAccount } = useAccountStore();
   const { isMainnet } = useBridgeModeStore();
+  const isPageDAOMaker = useIsPageDAOMaker();
 
   useEffect(() => {
     if (!connectedAccount) return;
@@ -43,7 +45,7 @@ export function MASBalance() {
       ) : (
         <>
           {amountFormattedFull} {MASSA_TOKEN}
-          {renderCustomTooltip && <CustomInfoTag />}
+          {renderCustomTooltip && !isPageDAOMaker && <CustomInfoTag />}
         </>
       )}
     </div>
