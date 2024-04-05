@@ -1,6 +1,7 @@
 import { Dropdown } from '@massalabs/react-ui-kit';
 import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import { iconsNetworks } from '../BoxLayout';
+import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, MASSA_TOKEN } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
@@ -18,7 +19,8 @@ export function MassaHeader() {
 
   return (
     <div className="flex items-center justify-between">
-      <div className="w-1/2">
+      <div className="w-1/2 flex items-center">
+        <UpdateMassaWalletWarning customClass="mr-3" />
         <Dropdown
           readOnly={true}
           options={[
