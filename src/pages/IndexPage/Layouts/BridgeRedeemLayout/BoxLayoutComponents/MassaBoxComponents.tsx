@@ -1,3 +1,4 @@
+import { MAINNET, BUILDNET } from '@massalabs/massa-web3';
 import { Dropdown } from '@massalabs/react-ui-kit';
 import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import { iconsNetworks } from '../BoxLayout';
@@ -29,7 +30,9 @@ export function MassaHeader() {
               item: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
                 `general.${massaNetwork}`,
               )}`,
-              icon: isMainnet ? iconsNetworks.MASMAIN : iconsNetworks.MASTEST,
+              icon: isMainnet
+                ? iconsNetworks[MAINNET]
+                : iconsNetworks[BUILDNET],
             },
           ]}
         />

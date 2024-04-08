@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { MAINNET, BUILDNET } from '@massalabs/massa-web3';
 import { MassaLogo } from '@massalabs/react-ui-kit';
 import { EVMHeader, EVMMiddle } from './BoxLayoutComponents/EvmBoxComponents';
 import {
@@ -25,8 +26,8 @@ interface IconsNetworks {
   [key: string]: JSX.Element;
 }
 export const iconsNetworks: IconsNetworks = {
-  MASMAIN: <MassaLogo size={40} />,
-  MASTEST: <MassaBuildnetLogo size={40} />,
+  [MAINNET]: <MassaLogo size={40} />,
+  [BUILDNET]: <MassaBuildnetLogo size={40} />,
   ETH: <EthSvg size={40} />,
   SEP: <SepoliaSvg size={40} />,
   BNB: <BNBSvg size={40} />,
