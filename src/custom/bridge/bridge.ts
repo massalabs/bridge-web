@@ -66,6 +66,7 @@ export async function forwardBurn(
     targetAddress: config[currentMode].massaBridgeContract,
     targetFunction: 'forwardBurn',
     parameter: new Args().addSerializable(request).serialize(),
+    maxGas: MAX_GAS_CALL,
     ...forwardBurnFees,
   });
 
