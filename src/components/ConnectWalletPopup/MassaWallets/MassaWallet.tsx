@@ -7,6 +7,7 @@ import BearbyWallet from './BearbyWallet';
 import SelectMassaWallet from './SelectMassaWallet';
 import StationWallet from './StationWallet';
 import SwitchWalletButton from './SwitchWalletButton';
+import { UpdateMassaWalletWarning } from './UpdateMassaWalletWarning';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
@@ -77,6 +78,7 @@ export function MassaWallet() {
     <>
       <div className="flex justify-between items-center mb-4  ">
         <div className="flex gap-2 items-center">
+          <UpdateMassaWalletWarning />
           {renderSelectedWallet()}
           <ChainStatus
             context={ChainContext.CONNECT}
