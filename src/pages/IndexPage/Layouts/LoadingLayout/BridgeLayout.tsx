@@ -51,7 +51,7 @@ export function BridgeLayout() {
       setCurrentIdTODisplay(mintTxId);
       setCurrentExplorerUrl(linkifyMassaOpIdToExplo(mintTxId));
     }
-  }, [lockTxId, lock, mintTxId]);
+  }, [lockTxId, lock, mintTxId, currentMode]);
 
   return (
     <div className="flex flex-col gap-6">

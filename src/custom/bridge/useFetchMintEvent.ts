@@ -6,8 +6,8 @@ import { useBridgeModeStore } from '@/store/store';
 import { OperationHistoryItem, lambdaEndpoint } from '@/utils/lambdaApi';
 
 export function useFetchMintEvent(): OperationHistoryItem[] | undefined {
-  const { lockTxId } = useOperationStore.getState();
-  const { currentMode } = useBridgeModeStore.getState();
+  const { lockTxId } = useOperationStore();
+  const { currentMode } = useBridgeModeStore();
   const [enableRefetch, setEnableRefetch] = useState<boolean>(true);
 
   const queryParams = `?&inputTxId=${lockTxId}`;
