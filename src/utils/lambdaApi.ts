@@ -62,7 +62,7 @@ export const lambdaEndpoint = 'bridge-getHistory-prod';
 
 export function useClaimableOperations() {
   const { address: evmAddress } = useAccount();
-  const { currentMode } = useBridgeModeStore.getState();
+  const { currentMode } = useBridgeModeStore();
 
   const state = BridgingState.processing;
   const queryParams = `?evmAddress=${evmAddress}&entities=${Entities.Burn}&state=${state}`;
@@ -75,14 +75,17 @@ export function useClaimableOperations() {
     useResource<OperationHistoryItem[]>(lambdaUrl);
 
   useEffect(() => {
-    if (!burnOperations?.length) return;
+    if (!burnOperations?.length) {
+      setClaimableOperations([]);
+      return;
+    }
 
     setClaimableOperations(
       burnOperations
         .filter((op) => !op.outputId) // keep only the ones that are not claimed
         .map((opToClaim) => burnOpApiToDTO(opToClaim)),
     );
-  }, [burnOperations]);
+  }, [burnOperations, setClaimableOperations]);
 
   return {
     claimableOperations,
