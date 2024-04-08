@@ -35,6 +35,9 @@ export interface OperationStoreState {
   burnTxId?: string;
   setBurnTxId(currentTxID?: string): void;
 
+  claimTxId?: string;
+  setClaimTxId(currentTxID?: string): void;
+
   amount?: string;
   setAmount(amount?: string): void;
 
@@ -117,11 +120,17 @@ export const useOperationStore = create<OperationStoreState>(
       set({ amount });
     },
 
+    claimTxId: undefined,
+    setClaimTxId(claimTxId?: string) {
+      set({ claimTxId });
+    },
+
     resetTxIDs: () => {
       set({
         lockTxId: undefined,
         mintTxId: undefined,
         burnTxId: undefined,
+        claimTxId: undefined,
         amount: undefined,
       });
     },

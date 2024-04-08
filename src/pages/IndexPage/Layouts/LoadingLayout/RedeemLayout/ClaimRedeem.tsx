@@ -23,6 +23,7 @@ export function ClaimRedeem() {
   const { setClaim, setBox } = useGlobalStatusesStore();
   const {
     burnTxId,
+    setClaimTxId,
     amount,
     getCurrentRedeemOperation,
     updateBurnRedeemOperationById,
@@ -49,6 +50,8 @@ export function ClaimRedeem() {
 
   // Updates current redeem operation state based on claim status
   useEffect(() => {
+    if (hash) setClaimTxId(hash);
+
     if (isPending) {
       updateCurrentRedeemOperation({
         claimState: ClaimState.PENDING,

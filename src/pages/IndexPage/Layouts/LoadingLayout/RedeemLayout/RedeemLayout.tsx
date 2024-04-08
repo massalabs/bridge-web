@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
@@ -6,24 +7,39 @@ import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useOperationStore } from '@/store/store';
-import { ClaimState, BurnState } from '@/utils/const';
+import { useBridgeModeStore, useOperationStore } from '@/store/store';
+import { ClaimState, BurnState, EVM_EXPLORER } from '@/utils/const';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 export function RedeemLayout(props: LoadingBoxProps) {
   const { burnState } = props;
 
   const { burn, approve, claim } = useGlobalStatusesStore();
-  const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
+  const { burnTxId, getCurrentRedeemOperation, claimTxId } =
+    useOperationStore();
+
+  const { currentMode } = useBridgeModeStore();
+
+  const [currentIdToDisplay, setCurrentIdToDisplay] = useState<string>('');
+  const [linkToDisplay, setLinkToDisplay] = useState<string>('');
+
   const evmWalletName = useConnectorName();
 
   // wait for burn success --> then check additional conditions
   // once burn is a success show claim button + change title & block redeem flow
   const isBurnSuccessful = burn === Status.Success;
 
-  const explorerUrl = linkifyMassaOpIdToExplo(burnTxId as string);
-
   const claimState = getCurrentRedeemOperation()?.claimState;
+
+  useEffect(() => {
+    if (claimTxId && isBurnSuccessful) {
+      setCurrentIdToDisplay(claimTxId);
+      setLinkToDisplay(`${EVM_EXPLORER[currentMode]}tx/${claimTxId}`);
+    } else if (burnTxId) {
+      setCurrentIdToDisplay(burnTxId);
+      setLinkToDisplay(linkifyMassaOpIdToExplo(burnTxId));
+    }
+  }, [burnTxId, claimTxId]);
 
   return (
     <>
@@ -56,7 +72,10 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <ClaimRedeem />}
-        <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
+        <ShowLinkToExplorers
+          explorerUrl={linkToDisplay}
+          currentTxID={currentIdToDisplay}
+        />
       </div>
     </>
   );
