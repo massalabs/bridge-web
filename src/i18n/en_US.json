@@ -385,8 +385,8 @@
     "burn-releasing-error": "(error during release... )"
   },
   "update-massa-wallet-warning": {
-    "1": "You are using a version lower than 0.3.3,",
-    "2": "please update your module via Massa Station",
-    "3": "to ensure that your asset balance is displayed correctly."
+    "1": "Update Massa Wallet to version 0.3.3 or higher.",
+    "2": "To update it, go to Explore Module Store in your Station.",
+    "3": "This is to ensure that your token balances will be correctly displayed."
   }
 }
