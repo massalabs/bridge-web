@@ -11,7 +11,6 @@ import { UpdateMassaWalletWarning } from './UpdateMassaWalletWarning';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
-import { useIsMassaWalletCurrentProvider } from '@/custom/bridge/useIsMassaWalletCurrentProvider';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
@@ -19,8 +18,6 @@ import { useAccountStore } from '@/store/store';
 export function MassaWallet() {
   const { currentProvider, providers, setCurrentProvider, isFetching } =
     useAccountStore();
-
-  const isMassaWalletCurrentProvider = useIsMassaWalletCurrentProvider();
 
   const [selectedProvider, setSelectedProvider] = useState<
     SUPPORTED_MASSA_WALLETS | undefined
@@ -81,7 +78,7 @@ export function MassaWallet() {
     <>
       <div className="flex justify-between items-center mb-4  ">
         <div className="flex gap-2 items-center">
-          {isMassaWalletCurrentProvider && <UpdateMassaWalletWarning />}
+          <UpdateMassaWalletWarning />
           {renderSelectedWallet()}
           <ChainStatus
             context={ChainContext.CONNECT}

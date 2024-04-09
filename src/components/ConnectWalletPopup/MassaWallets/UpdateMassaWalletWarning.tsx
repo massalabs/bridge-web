@@ -2,6 +2,7 @@ import { Tooltip } from '@massalabs/react-ui-kit';
 import { FiAlertTriangle } from 'react-icons/fi';
 import * as Semver from 'semver';
 import { useResource } from '@/custom/api/useResource';
+import { useIsMassaWalletCurrentProvider } from '@/custom/bridge/useIsMassaWalletCurrentProvider';
 import Intl from '@/i18n/i18n';
 import { MASSA_STATION_PLUGIN } from '@/utils/const';
 
@@ -18,7 +19,12 @@ const MASSA_STATION_PLUGIN_NAME = 'Massa Wallet';
 const MASSA_STATION_PLUGIN_VERSION = '0.3.3';
 
 export function UpdateMassaWalletWarning(props: { customClass?: string }) {
-  const { data } = useResource<PluginInfo[]>(MASSA_STATION_PLUGIN);
+  const isMassaWalletCurrentProvider = useIsMassaWalletCurrentProvider();
+
+  const { data } = useResource<PluginInfo[]>(
+    MASSA_STATION_PLUGIN,
+    isMassaWalletCurrentProvider,
+  );
 
   const version = data?.find(
     (plugin) => plugin.name === MASSA_STATION_PLUGIN_NAME,

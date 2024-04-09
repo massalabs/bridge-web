@@ -5,7 +5,6 @@ import { iconsNetworks } from '../BoxLayout';
 import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, MASSA_TOKEN } from '@/const';
-import { useIsMassaWalletCurrentProvider } from '@/custom/bridge/useIsMassaWalletCurrentProvider';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -15,7 +14,6 @@ export function MassaHeader() {
   const { massaNetwork: getMassaNetwork, isMainnet: getIsMainnet } =
     useBridgeModeStore();
   const massaNetwork = getMassaNetwork();
-  const isMassaWalletCurrentProvider = useIsMassaWalletCurrentProvider();
 
   const isMainnet = getIsMainnet();
   const hasNoAccounts = !accounts?.length;
@@ -25,9 +23,7 @@ export function MassaHeader() {
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2 flex items-center">
-        {isMassaWalletCurrentProvider && (
-          <UpdateMassaWalletWarning customClass="mr-3" />
-        )}
+        <UpdateMassaWalletWarning customClass="mr-3" />
         <Dropdown
           readOnly={true}
           options={[
