@@ -4,7 +4,7 @@ import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import { iconsNetworks } from '../BoxLayout';
 import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain } from '@/const';
+import { Blockchain, MASSA_TOKEN, SUPPORTED_MASSA_WALLETS } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -19,10 +19,20 @@ export function MassaHeader() {
 
   const isConnected = !isFetching && currentProvider && !hasNoAccounts;
 
+  function renderWalletUpdateWarning(): boolean {
+    if (!currentProvider) return false;
+    if (currentProvider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
+      return true;
+    }
+    return false;
+  }
+
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2 flex items-center">
-        <UpdateMassaWalletWarning customClass="mr-3" />
+        {renderWalletUpdateWarning() && (
+          <UpdateMassaWalletWarning customClass="mr-3" />
+        )}
         <Dropdown
           readOnly={true}
           options={[

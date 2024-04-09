@@ -74,11 +74,19 @@ export function MassaWallet() {
     }
   }
 
+  function renderWalletUpdateWarning(): boolean {
+    if (!currentProvider) return false;
+    if (currentProvider.name() === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
+      return true;
+    }
+    return false;
+  }
+
   return (
     <>
       <div className="flex justify-between items-center mb-4  ">
         <div className="flex gap-2 items-center">
-          <UpdateMassaWalletWarning />
+          {renderWalletUpdateWarning() && <UpdateMassaWalletWarning />}
           {renderSelectedWallet()}
           <ChainStatus
             context={ChainContext.CONNECT}
