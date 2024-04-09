@@ -1,18 +1,20 @@
+import { MAINNET, BUILDNET } from '@massalabs/massa-web3';
 import { Dropdown } from '@massalabs/react-ui-kit';
 import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import { iconsNetworks } from '../BoxLayout';
 import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain, MASSA_TOKEN } from '@/const';
+import { Blockchain } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 
 export function MassaHeader() {
   const { isFetching, accounts, currentProvider } = useAccountStore();
-  const { massaNetwork: getMassaNetwork } = useBridgeModeStore();
+  const { massaNetwork: getMassaNetwork, isMainnet: getIsMainnet } =
+    useBridgeModeStore();
   const massaNetwork = getMassaNetwork();
-
+  const isMainnet = getIsMainnet();
   const hasNoAccounts = !accounts?.length;
 
   const isConnected = !isFetching && currentProvider && !hasNoAccounts;
@@ -28,7 +30,9 @@ export function MassaHeader() {
               item: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
                 `general.${massaNetwork}`,
               )}`,
-              icon: iconsNetworks[MASSA_TOKEN],
+              icon: isMainnet
+                ? iconsNetworks[MAINNET]
+                : iconsNetworks[BUILDNET],
             },
           ]}
         />
