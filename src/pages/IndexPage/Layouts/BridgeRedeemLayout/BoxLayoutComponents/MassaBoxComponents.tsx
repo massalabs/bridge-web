@@ -4,7 +4,7 @@ import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import { iconsNetworks } from '../BoxLayout';
 import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain, MASSA_TOKEN } from '@/const';
+import { Blockchain } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';

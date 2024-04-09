@@ -42,7 +42,7 @@ export function UpdateMassaWalletWarning(props: { customClass?: string }) {
     </>
   );
 
-  if (!needShowWarning) return null;
+  if (!needShowWarning || !isMassaWalletCurrentProvider) return null;
 
   return (
     <div className={`flex items-center ${props.customClass}`}>
