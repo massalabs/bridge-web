@@ -14,6 +14,7 @@ export function MassaHeader() {
   const { massaNetwork: getMassaNetwork, isMainnet: getIsMainnet } =
     useBridgeModeStore();
   const massaNetwork = getMassaNetwork();
+
   const isMainnet = getIsMainnet();
   const hasNoAccounts = !accounts?.length;
 
