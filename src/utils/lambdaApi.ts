@@ -97,7 +97,7 @@ export function burnOpApiToDTO(
 ): BurnRedeemOperation {
   const op = {
     ...burn,
-    claimState: getClaimState(burn.serverState, burn.outputId),
+    claimState: getClaimState(burn.serverState, burn.isConfirmed),
   };
 
   return op;
@@ -105,7 +105,7 @@ export function burnOpApiToDTO(
 
 function getClaimState(
   serverState: BridgingState,
-  outputId?: string,
+  isConfirmed?: boolean,
 ): ClaimState {
   const statesCorrespondence = {
     // Relayer are adding signatures
@@ -132,7 +132,7 @@ function getClaimState(
 
   // The operation state given by the lambda is processing but the operation may be already claimed
   // if the outputTxId is set, so in this case we set the claimState to SUCCESS
-  if (serverState === BridgingState.processing && outputId) {
+  if (serverState === BridgingState.processing && isConfirmed) {
     return ClaimState.SUCCESS;
   }
 
