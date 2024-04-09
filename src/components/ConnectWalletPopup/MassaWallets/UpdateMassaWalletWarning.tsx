@@ -32,7 +32,7 @@ export function UpdateMassaWalletWarning(props: { customClass?: string }) {
 
   if (version === undefined) return null;
 
-  const needShowWarning = Semver.lt(version, MASSA_STATION_PLUGIN_VERSION);
+  const displayUpdateWarning = Semver.lt(version, MASSA_STATION_PLUGIN_VERSION);
 
   const body = (
     <>
@@ -42,7 +42,7 @@ export function UpdateMassaWalletWarning(props: { customClass?: string }) {
     </>
   );
 
-  if (!needShowWarning || !isMassaWalletCurrentProvider) return null;
+  if (!displayUpdateWarning || !isMassaWalletCurrentProvider) return null;
 
   return (
     <div className={`flex items-center ${props.customClass}`}>
