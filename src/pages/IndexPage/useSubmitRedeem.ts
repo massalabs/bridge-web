@@ -1,25 +1,17 @@
 import { SyntheticEvent } from 'react';
-import { useAccount } from 'wagmi';
 import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
-import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
+import { useBurn } from '@/custom/bridge/useBurn';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import {
-  useAccountStore,
-  useOperationStore,
-  useTokenStore,
-} from '@/store/store';
+import { useOperationStore } from '@/store/store';
+import { BurnState } from '@/utils/const';
 
 export function useSubmitRedeem() {
-  const { selectedToken } = useTokenStore();
-
-  const { setBox } = useGlobalStatusesStore();
+  const { setBox, setBurn } = useGlobalStatusesStore();
   const { amount } = useOperationStore();
-  const { address: evmAddress } = useAccount();
   const { tokenBalance: tokenBalanceEVM } = useEvmToken();
-
-  const { massaClient } = useAccountStore();
+  const { handleBurnRedeem } = useBurn();
 
   // TODO/: replace burn state by serverstate
 
@@ -27,24 +19,14 @@ export function useSubmitRedeem() {
     console.log('handleSubmitRedeem');
     e.preventDefault();
     // validate amount to transact
-    if (!validate(tokenBalanceEVM) || !amount || !selectedToken) return;
+    if (!validate(tokenBalanceEVM) || !amount) return;
     setBox(Status.Loading);
-
-    if (!massaClient) {
-      return;
-    }
+    setBurn(Status.Loading);
     const approved = await handleApproveRedeem(amount);
-
     if (approved) {
-      if (!evmAddress) {
-        return;
-      }
-
-      await handleBurnRedeem({
-        recipient: evmAddress,
-        amount,
-        // setBurnState,
-      });
+      console.log(BurnState.AWAITING_INCLUSION);
+      await handleBurnRedeem();
+      console.log(BurnState.PENDING);
     }
   }
   return { handleSubmitRedeem };

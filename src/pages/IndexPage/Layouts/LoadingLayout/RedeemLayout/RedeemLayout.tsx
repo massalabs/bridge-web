@@ -1,17 +1,38 @@
+import { useEffect } from 'react';
 import { Tooltip } from '@massalabs/react-ui-kit';
+import { parseUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
+import { useFetchBurnEvent } from '@/custom/bridge/useFetchBurnEvent';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useOperationStore } from '@/store/store';
+import {
+  useAccountStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store/store';
 import { ClaimState } from '@/utils/const';
+import {
+  BridgingState,
+  Entities,
+  HistoryOperationStatus,
+} from '@/utils/lambdaApi';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 export function RedeemLayout() {
-  const { burn, approve, claim } = useGlobalStatusesStore();
-  const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
+  const { burn, approve, claim, setBurn } = useGlobalStatusesStore();
+  const {
+    burnTxId,
+    getCurrentRedeemOperation,
+    appendBurnRedeemOperation,
+    amount,
+  } = useOperationStore();
+  const { connectedAccount } = useAccountStore();
+  const { selectedToken } = useTokenStore();
+  const { address: evmAddress } = useAccount();
   const evmWalletName = useConnectorName();
 
   // wait for burn success --> then check additional conditions
@@ -21,6 +42,37 @@ export function RedeemLayout() {
   const explorerUrl = linkifyMassaOpIdToExplo(burnTxId as string);
 
   const claimState = getCurrentRedeemOperation()?.claimState;
+
+  const lambdaResponse = useFetchBurnEvent();
+
+  const lambdaResponseIsEmpty =
+    lambdaResponse === undefined || lambdaResponse.length === 0;
+
+  useEffect(() => {
+    console.log();
+    if (burn === Status.Success) return;
+    console.log('lambdaResponse', lambdaResponse);
+    if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
+      return;
+    console.log('burn is successful');
+    setBurn(Status.Success);
+    appendBurnRedeemOperation({
+      inputId: burnTxId as string,
+      signatures: [],
+      claimState: ClaimState.RETRIEVING_INFO,
+      amount: parseUnits(amount, selectedToken.decimals).toString(),
+      recipient: evmAddress as string,
+      evmToken: selectedToken.evmToken,
+      massaToken: selectedToken.massaToken,
+      emitter: connectedAccount?.address() || '',
+      createdAt: new Date().toISOString(),
+      serverState: BridgingState.new,
+      historyStatus: HistoryOperationStatus.Unknown,
+      entity: Entities.Burn,
+      evmChainId: selectedToken.chainId,
+      isConfirmed: false,
+    });
+  }, [lambdaResponse, lambdaResponseIsEmpty, setBurn]);
 
   return (
     <>

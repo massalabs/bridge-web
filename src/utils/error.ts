@@ -10,6 +10,7 @@ export interface CustomError extends Error {
 const ERRORS_MESSAGES = [
   'unable to unprotect wallet',
   'TransactionExecutionError: User rejected the request',
+  'UserRejectionError: The operation callSmartContract was rejected by the user',
 ];
 
 const WARNING_MESSAGE =
