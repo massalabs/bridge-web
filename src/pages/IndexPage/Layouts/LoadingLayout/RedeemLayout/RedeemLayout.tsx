@@ -1,18 +1,15 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
-import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
-import { ClaimState, BurnState } from '@/utils/const';
+import { ClaimState } from '@/utils/const';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
-export function RedeemLayout(props: LoadingBoxProps) {
-  const { burnState } = props;
-
+export function RedeemLayout() {
   const { burn, approve, claim } = useGlobalStatusesStore();
   const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
   const evmWalletName = useConnectorName();
@@ -35,7 +32,8 @@ export function RedeemLayout(props: LoadingBoxProps) {
         <div className="flex justify-between">
           <p className="mas-body-2">
             {Intl.t('index.loading-box.burn-label', {
-              state: getBurnStateTranslation(burnState),
+              // state: getBurnStateTranslation(burnState),
+              state: 'bob & alice',
             })}
           </p>
           <LoadingState state={burn} />
@@ -80,21 +78,21 @@ function getClaimStateTranslation(claimState?: ClaimState) {
   }
 }
 
-function getBurnStateTranslation(burnState?: BurnState) {
-  switch (burnState) {
-    case BurnState.AWAITING_INCLUSION:
-      return Intl.t('index.loading-box.burn-label-awaiting-inclusion');
-    case BurnState.PENDING:
-      return Intl.t('index.loading-box.burn-label-included-pending');
-    case BurnState.SUCCESS:
-      return Intl.t('index.loading-box.burn-label-success');
-    case BurnState.SIGNATURE_TIMEOUT:
-      return Intl.t('index.loading-box.burn-label-signature-timeout');
-    case BurnState.REJECTED:
-      return Intl.t('index.loading-box.burn-label-rejected');
-    case BurnState.ERROR:
-      return Intl.t('index.loading-box.burn-label-error');
-    default:
-      return '';
-  }
-}
+// function getBurnStateTranslation(burnState?: BurnState) {
+//   switch (burnState) {
+//     case BurnState.AWAITING_INCLUSION:
+//       return Intl.t('index.loading-box.burn-label-awaiting-inclusion');
+//     case BurnState.PENDING:
+//       return Intl.t('index.loading-box.burn-label-included-pending');
+//     case BurnState.SUCCESS:
+//       return Intl.t('index.loading-box.burn-label-success');
+//     case BurnState.SIGNATURE_TIMEOUT:
+//       return Intl.t('index.loading-box.burn-label-signature-timeout');
+//     case BurnState.REJECTED:
+//       return Intl.t('index.loading-box.burn-label-rejected');
+//     case BurnState.ERROR:
+//       return Intl.t('index.loading-box.burn-label-error');
+//     default:
+//       return '';
+//   }
+// }

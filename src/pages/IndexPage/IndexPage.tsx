@@ -1,20 +1,8 @@
-import { useState, SyntheticEvent, useEffect, useCallback } from 'react';
-import { parseUnits } from 'viem';
-import { useAccount } from 'wagmi';
+import { useEffect } from 'react';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
-import { PendingOperationLayout } from './Layouts/LoadingLayout/PendingOperationLayout';
+import { useBridgeUtils } from './Layouts/useBridgeUtils';
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
-import { handleApproveRedeem } from '@/custom/bridge/handlers/handleApproveRedeem';
-import { handleBurnRedeem } from '@/custom/bridge/handlers/handleBurnRedeem';
-import {
-  handleEvmApproveError,
-  handleLockError,
-} from '@/custom/bridge/handlers/handleTransactionErrors';
-import { validate } from '@/custom/bridge/handlers/validateTransaction';
-import { useEvmApprove } from '@/custom/bridge/useEvmApprove';
-import useEvmToken from '@/custom/bridge/useEvmToken';
-import { useLock } from '@/custom/bridge/useLock';
 import {
   ChainContext,
   useEvmChainValidation,
@@ -27,34 +15,14 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { BurnState } from '@/utils/const';
 
 export function IndexPage() {
-  const { massaClient, connectedAccount, isFetching } = useAccountStore();
+  const { connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { side, amount, setAmount, resetTxIDs, isMassaToEvm } =
     useOperationStore();
 
   const massaToEvm = isMassaToEvm();
-
-  const { address: evmAddress } = useAccount();
-
-  const { allowance: allowanceEVM, tokenBalance: tokenBalanceEVM } =
-    useEvmToken();
-
-  const [burnState, setBurnState] = useState<BurnState>(BurnState.INIT);
-
-  const {
-    approve,
-    setMint,
-    box,
-    setBox,
-    setLock,
-    setApprove,
-    reset,
-    setAmountError,
-  } = useGlobalStatusesStore();
-
   const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
   const isValidMassaNetwork = useMassaNetworkValidation();
 
@@ -202,19 +170,10 @@ export function IndexPage() {
 
   return (
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
-      {/* If loading -> show loading layout else show home page*/}
-      {isOperationPending ? (
-        <PendingOperationLayout
-          onClose={closeLoadingBox}
-          burnState={burnState}
-        />
-      ) : (
-        <BridgeRedeemLayout
-          isBlurred={isBlurred}
-          isButtonDisabled={isButtonDisabled}
-          handleSubmit={handleSubmit}
-        />
-      )}
+      <BridgeRedeemLayout
+        isBlurred={isBlurred}
+        isButtonDisabled={isButtonDisabled}
+      />
       {!isOperationPending && <ClaimTokensPopup />}
     </div>
   );

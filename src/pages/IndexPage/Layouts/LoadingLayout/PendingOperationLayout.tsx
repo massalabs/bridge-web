@@ -4,20 +4,16 @@ import { LoadingState } from './LoadingState';
 import { RedeemLayout } from './RedeemLayout/RedeemLayout';
 import { SuccessLayout } from './SuccessLayout';
 import { WarningLayout } from './WarningLayout';
+import { useBridgeUtils } from '../useBridgeUtils';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
-import { BurnState } from '@/utils/const';
 
-export interface LoadingBoxProps {
-  onClose: () => void;
-  burnState: BurnState;
-}
-
-export function PendingOperationLayout(props: LoadingBoxProps) {
-  const { onClose } = props;
+export function PendingOperationLayout() {
   const { isMassaToEvm } = useOperationStore();
   const massaToEvm = isMassaToEvm();
+
+  const { closeLoadingBox } = useBridgeUtils();
 
   const { box } = useGlobalStatusesStore();
 
@@ -59,11 +55,11 @@ export function PendingOperationLayout(props: LoadingBoxProps) {
   function getLoadingBoxContent() {
     switch (true) {
       case IS_BOX_SUCCESS:
-        return <SuccessLayout {...props} />;
+        return <SuccessLayout />;
       case IS_BOX_WARNING:
         return <WarningLayout />;
       case massaToEvm:
-        return <RedeemLayout {...props} />;
+        return <RedeemLayout />;
       default:
         return <BridgeLayout />;
     }
@@ -80,7 +76,7 @@ export function PendingOperationLayout(props: LoadingBoxProps) {
             className="text-neutral bg-primary rounded-lg text-sm p-1.5 ml-auto inline-flex items-center
                 hover:bg-tertiary hover:text-c-primary"
             type="button"
-            onClick={onClose}
+            onClick={closeLoadingBox}
           >
             <FiX className="w-5 h-5" />
           </button>

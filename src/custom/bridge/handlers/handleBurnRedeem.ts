@@ -25,7 +25,6 @@ import {
 export interface BurnRedeemParams {
   recipient: `0x${string}`;
   amount: string;
-  setBurnState: (state: BurnState) => void;
 }
 
 export async function handleBurnRedeem(
@@ -36,7 +35,7 @@ export async function handleBurnRedeem(
   try {
     await initiateBurn(args);
   } catch (error) {
-    handleBurnError(args, error);
+    handleBurnError(error);
     setBox(Status.Error);
     setBurn(Status.Error);
     return false;
@@ -44,11 +43,7 @@ export async function handleBurnRedeem(
   return true;
 }
 
-async function initiateBurn({
-  recipient,
-  amount,
-  setBurnState,
-}: BurnRedeemParams) {
+async function initiateBurn({ recipient, amount }: BurnRedeemParams) {
   const { setBurn } = useGlobalStatusesStore.getState();
   const { setBurnTxId, appendBurnRedeemOperation } =
     useOperationStore.getState();
@@ -62,7 +57,8 @@ async function initiateBurn({
 
   setBurn(Status.Loading);
 
-  setBurnState(BurnState.AWAITING_INCLUSION);
+  // setBurnState(BurnState.AWAITING_INCLUSION);
+  console.log(BurnState.AWAITING_INCLUSION);
   const burnOpId = await forwardBurn(recipient, amount);
   setBurnTxId(burnOpId);
 
@@ -86,26 +82,31 @@ async function initiateBurn({
     evmChainId: selectedToken.chainId,
     isConfirmed: false,
   });
-  setBurnState(BurnState.SUCCESS);
+  console.log(BurnState.SUCCESS);
+  // setBurnState(BurnState.SUCCESS);
 }
 
-function handleBurnError(args: BurnRedeemParams, error: undefined | unknown) {
-  const { setBurnState } = args;
+function handleBurnError(error: undefined | unknown) {
+  // const { setBurnState } = args;
 
   const typedError = error as CustomError;
   const isErrorTimeout = typedError.cause?.error === TIMEOUT;
   if (isRejectedByUser(typedError)) {
     toast.error(Intl.t('index.burn.error.rejected'));
-    setBurnState(BurnState.REJECTED);
+    // setBurnState(BurnState.REJECTED);
+    console.log(BurnState.REJECTED);
   } else if (isWalletTimeoutError(typedError)) {
     toast.error(Intl.t('index.burn.error.timeout-signature'));
-    setBurnState(BurnState.SIGNATURE_TIMEOUT);
+    // setBurnState(BurnState.SIGNATURE_TIMEOUT);
+    console.log(BurnState.SIGNATURE_TIMEOUT);
   } else if (isErrorTimeout) {
     // when waitIncludedOperation fails to wait operation finality
-    setBurnState(BurnState.OPERATION_FINALITY_TIMEOUT);
+    // setBurnState(BurnState.OPERATION_FINALITY_TIMEOUT);
+    console.log(BurnState.OPERATION_FINALITY_TIMEOUT);
     toast.error(Intl.t('index.burn.error.timeout'));
   } else {
-    setBurnState(BurnState.ERROR);
+    // setBurnState(BurnState.ERROR);
+    console.log(BurnState.ERROR);
     toast.error(Intl.t('index.burn.error.unknown'));
     console.error(error);
   }

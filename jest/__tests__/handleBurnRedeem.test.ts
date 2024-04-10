@@ -23,7 +23,7 @@ describe('handleBurnRedeem', () => {
     burnArgs = {
       recipient,
       amount,
-      setBurnState: mockSetBurnStates,
+      // setBurnState: mockSetBurnStates,
     };
   });
 

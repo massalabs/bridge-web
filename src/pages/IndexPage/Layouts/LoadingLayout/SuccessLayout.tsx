@@ -1,8 +1,8 @@
 import { formatAmountToDisplay } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
+import { useBridgeUtils } from '../useBridgeUtils';
 import { Blockchain } from '@/const';
 import { addTokensBuildnetLink, addTokensMainnetLink } from '@/const/faq';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
@@ -15,8 +15,7 @@ import {
 import { EVM_EXPLORER } from '@/utils/const';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
-export function SuccessLayout(props: LoadingBoxProps) {
-  const { onClose } = props;
+export function SuccessLayout() {
   const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
@@ -25,7 +24,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
     useBridgeModeStore();
   const evmWalletName = useConnectorName();
   const isMainnet = getIsMainnet();
-
+  const { closeLoadingBox } = useBridgeUtils();
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
 
