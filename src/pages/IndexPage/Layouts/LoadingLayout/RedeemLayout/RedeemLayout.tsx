@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -11,10 +11,11 @@ import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
+  useBridgeModeStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { BurnState, ClaimState } from '@/utils/const';
+import { BurnState, ClaimState, EVM_EXPLORER } from '@/utils/const';
 import {
   BridgingState,
   Entities,
@@ -30,17 +31,14 @@ export function RedeemLayout() {
     appendBurnRedeemOperation,
     amount,
     setBurnState,
+    claimTxId,
   } = useOperationStore();
   const { connectedAccount } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { address: evmAddress } = useAccount();
   const evmWalletName = useConnectorName();
-
-  // wait for burn success --> then check additional conditions
-  // once burn is a success show claim button + change title & block redeem flow
+  const { currentMode } = useBridgeModeStore();
   const isBurnSuccessful = burn === Status.Success;
-
-  const explorerUrl = linkifyMassaOpIdToExplo(burnTxId as string);
 
   const claimState = getCurrentRedeemOperation()?.claimState;
 
@@ -49,29 +47,67 @@ export function RedeemLayout() {
   const lambdaResponseIsEmpty =
     lambdaResponse === undefined || lambdaResponse.length === 0;
 
+  const [currentIdToDisplay, setCurrentIdToDisplay] = useState<
+    string | undefined
+  >(undefined);
+
+  const [currentExplorerUrl, setCurrentExplorerUrl] = useState<string>('');
+
   useEffect(() => {
+    if (burnTxId && burn !== Status.Success) {
+      setCurrentIdToDisplay(burnTxId);
+      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId as string));
+    }
     if (burn === Status.Success) return;
     if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
       return;
-    setBurn(Status.Success);
-    setBurnState(BurnState.SUCCESS);
-    appendBurnRedeemOperation({
-      inputId: burnTxId as string,
-      signatures: [],
-      claimState: ClaimState.RETRIEVING_INFO,
-      amount: parseUnits(amount, selectedToken.decimals).toString(),
-      recipient: evmAddress as string,
-      evmToken: selectedToken.evmToken,
-      massaToken: selectedToken.massaToken,
-      emitter: connectedAccount?.address() || '',
-      createdAt: new Date().toISOString(),
-      serverState: BridgingState.new,
-      historyStatus: HistoryOperationStatus.Unknown,
-      entity: Entities.Burn,
-      evmChainId: selectedToken.chainId,
-      isConfirmed: false,
-    });
-  }, [lambdaResponse, lambdaResponseIsEmpty, setBurn]);
+    if (
+      lambdaResponse[0].inputId === burnTxId &&
+      lambdaResponse[0].serverState === BridgingState.processing
+    ) {
+      setBurn(Status.Success);
+      setBurnState(BurnState.SUCCESS);
+      appendBurnRedeemOperation({
+        inputId: burnTxId as string,
+        signatures: [],
+        claimState: ClaimState.RETRIEVING_INFO,
+        amount: parseUnits(amount, selectedToken.decimals).toString(),
+        recipient: evmAddress as string,
+        evmToken: selectedToken.evmToken,
+        massaToken: selectedToken.massaToken,
+        emitter: connectedAccount?.address() || '',
+        createdAt: new Date().toISOString(),
+        serverState: BridgingState.new,
+        historyStatus: HistoryOperationStatus.Unknown,
+        entity: Entities.Burn,
+        evmChainId: selectedToken.chainId,
+        isConfirmed: false,
+      });
+    }
+  }, [
+    lambdaResponse,
+    lambdaResponseIsEmpty,
+    setBurn,
+    burn,
+    amount,
+    evmAddress,
+    selectedToken,
+    burnTxId,
+    setBurnState,
+    appendBurnRedeemOperation,
+    connectedAccount,
+  ]);
+
+  useEffect(() => {
+    if (burn !== Status.Success && burnTxId) {
+      setCurrentIdToDisplay(burnTxId);
+      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId));
+    }
+    if (claimTxId && burn === Status.Success) {
+      setCurrentIdToDisplay(claimTxId);
+      setCurrentExplorerUrl(`${EVM_EXPLORER[currentMode]}tx/${claimTxId}`);
+    }
+  }, [burn, burnTxId, claimTxId, currentMode]);
 
   return (
     <>
@@ -104,7 +140,10 @@ export function RedeemLayout() {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <ClaimRedeem />}
-        <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
+        <ShowLinkToExplorers
+          explorerUrl={currentExplorerUrl}
+          currentTxID={currentIdToDisplay}
+        />
       </div>
     </>
   );
