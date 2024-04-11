@@ -4,7 +4,7 @@ import { LoadingState } from './LoadingState';
 import { RedeemLayout } from './RedeemLayout/RedeemLayout';
 import { SuccessLayout } from './SuccessLayout';
 import { WarningLayout } from './WarningLayout';
-import { useBridgeUtils } from '../../../../custom/bridge/useBridgeUtils';
+import { useBridgeUtils } from '@/custom/bridge/useBridgeUtils';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';

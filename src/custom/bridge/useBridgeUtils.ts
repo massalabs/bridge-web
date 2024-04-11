@@ -12,7 +12,7 @@ export function useBridgeUtils() {
     setAmount('');
     resetTxIDs();
     setBurnState(BurnState.INIT);
-  }, [reset, setAmount, resetTxIDs]);
+  }, [reset, setAmount, resetTxIDs, setBurnState]);
 
   return { closeLoadingBox, setBurnState };
 }

@@ -88,6 +88,7 @@ export function ClaimRedeem() {
     setClaim,
     updateCurrentRedeemOperation,
     setLoadingToError,
+    setClaimTxId,
   ]);
 
   // Event handler for claim button

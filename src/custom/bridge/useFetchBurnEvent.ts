@@ -19,9 +19,13 @@ export function useFetchBurnEvent() {
   );
 
   useEffect(() => {
-    if (data?.length) {
+    if (!data) return;
+    if (
+      data[0]?.serverState === 'processing' &&
+      data[0]?.inputId === burnTxId
+    ) {
       setEnableRefetch(false);
     }
-  }, [data]);
+  }, [data, burnTxId]);
   return data;
 }

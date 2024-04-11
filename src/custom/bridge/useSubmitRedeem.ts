@@ -27,15 +27,7 @@ export function useSubmitRedeem() {
         setBurnState(BurnState.PENDING);
       }
     },
-    [
-      amount,
-      tokenBalanceEVM,
-      setBox,
-      setBurn,
-      setBurnState,
-      handleApproveRedeem,
-      handleBurnRedeem,
-    ],
+    [amount, tokenBalanceEVM, setBox, setBurn, setBurnState, handleBurnRedeem],
   );
   return { handleSubmitRedeem };
 }

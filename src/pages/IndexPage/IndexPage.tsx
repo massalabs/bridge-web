@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { BridgeRedeemLayout } from './Layouts/BridgeRedeemLayout/BridgeRedeemLayout';
-import { useBridgeUtils } from '../../custom/bridge/useBridgeUtils';
+
 import { ClaimTokensPopup } from '@/components/ClaimTokensPopup/ClaimTokensPopup';
 import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
+import { useBridgeUtils } from '@/custom/bridge/useBridgeUtils';
 import {
   ChainContext,
   useEvmChainValidation,

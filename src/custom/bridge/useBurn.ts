@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Args } from '@massalabs/massa-web3';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -21,7 +22,7 @@ export function useBurn() {
   const { setBurnTxId, amount } = useOperationStore();
   const { address: evmAddress } = useAccount();
 
-  async function handleBurnRedeem() {
+  const handleBurnRedeem = useCallback(async () => {
     if (!amount) throw new Error('Amount not found');
     if (!massaClient) throw new Error('Massa client not found');
     if (!selectedToken) throw new Error('Token not selected');
@@ -49,7 +50,16 @@ export function useBurn() {
       setBox(Status.Error);
       setBurn(Status.Error);
     }
-  }
+  }, [
+    amount,
+    evmAddress,
+    massaClient,
+    selectedToken,
+    currentMode,
+    setBurnTxId,
+    setBox,
+    setBurn,
+  ]);
 
   return { handleBurnRedeem };
 }

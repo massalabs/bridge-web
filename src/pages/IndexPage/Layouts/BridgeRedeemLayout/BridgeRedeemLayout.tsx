@@ -7,10 +7,11 @@ import { useAccount } from 'wagmi';
 import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';
-import { useSubmitBridge } from '../../../../custom/bridge/useSubmitBridge';
-import { useSubmitRedeem } from '../../../../custom/bridge/useSubmitRedeem';
+
 import { GetTokensPopUpModal } from '@/components';
 import useEvmToken from '@/custom/bridge/useEvmToken';
+import { useSubmitBridge } from '@/custom/bridge/useSubmitBridge';
+import { useSubmitRedeem } from '@/custom/bridge/useSubmitRedeem';
 import Intl from '@/i18n/i18n';
 import { PendingOperationLayout } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
