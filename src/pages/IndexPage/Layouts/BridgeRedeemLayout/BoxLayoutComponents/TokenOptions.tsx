@@ -61,13 +61,14 @@ export function TokenOptions(props: TokenOptionsProps) {
     };
   }
 
-  function getIcon(token: IToken): JSX.Element {
+  function getIcon(symbolEVM: string): JSX.Element {
     const icons = {
       tDAI: getTokenIcons().tDAI,
       WETH: getTokenIcons().WETH,
       USDC: getTokenIcons().USDC,
+      DAI: getTokenIcons().tDAI,
     };
-    return icons[token.symbolEVM as SupportedTokens];
+    return icons[symbolEVM as SupportedTokens];
   }
 
   return (
@@ -78,7 +79,7 @@ export function TokenOptions(props: TokenOptionsProps) {
       options={tokens.map((token: IToken) => {
         return {
           item: nativeToken ? token.symbol : token.symbolEVM,
-          icon: getIcon(token),
+          icon: getIcon(token.symbolEVM),
           onClick: () => setSelectedToken(token),
         };
       })}
