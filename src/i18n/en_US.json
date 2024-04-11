@@ -114,7 +114,7 @@
         "speed-desc": " If Ethereum network load implies long confirmation times, increase the transaction fee in your Metamask wallet for faster processing.",
         "what-token-title": "What token do I need to use to pay for transaction fees on the Massa network?",
         "what-token-desc": " Massa network transactions require Massa’s native asset, the MAS token. When bridging to a new Massa address, you’ll receive {amount} MAS for free, with 0.001 allocated for storing your address on the ledger and the rest for a few future transaction fees. Learn more about Massa storage costs in ",
-        "zero-tx-fees-title": "Why are there zero transaction fees on the Massa network?",
+        "zero-tx-fees-title": "Why are there low transaction fees on the Massa network?",
         "zero-tx-fees-desc": "As Massa is a new network, chain activity is low enough to have zero transaction fees. Validator APY sufficiently incentivizes block production. In the future, as chain activity increases, transaction fees may also increase.",
         "storage-cost-title": "What is the storage cost on the Massa network?",
         "storage-cost-desc": "The cost for allocating an address on the ledger for the first time on the Massa network, is 0.001 MAS. For additional information please refer to ",
