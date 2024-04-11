@@ -306,8 +306,20 @@ export function MainnetFAQ() {
           </p>
           <br /> <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-2')}</p>
-          <br />
+          <br /> <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-5')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-6')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-7')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-8')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-9')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-10')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-11')}</p>
           <br />
         </AccordionContent>
       </Accordion>
