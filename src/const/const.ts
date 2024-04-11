@@ -34,7 +34,8 @@ export enum BridgeMode {
 
 export const config = {
   [BridgeMode.mainnet]: {
-    evmBridgeContract: '' as `0x${string}`,
+    evmBridgeContract:
+      '0xCD5dcE776c20260D96E2d0C65431f05da4fa8ba1' as `0x${string}`,
     massaBridgeContract: '',
     lambdaUrl:
       'https://gfltuhv4oouk5qs6jf7lv7tvp40vfwsj.lambda-url.eu-west-3.on.aws/',
