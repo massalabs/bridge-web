@@ -14,7 +14,7 @@ export function BridgeLayout() {
   const { currentMode } = useBridgeModeStore();
   const { lockTxId, mintTxId, setMintTxId } = useOperationStore();
 
-  const [currentIdToDisplay, setCurrentIdTODisplay] = useState<
+  const [currentIdToDisplay, setCurrentIdToDisplay] = useState<
     string | undefined
   >(undefined);
 
@@ -44,11 +44,11 @@ export function BridgeLayout() {
 
   useEffect(() => {
     if (lockTxId && lock !== Status.Success) {
-      setCurrentIdTODisplay(lockTxId);
+      setCurrentIdToDisplay(lockTxId);
       setCurrentExplorerUrl(`${EVM_EXPLORER[currentMode]}tx/${lockTxId}`);
     }
     if (lock === Status.Success && mintTxId) {
-      setCurrentIdTODisplay(mintTxId);
+      setCurrentIdToDisplay(mintTxId);
       setCurrentExplorerUrl(linkifyMassaOpIdToExplo(mintTxId));
     }
   }, [lockTxId, lock, mintTxId, currentMode]);

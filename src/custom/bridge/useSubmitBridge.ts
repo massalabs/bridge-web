@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect } from 'react';
+import { SyntheticEvent, useCallback, useEffect } from 'react';
 import { parseUnits } from 'viem';
 import {
   handleEvmApproveError,
@@ -37,9 +37,7 @@ export function useSubmitBridge() {
       return;
     }
     if (approveSuccess && amount) {
-      console.log('Approve success');
       setApprove(Status.Success);
-      console.log('Approve Loading');
       setLock(Status.Loading);
       writeLock();
     } else if (approveError) {
@@ -60,16 +58,13 @@ export function useSubmitBridge() {
 
   useEffect(() => {
     if (lockHash) {
-      console.log('Lock hash', lockHash);
       setLockTxId(lockHash);
     }
     if (isLockSuccess) {
-      console.log('Lock success');
       setLock(Status.Success);
       setMint(Status.Loading);
     }
     if (lockError) {
-      console.log('Lock error');
       handleLockError(lockError);
       setBox(Status.Error);
       setLock(Status.Error);
@@ -84,31 +79,42 @@ export function useSubmitBridge() {
     setMint,
   ]);
 
-  function handleSubmitBridge(e: SyntheticEvent) {
-    console.log('handleSubmitBridge');
-    e.preventDefault();
-    // validate amount to transact
-    if (!validate(tokenBalanceEVM) || !amount || !selectedToken) return;
+  const handleSubmitBridge = useCallback(
+    (e: SyntheticEvent) => {
+      e.preventDefault();
+      // validate amount to transact
+      if (!validate(tokenBalanceEVM) || !amount || !selectedToken) return;
 
-    // set loading box state which renders pending operation layout
-    setBox(Status.Loading);
+      // set loading box state which renders pending operation layout
+      setBox(Status.Loading);
 
-    // Init bridge approval
-    setApprove(Status.Loading);
-    let parsedAmount = parseUnits(amount, selectedToken.decimals);
-    const needApproval = allowanceEVM < parsedAmount;
+      // Init bridge approval
+      setApprove(Status.Loading);
+      let parsedAmount = parseUnits(amount, selectedToken.decimals);
+      const needApproval = allowanceEVM < parsedAmount;
 
-    if (needApproval) {
-      console.log('Need approval');
-      // writing bridge approval
-      writeEvmApprove();
-      return;
-    }
-    // Bridge does not need approval : writing lock
-    setApprove(Status.Success);
+      if (needApproval) {
+        // writing bridge approval
+        writeEvmApprove();
+        return;
+      }
+      // Bridge does not need approval : writing lock
+      setApprove(Status.Success);
 
-    writeLock();
-    setLock(Status.Loading);
-  }
+      writeLock();
+      setLock(Status.Loading);
+    },
+    [
+      amount,
+      allowanceEVM,
+      selectedToken,
+      tokenBalanceEVM,
+      setBox,
+      setApprove,
+      writeEvmApprove,
+      writeLock,
+      setLock,
+    ],
+  );
   return { handleSubmitBridge };
 }

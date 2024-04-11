@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ClaimState, SIDE } from '@/utils/const';
+import { BurnState, ClaimState, SIDE } from '@/utils/const';
 import { OperationHistoryItem } from '@/utils/lambdaApi';
 
 export interface BurnRedeemOperation extends OperationHistoryItem {
@@ -20,6 +20,9 @@ export interface OperationStoreState {
     inputOpId: string,
   ) => BurnRedeemOperation | undefined;
   getCurrentRedeemOperation: () => BurnRedeemOperation | undefined;
+
+  burnState: BurnState;
+  setBurnState: (burnState: BurnState) => void;
 
   side: SIDE;
   setSide(side: SIDE): void;
@@ -105,6 +108,11 @@ export const useOperationStore = create<OperationStoreState>(
     mintTxId: undefined,
     setMintTxId(mintTxId?: string) {
       set({ mintTxId });
+    },
+
+    burnState: BurnState.INIT,
+    setBurnState(burnState: BurnState) {
+      set({ burnState });
     },
 
     burnTxId: undefined,

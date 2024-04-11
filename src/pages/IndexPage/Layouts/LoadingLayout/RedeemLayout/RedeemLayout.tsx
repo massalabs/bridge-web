@@ -14,7 +14,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { ClaimState } from '@/utils/const';
+import { BurnState, ClaimState } from '@/utils/const';
 import {
   BridgingState,
   Entities,
@@ -29,6 +29,7 @@ export function RedeemLayout() {
     getCurrentRedeemOperation,
     appendBurnRedeemOperation,
     amount,
+    setBurnState,
   } = useOperationStore();
   const { connectedAccount } = useAccountStore();
   const { selectedToken } = useTokenStore();
@@ -49,13 +50,11 @@ export function RedeemLayout() {
     lambdaResponse === undefined || lambdaResponse.length === 0;
 
   useEffect(() => {
-    console.log();
     if (burn === Status.Success) return;
-    console.log('lambdaResponse', lambdaResponse);
     if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
       return;
-    console.log('burn is successful');
     setBurn(Status.Success);
+    setBurnState(BurnState.SUCCESS);
     appendBurnRedeemOperation({
       inputId: burnTxId as string,
       signatures: [],
@@ -84,8 +83,7 @@ export function RedeemLayout() {
         <div className="flex justify-between">
           <p className="mas-body-2">
             {Intl.t('index.loading-box.burn-label', {
-              // state: getBurnStateTranslation(burnState),
-              state: 'bob & alice',
+              state: getBurnStateTranslation(),
             })}
           </p>
           <LoadingState state={burn} />
@@ -130,21 +128,22 @@ function getClaimStateTranslation(claimState?: ClaimState) {
   }
 }
 
-// function getBurnStateTranslation(burnState?: BurnState) {
-//   switch (burnState) {
-//     case BurnState.AWAITING_INCLUSION:
-//       return Intl.t('index.loading-box.burn-label-awaiting-inclusion');
-//     case BurnState.PENDING:
-//       return Intl.t('index.loading-box.burn-label-included-pending');
-//     case BurnState.SUCCESS:
-//       return Intl.t('index.loading-box.burn-label-success');
-//     case BurnState.SIGNATURE_TIMEOUT:
-//       return Intl.t('index.loading-box.burn-label-signature-timeout');
-//     case BurnState.REJECTED:
-//       return Intl.t('index.loading-box.burn-label-rejected');
-//     case BurnState.ERROR:
-//       return Intl.t('index.loading-box.burn-label-error');
-//     default:
-//       return '';
-//   }
-// }
+function getBurnStateTranslation() {
+  const { burnState } = useOperationStore.getState();
+  switch (burnState) {
+    case BurnState.AWAITING_INCLUSION:
+      return Intl.t('index.loading-box.burn-label-awaiting-inclusion');
+    case BurnState.PENDING:
+      return Intl.t('index.loading-box.burn-label-included-pending');
+    case BurnState.SUCCESS:
+      return Intl.t('index.loading-box.burn-label-success');
+    case BurnState.SIGNATURE_TIMEOUT:
+      return Intl.t('index.loading-box.burn-label-signature-timeout');
+    case BurnState.REJECTED:
+      return Intl.t('index.loading-box.burn-label-rejected');
+    case BurnState.ERROR:
+      return Intl.t('index.loading-box.burn-label-error');
+    default:
+      return '';
+  }
+}

@@ -2,7 +2,7 @@ import { formatAmountToDisplay } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
-import { useBridgeUtils } from '../useBridgeUtils';
+import { useBridgeUtils } from '../../../../custom/bridge/useBridgeUtils';
 import { Blockchain } from '@/const';
 import { addTokensBuildnetLink, addTokensMainnetLink } from '@/const/faq';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
