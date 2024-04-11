@@ -17,14 +17,18 @@ export function useSubmitBridge() {
 
   const { setMint, setBox, setLock, setApprove, approve } =
     useGlobalStatusesStore();
+
   const { amount, setLockTxId } = useOperationStore();
+
   const {
     write: writeEvmApprove,
     isSuccess: approveSuccess,
     error: approveError,
   } = useEvmApprove();
+
   const { allowance: allowanceEVM, tokenBalance: tokenBalanceEVM } =
     useEvmToken();
+
   const {
     write: writeLock,
     isSuccess: isLockSuccess,

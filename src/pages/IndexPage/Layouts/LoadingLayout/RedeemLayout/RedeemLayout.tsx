@@ -1,113 +1,24 @@
-import { useEffect, useState } from 'react';
 import { Tooltip } from '@massalabs/react-ui-kit';
-import { parseUnits } from 'viem';
-import { useAccount } from 'wagmi';
 import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
-import { useFetchBurnEvent } from '@/custom/bridge/useFetchBurnEvent';
+import { useHandleBurnRedeem } from '@/custom/bridge/useHandleBurnRedeem';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import {
-  useAccountStore,
-  useBridgeModeStore,
-  useOperationStore,
-  useTokenStore,
-} from '@/store/store';
-import { BurnState, ClaimState, EVM_EXPLORER } from '@/utils/const';
-import {
-  BridgingState,
-  Entities,
-  HistoryOperationStatus,
-} from '@/utils/lambdaApi';
-import { linkifyMassaOpIdToExplo } from '@/utils/utils';
+import { useOperationStore } from '@/store/store';
+import { BurnState, ClaimState } from '@/utils/const';
 
 export function RedeemLayout() {
-  const { burn, approve, claim, setBurn } = useGlobalStatusesStore();
-  const {
-    burnTxId,
-    getCurrentRedeemOperation,
-    appendBurnRedeemOperation,
-    amount,
-    setBurnState,
-    claimTxId,
-  } = useOperationStore();
-  const { connectedAccount } = useAccountStore();
-  const { selectedToken } = useTokenStore();
-  const { address: evmAddress } = useAccount();
+  const { burn, approve, claim } = useGlobalStatusesStore();
+  const { getCurrentRedeemOperation } = useOperationStore();
+
   const evmWalletName = useConnectorName();
-  const { currentMode } = useBridgeModeStore();
   const isBurnSuccessful = burn === Status.Success;
 
   const claimState = getCurrentRedeemOperation()?.claimState;
 
-  const lambdaResponse = useFetchBurnEvent();
-
-  const lambdaResponseIsEmpty =
-    lambdaResponse === undefined || lambdaResponse.length === 0;
-
-  const [currentIdToDisplay, setCurrentIdToDisplay] = useState<
-    string | undefined
-  >(undefined);
-
-  const [currentExplorerUrl, setCurrentExplorerUrl] = useState<string>('');
-
-  useEffect(() => {
-    if (burnTxId && burn !== Status.Success) {
-      setCurrentIdToDisplay(burnTxId);
-      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId as string));
-    }
-    if (burn === Status.Success) return;
-    if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
-      return;
-    if (
-      lambdaResponse[0].inputId === burnTxId &&
-      lambdaResponse[0].serverState === BridgingState.processing
-    ) {
-      setBurn(Status.Success);
-      setBurnState(BurnState.SUCCESS);
-      appendBurnRedeemOperation({
-        inputId: burnTxId as string,
-        signatures: [],
-        claimState: ClaimState.RETRIEVING_INFO,
-        amount: parseUnits(amount, selectedToken.decimals).toString(),
-        recipient: evmAddress as string,
-        evmToken: selectedToken.evmToken,
-        massaToken: selectedToken.massaToken,
-        emitter: connectedAccount?.address() || '',
-        createdAt: new Date().toISOString(),
-        serverState: BridgingState.new,
-        historyStatus: HistoryOperationStatus.Unknown,
-        entity: Entities.Burn,
-        evmChainId: selectedToken.chainId,
-        isConfirmed: false,
-      });
-    }
-  }, [
-    lambdaResponse,
-    lambdaResponseIsEmpty,
-    setBurn,
-    burn,
-    amount,
-    evmAddress,
-    selectedToken,
-    burnTxId,
-    setBurnState,
-    appendBurnRedeemOperation,
-    connectedAccount,
-  ]);
-
-  useEffect(() => {
-    if (burn !== Status.Success && burnTxId) {
-      setCurrentIdToDisplay(burnTxId);
-      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId));
-    }
-    if (claimTxId && burn === Status.Success) {
-      setCurrentIdToDisplay(claimTxId);
-      setCurrentExplorerUrl(`${EVM_EXPLORER[currentMode]}tx/${claimTxId}`);
-    }
-  }, [burn, burnTxId, claimTxId, currentMode]);
+  const { currentIdToDisplay, currentExplorerUrl } = useHandleBurnRedeem();
 
   return (
     <>
