@@ -2,7 +2,6 @@ import {
   Args,
   Client,
   IReadData,
-  MAX_GAS_CALL,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
 import { parseUnits } from 'viem';
@@ -86,7 +85,6 @@ export async function getSupportedTokensList(
   }
 
   const returnObject = await publicClient.smartContracts().readSmartContract({
-    maxGas: MAX_GAS_CALL,
     targetAddress: contractAddress,
     targetFunction: 'supportedTokensList',
     parameter: [],
