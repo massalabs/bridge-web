@@ -33,7 +33,7 @@ describe('handleBurnRedeem', () => {
 
   test('should show success of burn (speculative success) event', async () => {
     smartContractsMock.getOperationStatus.mockResolvedValueOnce(
-      EOperationStatus.SPECULATIVE_SUCCESS,
+      EOperationStatus.FINAL_SUCCESS,
     );
     const result = await handleBurnRedeem(burnArgs);
 
