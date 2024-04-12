@@ -19,6 +19,9 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   const symbol = tokens.find(
     (t) => t.evmToken === operation.evmToken,
   )?.symbolEVM;
+  const decimals = tokens.find(
+    (t) => t.evmToken === operation.evmToken,
+  )?.decimals;
 
   const onReset = () => {
     updateBurnRedeemOperationById(operation.inputId, {
@@ -37,7 +40,11 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
           case ClaimState.SUCCESS:
             return (
               <div className="flex w-full justify-center">
-                <SuccessClaim operation={operation} symbol={symbol} />
+                <SuccessClaim
+                  operation={operation}
+                  symbol={symbol}
+                  decimals={decimals}
+                />
               </div>
             );
           case ClaimState.AWAITING_SIGNATURE:
@@ -50,6 +57,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
                   onUpdate={onUpdate}
                   operation={operation}
                   symbol={symbol}
+                  decimals={decimals}
                 />
               </div>
             );
@@ -61,6 +69,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
                   operation={operation}
                   onReset={onReset}
                   symbol={symbol}
+                  decimals={decimals}
                 />
               </div>
             );

@@ -12,11 +12,12 @@ import { formatAmount } from '@/utils/parseAmount';
 interface InitClaimProps {
   operation: BurnRedeemOperation;
   symbol?: string;
+  decimals?: number;
   onUpdate: (op: Partial<BurnRedeemOperation>) => void;
 }
 
 export function InitClaim(props: InitClaimProps) {
-  const { operation, symbol, onUpdate } = props;
+  const { operation, symbol, decimals, onUpdate } = props;
   const { write, error, isSuccess, hash, isPending } = useClaim();
   const { setClaim } = useGlobalStatusesStore();
 
@@ -75,6 +76,7 @@ export function InitClaim(props: InitClaimProps) {
         claimState={claimState}
         amount={operation.amount}
         symbol={symbol}
+        decimals={decimals}
       />
       <div>
         <Button onClick={() => handleClaim()}>
@@ -103,11 +105,15 @@ interface DisplayContentProps {
   claimState: ClaimState;
   amount: string;
   symbol?: string;
+  decimals?: number;
 }
 
 function DisplayContent(props: DisplayContentProps) {
-  const { claimState, amount, symbol } = props;
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(amount);
+  const { claimState, amount, symbol, decimals } = props;
+  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
+    amount,
+    decimals,
+  );
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
 

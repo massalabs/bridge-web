@@ -9,12 +9,13 @@ import { formatAmount } from '@/utils/parseAmount';
 interface ErrorClaimProps {
   operation: BurnRedeemOperation;
   onReset: () => void;
-  symbol: string | undefined;
+  symbol?: string;
+  decimals?: number;
 }
 
 export function ErrorClaim(props: ErrorClaimProps) {
-  const { operation, symbol, onReset } = props;
-  let { amountFormattedPreview } = formatAmount(operation.amount);
+  const { operation, symbol, decimals, onReset } = props;
+  let { amountFormattedPreview } = formatAmount(operation.amount, decimals);
 
   const isAlreadyExecuted =
     operation.claimState === ClaimState.ALREADY_EXECUTED;
