@@ -25,6 +25,20 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
   if (!massaClient) throw new Error('Massa client not found');
   if (!selectedToken) throw new Error('Token not selected');
 
+  const readOnlyEstimation = await massaClient
+    .smartContracts()
+    .readSmartContract({
+      targetAddress: selectedToken.massaToken,
+      targetFunction: 'increaseAllowance',
+      parameter: new Args()
+        .addString(config[currentMode].massaBridgeContract)
+        .addU256(amount)
+        .serialize(),
+      coins: await increaseAllowanceStorageCost(),
+    });
+
+  let maxGas = BigInt(Math.floor(readOnlyEstimation.info.gas_cost * 1.2));
+  maxGas = maxGas > MAX_GAS_CALL ? MAX_GAS_CALL : maxGas;
   const opId = await massaClient.smartContracts().callSmartContract({
     targetAddress: selectedToken.massaToken,
     targetFunction: 'increaseAllowance',
@@ -34,6 +48,7 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
       .serialize(),
     fee: increaseAllowanceFee.fee,
     coins: await increaseAllowanceStorageCost(),
+    maxGas,
   });
 
   await waitIncludedOperation(opId);
@@ -61,7 +76,17 @@ export async function forwardBurn(
   );
 
   const request = new ForwardingRequest(amt, recipient, tokenPair);
+  const readOnlyEstimation = await massaClient
+    .smartContracts()
+    .readSmartContract({
+      targetAddress: config[currentMode].massaBridgeContract,
+      targetFunction: 'forwardBurn',
+      parameter: new Args().addSerializable(request).serialize(),
+      ...forwardBurnFees,
+    });
 
+  let maxGas = BigInt(Math.floor(readOnlyEstimation.info.gas_cost * 1.2));
+  maxGas = maxGas > MAX_GAS_CALL ? MAX_GAS_CALL : maxGas;
   const opId = await massaClient.smartContracts().callSmartContract({
     targetAddress: config[currentMode].massaBridgeContract,
     targetFunction: 'forwardBurn',
