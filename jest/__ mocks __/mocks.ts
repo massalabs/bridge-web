@@ -1,5 +1,10 @@
+import { MAX_GAS_CALL } from '@massalabs/massa-web3';
+
 export const smartContractsMock = {
   callSmartContract: jest.fn(),
+  readSmartContract: jest
+    .fn()
+    .mockResolvedValue({ info: { gas_cost: MAX_GAS_CALL.toString() } }),
   getOperationStatus: jest.fn(),
   getFilteredScOutputEvents: jest.fn(),
 };
