@@ -1,5 +1,6 @@
 export const smartContractsMock = {
   callSmartContract: jest.fn(),
+  readSmartContract: jest.fn(),
   getOperationStatus: jest.fn(),
   getFilteredScOutputEvents: jest.fn(),
 };
