@@ -33,6 +33,19 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
     updateBurnRedeemOperationById(operation.inputId, op);
   };
 
+  if (decimals === undefined || symbol === undefined) {
+    return (
+      <div
+        className="flex justify-between items-center
+      bg-secondary/50 backdrop-blur-lg text-f-primary 
+      w-[620px] h-12 border border-tertiary rounded-2xl 
+      px-10 py-14 animate-pulse"
+      >
+        <div className="w-full h-4 bg-gray-300 rounded-xl"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full justify-center">
       {(() => {
