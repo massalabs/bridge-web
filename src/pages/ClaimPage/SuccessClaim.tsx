@@ -11,12 +11,14 @@ import { formatAmount } from '@/utils/parseAmount';
 interface SuccessClaimProps {
   operation: BurnRedeemOperation;
   symbol?: string;
+  decimals?: number;
 }
 
 export function SuccessClaim(args: SuccessClaimProps) {
-  const { operation, symbol } = args;
+  const { operation, symbol, decimals } = args;
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(
     operation.amount,
+    decimals,
   );
 
   const txHash = operation.outputId;
