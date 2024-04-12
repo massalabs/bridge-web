@@ -67,7 +67,7 @@ async function initiateBurn({
   setBurnTxId(burnOpId);
 
   setBurnState(BurnState.PENDING);
-  await waitIncludedOperation(burnOpId);
+  await waitIncludedOperation(burnOpId, true);
 
   setBurn(Status.Success);
   appendBurnRedeemOperation({
