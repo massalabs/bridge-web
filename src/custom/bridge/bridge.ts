@@ -82,7 +82,6 @@ export async function forwardBurn(
       targetAddress: config[currentMode].massaBridgeContract,
       targetFunction: 'forwardBurn',
       parameter: new Args().addSerializable(request).serialize(),
-      ...forwardBurnFees,
     });
 
   let maxGas = BigInt(Math.floor(readOnlyEstimation.info.gas_cost * 1.2));
