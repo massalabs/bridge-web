@@ -207,6 +207,16 @@ export function MainnetFAQ() {
         </AccordionContent>
       </Accordion>
 
+      <Accordion title="What are the token addresses on Massa?">
+        <AccordionContent>
+          {tokens.map((token, index) => (
+            <p key={index}>
+              {token.symbol} ({token.name}) - {token.massaToken}
+            </p>
+          ))}
+        </AccordionContent>
+      </Accordion>
+
       <Accordion title={Intl.t('index.faq.mainnet.speed-title')}>
         <AccordionContent>
           <p>{Intl.t('index.faq.mainnet.speed-desc')}</p>
@@ -297,7 +307,9 @@ export function MainnetFAQ() {
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-3')}
             <br />
             {tokens.map((token, index) => (
-              <p key={index}>{token.symbol}</p>
+              <p key={index}>
+                {token.symbol} - {token.massaToken}
+              </p>
             ))}
             <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-4')}

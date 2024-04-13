@@ -131,7 +131,7 @@
         "bridged-tokens-subtitle-2": "b. For Bearby Wallet",
         "bridged-tokens-desc-1": "Step 1: Open Massa Wallet module in the Massa Station app. Select the account to which you bridged tokens.",
         "bridged-tokens-desc-2": "Step 2: From the menu on the left, click on ‘Assets’.",
-        "bridged-tokens-desc-3": "Step 3: Click on “Import token“. You will need to provide the smart-contract address of a token you want to add. Use these Smart contract addresses to see your balance.",
+        "bridged-tokens-desc-3": "Step 3: Click on “Import token“. You will need to provide the smart-contract address of a token you want to add. Use these Smart contract addresses to see your balance:",
         "bridged-tokens-desc-4": "Step 4: Click on “Import token“ and pass the address of the token you bridged. You should see the fungible token and its corresponding balance for your wallet account.",
         "bridged-tokens-desc-5": "Step 1: Open & connect Bearby Wallet browser extension.",
         "bridged-tokens-desc-6": "Step 2: Click on the filter icon under the receive button.",
