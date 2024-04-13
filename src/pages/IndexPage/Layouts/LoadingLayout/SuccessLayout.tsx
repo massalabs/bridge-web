@@ -56,8 +56,6 @@ export function SuccessLayout(props: LoadingBoxProps) {
 
   const currentTxID = massaToEvm ? currentRedeemOperation?.outputId : mintTxId;
 
-  // https://reactrouter.com/en/main/components/link#relative
-
   const redirectToFaq = getFaqUrl();
 
   function getFaqUrl(): string {
@@ -107,7 +105,6 @@ export function SuccessLayout(props: LoadingBoxProps) {
           <div className="mb-1">
             {Intl.t('index.loading-box.add-tokens-message')}
           </div>
-          {/* this may need to be changed for FAQ mainnet */}
           <Link onClick={onClose} to={redirectToFaq}>
             <u>{Intl.t('index.loading-box.link-to-instructions')}</u>
           </Link>

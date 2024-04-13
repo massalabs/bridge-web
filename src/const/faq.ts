@@ -1,7 +1,5 @@
 import { PAGES } from '.';
 
-export const { href } = new URL('.', window.origin + location.pathname);
-
 export enum FAQsections {
   getTokens = 'getTokens',
   addTokens = 'addTokens',
@@ -53,11 +51,8 @@ export const bridgeEmail = 'support.bridge@massa.net';
 
 export const discordSupportChannel = undefined;
 
-export const bridgeWmasPageLink = `${href}${PAGES.DAO}`;
-export const historyPageLink = `${href}${PAGES.HISTORY}`;
+export const bridgeWmasPageLink = `/${PAGES.DAO}`;
 
-export const bridgeWmasFAQLink = `${href}${PAGES.FAQ}${faqURL.mainnet.bridgeWmas.bridgeWmas}`;
+export const addTokensBuildnetLink = `/${PAGES.FAQ}${faqURL.buildnet.addTokens.addToMassa}`;
 
-export const addTokensBuildnetLink = `${href}${PAGES.FAQ}${faqURL.buildnet.addTokens.addToMassa}`;
-
-export const addTokensMainnetLink = `${href}${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
+export const addTokensMainnetLink = `/${PAGES.FAQ}${faqURL.mainnet.addTokens.addToMassa}`;
