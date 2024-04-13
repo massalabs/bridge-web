@@ -137,7 +137,7 @@
         "bridged-tokens-desc-6": "Step 2: Click on the filter icon under the receive button.",
         "bridged-tokens-desc-7": "Step 3: Click the “+” icon.",
         "bridged-tokens-desc-8": "Step 4: Copy and paste into that field the desired tokens address (see above).",
-        "bridged-tokens-desc-9": "Step 5: Click fetch “Fetch FT State” and then click 'Add FT'",
+        "bridged-tokens-desc-9": "Step 5: Click fetch “Fetch FT State” and then click “Add FT“",
         "bridged-tokens-desc-10": "Step 6: You should now see the added token with it’s associated balance.",
         "bridged-tokens-desc-11": "Also you can connect your wallet to Dusa Protocol and check the token balance there.",
         "sc-wallet-title": "Can I use Massa Bridge with a smart-contract wallet?",
