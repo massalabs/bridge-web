@@ -56,7 +56,7 @@ export function MainnetFAQ() {
             1. Navigate to the{' '}
             <u>
               <a href={bridgeWmasPageLink} target="_blank">
-                DAO Maker
+                DAO Maker Claim
               </a>
             </u>{' '}
             page. Make sure you’re on Mainnet mode in the upper-right corner.
@@ -84,7 +84,7 @@ export function MainnetFAQ() {
             and{' '}
             <u>
               <a href={MASSA_WALLET_CREATE_ACCOUNT_FAQ} target="_blank">
-                Massa Wallet FAQ
+                Massa Wallet Instructions
               </a>
             </u>
             .
@@ -155,13 +155,13 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.not-visible-desc-1')}
-            <a target="_blank" href="mailto:support.bridge@massa.net">
+            <a target="_blank" href={`mailto:${bridgeEmail}`}>
               <u> {bridgeEmail} </u>
             </a>
             .
             <br /> <br />
             {Intl.t('index.faq.mainnet.not-visible-desc-2')}
-            <a href="mailto:support.bridge@massa.net">
+            <a href={`mailto:${bridgeEmail}`}>
               <u>{bridgeEmail}</u>
             </a>
             .
@@ -173,7 +173,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.exceed-desc')}
-            <a target="_blank" href="mailto:support.bridge@massa.net">
+            <a target="_blank" href={`mailto:${bridgeEmail}`}>
               <u>{bridgeEmail}</u>
             </a>
             .
@@ -289,7 +289,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-1')}</p>
           <br />
-          <p>
+          <div>
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-1')}
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-2')}
@@ -297,17 +297,27 @@ export function MainnetFAQ() {
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-3')}
             <br />
             {tokens.map((token, index) => (
-              <p key={index}>
-                {token.symbol} - {token.massaToken}
-              </p>
+              <p key={index}>{token.symbol}</p>
             ))}
             <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-4')}
-          </p>
+          </div>
           <br /> <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-2')}</p>
-          <br />
+          <br /> <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-5')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-6')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-7')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-8')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-9')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-10')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-11')}</p>
           <br />
         </AccordionContent>
       </Accordion>
@@ -321,7 +331,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.no-wap-desc')}{' '}
-            <a target="_blank" href="bridge.massa.net/index">
+            <a target="_blank" href={bridgeUrl}>
               <u>{bridgeUrl}</u>
             </a>
             .

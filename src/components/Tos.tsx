@@ -19,7 +19,7 @@ export function Tos() {
                 {Intl.t('terms-of-service.title')}
               </div>
               <div>{Intl.t('terms-of-service.description')}</div>
-              <a href="https://bridge.massa.net/legal/ToS.pdf" target="_blank">
+              <a href="/legal/ToS.pdf" target="_blank">
                 <u>{Intl.t('terms-of-service.subtitle')}</u>
               </a>
               <Button onClick={() => acceptTos()}>
