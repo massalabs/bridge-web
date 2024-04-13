@@ -6,6 +6,7 @@ import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { Tos } from '@/components/Tos';
 import { PAGES } from '@/const';
+import { useIsPageDAOMaker } from '@/custom/bridge/location';
 import {
   useEvmChainValidation,
   useGetChainValidationContext,
@@ -35,6 +36,7 @@ export function Navbar(props: NavbarProps) {
   const { context } = useGetChainValidationContext();
   const isValidEvmNetwork = useEvmChainValidation(context);
   const isValidMassaNetwork = useMassaNetworkValidation();
+  const isPageDAOMaker = useIsPageDAOMaker();
 
   const { isConnected: isConnectedEVM } = useAccount();
 
@@ -132,7 +134,9 @@ export function Navbar(props: NavbarProps) {
           />
         </div>
       </div>
-      <Banner>{Intl.t('index.top-banner.mainnet-coming-soon')}</Banner>
+      {!isPageDAOMaker && (
+        <Banner>{Intl.t('index.top-banner.mainnet-coming-soon')}</Banner>
+      )}
       <Tos />
     </div>
   );
