@@ -4,7 +4,7 @@ import { config } from '@/const';
 import {
   FAQsections,
   bridgeEmail,
-  bridgeTutorialLink,
+  HOW_TO_BRIDGE_LINK,
   bridgeUrl,
   bridgeWmasPageLink,
   discordSupportChannel,
@@ -193,8 +193,8 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.tutorial-title')}>
         <AccordionContent>
           <p>
-            {bridgeTutorialLink ? (
-              <a target="_blank" href={bridgeTutorialLink}>
+            {HOW_TO_BRIDGE_LINK ? (
+              <a target="_blank" href={HOW_TO_BRIDGE_LINK}>
                 <u>{Intl.t('index.faq.mainnet.tutorial-desc')}</u>
               </a>
             ) : (

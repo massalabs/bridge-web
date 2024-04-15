@@ -43,7 +43,8 @@ export interface FAQProps {
   category: string | null;
 }
 
-export const bridgeTutorialLink = undefined;
+export const HOW_TO_BRIDGE_LINK =
+  'https://docs.massa.net/docs/massaBridge/instructions';
 
 export const bridgeUrl = 'https://bridge.massa.net/index';
 
