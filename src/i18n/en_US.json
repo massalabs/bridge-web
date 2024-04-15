@@ -131,7 +131,7 @@
         "bridged-tokens-subtitle-2": "b. For Bearby Wallet",
         "bridged-tokens-desc-1": "Step 1: Open Massa Wallet module in the Massa Station app. Select the account to which you bridged tokens.",
         "bridged-tokens-desc-2": "Step 2: From the menu on the left, click on ‘Assets’.",
-        "bridged-tokens-desc-3": "Step 3: Click on “Import token“. You will need to provide the smart-contract address of a token you want to add. Use these Smart contract addresses to see your balance.",
+        "bridged-tokens-desc-3": "Step 3: Click on “Import token“. You will need to provide the smart-contract address of a token you want to add. Use these Smart contract addresses to see your balance:",
         "bridged-tokens-desc-4": "Step 4: Click on “Import token“ and pass the address of the token you bridged. You should see the fungible token and its corresponding balance for your wallet account.",
         "bridged-tokens-desc-5": "Step 1: Open & connect Bearby Wallet browser extension.",
         "bridged-tokens-desc-6": "Step 2: Click on the filter icon under the receive button.",
@@ -150,7 +150,11 @@
         "feature-request-desc": "You can submit feature requests in our Discord support channel: ",
         "no-find-title": "You couldn’t find an answer to what you’re looking for?",
         "no-find-desc-1": "Head to our Discord support channel and open a ticket. ",
-        "no-find-desc-2": " Our support team will review your issue and come back to you as soon as possible."
+        "no-find-desc-2": " Our support team will review your issue and come back to you as soon as possible.",
+        "token-address-title": "What are the token addresses on Massa?",
+        "bridge-address-title": "What are the Massa Bridge addresses on the Ethereum and Massa networks?",
+        "bridge-address-desc-1": "Evm bridge contract:",
+        "bridge-address-desc-2": "Massa bridge contract:"
       }
     },
     "loading-box": {
@@ -184,7 +188,7 @@
       "claim-label-retrieving-info": "(retrieving info...)",
       "claim-label-awaiting-signature": "(awaiting signature...)",
       "claim-label-claiming": "(claiming...)",
-      "claim-pending-tooltip": "If you leave, you will see the status of Claim in your {wallet} wallet.",
+      "claim-pending-tooltip": "Please remain on this page while processing claim. If you leave, you will see Claim status in your {wallet} wallet or in the history page.",
       "claim-label-rejected": "(rejected by user)",
       "claim-label-error": "(unknown error)",
       "burned": "Burn was successful",

@@ -19,7 +19,6 @@ import {
 import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
-  useBridgeModeStore,
   useGlobalStatusesStore,
   useOperationStore,
   useTokenStore,
@@ -29,7 +28,6 @@ import { BurnState } from '@/utils/const';
 export function IndexPage() {
   const { massaClient, connectedAccount, isFetching } = useAccountStore();
   const { selectedToken } = useTokenStore();
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const { side, amount, setAmount, resetTxIDs, isMassaToEvm } =
     useOperationStore();
 
@@ -54,14 +52,12 @@ export function IndexPage() {
 
   const isOperationPending = box !== Status.None;
   const isBlurred = isOperationPending ? 'blur-md' : '';
-  const isMainnet = getIsMainnet();
 
   const isButtonDisabled =
     isFetching ||
     !connectedAccount ||
     !isValidEthNetwork ||
     !isValidMassaNetwork ||
-    isMainnet ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
 
