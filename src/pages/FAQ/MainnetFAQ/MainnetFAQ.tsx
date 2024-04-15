@@ -194,9 +194,13 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {HOW_TO_BRIDGE_LINK ? (
-              <a target="_blank" href={HOW_TO_BRIDGE_LINK}>
-                <u>{Intl.t('index.faq.mainnet.tutorial-desc')}</u>
-              </a>
+              <div>
+                {Intl.t('index.faq.mainnet.tutorial-desc-1')}{' '}
+                <a target="_blank" href={HOW_TO_BRIDGE_LINK}>
+                  <u>{Intl.t('index.faq.mainnet.tutorial-desc-2')}</u>
+                </a>
+                {'.'}
+              </div>
             ) : (
               Intl.t('index.faq.mainnet.tutorial-empty-desc')
             )}
