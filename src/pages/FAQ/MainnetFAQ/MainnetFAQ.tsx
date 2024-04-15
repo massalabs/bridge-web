@@ -305,10 +305,10 @@ export function MainnetFAQ() {
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-2')}
             <br /> <br />
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-3')}
-            <br />
+            <br /> <br />
             {tokens.map((token, index) => (
               <p key={index}>
-                {token.symbol} - {token.massaToken}
+                {token.symbol} ({token.name}) - {token.massaToken}
               </p>
             ))}
             <br />
@@ -316,19 +316,19 @@ export function MainnetFAQ() {
           </div>
           <br /> <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-2')}</p>
-          <br /> <br />
+          <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-5')}</p>
-          <br /> <br />
+          <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-6')}</p>
-          <br /> <br />
+          <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-7')}</p>
-          <br /> <br />
+          <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-8')}</p>
-          <br /> <br />
+          <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-9')}</p>
-          <br /> <br />
+          <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-10')}</p>
-          <br /> <br />
+          <br />
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-desc-11')}</p>
           <br />
         </AccordionContent>
