@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { Accordion, AccordionContent } from '@massalabs/react-ui-kit';
+import { config } from '@/const';
 import {
   FAQsections,
   bridgeEmail,
@@ -10,6 +11,7 @@ import {
 } from '@/const/faq';
 import { useQuery } from '@/custom/api/useQuery';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
 import {
   AIRDROP_AMOUNT,
@@ -22,6 +24,7 @@ import {
 export function MainnetFAQ() {
   const query = useQuery();
   const { tokens } = useTokenStore();
+  const { currentMode } = useBridgeModeStore();
 
   const addTokensToMassaRef = useRef<HTMLDivElement | null>(null);
   const bridgeWmasRef = useRef<HTMLDivElement | null>(null);
@@ -207,13 +210,25 @@ export function MainnetFAQ() {
         </AccordionContent>
       </Accordion>
 
-      <Accordion title="What are the token addresses on Massa?">
+      <Accordion title={Intl.t('index.faq.mainnet.token-address-title')}>
         <AccordionContent>
           {tokens.map((token, index) => (
             <p key={index}>
               {token.symbol} ({token.name}) - {token.massaToken}
             </p>
           ))}
+        </AccordionContent>
+      </Accordion>
+      <Accordion title={Intl.t('index.faq.mainnet.bridge-address-title')}>
+        <AccordionContent>
+          <p>
+            {Intl.t('index.faq.mainnet.bridge-address-desc-1')}{' '}
+            {config[currentMode].evmBridgeContract}
+          </p>
+          <p>
+            {Intl.t('index.faq.mainnet.bridge-address-desc-2')}{' '}
+            {config[currentMode].massaBridgeContract}
+          </p>
         </AccordionContent>
       </Accordion>
 
