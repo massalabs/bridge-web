@@ -378,11 +378,10 @@ export function MainnetFAQ() {
           <p>
             {discordSupportChannel ? (
               <>
-                {Intl.t('index.faq.mainnet.no-find-desc-1')}
+                {Intl.t('index.faq.mainnet.feature-request-desc-1')}{' '}
                 <a target="_blank" href={discordSupportChannel}>
-                  <u>{discordSupportChannel} </u>
+                  <u>Discord Support Channel</u>
                 </a>
-                {Intl.t('index.faq.mainnet.no-find-desc-2')}
               </>
             ) : (
               Intl.t('index.faq.mainnet.support-channel')
@@ -398,9 +397,10 @@ export function MainnetFAQ() {
               <>
                 {Intl.t('index.faq.mainnet.no-find-desc-1')}{' '}
                 <a target="_blank" href={discordSupportChannel}>
-                  <u>{discordSupportChannel}</u>
-                </a>
-                {Intl.t('index.faq.mainnet.no-find-desc-2')}
+                  <u>Discord Support Channel</u>
+                </a>{' '}
+                {Intl.t('index.faq.mainnet.no-find-desc-2')}{' '}
+                {Intl.t('index.faq.mainnet.no-find-desc-3')}
               </>
             ) : (
               Intl.t('index.faq.mainnet.support-channel')

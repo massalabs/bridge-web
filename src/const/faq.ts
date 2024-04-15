@@ -50,7 +50,8 @@ export const bridgeUrl = 'https://bridge.massa.net/index';
 
 export const bridgeEmail = 'support.bridge@massa.net';
 
-export const discordSupportChannel = undefined;
+export const discordSupportChannel =
+  'https://discord.com/channels/828270821042159636/1229348333848629319';
 
 export const bridgeWmasPageLink = `/${PAGES.DAO}`;
 
