@@ -382,6 +382,7 @@ export function MainnetFAQ() {
                 <a target="_blank" href={discordSupportChannel}>
                   <u>Discord Support Channel</u>
                 </a>
+                {'.'}
               </>
             ) : (
               Intl.t('index.faq.mainnet.support-channel')
