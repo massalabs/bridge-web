@@ -39,7 +39,7 @@ export function Footer() {
           <li>
             <a
               className="mas-menu-default no-underline cursor-pointer"
-              href="/legal/ToS.pdf"
+              href={BRIDGE_GENERAL_DOCS}
               target="_blank"
             >
               {Intl.t('index.footer.docs')}
@@ -48,7 +48,7 @@ export function Footer() {
           <li>
             <a
               className="mas-menu-default no-underline cursor-pointer"
-              href={BRIDGE_GENERAL_DOCS}
+              href="/legal/ToS.pdf"
               target="_blank"
             >
               {Intl.t('index.footer.tos')}
