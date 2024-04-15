@@ -219,6 +219,7 @@ export function MainnetFAQ() {
           ))}
         </AccordionContent>
       </Accordion>
+
       <Accordion title={Intl.t('index.faq.mainnet.bridge-address-title')}>
         <AccordionContent>
           <p>

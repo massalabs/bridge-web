@@ -188,7 +188,7 @@
       "claim-label-retrieving-info": "(retrieving info...)",
       "claim-label-awaiting-signature": "(awaiting signature...)",
       "claim-label-claiming": "(claiming...)",
-      "claim-pending-tooltip": "If you leave, you will see the status of Claim in your {wallet} wallet.",
+      "claim-pending-tooltip": "Please remain on this page while processing claim. If you leave, you will see Claim status in your {wallet} wallet or in the history page.",
       "claim-label-rejected": "(rejected by user)",
       "claim-label-error": "(unknown error)",
       "burned": "Burn was successful",
