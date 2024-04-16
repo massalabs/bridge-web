@@ -104,7 +104,7 @@ export function SuccessLayout() {
           <div className="mb-1">
             {Intl.t('index.loading-box.add-tokens-message')}
           </div>
-          <Link onClick={onClose} to={redirectToFaq}>
+          <Link onClick={() => closeLoadingBox} to={redirectToFaq}>
             <u>{Intl.t('index.loading-box.link-to-instructions')}</u>
           </Link>
         </div>
