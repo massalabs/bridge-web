@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MassaIconSvg, MassaStationIconSvg } from '@/assets';
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import Intl from '@/i18n/i18n';
-import { MASSA_STATION_INSTALL } from '@/utils/const';
+import { BRIDGE_GENERAL_DOCS, MASSA_STATION_INSTALL } from '@/utils/const';
 
 export function Footer() {
   const navigate = useNavigate();
@@ -34,6 +34,15 @@ export function Footer() {
             >
               <MassaStationIconSvg />
               {Intl.t(`index.footer.massa-station`)}
+            </a>
+          </li>
+          <li>
+            <a
+              className="mas-menu-default no-underline cursor-pointer"
+              href={BRIDGE_GENERAL_DOCS}
+              target="_blank"
+            >
+              {Intl.t('index.footer.docs')}
             </a>
           </li>
           <li>
