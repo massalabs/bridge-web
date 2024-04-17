@@ -25,7 +25,7 @@ export function IndexPage() {
   const isValidMassaNetwork = useMassaNetworkValidation();
 
   const isOperationPending = box !== Status.None;
-  const isBlurred = isOperationPending ? 'blur-md' : '';
+  const blurClass = isOperationPending ? 'blur-md' : '';
 
   const isButtonDisabled =
     isFetching ||
@@ -38,7 +38,7 @@ export function IndexPage() {
   return (
     <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
       <BridgeRedeemLayout
-        isBlurred={isBlurred}
+        isBlurred={blurClass}
         isButtonDisabled={isButtonDisabled}
       />
       {!isOperationPending && <ClaimTokensPopup />}

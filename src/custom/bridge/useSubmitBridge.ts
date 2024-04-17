@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { parseUnits } from 'viem';
 import {
   handleEvmApproveError,
@@ -83,42 +83,38 @@ export function useSubmitBridge() {
     setMint,
   ]);
 
-  const handleSubmitBridge = useCallback(
-    (e: SyntheticEvent) => {
-      e.preventDefault();
-      // validate amount to transact
-      if (!validate(tokenBalanceEVM) || !amount || !selectedToken) return;
+  const handleSubmitBridge = useCallback(() => {
+    // validate amount to transact
+    if (!validate(tokenBalanceEVM) || !amount || !selectedToken) return;
 
-      // set loading box state which renders pending operation layout
-      setBox(Status.Loading);
+    // set loading box state which renders pending operation layout
+    setBox(Status.Loading);
 
-      // Init bridge approval
-      setApprove(Status.Loading);
-      let parsedAmount = parseUnits(amount, selectedToken.decimals);
-      const needApproval = allowanceEVM < parsedAmount;
+    // Init bridge approval
+    setApprove(Status.Loading);
+    let parsedAmount = parseUnits(amount, selectedToken.decimals);
+    const needApproval = allowanceEVM < parsedAmount;
 
-      if (needApproval) {
-        // writing bridge approval
-        writeEvmApprove();
-        return;
-      }
-      // Bridge does not need approval : writing lock
-      setApprove(Status.Success);
+    if (needApproval) {
+      // writing bridge approval
+      writeEvmApprove();
+      return;
+    }
+    // Bridge does not need approval : writing lock
+    setApprove(Status.Success);
 
-      writeLock();
-      setLock(Status.Loading);
-    },
-    [
-      amount,
-      allowanceEVM,
-      selectedToken,
-      tokenBalanceEVM,
-      setBox,
-      setApprove,
-      writeEvmApprove,
-      writeLock,
-      setLock,
-    ],
-  );
+    writeLock();
+    setLock(Status.Loading);
+  }, [
+    amount,
+    allowanceEVM,
+    selectedToken,
+    tokenBalanceEVM,
+    setBox,
+    setApprove,
+    writeEvmApprove,
+    writeLock,
+    setLock,
+  ]);
   return { handleSubmitBridge };
 }

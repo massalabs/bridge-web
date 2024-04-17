@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from 'react';
+import { useState } from 'react';
 
 import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
@@ -80,8 +80,8 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
 
-  function handleGenericSubmit(e: SyntheticEvent) {
-    isMassaToEvm() ? handleSubmitRedeem(e) : handleSubmitBridge(e);
+  function handleGenericSubmit() {
+    isMassaToEvm() ? handleSubmitRedeem() : handleSubmitBridge();
   }
 
   const isOperationPending = box !== Status.None;
@@ -190,10 +190,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
           <WarningNoEth />
         </div>
         <div className="mb-5">
-          <Button
-            disabled={isButtonDisabled}
-            onClick={(e) => handleGenericSubmit(e)}
-          >
+          <Button disabled={isButtonDisabled} onClick={handleGenericSubmit}>
             {massaToEvm
               ? Intl.t('index.button.redeem')
               : Intl.t('index.button.bridge')}

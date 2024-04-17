@@ -14,5 +14,5 @@ export function useBridgeUtils() {
     setBurnState(BurnState.INIT);
   }, [reset, setAmount, resetTxIDs, setBurnState]);
 
-  return { closeLoadingBox, setBurnState };
+  return { closeLoadingBox };
 }

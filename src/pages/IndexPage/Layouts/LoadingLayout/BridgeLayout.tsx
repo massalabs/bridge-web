@@ -14,9 +14,7 @@ export function BridgeLayout() {
   const { currentMode } = useBridgeModeStore();
   const { lockTxId, mintTxId, setMintTxId } = useOperationStore();
 
-  const [currentIdToDisplay, setCurrentIdToDisplay] = useState<
-    string | undefined
-  >(undefined);
+  const [currentIdToDisplay, setCurrentIdToDisplay] = useState<string>();
 
   const [currentExplorerUrl, setCurrentExplorerUrl] = useState<string>('');
 
@@ -29,7 +27,7 @@ export function BridgeLayout() {
     if (lock !== Status.Success) return;
     if (lambdaResponseIsEmpty) return;
     setMintTxId(lambdaResponse[0].outputId || '');
-    if (lambdaResponse[0].isConfirmed === true) {
+    if (lambdaResponse[0].isConfirmed) {
       setBox(Status.Success);
       setMint(Status.Success);
     }

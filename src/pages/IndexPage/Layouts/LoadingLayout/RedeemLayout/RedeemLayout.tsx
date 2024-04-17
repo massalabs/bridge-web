@@ -11,7 +11,7 @@ import { BurnState, ClaimState } from '@/utils/const';
 
 export function RedeemLayout() {
   const { burn, approve, claim } = useGlobalStatusesStore();
-  const { getCurrentRedeemOperation } = useOperationStore();
+  const { getCurrentRedeemOperation, burnState } = useOperationStore();
 
   const evmWalletName = useConnectorName();
   const isBurnSuccessful = burn === Status.Success;
@@ -30,7 +30,7 @@ export function RedeemLayout() {
         <div className="flex justify-between">
           <p className="mas-body-2">
             {Intl.t('index.loading-box.burn-label', {
-              state: getBurnStateTranslation(),
+              state: getBurnStateTranslation(burnState),
             })}
           </p>
           <LoadingState state={burn} />
@@ -78,8 +78,7 @@ function getClaimStateTranslation(claimState?: ClaimState) {
   }
 }
 
-function getBurnStateTranslation() {
-  const { burnState } = useOperationStore.getState();
+function getBurnStateTranslation(burnState?: BurnState) {
   switch (burnState) {
     case BurnState.AWAITING_INCLUSION:
       return Intl.t('index.loading-box.burn-label-awaiting-inclusion');

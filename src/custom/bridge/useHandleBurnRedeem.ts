@@ -42,7 +42,7 @@ export function useHandleBurnRedeem() {
   useEffect(() => {
     if (burnTxId && burn !== Status.Success) {
       setCurrentIdToDisplay(burnTxId);
-      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId as string));
+      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId));
     }
     if (burn === Status.Success) return;
     if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
