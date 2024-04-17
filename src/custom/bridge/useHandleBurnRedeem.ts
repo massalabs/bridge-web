@@ -86,10 +86,12 @@ export function useHandleBurnRedeem() {
 
   useEffect(() => {
     if (burn !== Status.Success && burnTxId) {
+      // if burn is not a success and we have a burnTxId burn is in progress so show the burn tx id
       setCurrentIdToDisplay(burnTxId);
       setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId));
     }
     if (claimTxId && burn === Status.Success) {
+      // if the burn is a success and we have a claimTxId then claim is in progress claimTxId
       setCurrentIdToDisplay(claimTxId);
       setCurrentExplorerUrl(`${EVM_EXPLORER[currentMode]}tx/${claimTxId}`);
     }
