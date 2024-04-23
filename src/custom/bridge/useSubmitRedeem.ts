@@ -17,9 +17,9 @@ export function useSubmitRedeem() {
     // validate amount to transact
     if (!validate(tokenBalanceEVM) || !amount) return;
     setBox(Status.Loading);
-    setBurn(Status.Loading);
     const approved = await handleApproveRedeem(amount);
     if (approved) {
+      setBurn(Status.Loading);
       setBurnState(BurnState.AWAITING_INCLUSION);
       await handleBurnRedeem();
       setBurnState(BurnState.PENDING);
