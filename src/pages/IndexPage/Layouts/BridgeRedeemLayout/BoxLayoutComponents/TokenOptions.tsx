@@ -1,14 +1,4 @@
-import { Dropdown } from '@massalabs/react-ui-kit';
-import { USDCMassaSvg } from '@/assets/ETHUSDCSvg';
-import { SepoliaDaiSvg } from '@/assets/SepoliaDaiSvg';
-import { SepoliaUSDCSvg } from '@/assets/SepoliaUSDCSvg';
-import { SepoliaWethSvg } from '@/assets/SepoliaWethSvg';
-import { TDaiMassaSvg } from '@/assets/TDaiMassaSvg';
-import { TDaiSvg } from '@/assets/TDaiSvg';
-import { USDCSvg } from '@/assets/USDCSvg';
-import { WEthMassaSvg } from '@/assets/WEthMassaSvg';
-import { WEthSvg } from '@/assets/WEthSvg';
-import { SupportedTokens } from '@/const';
+import { Dropdown, getIcon } from '@massalabs/react-ui-kit';
 import { useOperationStore } from '@/store/operationStore';
 import { useBridgeModeStore, useAccountStore } from '@/store/store';
 import { useTokenStore, IToken } from '@/store/tokenStore';
@@ -40,37 +30,6 @@ export function TokenOptions(props: TokenOptionsProps) {
     readOnlyDropdown = isMassaToEvm || isFetching;
   }
 
-  function getTokenIcons() {
-    if (!nativeToken) {
-      return {
-        tDAI: <TDaiSvg />,
-        WETH: <WEthSvg />,
-        USDC: <USDCSvg />,
-      };
-    } else if (isMainnet) {
-      return {
-        tDAI: <TDaiMassaSvg />,
-        WETH: <WEthMassaSvg />,
-        USDC: <USDCMassaSvg />,
-      };
-    }
-    return {
-      tDAI: <SepoliaDaiSvg />,
-      WETH: <SepoliaWethSvg />,
-      USDC: <SepoliaUSDCSvg />,
-    };
-  }
-
-  function getIcon(symbolEVM: string): JSX.Element {
-    const icons = {
-      tDAI: getTokenIcons().tDAI,
-      WETH: getTokenIcons().WETH,
-      USDC: getTokenIcons().USDC,
-      DAI: getTokenIcons().tDAI,
-    };
-    return icons[symbolEVM as SupportedTokens];
-  }
-
   return (
     <Dropdown
       select={selectedMassaTokenKey}
@@ -79,7 +38,7 @@ export function TokenOptions(props: TokenOptionsProps) {
       options={tokens.map((token: IToken) => {
         return {
           item: nativeToken ? token.symbol : token.symbolEVM,
-          icon: getIcon(token.symbolEVM),
+          icon: getIcon(token.symbolEVM, nativeToken, isMainnet),
           onClick: () => setSelectedToken(token),
         };
       })}

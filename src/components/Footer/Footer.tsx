@@ -23,7 +23,7 @@ export function Footer() {
               target="_blank"
             >
               <MassaIconSvg />
-              {Intl.t(`index.footer.massa`)}
+              {Intl.t('index.footer.massa')}
             </a>
           </li>
           <li>
