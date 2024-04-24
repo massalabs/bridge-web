@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { fromMAS } from '@massalabs/massa-web3';
-import { Tag } from '@massalabs/react-ui-kit';
+import { Tag, formatAmount } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { FiHelpCircle } from 'react-icons/fi';
@@ -14,7 +14,6 @@ import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { AIRDROP_AMOUNT } from '@/utils/const';
-import { formatAmount } from '@/utils/parseAmount';
 
 export function MASBalance() {
   const [balance, setBalance] = useState<IAccountBalanceResponse>();

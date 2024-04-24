@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@massalabs/react-ui-kit';
+import { Button, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 
 import { useBridgeModeStore } from '../../store/store';
@@ -6,7 +6,6 @@ import { EVM_EXPLORER } from '../../utils/const';
 import { SuccessCheck } from '@/components';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
-import { formatAmount } from '@/utils/parseAmount';
 
 interface SuccessClaimProps {
   operation: BurnRedeemOperation;

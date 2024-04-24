@@ -1,3 +1,4 @@
+import { formatAmountToDisplay } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { LoadingBoxProps } from './PendingOperationLayout';
@@ -12,7 +13,6 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { EVM_EXPLORER } from '@/utils/const';
-import { formatAmountToDisplay } from '@/utils/parseAmount';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 export function SuccessLayout(props: LoadingBoxProps) {

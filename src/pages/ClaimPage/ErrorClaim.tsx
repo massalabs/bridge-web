@@ -1,10 +1,9 @@
 import { SyntheticEvent } from 'react';
-import { Button } from '@massalabs/react-ui-kit';
+import { Button, formatAmount } from '@massalabs/react-ui-kit';
 import { FiAlertCircle, FiRefreshCcw } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
-import { formatAmount } from '@/utils/parseAmount';
 
 interface ErrorClaimProps {
   operation: BurnRedeemOperation;

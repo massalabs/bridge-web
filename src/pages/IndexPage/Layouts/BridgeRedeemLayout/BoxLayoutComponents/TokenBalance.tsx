@@ -1,10 +1,9 @@
-import { Tooltip } from '@massalabs/react-ui-kit';
+import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/operationStore';
 import { useTokenStore } from '@/store/tokenStore';
-import { formatAmount } from '@/utils/parseAmount';
 
 export function TokenBalance() {
   const { isMassaToEvm } = useOperationStore();

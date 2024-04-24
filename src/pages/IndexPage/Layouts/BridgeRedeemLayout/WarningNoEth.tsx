@@ -1,10 +1,10 @@
+import { formatAmount } from '@massalabs/react-ui-kit';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { useAccount, useBalance } from 'wagmi';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { formatAmount } from '@/utils/parseAmount';
 
 export function WarningNoEth() {
   const { side } = useOperationStore();

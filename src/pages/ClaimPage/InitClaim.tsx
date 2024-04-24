@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Tooltip, Button } from '@massalabs/react-ui-kit';
+import { Tooltip, Button, formatAmount } from '@massalabs/react-ui-kit';
 import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../custom/bridge/useClaim';
 import { Spinner } from '@/components';
@@ -7,7 +7,6 @@ import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
-import { formatAmount } from '@/utils/parseAmount';
 
 interface InitClaimProps {
   operation: BurnRedeemOperation;

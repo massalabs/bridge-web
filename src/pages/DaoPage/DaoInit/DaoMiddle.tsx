@@ -1,12 +1,11 @@
 import { ReactElement } from 'react';
-import { MassaLogo, Tag } from '@massalabs/react-ui-kit';
+import { MassaLogo, Tag, formatAmountToDisplay } from '@massalabs/react-ui-kit';
 import { wmasDecimals } from '../DaoPage';
 import { Blockchain, MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages';
 import { useAccountStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
-import { formatAmountToDisplay } from '@/utils/parseAmount';
 interface DaoMiddleProps {
   amount: string;
 }
