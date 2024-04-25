@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Args } from '@massalabs/massa-web3';
+import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { handleBurnError } from './handlers/handleTransactionErrors';
@@ -38,10 +38,21 @@ export function useBurn() {
     const request = new ForwardingRequest(amt, evmAddress, tokenPair);
 
     try {
-      const opId = await massaClient.smartContracts().callSmartContract({
+      const callData = {
         targetAddress: config[currentMode].massaBridgeContract,
         targetFunction: 'forwardBurn',
         parameter: new Args().addSerializable(request).serialize(),
+      };
+      const readOnlyEstimation = await massaClient
+        .smartContracts()
+        .readSmartContract(callData);
+
+      let maxGas = BigInt(Math.floor(readOnlyEstimation.info.gas_cost * 1.2));
+      maxGas = maxGas > MAX_GAS_CALL ? MAX_GAS_CALL : maxGas;
+
+      const opId = await massaClient.smartContracts().callSmartContract({
+        ...callData,
+        maxGas,
         ...forwardBurnFees,
       });
       setBurnTxId(opId);
