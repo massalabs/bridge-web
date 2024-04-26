@@ -1,4 +1,4 @@
-import { Dropdown, getIcon } from '@massalabs/react-ui-kit';
+import { Dropdown, getAssetIcons } from '@massalabs/react-ui-kit';
 import { useOperationStore } from '@/store/operationStore';
 import { useBridgeModeStore, useAccountStore } from '@/store/store';
 import { useTokenStore, IToken } from '@/store/tokenStore';
@@ -38,7 +38,7 @@ export function TokenOptions(props: TokenOptionsProps) {
       options={tokens.map((token: IToken) => {
         return {
           item: nativeToken ? token.symbol : token.symbolEVM,
-          icon: getIcon(token.symbolEVM, nativeToken, isMainnet),
+          icon: getAssetIcons(token.symbolEVM, nativeToken, isMainnet),
           onClick: () => setSelectedToken(token),
         };
       })}

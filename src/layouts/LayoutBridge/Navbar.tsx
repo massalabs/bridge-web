@@ -44,7 +44,7 @@ export function Navbar(props: NavbarProps) {
     !isValidMassaNetwork ||
     !connectedAccount;
 
-  // Responsible for trigger wrong network toast accross Dapp
+  // Responsible for trigger wrong network toast across Dapp
   useWrongNetworkToast();
 
   function ConnectedWallet() {
