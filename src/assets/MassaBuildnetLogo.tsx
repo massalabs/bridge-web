@@ -1,4 +1,4 @@
-import { SVGProps } from '@massalabs/react-ui-kit/src/components/Icons/Svg/FT/svgInterface';
+import { SVGProps } from '@massalabs/react-ui-kit';
 
 import { useConfigStore } from '@/store/store';
 /* eslint-disable max-len */

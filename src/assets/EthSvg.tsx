@@ -1,4 +1,4 @@
-import { SVGProps } from '@massalabs/react-ui-kit/src/components/Icons/Svg/FT/svgInterface';
+import { SVGProps } from '@massalabs/react-ui-kit';
 
 export function EthSvg(props: SVGProps) {
   let { size } = props;
