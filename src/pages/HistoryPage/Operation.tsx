@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { formatAmount } from '@massalabs/react-ui-kit';
 import { Amount } from './Amount';
 import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
@@ -8,7 +9,6 @@ import { wmasDecimals, wmasSymbol } from '../DaoPage';
 import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
-import { formatAmount } from '@/utils/parseAmount';
 
 function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);

@@ -1,4 +1,4 @@
-import { Button } from '@massalabs/react-ui-kit';
+import { Button, formatAmount } from '@massalabs/react-ui-kit';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
@@ -10,7 +10,6 @@ import {
 import Intl from '@/i18n/i18n';
 import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { maskAddress } from '@/utils/massaFormat';
-import { formatAmount } from '@/utils/parseAmount';
 
 export function EvmConnectButton(): JSX.Element {
   const { switchChain } = useSwitchChain();

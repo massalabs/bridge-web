@@ -1,4 +1,4 @@
-import { SVGProps } from './svgInterface';
+import { SVGProps } from '@massalabs/react-ui-kit';
 
 export function SepoliaSvg(props: SVGProps) {
   let { size } = props;

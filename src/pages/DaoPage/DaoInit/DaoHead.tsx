@@ -1,9 +1,9 @@
 import { Dropdown, Money } from '@massalabs/react-ui-kit';
+import { WMasSvg } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
 import { BNBSvg } from '@/assets/BNBSvg';
-import { WMasSvg } from '@/assets/WMasSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';

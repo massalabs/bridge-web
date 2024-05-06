@@ -1,6 +1,6 @@
-import { SVGProps } from './svgInterface';
-import { useConfigStore } from '@/store/store';
+import { SVGProps } from '@massalabs/react-ui-kit';
 
+import { useConfigStore } from '@/store/store';
 /* eslint-disable max-len */
 export function MassaBuildnetLogo(props: SVGProps) {
   let { size } = props;

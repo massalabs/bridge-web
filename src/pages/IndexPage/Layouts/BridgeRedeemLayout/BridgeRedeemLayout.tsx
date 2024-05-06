@@ -1,6 +1,6 @@
 import { SyntheticEvent, useState } from 'react';
 
-import { Button, Money } from '@massalabs/react-ui-kit';
+import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
@@ -18,7 +18,6 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { formatAmount } from '@/utils/parseAmount';
 
 interface BridgeRedeemProps {
   isBlurred: string;

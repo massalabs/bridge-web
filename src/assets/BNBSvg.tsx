@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-import { SVGProps } from './svgInterface';
+import { SVGProps } from '@massalabs/react-ui-kit';
 
 export function BNBSvg(props: SVGProps) {
   let { size } = props;

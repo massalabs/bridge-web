@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
-import { MassaLogo, Tooltip } from '@massalabs/react-ui-kit';
+import { MassaLogo, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { parseUnits } from 'viem';
@@ -28,7 +28,6 @@ import {
 } from '@/store/store';
 
 import { IToken } from '@/store/tokenStore';
-import { formatAmount } from '@/utils/parseAmount';
 
 interface FeesEstimationProps {
   amount?: string;
