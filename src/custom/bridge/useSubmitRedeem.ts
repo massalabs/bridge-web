@@ -22,7 +22,6 @@ export function useSubmitRedeem() {
       setBurn(Status.Loading);
       setBurnState(BurnState.AWAITING_INCLUSION);
       await handleBurnRedeem();
-      setBurnState(BurnState.PENDING);
     }
   }, [
     amount,

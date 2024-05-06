@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3';
+import { Args, EOperationStatus, MAX_GAS_CALL } from '@massalabs/massa-web3';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { handleBurnError } from './handlers/handleTransactionErrors';
@@ -55,7 +55,33 @@ export function useBurn() {
         maxGas,
         ...forwardBurnFees,
       });
-      setBurnTxId(opId);
+
+      const operationStatus = await massaClient
+        .smartContracts()
+        .awaitMultipleRequiredOperationStatus(opId, [
+          EOperationStatus.SPECULATIVE_ERROR,
+          EOperationStatus.SPECULATIVE_SUCCESS,
+        ]);
+
+      if (operationStatus === EOperationStatus.SPECULATIVE_SUCCESS) {
+        setBurnTxId(opId);
+      } else if (operationStatus === EOperationStatus.SPECULATIVE_ERROR) {
+        await massaClient
+          .smartContracts()
+          .getFilteredScOutputEvents({
+            emitter_address: null,
+            start: null,
+            end: null,
+            original_caller_address: null,
+            original_operation_id: opId,
+            is_final: null,
+          })
+          .then((events) => {
+            events.map((l) => {
+              throw new Error(`opId ${opId}: execution error ${l.data}`);
+            });
+          });
+      }
     } catch (error) {
       handleBurnError(error);
       setBox(Status.Error);

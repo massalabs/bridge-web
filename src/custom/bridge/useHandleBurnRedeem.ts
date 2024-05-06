@@ -41,6 +41,7 @@ export function useHandleBurnRedeem() {
 
   useEffect(() => {
     if (burnTxId && burn !== Status.Success) {
+      setBurnState(BurnState.PENDING);
       setCurrentIdToDisplay(burnTxId);
       setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId));
     }
