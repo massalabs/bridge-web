@@ -69,9 +69,6 @@ export function useBurn() {
           200_000,
         );
 
-      // if (operationStatus === EOperationStatus.SPECULATIVE_SUCCESS) {
-      //   setBurnTxId(opId);
-      // } else
       if (operationStatus === EOperationStatus.SPECULATIVE_ERROR) {
         await massaClient
           .smartContracts()
