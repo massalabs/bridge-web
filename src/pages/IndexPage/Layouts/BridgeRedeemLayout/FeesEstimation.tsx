@@ -122,7 +122,7 @@ export function FeesEstimation() {
       if (fees === 0n) {
         setFeesETH(undefined);
       } else {
-        setFeesETH(formatAmount(fees.toString()).amountFormattedFull);
+        setFeesETH(formatAmount(fees.toString(), 18).amountFormattedFull);
       }
     };
 
