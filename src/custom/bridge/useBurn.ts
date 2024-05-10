@@ -56,16 +56,23 @@ export function useBurn() {
         ...forwardBurnFees,
       });
 
+      setBurnTxId(opId);
+
       const operationStatus = await massaClient
         .smartContracts()
-        .awaitMultipleRequiredOperationStatus(opId, [
-          EOperationStatus.SPECULATIVE_ERROR,
-          EOperationStatus.SPECULATIVE_SUCCESS,
-        ]);
+        .awaitMultipleRequiredOperationStatus(
+          opId,
+          [
+            EOperationStatus.SPECULATIVE_ERROR,
+            EOperationStatus.SPECULATIVE_SUCCESS,
+          ],
+          200000,
+        );
 
-      if (operationStatus === EOperationStatus.SPECULATIVE_SUCCESS) {
-        setBurnTxId(opId);
-      } else if (operationStatus === EOperationStatus.SPECULATIVE_ERROR) {
+      // if (operationStatus === EOperationStatus.SPECULATIVE_SUCCESS) {
+      //   setBurnTxId(opId);
+      // } else
+      if (operationStatus === EOperationStatus.SPECULATIVE_ERROR) {
         await massaClient
           .smartContracts()
           .getFilteredScOutputEvents({
