@@ -66,7 +66,7 @@ export function useBurn() {
             EOperationStatus.SPECULATIVE_ERROR,
             EOperationStatus.SPECULATIVE_SUCCESS,
           ],
-          200000,
+          200_000,
         );
 
       // if (operationStatus === EOperationStatus.SPECULATIVE_SUCCESS) {
