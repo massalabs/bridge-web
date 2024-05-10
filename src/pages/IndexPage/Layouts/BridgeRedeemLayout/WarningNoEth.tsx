@@ -22,7 +22,7 @@ export function WarningNoEth() {
   const estimatedFees = estimateClaimFees();
   const fees =
     estimatedFees > 0n
-      ? formatAmount(estimatedFees.toString()).amountFormattedFull
+      ? formatAmount(estimatedFees.toString(), 18).amountFormattedFull
       : '';
 
   return (
