@@ -149,11 +149,11 @@ export function useFetchSignatures() {
   const state = BridgingState.processing;
   const queryParams = `?evmAddress=${evmAddress}&inputOpId=${burnTxId}&entities=${Entities.Burn}&state=${state}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
-  const [enableReftech, setEnableRefetch] = useState(true);
+  const [enableRefetch, setEnableRefetch] = useState(true);
 
   const { data: burnOperations } = useResource<OperationHistoryItem[]>(
     lambdaUrl,
-    enableReftech,
+    enableRefetch,
   );
 
   useEffect(() => {
