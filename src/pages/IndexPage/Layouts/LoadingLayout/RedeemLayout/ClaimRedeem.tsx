@@ -17,6 +17,7 @@ import { useFetchSignatures } from '@/utils/lambdaApi';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
+
 export function ClaimRedeem() {
   const { address: evmAddress, chain } = useAccount();
   const { selectedToken, refreshBalances } = useTokenStore();
@@ -26,6 +27,7 @@ export function ClaimRedeem() {
     amount,
     getCurrentRedeemOperation,
     updateBurnRedeemOperationById,
+    setClaimTxId,
   } = useOperationStore();
 
   useFetchSignatures();
@@ -49,6 +51,7 @@ export function ClaimRedeem() {
 
   // Updates current redeem operation state based on claim status
   useEffect(() => {
+    if (hash) setClaimTxId(hash);
     if (isPending) {
       updateCurrentRedeemOperation({
         claimState: ClaimState.PENDING,
@@ -85,6 +88,7 @@ export function ClaimRedeem() {
     setClaim,
     updateCurrentRedeemOperation,
     setLoadingToError,
+    setClaimTxId,
   ]);
 
   // Event handler for claim button

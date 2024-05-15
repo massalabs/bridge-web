@@ -1,10 +1,14 @@
 import { toast } from '@massalabs/react-ui-kit';
 import Intl from '../../../i18n/i18n';
-import { ClaimState } from '@/utils/const';
+import { TIMEOUT } from '@/const';
+import { useOperationStore } from '@/store/operationStore';
+import { BurnState, ClaimState } from '@/utils/const';
 import {
+  CustomError,
   isOperationAlreadyExecutedError,
   isParameterError,
   isRejectedByUser,
+  isWalletTimeoutError,
 } from '@/utils/error';
 
 export function handleLockError(error: Error) {
@@ -53,5 +57,26 @@ export function handleEvmClaimBoxError(error: Error): ClaimState {
     toast.error(Intl.t('index.claim.error.unknown'), { id: error.message });
     console.error(error);
     return ClaimState.ERROR;
+  }
+}
+
+export function handleBurnError(error: undefined | unknown) {
+  const { setBurnState } = useOperationStore.getState();
+  const typedError = error as CustomError;
+  const isErrorTimeout = typedError.cause?.error === TIMEOUT;
+  if (isRejectedByUser(typedError)) {
+    toast.error(Intl.t('index.burn.error.rejected'));
+    setBurnState(BurnState.REJECTED);
+  } else if (isWalletTimeoutError(typedError)) {
+    toast.error(Intl.t('index.burn.error.timeout-signature'));
+    setBurnState(BurnState.SIGNATURE_TIMEOUT);
+  } else if (isErrorTimeout) {
+    // when waitIncludedOperation fails to wait operation finality
+    setBurnState(BurnState.OPERATION_FINALITY_TIMEOUT);
+    toast.error(Intl.t('index.burn.error.timeout'));
+  } else {
+    setBurnState(BurnState.ERROR);
+    toast.error(Intl.t('index.burn.error.unknown'));
+    console.error(error);
   }
 }

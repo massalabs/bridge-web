@@ -23,8 +23,9 @@ export async function increaseAllowanceStorageCost(): Promise<bigint> {
     connectedAccount.address(),
     config[currentMode].massaBridgeContract,
   );
-  const foundKey = allKeys.find((k) => k === key);
-
+  const foundKey = allKeys.find((k) => {
+    return JSON.stringify(k) === JSON.stringify(key);
+  });
   if (foundKey) {
     return 0n;
   }

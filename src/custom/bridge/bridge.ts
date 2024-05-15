@@ -5,17 +5,15 @@ import {
   MAX_GAS_CALL,
   bytesToSerializableObjectArray,
 } from '@massalabs/massa-web3';
-import { parseUnits } from 'viem';
 import { waitIncludedOperation } from './massa-utils';
 import {
   useAccountStore,
   useBridgeModeStore,
   useTokenStore,
 } from '../../store/store';
-import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
-import { config, forwardBurnFees, increaseAllowanceFee } from '@/const';
+import { config, increaseAllowanceFee } from '@/const';
 
 export async function increaseAllowance(amount: bigint): Promise<string> {
   const { massaClient } = useAccountStore.getState();
@@ -52,47 +50,6 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
   });
 
   await waitIncludedOperation(opId);
-
-  return opId;
-}
-
-export async function forwardBurn(
-  recipient: string,
-  amount: string,
-): Promise<string> {
-  const { massaClient } = useAccountStore.getState();
-  const { selectedToken } = useTokenStore.getState();
-  const { currentMode } = useBridgeModeStore.getState();
-
-  if (!massaClient) throw new Error('Massa client not found');
-  if (!selectedToken) throw new Error('Token not selected');
-
-  const amt = parseUnits(amount, selectedToken.decimals);
-
-  const tokenPair = new TokenPair(
-    selectedToken.massaToken,
-    selectedToken.evmToken,
-    selectedToken.chainId,
-  );
-
-  const request = new ForwardingRequest(amt, recipient, tokenPair);
-  const readOnlyEstimation = await massaClient
-    .smartContracts()
-    .readSmartContract({
-      targetAddress: config[currentMode].massaBridgeContract,
-      targetFunction: 'forwardBurn',
-      parameter: new Args().addSerializable(request).serialize(),
-    });
-
-  let maxGas = BigInt(Math.floor(readOnlyEstimation.info.gas_cost * 1.2));
-  maxGas = maxGas > MAX_GAS_CALL ? MAX_GAS_CALL : maxGas;
-  const opId = await massaClient.smartContracts().callSmartContract({
-    targetAddress: config[currentMode].massaBridgeContract,
-    targetFunction: 'forwardBurn',
-    parameter: new Args().addSerializable(request).serialize(),
-    maxGas,
-    ...forwardBurnFees,
-  });
 
   return opId;
 }

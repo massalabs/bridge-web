@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from 'react';
+import { useState } from 'react';
 
 import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
@@ -7,9 +7,14 @@ import { useAccount } from 'wagmi';
 import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';
+
 import { GetTokensPopUpModal } from '@/components';
 import useEvmToken from '@/custom/bridge/useEvmToken';
+import { useSubmitBridge } from '@/custom/bridge/useSubmitBridge';
+import { useSubmitRedeem } from '@/custom/bridge/useSubmitRedeem';
 import Intl from '@/i18n/i18n';
+import { PendingOperationLayout } from '@/pages';
+import { Status } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -22,17 +27,17 @@ import { SIDE } from '@/utils/const';
 interface BridgeRedeemProps {
   isBlurred: string;
   isButtonDisabled: boolean;
-  handleSubmit: (e: SyntheticEvent) => void;
 }
 
 export function BridgeRedeemLayout(props: BridgeRedeemProps) {
-  const { isBlurred, isButtonDisabled, handleSubmit } = props;
+  const { isBlurred, isButtonDisabled } = props;
 
   const { setAmountError, amountError } = useGlobalStatusesStore();
 
   const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
     useEvmToken();
   const { isConnected: isEvmWalletConnected } = useAccount();
+  const { box } = useGlobalStatusesStore();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
   const { isMassaToEvm, amount, setSide, setAmount } = useOperationStore();
@@ -42,6 +47,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
 
   const massaToEvm = isMassaToEvm();
+
+  const { handleSubmitBridge } = useSubmitBridge();
+  const { handleSubmitRedeem } = useSubmitRedeem();
 
   function handlePercent(percent: number) {
     if (!token || !isBalanceFetched) return;
@@ -71,6 +79,14 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     setAmount('');
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
+
+  function handleGenericSubmit() {
+    isMassaToEvm() ? handleSubmitRedeem() : handleSubmitBridge();
+  }
+
+  const isOperationPending = box !== Status.None;
+
+  if (isOperationPending) return <PendingOperationLayout />;
 
   // Money component formats amount without decimals
   return (
@@ -174,7 +190,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
           <WarningNoEth />
         </div>
         <div className="mb-5">
-          <Button disabled={isButtonDisabled} onClick={(e) => handleSubmit(e)}>
+          <Button disabled={isButtonDisabled} onClick={handleGenericSubmit}>
             {massaToEvm
               ? Intl.t('index.button.redeem')
               : Intl.t('index.button.bridge')}

@@ -1,29 +1,24 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { ClaimRedeem } from './ClaimRedeem';
 import { LoadingState } from '../LoadingState';
-import { LoadingBoxProps } from '../PendingOperationLayout';
 import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
+import { useHandleBurnRedeem } from '@/custom/bridge/useHandleBurnRedeem';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/store';
-import { ClaimState, BurnState } from '@/utils/const';
-import { linkifyMassaOpIdToExplo } from '@/utils/utils';
+import { BurnState, ClaimState } from '@/utils/const';
 
-export function RedeemLayout(props: LoadingBoxProps) {
-  const { burnState } = props;
-
+export function RedeemLayout() {
   const { burn, approve, claim } = useGlobalStatusesStore();
-  const { burnTxId, getCurrentRedeemOperation } = useOperationStore();
-  const evmWalletName = useConnectorName();
+  const { getCurrentRedeemOperation, burnState } = useOperationStore();
 
-  // wait for burn success --> then check additional conditions
-  // once burn is a success show claim button + change title & block redeem flow
+  const evmWalletName = useConnectorName();
   const isBurnSuccessful = burn === Status.Success;
 
-  const explorerUrl = linkifyMassaOpIdToExplo(burnTxId as string);
-
   const claimState = getCurrentRedeemOperation()?.claimState;
+
+  const { currentIdToDisplay, currentExplorerUrl } = useHandleBurnRedeem();
 
   return (
     <>
@@ -56,7 +51,10 @@ export function RedeemLayout(props: LoadingBoxProps) {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <ClaimRedeem />}
-        <ShowLinkToExplorers explorerUrl={explorerUrl} currentTxID={burnTxId} />
+        <ShowLinkToExplorers
+          explorerUrl={currentExplorerUrl}
+          currentTxID={currentIdToDisplay}
+        />
       </div>
     </>
   );

@@ -1,10 +1,10 @@
 import { formatAmountToDisplay } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { LoadingBoxProps } from './PendingOperationLayout';
 import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 import { Blockchain } from '@/const';
 import { addTokensBuildnetLink, addTokensMainnetLink } from '@/const/faq';
+import { useBridgeUtils } from '@/custom/bridge/useBridgeUtils';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import {
@@ -15,8 +15,7 @@ import {
 import { EVM_EXPLORER } from '@/utils/const';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
-export function SuccessLayout(props: LoadingBoxProps) {
-  const { onClose } = props;
+export function SuccessLayout() {
   const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
@@ -25,7 +24,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
     useBridgeModeStore();
   const evmWalletName = useConnectorName();
   const isMainnet = getIsMainnet();
-
+  const { closeLoadingBox } = useBridgeUtils();
   const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
 
@@ -105,7 +104,7 @@ export function SuccessLayout(props: LoadingBoxProps) {
           <div className="mb-1">
             {Intl.t('index.loading-box.add-tokens-message')}
           </div>
-          <Link onClick={onClose} to={redirectToFaq}>
+          <Link onClick={closeLoadingBox} to={redirectToFaq}>
             <u>{Intl.t('index.loading-box.link-to-instructions')}</u>
           </Link>
         </div>
