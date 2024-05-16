@@ -1,5 +1,4 @@
-import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
-import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
+import { FetchingLine, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/operationStore';
