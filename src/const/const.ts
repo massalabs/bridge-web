@@ -13,6 +13,11 @@ export enum Blockchain {
   UNKNOWN = 'Unknown',
 }
 
+export enum SupportedEvmBlockchain {
+  ETH = Blockchain.ETHEREUM,
+  BSC = Blockchain.BSC,
+}
+
 // SMART CONTRACTS ADDRESSES
 export const TDAI_CONTRACT_ADDRESS =
   '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';

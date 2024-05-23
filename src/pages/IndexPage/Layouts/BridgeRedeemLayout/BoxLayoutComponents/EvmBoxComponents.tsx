@@ -2,45 +2,46 @@ import { Dropdown } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
 import { iconsNetworks } from '../BoxLayout';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain } from '@/const';
+import { Blockchain, SupportedEvmBlockchain } from '@/const';
 import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
-import { useBridgeModeStore } from '@/store/store';
+import { useBridgeModeStore, useOperationStore } from '@/store/store';
 
 export function EVMHeader() {
   const { isConnected } = useAccount();
-  const { evmNetwork: getEvmNetwork, isMainnet: getIsMainnet } =
-    useBridgeModeStore();
-
-  const evmNetwork = getEvmNetwork();
+  const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
+  const { selectedEvm, setSelectedEvm, availableEvmNetworks } =
+    useOperationStore();
   const isMainnet = getIsMainnet();
-
-  const ethChainAndNetwork = `${Intl.t(
-    `general.${Blockchain.ETHEREUM}`,
-  )} ${Intl.t(`general.${evmNetwork}`)}`;
-  const sepChainAndNetwork = `${Intl.t(`general.Sepolia`)} ${Intl.t(
-    `general.${evmNetwork}`,
-  )}`;
-
-  const defaultIcon = isMainnet ? iconsNetworks['ETH'] : iconsNetworks['SEP'];
-  const defaultNetwork = isMainnet ? ethChainAndNetwork : sepChainAndNetwork;
 
   const walletName = useConnectorName();
   const currentEvmChain = useConnectedEvmChain();
+
+  const options = [
+    {
+      icon: isMainnet ? iconsNetworks.ETH : iconsNetworks.SEP,
+      item: `${Intl.t(
+        `general.${isMainnet ? Blockchain.ETHEREUM : Blockchain.SEPOLIA}`,
+      )} ${Intl.t(`general.${currentMode}`)}`,
+      onClick: () => setSelectedEvm(SupportedEvmBlockchain.ETH),
+    },
+    {
+      icon: isMainnet ? iconsNetworks.BSC : iconsNetworks.TBSC,
+      item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
+        `general.${currentMode}`,
+      )}`,
+      onClick: () => setSelectedEvm(SupportedEvmBlockchain.BSC),
+    },
+  ];
 
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
         <Dropdown
-          readOnly={true}
-          options={[
-            {
-              icon: defaultIcon,
-              item: defaultNetwork,
-            },
-          ]}
+          options={options}
+          select={availableEvmNetworks.indexOf(selectedEvm)}
         />
       </div>
       <div className="flex items-center gap-3">
