@@ -34,8 +34,9 @@ export enum BridgeMode {
 
 export const config = {
   [BridgeMode.mainnet]: {
-    evmBridgeContract:
+    ethBridgeContract:
       '0xCD5dcE776c20260D96E2d0C65431f05da4fa8ba1' as `0x${string}`,
+    bscBridgeContract: '0x' as `0x${string}`,
     massaBridgeContract:
       'AS12Kkm5NXHb4xjJJRBDSJiSUsSSbV7DcBCLSS1Zdugz1WdzjVSxg',
     lambdaUrl:
@@ -43,8 +44,9 @@ export const config = {
     wmas_address: '0xDc074966De429c92614769Dc6546A8E72E83175D' as `0x${string}`,
   },
   [BridgeMode.testnet]: {
-    evmBridgeContract:
+    ethBridgeContract:
       '0xf18a8776cD5AA54b05C0C0e5Dc82D992849eD006' as `0x${string}`,
+    bscBridgeContract: '0x' as `0x${string}`,
     massaBridgeContract: 'AS1owaJB7NkqY2pjsggBP7m1jFA9XRZKGpXBbjBMeysQDSxjm7MS',
     lambdaUrl:
       'https://6sul7w7nqer7pd5mf7cl6l2muy0isblj.lambda-url.eu-west-3.on.aws/default/',

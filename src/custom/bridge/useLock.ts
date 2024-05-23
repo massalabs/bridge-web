@@ -19,7 +19,7 @@ export function useLock() {
   const { amount } = useOperationStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
 
-  const bridgeContractAddr = config[currentMode].evmBridgeContract;
+  const bridgeContractAddr = config[currentMode].ethBridgeContract;
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
   const { data: hash, writeContract, error } = useWriteContract();

@@ -228,7 +228,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.bridge-address-desc-1')}{' '}
-            {config[currentMode].evmBridgeContract}
+            {config[currentMode].ethBridgeContract}
           </p>
           <p>
             {Intl.t('index.faq.mainnet.bridge-address-desc-2')}{' '}
