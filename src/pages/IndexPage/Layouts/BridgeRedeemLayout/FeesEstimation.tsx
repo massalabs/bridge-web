@@ -23,6 +23,10 @@ import {
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import useEvmToken from '@/custom/bridge/useEvmToken';
+import {
+  useEvmChainValidation,
+  useGetChainValidationContext,
+} from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import {
   useAccountStore,
@@ -102,6 +106,10 @@ export function FeesEstimation() {
 
   const currentEvmChain = useConnectedEvmChain();
 
+  const { context } = useGetChainValidationContext();
+
+  const isEvmNetworkValid = useEvmChainValidation(context);
+
   const estimateFeesMassa = useCallback(
     async (selectedToken: IToken, amount?: string) => {
       const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
@@ -165,25 +173,20 @@ export function FeesEstimation() {
     connectedAccount, // update the estimation when account change to take into account the new allowance
   ]);
 
-  if (!selectedToken || !isEvmWalletConnected || !connectedAccount) return null;
+  if (
+    !selectedToken ||
+    !isEvmWalletConnected ||
+    !connectedAccount ||
+    !isEvmNetworkValid
+  )
+    return null;
 
   const symbolEVM = selectedToken.symbolEVM;
   const symbolMASSA = selectedToken.symbol;
 
   const chainName = chain
-    ? chain.name
+    ? chain.name.replace('Testnet', '').replace('Mainnet', '')
     : Intl.t(`general.${Blockchain.UNKNOWN}`);
-
-  if (currentEvmChain === Blockchain.BSC) {
-    return (
-      <div className="text-s-warning">
-        {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
-        <Link to={`/${PAGES.DAO}`}>
-          <u>{Intl.t('dao-maker.page-name')} </u>
-        </Link>
-      </div>
-    );
-  }
 
   const storageMASString = storageMAS ? toMAS(storageMAS).toString() : '';
   const totalCostMASString = toMAS(
@@ -225,7 +228,7 @@ export function FeesEstimation() {
         </div>
         <EstimatedAmount amount={totalCostMASString} symbol={MASSA_TOKEN} />
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2">
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
             name: chainName,
@@ -234,6 +237,14 @@ export function FeesEstimation() {
         </p>
         <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
       </div>
+      {currentEvmChain === Blockchain.BSC && (
+        <div className="text-s-warning">
+          {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
+          <Link to={`/${PAGES.DAO}`}>
+            <u>{Intl.t('dao-maker.page-name')} </u>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
