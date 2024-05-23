@@ -1,3 +1,5 @@
+import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
+
 export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
 export const METAMASK = 'Metamask';
 
@@ -13,10 +15,17 @@ export enum Blockchain {
   UNKNOWN = 'Unknown',
 }
 
+// Supported blockchain to bridge from and to
 export enum SupportedEvmBlockchain {
   ETH = Blockchain.ETHEREUM,
   BSC = Blockchain.BSC,
 }
+
+// Mapping from Supported blockchain to the list of supported chain ids (mainnet and testnets)
+export const BLOCKCHAIN_TO_CHAIN_IDS: Record<string, number[]> = {
+  [SupportedEvmBlockchain.ETH]: [mainnet.id, sepolia.id],
+  [SupportedEvmBlockchain.BSC]: [bsc.id, bscTestnet.id],
+};
 
 // SMART CONTRACTS ADDRESSES
 export const TDAI_CONTRACT_ADDRESS =

@@ -8,17 +8,27 @@ import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { getEvmNetworkIcon } from '@/pages';
-import { useBridgeModeStore, useOperationStore } from '@/store/store';
+import {
+  useBridgeModeStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store/store';
 
 export function EVMHeader() {
   const { isConnected } = useAccount();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
   const { selectedEvm, setSelectedEvm, availableEvmNetworks } =
     useOperationStore();
+  const { resetSelectedToken } = useTokenStore();
   const isMainnet = getIsMainnet();
 
   const walletName = useConnectorName();
   const currentEvmChain = useConnectedEvmChain();
+
+  function handleChangeEvmNetwork(selectedEvm: SupportedEvmBlockchain) {
+    setSelectedEvm(selectedEvm);
+    resetSelectedToken();
+  }
 
   const options = [
     {
@@ -28,7 +38,7 @@ export function EVMHeader() {
       item: `${Intl.t(
         `general.${isMainnet ? Blockchain.ETHEREUM : Blockchain.SEPOLIA}`,
       )} ${Intl.t(`general.${currentMode}`)}`,
-      onClick: () => setSelectedEvm(SupportedEvmBlockchain.ETH),
+      onClick: () => handleChangeEvmNetwork(SupportedEvmBlockchain.ETH),
     },
     {
       icon: isMainnet
@@ -37,7 +47,7 @@ export function EVMHeader() {
       item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
         `general.${currentMode}`,
       )}`,
-      onClick: () => setSelectedEvm(SupportedEvmBlockchain.BSC),
+      onClick: () => handleChangeEvmNetwork(SupportedEvmBlockchain.BSC),
     },
   ];
   return (

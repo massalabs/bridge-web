@@ -51,7 +51,7 @@ async function initAccountStore() {
 }
 
 async function initTokenStore() {
-  useTokenStore.getState().getTokens();
+  useTokenStore.getState().refreshTokens();
 }
 
 async function initializeStores() {

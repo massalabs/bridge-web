@@ -29,7 +29,7 @@ export const useBridgeModeStore = create<ModeStoreState>(
       // if the mode has changed, we need to refresh the tokens
 
       if (previousMode !== mode) {
-        useTokenStore.getState().getTokens();
+        useTokenStore.getState().refreshTokens();
       }
     },
   }),

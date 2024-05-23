@@ -10,8 +10,12 @@ import {
 } from '@massalabs/massa-web3';
 import { create } from 'zustand';
 import { getEVMSymbol, getMASSASymbol } from './helpers/tokenSymbol';
-import { useAccountStore, useBridgeModeStore } from './store';
-import { config } from '../const';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useOperationStore,
+} from './store';
+import { BLOCKCHAIN_TO_CHAIN_IDS, config } from '../const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
 import {
   getAllowance,
@@ -42,8 +46,14 @@ export interface TokenStoreState {
   selectedToken?: IToken;
   tokens: IToken[];
 
+  /** Return the token filtered by supported token on the current selected evm chain */
+  getTokens(): IToken[];
+  /** Set the selected token if included in the list of the supported token on the current selected evm chain */
   setSelectedToken: (token?: IToken) => void;
-  getTokens: () => void;
+  /** Reset selected token to the first token in the list of the supported token on the current selected evm chain */
+  resetSelectedToken: () => void;
+  /** Refresh the list of supported tokens by reading the massa bridge smart contract */
+  refreshTokens: () => void;
   refreshBalances: () => void;
 }
 
@@ -58,7 +68,14 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
   selectedToken: undefined,
   tokens: [],
 
-  getTokens: async () => {
+  getTokens: () => {
+    const { selectedEvm } = useOperationStore.getState();
+    return get().tokens.filter((token) =>
+      BLOCKCHAIN_TO_CHAIN_IDS[selectedEvm].includes(token.chainId),
+    );
+  },
+
+  refreshTokens: async () => {
     const { isMainnet: getIsMainnet } = useBridgeModeStore.getState();
 
     const publicClient = await initMassaClient(getIsMainnet());
@@ -112,11 +129,26 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
   },
 
   setSelectedToken: (selectedToken?: IToken) => {
-    set({ selectedToken });
+    // if given undefined, set undefined
+    if (!selectedToken) {
+      set({ selectedToken });
+    }
+    // if selected token is not in the list, set first selectable token
+    // selectable is the token supported on the current evm chain selected
+    const selectable = get().getTokens();
+    if (selectedToken && selectable.includes(selectedToken)) {
+      set({ selectedToken });
+    } else {
+      set({ selectedToken: selectable[0] });
+    }
     _setInStorage(
       SELECTED_MASSA_TOKEN_KEY,
       selectedToken ? JSON.stringify(selectedToken) : '',
     );
+  },
+
+  resetSelectedToken: () => {
+    set({ selectedToken: get().getTokens()[0] });
   },
 
   refreshBalances: async () => {
