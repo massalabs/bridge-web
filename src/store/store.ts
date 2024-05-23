@@ -5,7 +5,6 @@ import configStore, {
   BRIDGE_THEME_STORAGE_KEY,
   ConfigStoreState,
 } from './configStore';
-import modeStore, { ModeStoreState } from './modeStore';
 import { useTokenStore } from './tokenStore';
 import { LAST_USED_ACCOUNT, _getFromStorage } from '../utils/storage';
 import { updateProviders } from '@/store/helpers/massaProviders';
@@ -22,9 +21,7 @@ export const useAccountStore = create<AccountStoreState>((set, get) => ({
   ...accountStore(set, get),
 }));
 
-export const useBridgeModeStore = create<ModeStoreState>((set, get) => ({
-  ...modeStore(set, get),
-}));
+export { useBridgeModeStore } from './modeStore';
 
 function initConfigStore() {
   let theme = _getFromStorage(BRIDGE_THEME_STORAGE_KEY);

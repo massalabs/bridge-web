@@ -18,14 +18,15 @@ import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 export function SuccessLayout() {
   const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
-  const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
+  const {
+    currentMode,
+    isMainnet: getIsMainnet,
+    massaNetwork: getMassaNetwork,
+  } = useBridgeModeStore();
   const { chain } = useAccount();
-  const { evmNetwork: getEvmNetwork, massaNetwork: getMassaNetwork } =
-    useBridgeModeStore();
   const evmWalletName = useConnectorName();
   const isMainnet = getIsMainnet();
   const { closeLoadingBox } = useBridgeUtils();
-  const evmNetwork = getEvmNetwork();
   const massaNetwork = getMassaNetwork();
 
   const { selectedToken: token } = useTokenStore();
@@ -43,7 +44,9 @@ export function SuccessLayout() {
     `general.${massaNetwork}`,
   )}`;
 
-  const evmChainAndNetwork = `${chain.name} ${evmNetwork}`;
+  const evmChainAndNetwork = `${chain.name} ${Intl.t(
+    `general.${currentMode}`,
+  )}`;
 
   // claim && bridge success need to show respective show link to explorer
   const explorerUrl = massaToEvm
