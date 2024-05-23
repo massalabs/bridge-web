@@ -30,8 +30,8 @@ export const iconsNetworks: IconsNetworks = {
   [BUILDNET]: <MassaBuildnetLogo size={40} />,
   ETH: <EthSvg size={40} />,
   SEP: <SepoliaSvg size={40} />,
-  BNB: <BNBSvg size={40} />,
-  tBNB: <BNBSvg size={40} />,
+  BSC: <BNBSvg size={40} />,
+  TBSC: <BNBSvg size={40} />,
 };
 
 interface BoxLayoutResult {

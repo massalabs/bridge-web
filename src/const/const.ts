@@ -3,15 +3,12 @@ export const METAMASK = 'Metamask';
 
 export enum Blockchain {
   ETHEREUM = 'Ethereum',
-  EVM_MAINNET = 'Mainnet',
-  EVM_TESTNET = 'Testnet',
+  SEPOLIA = 'Sepolia',
   MASSA = 'Massa',
   MASSA_BUILDNET = 'Buildnet',
   MASSA_MAINNET = 'Mainnet',
-  BSC = 'Binance smart chain',
-  TBSC = 'BSC Testnet',
-  BSC_MAINNET = 'Mainnet',
-  BSC_TESTNET = 'Testnet',
+  BSC = 'BSC',
+  // TBSC = 'TBSC',
   INVALID_CHAIN = 'Invalid-chain',
   UNKNOWN = 'Unknown',
 }
@@ -28,8 +25,8 @@ export const U256_MAX = BigInt(
 );
 
 export enum BridgeMode {
-  mainnet = 'mainnet',
-  testnet = 'testnet',
+  mainnet = 'Mainnet',
+  testnet = 'Testnet',
 }
 
 export const config = {
