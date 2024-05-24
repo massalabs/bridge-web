@@ -10,7 +10,7 @@ export function useFetchBurnEvent() {
   const { currentMode } = useBridgeModeStore();
   const [enableRefetch, setEnableRefetch] = useState<boolean>(true);
 
-  const queryParams = `?&inputTxId=${burnTxId}`;
+  const queryParams = `?&inputOpId=${burnTxId}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
 
   const { data } = useResource<OperationHistoryItem[]>(
