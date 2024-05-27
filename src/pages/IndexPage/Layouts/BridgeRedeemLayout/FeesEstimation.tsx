@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toMAS } from '@massalabs/massa-web3';
-import { MassaLogo, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
+import {
+  FetchingLine,
+  MassaLogo,
+  Tooltip,
+  formatAmount,
+} from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
-import { FetchingLine } from '../LoadingLayout/FetchingComponent';
 import { EthSvg } from '@/assets/EthSvg';
 import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
