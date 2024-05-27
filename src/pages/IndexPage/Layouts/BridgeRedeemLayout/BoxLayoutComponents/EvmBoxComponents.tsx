@@ -35,7 +35,6 @@ export function EVMHeader() {
       onClick: () => setSelectedEvm(SupportedEvmBlockchain.BSC),
     },
   ];
-
   return (
     <div className="flex items-center justify-between">
       <div className="w-1/2">
