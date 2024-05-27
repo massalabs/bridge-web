@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { fromMAS } from '@massalabs/massa-web3';
-import { Tag, formatAmount } from '@massalabs/react-ui-kit';
+import { FetchingLine, Tag, formatAmount } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { FiHelpCircle } from 'react-icons/fi';
@@ -11,7 +11,6 @@ import { fetchMASBalance } from '@/bridge';
 import { MASSA_TOKEN } from '@/const';
 import { useIsPageDAOMaker } from '@/custom/bridge/location';
 import Intl from '@/i18n/i18n';
-import { FetchingLine } from '@/pages/IndexPage/Layouts/LoadingLayout/FetchingComponent';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { AIRDROP_AMOUNT } from '@/utils/const';
 

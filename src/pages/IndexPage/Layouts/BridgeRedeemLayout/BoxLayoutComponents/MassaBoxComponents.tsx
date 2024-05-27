@@ -1,6 +1,5 @@
 import { MAINNET, BUILDNET } from '@massalabs/massa-web3';
-import { Dropdown } from '@massalabs/react-ui-kit';
-import { FetchingLine } from '../../LoadingLayout/FetchingComponent';
+import { Dropdown, FetchingLine } from '@massalabs/react-ui-kit';
 import { iconsNetworks } from '../BoxLayout';
 import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';

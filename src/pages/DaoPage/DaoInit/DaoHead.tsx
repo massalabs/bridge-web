@@ -1,4 +1,4 @@
-import { Dropdown, Money } from '@massalabs/react-ui-kit';
+import { Dropdown, FetchingLine, Money } from '@massalabs/react-ui-kit';
 import { WMasSvg } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -8,7 +8,6 @@ import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
-import { FetchingLine } from '@/pages';
 import { useBridgeModeStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
 
