@@ -58,7 +58,7 @@ export const config = {
     ethBridgeContract:
       '0xf18a8776cD5AA54b05C0C0e5Dc82D992849eD006' as `0x${string}`,
     bscBridgeContract:
-      '0xBBe6d5635E1a8AAac1D8AfF6746a770A20361E42' as `0x${string}`,
+      '0xb06Cf6Ed6E24f31bf9148CF7c4D4218903d500b2' as `0x${string}`,
     massaBridgeContract: 'AS1owaJB7NkqY2pjsggBP7m1jFA9XRZKGpXBbjBMeysQDSxjm7MS',
     lambdaUrl:
       'https://6sul7w7nqer7pd5mf7cl6l2muy0isblj.lambda-url.eu-west-3.on.aws/default/',
