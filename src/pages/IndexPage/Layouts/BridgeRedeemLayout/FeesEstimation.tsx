@@ -7,7 +7,6 @@ import {
   formatAmount,
 } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
 import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { EthSvg } from '@/assets/EthSvg';
@@ -18,10 +17,8 @@ import {
   forwardBurnFees,
   increaseAllowanceFee,
   MASSA_TOKEN,
-  PAGES,
 } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
-import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import {
   useEvmChainValidation,
@@ -103,8 +100,6 @@ export function FeesEstimation() {
   });
 
   const { connectedAccount } = useAccountStore();
-
-  const currentEvmChain = useConnectedEvmChain();
 
   const { context } = useGetChainValidationContext();
 
@@ -237,14 +232,6 @@ export function FeesEstimation() {
         </p>
         <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
       </div>
-      {currentEvmChain === Blockchain.BSC && (
-        <div className="text-s-warning">
-          {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
-          <Link to={`/${PAGES.DAO}`}>
-            <u>{Intl.t('dao-maker.page-name')} </u>
-          </Link>
-        </div>
-      )}
     </div>
   );
 }
