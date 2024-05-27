@@ -1,5 +1,4 @@
 import { Dropdown, getAssetIcons } from '@massalabs/react-ui-kit';
-import { useOperationStore } from '@/store/operationStore';
 import { useBridgeModeStore, useAccountStore } from '@/store/store';
 import { useTokenStore, IToken } from '@/store/tokenStore';
 
@@ -10,9 +9,10 @@ interface TokenOptionsProps {
 export function TokenOptions(props: TokenOptionsProps) {
   const { nativeToken } = props;
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const { isMassaToEvm: getIsMassaToEvm } = useOperationStore();
   const { isFetching } = useAccountStore();
-  const { tokens, setSelectedToken, selectedToken } = useTokenStore();
+  const { getTokens, setSelectedToken, selectedToken } = useTokenStore();
+
+  const tokens = getTokens();
 
   const selectedMassaTokenKey: number = parseInt(
     Object.keys(tokens).find(
@@ -21,14 +21,8 @@ export function TokenOptions(props: TokenOptionsProps) {
   );
 
   const isMainnet = getIsMainnet();
-  const isMassaToEvm = getIsMassaToEvm();
 
-  let readOnlyDropdown;
-  if (isMassaToEvm) {
-    readOnlyDropdown = !isMassaToEvm || isFetching;
-  } else {
-    readOnlyDropdown = isMassaToEvm || isFetching;
-  }
+  const readOnlyDropdown = isFetching;
 
   return (
     <Dropdown

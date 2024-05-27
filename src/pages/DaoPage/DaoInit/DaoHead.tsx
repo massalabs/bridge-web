@@ -30,9 +30,7 @@ export function DaoHead(props: DaoHeadProps) {
     setAmountError,
   } = props;
   const { address: evmAddress } = useAccount();
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-
-  const isMainnet = getIsMainnet();
+  const { currentMode } = useBridgeModeStore();
 
   function handleAmountChange(o: string) {
     setAmount(o);
@@ -66,7 +64,9 @@ export function DaoHead(props: DaoHeadProps) {
               options={[
                 {
                   icon: <BNBSvg />,
-                  item: isMainnet ? Blockchain.BSC : Blockchain.TBSC,
+                  item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
+                    `general.${currentMode}`,
+                  )}`,
                 },
               ]}
             />

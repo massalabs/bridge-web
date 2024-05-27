@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { SupportedEvmBlockchain } from '@/const';
 import { BurnState, ClaimState, SIDE } from '@/utils/const';
 import { OperationHistoryItem } from '@/utils/lambdaApi';
 
@@ -28,6 +29,10 @@ export interface OperationStoreState {
   setSide(side: SIDE): void;
 
   isMassaToEvm(): boolean;
+
+  availableEvmNetworks: SupportedEvmBlockchain[];
+  selectedEvm: SupportedEvmBlockchain;
+  setSelectedEvm(selectedEvm: SupportedEvmBlockchain): void;
 
   lockTxId?: string;
   setLockTxId(currentTxID?: string): void;
@@ -97,6 +102,12 @@ export const useOperationStore = create<OperationStoreState>(
     },
 
     isMassaToEvm: () => get().side === SIDE.MASSA_TO_EVM,
+
+    availableEvmNetworks: Object.values(SupportedEvmBlockchain),
+    selectedEvm: SupportedEvmBlockchain.ETH,
+    setSelectedEvm(selectedEvm: SupportedEvmBlockchain) {
+      set({ selectedEvm });
+    },
 
     side: SIDE.EVM_TO_MASSA,
     setSide(side: SIDE) {

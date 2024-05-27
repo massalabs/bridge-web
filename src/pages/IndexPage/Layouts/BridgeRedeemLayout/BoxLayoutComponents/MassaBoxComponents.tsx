@@ -1,6 +1,6 @@
 import { MAINNET, BUILDNET } from '@massalabs/massa-web3';
 import { Dropdown, FetchingLine } from '@massalabs/react-ui-kit';
-import { iconsNetworks } from '../BoxLayout';
+import { massaIconsNetworks } from '../BoxLayout';
 import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
@@ -31,8 +31,8 @@ export function MassaHeader() {
                 `general.${massaNetwork}`,
               )}`,
               icon: isMainnet
-                ? iconsNetworks[MAINNET]
-                : iconsNetworks[BUILDNET],
+                ? massaIconsNetworks[MAINNET]
+                : massaIconsNetworks[BUILDNET],
             },
           ]}
         />

@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import { BridgeLogo } from '@/assets/BridgeLogo';
+import { Banner } from '@/components';
 import { Tos } from '@/components/Tos';
-import { PAGES } from '@/const';
+import { Blockchain, PAGES } from '@/const';
+import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import {
   useEvmChainValidation,
   useGetChainValidationContext,
@@ -29,7 +31,7 @@ export function Navbar(props: NavbarProps) {
 
   const { currentMode, availableModes, setCurrentMode } = useBridgeModeStore();
   const { accounts, isFetching, connectedAccount } = useAccountStore();
-
+  const currentEvmChain = useConnectedEvmChain();
   const { setTheme } = useConfigStore();
   const { context } = useGetChainValidationContext();
   const isValidEvmNetwork = useEvmChainValidation(context);
@@ -132,6 +134,14 @@ export function Navbar(props: NavbarProps) {
         </div>
       </div>
       <Tos />
+      {currentEvmChain === Blockchain.BSC && (
+        <Banner>
+          {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
+          <Link to={`/${PAGES.DAO}`}>
+            <u>{Intl.t('dao-maker.page-name')} </u>
+          </Link>
+        </Banner>
+      )}
     </div>
   );
 }

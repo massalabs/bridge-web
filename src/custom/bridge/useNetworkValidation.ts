@@ -2,7 +2,12 @@ import { BUILDNET_CHAIN_ID, MAINNET_CHAIN_ID } from '@massalabs/massa-web3';
 import { bsc, bscTestnet, mainnet, sepolia } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { useIsPageBridge, useIsPageDAOMaker } from './location';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import { SupportedEvmBlockchain } from '@/const';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useOperationStore,
+} from '@/store/store';
 
 // These hooks are used to check if the user is connected to the right network
 
@@ -12,7 +17,7 @@ export enum ChainContext {
   CONNECT = 'CONNECT',
 }
 
-export function useGetTargetBnbChainId(): number {
+export function useGetTargetBscChainId(): number {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
   return isMainnet ? bsc.id : bscTestnet.id;
@@ -21,6 +26,15 @@ export function useGetTargetEthChainId(): number {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
   return isMainnet ? mainnet.id : sepolia.id;
+}
+
+export function useGetTargetEvmChainId(): number {
+  const { selectedEvm } = useOperationStore();
+  const targetBscChainId = useGetTargetBscChainId();
+  const targetEthChainId = useGetTargetEthChainId();
+  return selectedEvm === SupportedEvmBlockchain.ETH
+    ? targetEthChainId
+    : targetBscChainId;
 }
 
 interface getChainValidationContext {
@@ -32,21 +46,23 @@ interface getChainValidationContext {
 export function useGetChainValidationContext(): getChainValidationContext {
   const isPageDAOMaker = useIsPageDAOMaker();
   const isPageBridge = useIsPageBridge();
-  const targetBnbChainId = useGetTargetBnbChainId();
-  const targetEthChainId = useGetTargetEthChainId();
+  const targetBscChainId = useGetTargetBscChainId();
+  const targetEvmChainId = useGetTargetEvmChainId();
+
   if (isPageDAOMaker) {
     return {
-      targetChainId: targetBnbChainId,
+      targetChainId: targetBscChainId,
       context: ChainContext.DAO,
     };
-  } else if (isPageBridge) {
+  }
+  if (isPageBridge) {
     return {
-      targetChainId: targetEthChainId,
+      targetChainId: targetEvmChainId,
       context: ChainContext.BRIDGE,
     };
   } else {
     return {
-      targetChainId: targetEthChainId,
+      targetChainId: targetEvmChainId,
       context: ChainContext.CONNECT,
     };
   }
@@ -55,16 +71,17 @@ export function useGetChainValidationContext(): getChainValidationContext {
 // Validates evm chain depending on supplied context (DAO, BRIDGE, CONNECT)
 export function useEvmChainValidation(context: ChainContext): boolean {
   const { chain } = useAccount();
-  const targetBnbChainId = useGetTargetBnbChainId();
-  const targetEthChainId = useGetTargetEthChainId();
+  const targetBscChainId = useGetTargetBscChainId();
+  const targetEvmChainId = useGetTargetEvmChainId();
+
   if (!chain) return false;
 
   if (context === ChainContext.DAO) {
-    return chain.id === targetBnbChainId;
+    return chain.id === targetBscChainId;
   } else if (context === ChainContext.BRIDGE) {
-    return chain.id === targetEthChainId;
+    return chain.id === targetEvmChainId;
   } else {
-    return chain.id === targetBnbChainId || chain.id === targetEthChainId;
+    return chain.id === targetBscChainId || chain.id === targetEvmChainId;
   }
 }
 

@@ -8,10 +8,7 @@ import {
 } from './BoxLayoutComponents/MassaBoxComponents';
 import { TokenBalance } from './BoxLayoutComponents/TokenBalance';
 import { TokenOptions } from './BoxLayoutComponents/TokenOptions';
-import { BNBSvg } from '@/assets/BNBSvg';
-import { EthSvg } from '@/assets/EthSvg';
 import { MassaBuildnetLogo } from '@/assets/MassaBuildnetLogo';
-import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
@@ -22,16 +19,12 @@ interface Layout {
   balance: ReactNode;
 }
 
-interface IconsNetworks {
+interface MassaIconsNetworks {
   [key: string]: JSX.Element;
 }
-export const iconsNetworks: IconsNetworks = {
+export const massaIconsNetworks: MassaIconsNetworks = {
   [MAINNET]: <MassaLogo size={40} />,
   [BUILDNET]: <MassaBuildnetLogo size={40} />,
-  ETH: <EthSvg size={40} />,
-  SEP: <SepoliaSvg size={40} />,
-  BNB: <BNBSvg size={40} />,
-  tBNB: <BNBSvg size={40} />,
 };
 
 interface BoxLayoutResult {

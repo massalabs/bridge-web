@@ -8,7 +8,7 @@ const useEvmToken = () => {
   const { selectedToken } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
 
-  const bridgeContractAddr = config[currentMode].evmBridgeContract;
+  const bridgeContractAddr = config[currentMode].ethBridgeContract;
 
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 

@@ -32,7 +32,7 @@ export function TokenBalance() {
         {Intl.t('connect-wallet.connected-cards.wallet-balance')}
       </p>
       <div className="mas-body">
-        {!isFetched || amount === undefined ? (
+        {!isFetched || !selectedToken || amount === undefined ? (
           <FetchingLine />
         ) : (
           <div className="flex items-center">

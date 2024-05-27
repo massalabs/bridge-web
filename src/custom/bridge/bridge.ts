@@ -68,7 +68,6 @@ export async function getSupportedTokensList(
   }
 
   const returnObject = await publicClient.smartContracts().readSmartContract({
-    maxGas: MAX_GAS_CALL,
     targetAddress: contractAddress,
     targetFunction: 'supportedTokensList',
     parameter: [],
