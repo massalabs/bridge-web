@@ -56,6 +56,7 @@
     "@tanstack/eslint-plugin-query": "^4.29.4",
     "@testing-library/react": "^14.0.0",
     "@types/big.js": "^6.2.0",
+    "@types/dot-object": "^2.1.6",
     "@types/jest": "^29.5.8",
     "@types/jsdom": "^21.1.5",
     "@types/react": "^18.0.28",
