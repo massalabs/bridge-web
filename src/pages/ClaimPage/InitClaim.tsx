@@ -165,6 +165,7 @@ function DisplayContent(props: DisplayContentProps) {
   }
 }
 
+// This should be in ui-kit
 export function getEvmNetworkIcon(chaindId: number, size = 16) {
   interface EvmIcons {
     [key: string]: JSX.Element;
@@ -179,6 +180,7 @@ export function getEvmNetworkIcon(chaindId: number, size = 16) {
   return evmIcons[chaindId];
 }
 
+// This should be in ui-kit
 export function getEvmChainName(chainId: number) {
   const chains = [mainnet, sepolia, bsc, bscTestnet];
 

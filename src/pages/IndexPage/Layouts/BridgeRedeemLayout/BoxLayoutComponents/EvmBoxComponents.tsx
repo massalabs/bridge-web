@@ -1,12 +1,13 @@
 import { Dropdown } from '@massalabs/react-ui-kit';
+import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import { iconsNetworks } from '../BoxLayout';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SupportedEvmBlockchain } from '@/const';
 import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
+import { getEvmNetworkIcon } from '@/pages';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
 
 export function EVMHeader() {
@@ -21,14 +22,18 @@ export function EVMHeader() {
 
   const options = [
     {
-      icon: isMainnet ? iconsNetworks.ETH : iconsNetworks.SEP,
+      icon: isMainnet
+        ? getEvmNetworkIcon(mainnet.id, 40)
+        : getEvmNetworkIcon(sepolia.id, 40),
       item: `${Intl.t(
         `general.${isMainnet ? Blockchain.ETHEREUM : Blockchain.SEPOLIA}`,
       )} ${Intl.t(`general.${currentMode}`)}`,
       onClick: () => setSelectedEvm(SupportedEvmBlockchain.ETH),
     },
     {
-      icon: isMainnet ? iconsNetworks.BSC : iconsNetworks.TBSC,
+      icon: isMainnet
+        ? getEvmNetworkIcon(bsc.id, 40)
+        : getEvmNetworkIcon(bscTestnet.id, 40),
       item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
         `general.${currentMode}`,
       )}`,
