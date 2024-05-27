@@ -21,7 +21,7 @@ export function IndexPage() {
   const { isMassaToEvm } = useOperationStore();
 
   const massaToEvm = isMassaToEvm();
-  const isValidEthNetwork = useEvmChainValidation(ChainContext.BRIDGE);
+  const isValidEvmNetwork = useEvmChainValidation(ChainContext.BRIDGE);
   const isValidMassaNetwork = useMassaNetworkValidation();
 
   const isOperationPending = box !== Status.None;
@@ -30,7 +30,7 @@ export function IndexPage() {
   const isButtonDisabled =
     isFetching ||
     !connectedAccount ||
-    !isValidEthNetwork ||
+    !isValidEvmNetwork ||
     !isValidMassaNetwork ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);

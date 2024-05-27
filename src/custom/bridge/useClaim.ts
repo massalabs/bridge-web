@@ -16,7 +16,7 @@ interface ClaimArguments {
 export function useClaim() {
   const { currentMode } = useBridgeModeStore();
 
-  const bridgeContractAddr = config[currentMode].evmBridgeContract;
+  const bridgeContractAddr = config[currentMode].ethBridgeContract;
 
   const { data: hash, writeContract, error, isPending } = useWriteContract();
 

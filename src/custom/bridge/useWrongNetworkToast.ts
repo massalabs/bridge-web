@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { toast } from '@massalabs/react-ui-kit';
-import { useLocation } from 'react-router-dom';
 
 import { useAccount } from 'wagmi';
 import { useConnectorName } from './useConnectorName';
@@ -11,22 +10,18 @@ import {
   useMassaNetworkValidation,
 } from './useNetworkValidation';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useBridgeModeStore } from '@/store/store';
+import {
+  useAccountStore,
+  useBridgeModeStore,
+  useOperationStore,
+} from '@/store/store';
 
 export function useWrongNetworkToast() {
-  const { pathname } = useLocation();
   const { chain, isConnected } = useAccount();
 
   const { chainId, currentProvider } = useAccountStore();
-  const {
-    isMainnet: getIsMainnet,
-    currentMode,
-    evmNetwork: getEvmNetwork,
-    massaNetwork: getMassaNetwork,
-  } = useBridgeModeStore();
-
-  const isMainnet = getIsMainnet();
-  const evmNetwork = getEvmNetwork();
+  const { currentMode, massaNetwork: getMassaNetwork } = useBridgeModeStore();
+  const { selectedEvm } = useOperationStore();
   const massaNetwork = getMassaNetwork();
   const walletName = useConnectorName();
 
@@ -49,13 +44,11 @@ export function useWrongNetworkToast() {
   }, [
     currentMode,
     walletName,
-    evmNetwork,
     toastIdEvm,
     chain,
-    isMainnet,
+    selectedEvm,
     isEvmNetworkValid,
     context,
-    pathname,
     isConnected,
   ]);
 
@@ -87,9 +80,7 @@ export function useWrongNetworkToast() {
     massaNetwork,
     toastIdMassa,
     chainId,
-    isMainnet,
     isMassaNetworkValid,
     context,
-    pathname,
   ]);
 }
