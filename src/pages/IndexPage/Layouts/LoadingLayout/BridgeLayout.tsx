@@ -6,8 +6,6 @@ import { useFetchMintEvent } from '@/custom/bridge/useFetchMintEvent';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
-import { EVM_EXPLORER } from '@/utils/const';
-import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 export function BridgeLayout() {
   const { approve, lock, mint, setMint, setBox } = useGlobalStatusesStore();
@@ -15,8 +13,6 @@ export function BridgeLayout() {
   const { lockTxId, mintTxId, setMintTxId } = useOperationStore();
 
   const [currentIdToDisplay, setCurrentIdToDisplay] = useState<string>();
-
-  const [currentExplorerUrl, setCurrentExplorerUrl] = useState<string>('');
 
   const lambdaResponse = useFetchMintEvent();
 
@@ -43,11 +39,9 @@ export function BridgeLayout() {
   useEffect(() => {
     if (lockTxId && lock !== Status.Success) {
       setCurrentIdToDisplay(lockTxId);
-      setCurrentExplorerUrl(`${EVM_EXPLORER[currentMode]}tx/${lockTxId}`);
     }
     if (lock === Status.Success && mintTxId) {
       setCurrentIdToDisplay(mintTxId);
-      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(mintTxId));
     }
   }, [lockTxId, lock, mintTxId, currentMode]);
 
@@ -65,10 +59,7 @@ export function BridgeLayout() {
         <p className="mas-body-2">{Intl.t('index.loading-box.mint')}</p>
         <LoadingState state={mint} />
       </div>
-      <ShowLinkToExplorers
-        explorerUrl={currentExplorerUrl}
-        currentTxID={currentIdToDisplay}
-      />
+      <ShowLinkToExplorers currentTxID={currentIdToDisplay} />
     </div>
   );
 }

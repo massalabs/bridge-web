@@ -30,7 +30,7 @@ export function WarningLayout() {
         </a>
       </u>
       {/* Link will be updated at a later stage because this component needs to be changed  */}
-      <ShowLinkToExplorers explorerUrl="foo" currentTxID={currentTxID} />
+      <ShowLinkToExplorers currentTxID={currentTxID} />
     </div>
   );
 }

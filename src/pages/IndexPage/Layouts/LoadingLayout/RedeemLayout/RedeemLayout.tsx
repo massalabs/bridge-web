@@ -18,7 +18,7 @@ export function RedeemLayout() {
 
   const claimState = getCurrentRedeemOperation()?.claimState;
 
-  const { currentIdToDisplay, currentExplorerUrl } = useHandleBurnRedeem();
+  const { currentIdToDisplay } = useHandleBurnRedeem();
 
   return (
     <>
@@ -51,10 +51,7 @@ export function RedeemLayout() {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <ClaimRedeem />}
-        <ShowLinkToExplorers
-          explorerUrl={currentExplorerUrl}
-          currentTxID={currentIdToDisplay}
-        />
+        <ShowLinkToExplorers currentTxID={currentIdToDisplay} />
       </div>
     </>
   );

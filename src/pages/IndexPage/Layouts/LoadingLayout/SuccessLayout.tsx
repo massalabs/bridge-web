@@ -12,8 +12,6 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { EVM_EXPLORER } from '@/utils/const';
-import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 export function SuccessLayout() {
   const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
@@ -47,11 +45,6 @@ export function SuccessLayout() {
   const evmChainAndNetwork = `${chain.name} ${Intl.t(
     `general.${currentMode}`,
   )}`;
-
-  // claim && bridge success need to show respective show link to explorer
-  const explorerUrl = massaToEvm
-    ? `${EVM_EXPLORER[currentMode]}tx/${currentRedeemOperation?.outputId}`
-    : linkifyMassaOpIdToExplo(mintTxId as string);
 
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
@@ -112,10 +105,7 @@ export function SuccessLayout() {
           </Link>
         </div>
       )}
-      <ShowLinkToExplorers
-        explorerUrl={explorerUrl}
-        currentTxID={currentTxID}
-      />
+      <ShowLinkToExplorers currentTxID={currentTxID} />
     </div>
   );
 }

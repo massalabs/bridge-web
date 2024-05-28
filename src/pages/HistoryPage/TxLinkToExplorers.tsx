@@ -1,3 +1,5 @@
+import { bsc, bscTestnet } from 'viem/chains';
+import { SupportedEvmBlockchain } from '@/const';
 import { useBridgeModeStore } from '@/store/store';
 import { EVM_EXPLORER } from '@/utils/const';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
@@ -14,7 +16,20 @@ export function TxLinkToExplorers(props: TxLinkToExplorersProps) {
 
   if (operation.outputId === null || operation.outputId === undefined) return;
 
-  const evmExplorer = `${EVM_EXPLORER[currentMode]}tx/${operation.outputId}`;
+  const txHash = operation.outputId;
+  const chainID = operation.evmChainId;
+
+  function getEvmExplorerUrl(): string {
+    if (!txHash || !chainID) return '';
+
+    if (chainID === bsc.id || chainID === bscTestnet.id) {
+      return `${
+        EVM_EXPLORER[SupportedEvmBlockchain.BSC][currentMode]
+      }${txHash}`;
+    }
+
+    return `${EVM_EXPLORER[SupportedEvmBlockchain.ETH][currentMode]}${txHash}`;
+  }
 
   const massaExplorer = linkifyMassaOpIdToExplo(operation.outputId);
 
@@ -24,7 +39,7 @@ export function TxLinkToExplorers(props: TxLinkToExplorersProps) {
       case Entities.Lock:
         return massaExplorer;
       case Entities.Burn:
-        return evmExplorer;
+        return getEvmExplorerUrl();
     }
   }
 
