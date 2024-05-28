@@ -1,5 +1,5 @@
 import { Dropdown, FetchingLine, Money } from '@massalabs/react-ui-kit';
-import { WMasSvg } from '@massalabs/react-ui-kit';
+import { WMAS } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
@@ -89,7 +89,7 @@ export function DaoHead(props: DaoHeadProps) {
             <Dropdown
               readOnly={true}
               size="md"
-              options={[{ icon: <WMasSvg />, item: wmasSymbol }]}
+              options={[{ icon: <WMAS />, item: wmasSymbol }]}
             />
           </div>
         </div>

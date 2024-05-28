@@ -17,17 +17,30 @@ export enum ChainContext {
   CONNECT = 'CONNECT',
 }
 
+/**
+ *
+ * @returns target chain id for Binance Smart Chain
+ */
 export function useGetTargetBscChainId(): number {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
   return isMainnet ? bsc.id : bscTestnet.id;
 }
+
+/**
+ *
+ * @returns target chain id for Ethereum
+ */
 export function useGetTargetEthChainId(): number {
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
   return isMainnet ? mainnet.id : sepolia.id;
 }
 
+/**
+ *
+ * @returns target chain id for the selected EVM chain
+ */
 export function useGetTargetEvmChainId(): number {
   const { selectedEvm } = useOperationStore();
   const targetBscChainId = useGetTargetBscChainId();

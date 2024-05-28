@@ -15,7 +15,6 @@ import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useBridgeModeStore } from '@/store/modeStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { CustomError } from '@/utils/error';
@@ -100,7 +99,7 @@ export function InitClaim(props: InitClaimProps) {
   return (
     <div
       className={`flex justify-between 
-         bg-secondary/50  backdrop-blur-lg text-f-primary 
+          bg-secondary/50  backdrop-blur-lg text-f-primary 
           w-[720px] h-fit border border-tertiary rounded-2xl p-10`}
     >
       <DisplayContent
@@ -149,9 +148,6 @@ function DisplayContent(props: DisplayContentProps) {
     decimals,
   );
 
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-  const isMainnet = getIsMainnet();
-
   const isClaimRejected = claimState === ClaimState.REJECTED;
 
   if (isClaimRejected) {
@@ -169,7 +165,7 @@ function DisplayContent(props: DisplayContentProps) {
     return (
       <div className="flex flex-col gap-2">
         <strong className="flex items-center gap-2">
-          {getAssetIcons(symbol as string, true, isMainnet, 26)}
+          {getAssetIcons(symbol, operation.evmChainId, 26)}
           {amountFormattedPreview} {symbol}
           <Tooltip
             customClass="mas-caption w-fit whitespace-nowrap"

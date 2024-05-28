@@ -23,6 +23,12 @@ export default ({ mode }) => {
         external: ['@faker-js/faker'],
       },
     },
+    server: {
+      fs: {
+        // to allow server ui kit asset like font files
+        allow: ['../..'],
+      },
+    },
     resolve: {
       alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
     },
