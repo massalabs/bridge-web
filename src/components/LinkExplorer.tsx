@@ -31,17 +31,16 @@ export function LinkExplorer(props: LinkExplorerProps) {
 
   function getExplorerUrl(): string | undefined {
     if (!currentTxId || !chainId) return undefined;
+
     if (isEVMTxID.test(currentTxId)) {
-      if (chainId === bsc.id || chainId === bscTestnet.id) {
-        return `${
-          EVM_EXPLORER[SupportedEvmBlockchain.BSC][currentMode]
-        }${currentTxId}`;
-      } else {
-        return `${
-          EVM_EXPLORER[SupportedEvmBlockchain.ETH][currentMode]
-        }${currentTxId}`;
-      }
-    } else return linkifyMassaOpIdToExplo(currentTxId);
+      const explorerType =
+        chainId === bsc.id || chainId === bscTestnet.id
+          ? SupportedEvmBlockchain.BSC
+          : SupportedEvmBlockchain.ETH;
+      return `${EVM_EXPLORER[explorerType][currentMode]}${currentTxId}`;
+    }
+
+    return linkifyMassaOpIdToExplo(currentTxId);
   }
 
   const evmExplorer = getExplorerUrl();
