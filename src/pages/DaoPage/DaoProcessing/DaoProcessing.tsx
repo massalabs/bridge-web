@@ -110,7 +110,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
           <MinimalLinkExplorer
             explorerUrl={burnExplorerUrl}
             currentTxID={burnTxHash}
-            size="md"
+            size="lg"
           />
           <LoadingState
             state={(isBurnSuccess && Status.Success) || Status.Loading}
@@ -127,6 +127,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
           <MinimalLinkExplorer
             explorerUrl={releaseExplorerUrl}
             currentTxID={releaseOpId}
+            size="lg"
           />
           <LoadingState
             state={(() => {

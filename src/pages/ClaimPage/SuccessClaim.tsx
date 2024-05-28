@@ -1,10 +1,9 @@
-import { Button, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
-import { FiExternalLink } from 'react-icons/fi';
-
+import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { bsc, bscTestnet } from 'viem/chains';
 import { useBridgeModeStore } from '../../store/store';
 import { EVM_EXPLORER } from '../../utils/const';
 import { SuccessCheck } from '@/components';
+import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
 import { SupportedEvmBlockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
@@ -25,10 +24,6 @@ export function SuccessClaim(args: SuccessClaimProps) {
 
   const txHash = operation.outputId;
   const chainID = operation.evmChainId;
-
-  const openInNewTab = (url: string) => {
-    window.open(url, '_blank', 'noreferrer');
-  };
 
   function getExplorerUrl(): string {
     if (!txHash || !chainID) return '';
@@ -63,11 +58,11 @@ export function SuccessClaim(args: SuccessClaimProps) {
         />
       </div>
       <div className="flex gap-4 items-center">
-        {txHash && (
-          <Button variant="icon" onClick={() => openInNewTab(getExplorerUrl())}>
-            <FiExternalLink size={18} />
-          </Button>
-        )}
+        <MinimalLinkExplorer
+          currentTxID={txHash}
+          explorerUrl={getExplorerUrl()}
+          size="sm"
+        />
         <SuccessCheck size="md" />
       </div>
     </div>
