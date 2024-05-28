@@ -20,14 +20,11 @@ export function LinkExplorer(props: LinkExplorerProps) {
   const { currentMode } = useBridgeModeStore();
   if (!currentTxId) return;
 
-  function getMaskAddressDisplaySize() {
-    const sizeMap = {
-      lg: 6,
-      md: 4,
-      sm: 0,
-    };
-    return sizeMap[size];
-  }
+  const sizeMap = {
+    lg: 6,
+    md: 4,
+    sm: 0,
+  };
 
   function getExplorerUrl(): string | undefined {
     if (!currentTxId || !chainId) return undefined;
@@ -57,7 +54,7 @@ export function LinkExplorer(props: LinkExplorerProps) {
         )}
 
         {(size === 'lg' || size === 'md') && (
-          <div>{maskAddress(currentTxId, getMaskAddressDisplaySize())}</div>
+          <div>{maskAddress(currentTxId, sizeMap[size])}</div>
         )}
 
         <Button variant="icon" onClick={() => openInNewTab(evmExplorer)}>
