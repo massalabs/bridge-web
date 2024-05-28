@@ -1,18 +1,15 @@
 import { useMemo } from 'react';
 import { formatAmount } from '@massalabs/react-ui-kit';
-import { bsc, bscTestnet } from 'viem/chains';
+// import { bsc, bscTestnet } from 'viem/chains';
 import { Amount } from './Amount';
 import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
 import { wmasDecimals, wmasSymbol } from '../DaoPage';
 import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
-import { MASSA_TOKEN, SupportedEvmBlockchain } from '@/const';
-import { useBridgeModeStore } from '@/store/modeStore';
+import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
-import { EVM_EXPLORER } from '@/utils/const';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
-import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
@@ -25,7 +22,6 @@ interface OperationProps {
 export function Operation(props: OperationProps) {
   const { operation: op } = props;
 
-  const { currentMode } = useBridgeModeStore();
   const { tokens } = useTokenStore();
 
   const memoizedStatusComponent = useMemo(() => {
@@ -53,34 +49,6 @@ export function Operation(props: OperationProps) {
       tokenDecimals: token?.decimals,
     };
   }
-
-  function getExplorerUrl(): string {
-    if (!op.outputId) return '';
-
-    switch (op.entity) {
-      case Entities.ReleaseMAS:
-      case Entities.Lock:
-        return linkifyMassaOpIdToExplo(op.outputId);
-
-      case Entities.Burn:
-        if (!op.evmChainId) return '';
-
-        if (op.evmChainId === bsc.id || op.evmChainId === bscTestnet.id) {
-          return `${EVM_EXPLORER[SupportedEvmBlockchain.BSC][currentMode]}${
-            op.outputId
-          }`;
-        }
-
-        return `${EVM_EXPLORER[SupportedEvmBlockchain.ETH][currentMode]}${
-          op.outputId
-        }`;
-
-      default:
-        return '';
-    }
-  }
-
-  const explorerUrl = getExplorerUrl();
 
   const { sentSymbol, receivedSymbol, tokenDecimals } = getTokenInfo();
 
@@ -110,8 +78,8 @@ export function Operation(props: OperationProps) {
       />
       {memoizedStatusComponent}
       <MinimalLinkExplorer
-        currentTxID={op.outputId}
-        explorerUrl={explorerUrl}
+        currentTxId={op.outputId}
+        chainId={op.evmChainId}
         size="md"
       />
     </div>

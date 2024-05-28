@@ -1,10 +1,6 @@
 import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
-import { bsc, bscTestnet } from 'viem/chains';
-import { useBridgeModeStore } from '../../store/store';
-import { EVM_EXPLORER } from '../../utils/const';
 import { SuccessCheck } from '@/components';
 import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
-import { SupportedEvmBlockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
 
@@ -16,26 +12,10 @@ interface SuccessClaimProps {
 
 export function SuccessClaim(args: SuccessClaimProps) {
   const { operation, symbol, decimals } = args;
-  const { currentMode } = useBridgeModeStore();
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(
     operation.amount,
     decimals,
   );
-
-  const txHash = operation.outputId;
-  const chainID = operation.evmChainId;
-
-  function getExplorerUrl(): string {
-    if (!txHash || !chainID) return '';
-
-    if (chainID === bsc.id || chainID === bscTestnet.id) {
-      return `${
-        EVM_EXPLORER[SupportedEvmBlockchain.BSC][currentMode]
-      }${txHash}`;
-    }
-
-    return `${EVM_EXPLORER[SupportedEvmBlockchain.ETH][currentMode]}${txHash}`;
-  }
 
   return (
     <div
@@ -59,8 +39,8 @@ export function SuccessClaim(args: SuccessClaimProps) {
       </div>
       <div className="flex gap-4 items-center">
         <MinimalLinkExplorer
-          currentTxID={txHash}
-          explorerUrl={getExplorerUrl()}
+          currentTxId={operation.outputId}
+          chainId={operation.evmChainId}
           size="sm"
         />
         <SuccessCheck size="md" />
