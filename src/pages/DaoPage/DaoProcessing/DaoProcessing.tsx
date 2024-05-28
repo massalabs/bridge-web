@@ -3,7 +3,7 @@ import { FiX } from 'react-icons/fi';
 import { bsc, bscTestnet } from 'viem/chains';
 import { ReleaseSuccess } from './ReleaseSuccess';
 import { ReleaseMasStatus } from '../DaoPage';
-import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
+import { LinkExplorer } from '@/components/LinkExplorer';
 import { useFetchBurnedWmasTx } from '@/custom/bridge/useFetchBurnedWmas';
 import Intl from '@/i18n/i18n';
 import { LoadingState } from '@/pages';
@@ -111,7 +111,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
           })}
         </p>
         <div className="flex items-center gap-4">
-          <MinimalLinkExplorer
+          <LinkExplorer
             chainId={isMainnet ? bsc.id : bscTestnet.id}
             currentTxId={burnTxHash}
             size="lg"
@@ -128,7 +128,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
           })}
         </p>
         <div className="flex items-center gap-4">
-          <MinimalLinkExplorer
+          <LinkExplorer
             chainId={releaseEvmChainId}
             currentTxId={releaseOpId}
             size="lg"

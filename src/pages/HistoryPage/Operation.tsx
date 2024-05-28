@@ -6,7 +6,7 @@ import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
 import { wmasDecimals, wmasSymbol } from '../DaoPage';
-import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
+import { LinkExplorer } from '@/components/LinkExplorer';
 import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
@@ -77,7 +77,7 @@ export function Operation(props: OperationProps) {
         symbol={receivedSymbol}
       />
       {memoizedStatusComponent}
-      <MinimalLinkExplorer
+      <LinkExplorer
         currentTxId={op.outputId}
         chainId={op.evmChainId}
         size="md"

@@ -1,6 +1,6 @@
 import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { SuccessCheck } from '@/components';
-import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
+import { LinkExplorer } from '@/components/LinkExplorer';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
 
@@ -38,7 +38,7 @@ export function SuccessClaim(args: SuccessClaimProps) {
         />
       </div>
       <div className="flex gap-4 items-center">
-        <MinimalLinkExplorer
+        <LinkExplorer
           currentTxId={operation.outputId}
           chainId={operation.evmChainId}
           size="sm"

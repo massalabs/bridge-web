@@ -1,7 +1,7 @@
 import { formatAmountToDisplay } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { ShowLinkToExplorers } from './ShowLinkToExplorers';
+import { BridgeLinkExplorer } from './BridgeLinkExplorer';
 import { Blockchain } from '@/const';
 import { addTokensBuildnetLink, addTokensMainnetLink } from '@/const/faq';
 import { useBridgeUtils } from '@/custom/bridge/useBridgeUtils';
@@ -105,7 +105,7 @@ export function SuccessLayout() {
           </Link>
         </div>
       )}
-      <ShowLinkToExplorers currentTxID={currentTxID} />
+      <BridgeLinkExplorer currentTxID={currentTxID} />
     </div>
   );
 }

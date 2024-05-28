@@ -1,7 +1,7 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { ClaimRedeem } from './ClaimRedeem';
+import { BridgeLinkExplorer } from '../BridgeLinkExplorer';
 import { LoadingState } from '../LoadingState';
-import { ShowLinkToExplorers } from '../ShowLinkToExplorers';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { useHandleBurnRedeem } from '@/custom/bridge/useHandleBurnRedeem';
 import Intl from '@/i18n/i18n';
@@ -51,7 +51,7 @@ export function RedeemLayout() {
           <LoadingState state={claim} />
         </div>
         {isBurnSuccessful && <ClaimRedeem />}
-        <ShowLinkToExplorers currentTxID={currentIdToDisplay} />
+        <BridgeLinkExplorer currentTxID={currentIdToDisplay} />
       </div>
     </>
   );

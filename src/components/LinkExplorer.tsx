@@ -9,13 +9,13 @@ import { EVM_EXPLORER } from '@/utils/const';
 import { maskAddress } from '@/utils/massaFormat';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
-interface MinimalLinkExplorerProps {
+interface LinkExplorerProps {
   currentTxId: `0x${string}` | string | undefined;
   chainId: number | undefined;
   size?: 'lg' | 'md' | 'sm';
 }
 
-export function MinimalLinkExplorer(props: MinimalLinkExplorerProps) {
+export function LinkExplorer(props: LinkExplorerProps) {
   const { currentTxId, chainId, size = 'sm' } = props;
   const { currentMode } = useBridgeModeStore();
   if (!currentTxId) return;

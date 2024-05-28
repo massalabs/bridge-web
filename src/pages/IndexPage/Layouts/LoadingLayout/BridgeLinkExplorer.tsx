@@ -7,7 +7,7 @@ import { EVM_EXPLORER } from '@/utils/const';
 import { TX_CHAR_LIMIT, maskAddress } from '@/utils/massaFormat';
 import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
-interface ShowLinkToExplorers {
+interface ShowBridgeLinkExplorer {
   currentTxID: string | undefined;
 }
 
@@ -17,7 +17,7 @@ export const openInNewTab = (url: string) => {
   window.open(url, '_blank', 'noreferrer');
 };
 
-export function ShowLinkToExplorers(props: ShowLinkToExplorers) {
+export function BridgeLinkExplorer(props: ShowBridgeLinkExplorer) {
   const { currentTxID } = props;
   const { currentMode } = useBridgeModeStore();
   const { selectedEvm } = useOperationStore();

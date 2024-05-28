@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import { BridgeLinkExplorer } from './BridgeLinkExplorer';
 import { LoadingState } from './LoadingState';
-import { ShowLinkToExplorers } from './ShowLinkToExplorers';
 
 import { useFetchMintEvent } from '@/custom/bridge/useFetchMintEvent';
 import Intl from '@/i18n/i18n';
@@ -59,7 +59,7 @@ export function BridgeLayout() {
         <p className="mas-body-2">{Intl.t('index.loading-box.mint')}</p>
         <LoadingState state={mint} />
       </div>
-      <ShowLinkToExplorers currentTxID={currentIdToDisplay} />
+      <BridgeLinkExplorer currentTxID={currentIdToDisplay} />
     </div>
   );
 }
