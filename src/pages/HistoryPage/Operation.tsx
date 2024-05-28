@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { formatAmount } from '@massalabs/react-ui-kit';
-// import { bsc, bscTestnet } from 'viem/chains';
 import { Amount } from './Amount';
 import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
