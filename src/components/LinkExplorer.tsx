@@ -26,6 +26,8 @@ export function LinkExplorer(props: LinkExplorerProps) {
     sm: 0,
   };
 
+  const explorerUrl = getExplorerUrl();
+
   function getExplorerUrl(): string | undefined {
     if (!currentTxId || !chainId) return undefined;
 
@@ -40,10 +42,8 @@ export function LinkExplorer(props: LinkExplorerProps) {
     return linkifyMassaOpIdToExplo(currentTxId);
   }
 
-  const evmExplorer = getExplorerUrl();
-
   return (
-    evmExplorer && (
+    explorerUrl && (
       <div className="flex items-center gap-2 justify-evenly">
         {size === 'lg' && (
           <div>
@@ -57,7 +57,7 @@ export function LinkExplorer(props: LinkExplorerProps) {
           <div>{maskAddress(currentTxId, sizeMap[size])}</div>
         )}
 
-        <Button variant="icon" onClick={() => openInNewTab(evmExplorer)}>
+        <Button variant="icon" onClick={() => openInNewTab(explorerUrl)}>
           <FiExternalLink size={18} />
         </Button>
       </div>
