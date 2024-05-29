@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { FiX } from 'react-icons/fi';
+import { bsc, bscTestnet } from 'viem/chains';
 import { ReleaseSuccess } from './ReleaseSuccess';
 import { ReleaseMasStatus } from '../DaoPage';
-import { MinimalLinkExplorer } from '@/components/MinimalLinkExplorer';
+import { LinkExplorer } from '@/components/LinkExplorer';
 import { useFetchBurnedWmasTx } from '@/custom/bridge/useFetchBurnedWmas';
 import Intl from '@/i18n/i18n';
 import { LoadingState } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
+import { useBridgeModeStore } from '@/store/modeStore';
 import {
   HistoryOperationStatus,
   OperationHistoryItem,
 } from '@/utils/lambdaApi';
-import { linkifyBscTxIdToExplo, linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 interface DaoProcessingProps {
   amount: string;
@@ -34,8 +35,12 @@ export function DaoProcessing(props: DaoProcessingProps) {
     isBurnWriteError,
   } = props;
 
+  const { isMainnet: getIsMainnet } = useBridgeModeStore();
+  const isMainnet = getIsMainnet();
+
   const [isReleaseSuccess, setIsReleaseSuccess] = useState(false);
   const [releaseOpId, setReleaseOpId] = useState<string>('');
+  const [releaseEvmChainId, setReleaseEvmChainId] = useState<number>();
 
   // lambdaResponse is an [], returning the object directly caused some problems
   // because ts doesn't evaluate {} as falsy
@@ -50,6 +55,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
     // Handles release success/failure
     if (!isBurnSuccess) return;
     if (lambdaResponseIsEmpty) return;
+    setReleaseEvmChainId(lambdaResponse[0].evmChainId);
     setReleaseOpId(lambdaResponse[0].outputId || '');
     if (
       lambdaResponse[0].isConfirmed === true &&
@@ -83,10 +89,6 @@ export function DaoProcessing(props: DaoProcessingProps) {
     setReleaseOpId('');
   }
 
-  const releaseExplorerUrl = linkifyMassaOpIdToExplo(releaseOpId);
-
-  const burnExplorerUrl = linkifyBscTxIdToExplo(burnTxHash);
-
   return (
     <div className="flex flex-col gap-6 items-center">
       <div className="flex w-full justify-end">
@@ -107,9 +109,10 @@ export function DaoProcessing(props: DaoProcessingProps) {
           })}
         </p>
         <div className="flex items-center gap-4">
-          <MinimalLinkExplorer
-            explorerUrl={burnExplorerUrl}
-            currentTxID={burnTxHash}
+          <LinkExplorer
+            chainId={isMainnet ? bsc.id : bscTestnet.id}
+            currentTxId={burnTxHash}
+            size="lg"
           />
           <LoadingState
             state={(isBurnSuccess && Status.Success) || Status.Loading}
@@ -123,9 +126,10 @@ export function DaoProcessing(props: DaoProcessingProps) {
           })}
         </p>
         <div className="flex items-center gap-4">
-          <MinimalLinkExplorer
-            explorerUrl={releaseExplorerUrl}
-            currentTxID={releaseOpId}
+          <LinkExplorer
+            chainId={releaseEvmChainId}
+            currentTxId={releaseOpId}
+            size="lg"
           />
           <LoadingState
             state={(() => {

@@ -1,9 +1,6 @@
-import { Button, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
-import { FiExternalLink } from 'react-icons/fi';
-
-import { useBridgeModeStore } from '../../store/store';
-import { EVM_EXPLORER } from '../../utils/const';
+import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { SuccessCheck } from '@/components';
+import { LinkExplorer } from '@/components/LinkExplorer';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
 
@@ -19,16 +16,6 @@ export function SuccessClaim(args: SuccessClaimProps) {
     operation.amount,
     decimals,
   );
-
-  const txHash = operation.outputId;
-
-  const openInNewTab = (url: string) => {
-    window.open(url, '_blank', 'noreferrer');
-  };
-
-  const { currentMode } = useBridgeModeStore();
-
-  const explorerUrl = EVM_EXPLORER[currentMode] + 'tx/' + txHash;
 
   return (
     <div
@@ -51,11 +38,11 @@ export function SuccessClaim(args: SuccessClaimProps) {
         />
       </div>
       <div className="flex gap-4 items-center">
-        {txHash && (
-          <Button variant="icon" onClick={() => openInNewTab(explorerUrl)}>
-            <FiExternalLink size={18} />
-          </Button>
-        )}
+        <LinkExplorer
+          currentTxId={operation.outputId}
+          chainId={operation.evmChainId}
+          size="sm"
+        />
         <SuccessCheck size="md" />
       </div>
     </div>

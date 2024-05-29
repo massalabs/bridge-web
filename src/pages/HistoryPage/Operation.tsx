@@ -4,8 +4,8 @@ import { Amount } from './Amount';
 import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
-import { TxLinkToExplorers } from './TxLinkToExplorers';
 import { wmasDecimals, wmasSymbol } from '../DaoPage';
+import { LinkExplorer } from '@/components/LinkExplorer';
 import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
@@ -76,7 +76,11 @@ export function Operation(props: OperationProps) {
         symbol={receivedSymbol}
       />
       {memoizedStatusComponent}
-      <TxLinkToExplorers operation={op} />
+      <LinkExplorer
+        currentTxId={op.outputId}
+        chainId={op.evmChainId}
+        size="md"
+      />
     </div>
   );
 }

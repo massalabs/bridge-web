@@ -1,4 +1,4 @@
-import { ShowLinkToExplorers } from './ShowLinkToExplorers';
+import { BridgeLinkExplorer } from './BridgeLinkExplorer';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/store';
@@ -29,8 +29,7 @@ export function WarningLayout() {
           support.bridge@massa.net
         </a>
       </u>
-      {/* Link will be updated at a later stage because this component needs to be changed  */}
-      <ShowLinkToExplorers explorerUrl="foo" currentTxID={currentTxID} />
+      <BridgeLinkExplorer currentTxID={currentTxID} />
     </div>
   );
 }

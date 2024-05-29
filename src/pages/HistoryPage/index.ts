@@ -3,6 +3,5 @@ export * from './Emitter';
 export * from './HistoryPage';
 export * from './Operation';
 export * from './ShowStatus';
-export * from './TxLinkToExplorers';
 export * from './Operation';
 export * from './Recipient';

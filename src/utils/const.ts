@@ -1,4 +1,4 @@
-import { BridgeMode } from '../const';
+import { BridgeMode, SupportedEvmBlockchain } from '../const';
 
 export const tagTypes = {
   success: 'success',
@@ -59,8 +59,14 @@ export const MASSA_FAUCET_LINK = 'https://discord.gg/FS2NVAum';
 export const SEPOLIA_FAUCET_LINK = 'https://sepoliafaucet.com/';
 
 export const EVM_EXPLORER = {
-  [BridgeMode.mainnet]: 'https://etherscan.io/',
-  [BridgeMode.testnet]: 'https://sepolia.etherscan.io/',
+  [SupportedEvmBlockchain.ETH]: {
+    [BridgeMode.mainnet]: 'https://etherscan.io/tx/',
+    [BridgeMode.testnet]: 'https://sepolia.etherscan.io/tx/',
+  },
+  [SupportedEvmBlockchain.BSC]: {
+    [BridgeMode.mainnet]: 'https://bscscan.com/tx/',
+    [BridgeMode.testnet]: 'https://testnet.bscscan.com/tx/',
+  },
 };
 
 export const ethMinConfirmations = 5;
