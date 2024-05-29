@@ -41,7 +41,7 @@ export function ClaimPage() {
   }
 
   return (
-    <div className="flex flex-col w-fit px-40 items-center justify-center gap-6 overflow-scroll">
+    <div className="flex flex-col w-full h-full items-center justify-center gap-6 overflow-scroll">
       {burnListIsNotEmpty ? (
         burnOperations.map((operation: BurnRedeemOperation) => (
           <ClaimButton operation={operation} key={operation.inputId} />

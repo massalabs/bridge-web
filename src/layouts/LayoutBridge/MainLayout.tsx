@@ -17,7 +17,8 @@ export function MainLayout(props: MainLayoutProps) {
 
   return (
     <div
-      className="bg-fixed bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
+      className=" flex flex-col justify-between 
+      bg-fixed bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))]
       from-bright-blue to-deep-blue to-60% overflow-auto w-full min-h-screen
       "
     >

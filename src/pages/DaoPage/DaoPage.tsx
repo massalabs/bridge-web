@@ -96,7 +96,7 @@ export function DaoPage() {
   return (
     <div
       className={`flex flex-col gap-4 p-10 max-w-[800px] 
-            w-full border border-tertiary rounded-2xl
+            w-full h-full border border-tertiary rounded-2xl
             bg-secondary/50 text-f-primary mb-5`}
     >
       {renderReleaseMasStatus(releaseMasStatus)}
