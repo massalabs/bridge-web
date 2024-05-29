@@ -1,10 +1,13 @@
 import { Button, Clipboard } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
+import { useBridgeModeStore } from '@/store/modeStore';
+import { useOperationStore } from '@/store/operationStore';
+import { EVM_EXPLORER } from '@/utils/const';
 import { TX_CHAR_LIMIT, maskAddress } from '@/utils/massaFormat';
+import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
-interface ShowLinkToExplorers {
-  explorerUrl: string;
+interface ShowBridgeLinkExplorer {
   currentTxID: string | undefined;
 }
 
@@ -14,8 +17,21 @@ export const openInNewTab = (url: string) => {
   window.open(url, '_blank', 'noreferrer');
 };
 
-export function ShowLinkToExplorers(props: ShowLinkToExplorers) {
-  const { explorerUrl, currentTxID } = props;
+export function BridgeLinkExplorer(props: ShowBridgeLinkExplorer) {
+  const { currentTxID } = props;
+  const { currentMode } = useBridgeModeStore();
+  const { selectedEvm } = useOperationStore();
+
+  function getExplorerUrl(): string {
+    if (!currentTxID) return '';
+    if (!isEVMTxID.test(currentTxID)) {
+      return linkifyMassaOpIdToExplo(currentTxID);
+    }
+
+    return `${EVM_EXPLORER[selectedEvm][currentMode]}${currentTxID}`;
+  }
+
+  let explorerUrl = getExplorerUrl();
 
   const showLinkToExplorers = currentTxID && explorerUrl;
 

@@ -10,7 +10,7 @@ export function useFetchMintEvent(): OperationHistoryItem[] | undefined {
   const { currentMode } = useBridgeModeStore();
   const [enableRefetch, setEnableRefetch] = useState<boolean>(true);
 
-  const queryParams = `?&inputTxId=${lockTxId}`;
+  const queryParams = `?inputTxId=${lockTxId}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
 
   const { data } = useResource<OperationHistoryItem[]>(

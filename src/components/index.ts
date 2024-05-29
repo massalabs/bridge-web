@@ -7,3 +7,4 @@ export * from './IconsCheck';
 export * from './Status';
 export * from './Footer/Footer';
 export * from './Banner/Banner';
+export * from './LinkExplorer';

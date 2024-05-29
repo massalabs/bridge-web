@@ -6,13 +6,12 @@ import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useOperationStore } from '@/store/operationStore';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
-import { BurnState, ClaimState, EVM_EXPLORER } from '@/utils/const';
+import { BurnState, ClaimState } from '@/utils/const';
 import {
   BridgingState,
   HistoryOperationStatus,
   Entities,
 } from '@/utils/lambdaApi';
-import { linkifyMassaOpIdToExplo } from '@/utils/utils';
 
 export function useHandleBurnRedeem() {
   const { burn, setBurn } = useGlobalStatusesStore();
@@ -37,13 +36,10 @@ export function useHandleBurnRedeem() {
     string | undefined
   >(undefined);
 
-  const [currentExplorerUrl, setCurrentExplorerUrl] = useState<string>('');
-
   useEffect(() => {
     if (burnTxId && burn !== Status.Success) {
       setBurnState(BurnState.PENDING);
       setCurrentIdToDisplay(burnTxId);
-      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId));
     }
     if (burn === Status.Success) return;
     if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
@@ -89,14 +85,12 @@ export function useHandleBurnRedeem() {
     if (burn !== Status.Success && burnTxId) {
       // if burn is not a success and we have a burnTxId burn is in progress so show the burn tx id
       setCurrentIdToDisplay(burnTxId);
-      setCurrentExplorerUrl(linkifyMassaOpIdToExplo(burnTxId));
     }
     if (claimTxId && burn === Status.Success) {
       // if the burn is a success and we have a claimTxId then claim is in progress claimTxId
       setCurrentIdToDisplay(claimTxId);
-      setCurrentExplorerUrl(`${EVM_EXPLORER[currentMode]}tx/${claimTxId}`);
     }
   }, [burn, burnTxId, claimTxId, currentMode]);
 
-  return { currentExplorerUrl, currentIdToDisplay };
+  return { currentIdToDisplay };
 }
