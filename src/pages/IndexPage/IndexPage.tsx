@@ -36,7 +36,7 @@ export function IndexPage() {
     (REDEEM_OFF && massaToEvm);
 
   return (
-    <div className="flex flex-col gap-36 items-center justify-center w-full h-full min-h-screen">
+    <div className="flex flex-col gap-36 items-center justify-center w-full h-full">
       <BridgeRedeemLayout
         isBlurred={blurClass}
         isButtonDisabled={isButtonDisabled}

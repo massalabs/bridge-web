@@ -91,7 +91,7 @@ export function HistoryPage() {
   }
 
   return (
-    <div className="flex h-fit w-screen items-center justify-center p-10">
+    <div className="flex h-full w-screen items-center justify-center p-10">
       <div
         className="bg-secondary/50 text-f-primary border-tertiary flex w-[90%] flex-col justify-between
         rounded-2xl border px-16 py-12 backdrop-blur-lg"
