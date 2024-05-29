@@ -6,6 +6,7 @@ import {
   getAssetIcons,
 } from '@massalabs/react-ui-kit';
 import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../custom/bridge/useClaim';
 import { BNBSvg } from '@/assets/BNBSvg';
@@ -31,9 +32,13 @@ export function InitClaim(props: InitClaimProps) {
   const { write, error, isSuccess, hash, isPending } = useClaim();
   const { setClaim } = useGlobalStatusesStore();
 
+  const { chainId } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
+
   const claimState = operation.claimState;
   const isClaimRejected = claimState === ClaimState.REJECTED;
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
+  const isChainIncompatible = chainId !== operation.evmChainId;
 
   let { amountFormattedPreview } = formatAmount(operation.amount, decimals);
 
@@ -57,9 +62,25 @@ export function InitClaim(props: InitClaimProps) {
     }
   }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
 
-  function handleClaim() {
-    onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
-    setClaim(Status.Loading);
+  async function handleClaim() {
+    if (isChainIncompatible) {
+      await switchChainAsync({
+        chainId: operation.evmChainId,
+      }).then(() => {
+        onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
+        setClaim(Status.Loading);
+        write({
+          amount: operation.amount,
+          recipient: operation.recipient,
+          inputOpId: operation.inputId,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          evmToken: operation.evmToken!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          signatures: operation.signatures!,
+        });
+      });
+      return;
+    }
     write({
       amount: operation.amount,
       recipient: operation.recipient,
@@ -90,10 +111,15 @@ export function InitClaim(props: InitClaimProps) {
         symbol={symbol}
         decimals={decimals}
       />
-      <div>
+      <div className="flex flex-col gap-2">
         <Button onClick={() => handleClaim()}>
           {Intl.t('claim.claim')} {amountFormattedPreview} {symbol}
         </Button>
+        {isChainIncompatible && (
+          <div className="w-56">
+            by clicking on claim you will first have to change network.
+          </div>
+        )}
       </div>
     </div>
   );
