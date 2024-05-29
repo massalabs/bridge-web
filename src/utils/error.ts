@@ -11,6 +11,7 @@ const ERRORS_MESSAGES = [
   'unable to unprotect wallet',
   'TransactionExecutionError: User rejected the request',
   'UserRejectionError: The operation callSmartContract was rejected by the user',
+  'UserRejectedRequestError: User rejected the request.',
 ];
 
 const WARNING_MESSAGE =

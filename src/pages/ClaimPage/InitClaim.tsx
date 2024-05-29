@@ -62,25 +62,7 @@ export function InitClaim(props: InitClaimProps) {
     }
   }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
 
-  async function handleClaim() {
-    if (isChainIncompatible) {
-      await switchChainAsync({
-        chainId: operation.evmChainId,
-      }).then(() => {
-        onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
-        setClaim(Status.Loading);
-        write({
-          amount: operation.amount,
-          recipient: operation.recipient,
-          inputOpId: operation.inputId,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          evmToken: operation.evmToken!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          signatures: operation.signatures!,
-        });
-      });
-      return;
-    }
+  function writeClaim() {
     write({
       amount: operation.amount,
       recipient: operation.recipient,
@@ -90,6 +72,25 @@ export function InitClaim(props: InitClaimProps) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       signatures: operation.signatures!,
     });
+  }
+
+  async function handleClaim() {
+    onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
+    setClaim(Status.Loading);
+    if (isChainIncompatible) {
+      await switchChainAsync({
+        chainId: operation.evmChainId,
+      })
+        .then(() => {
+          writeClaim();
+        })
+        .catch((e) => {
+          const errorClaimState = handleEvmClaimError(e);
+          onUpdate({ claimState: errorClaimState });
+        });
+      return;
+    }
+    writeClaim();
   }
 
   if (
@@ -116,9 +117,7 @@ export function InitClaim(props: InitClaimProps) {
           {Intl.t('claim.claim')} {amountFormattedPreview} {symbol}
         </Button>
         {isChainIncompatible && (
-          <div className="w-56">
-            by clicking on claim you will first have to change network.
-          </div>
+          <div className="w-56">{Intl.t('claim.wrong-network')}</div>
         )}
       </div>
     </div>
@@ -164,7 +163,7 @@ function DisplayContent(props: DisplayContentProps) {
         {Intl.t('claim.rejected-1')}
         <strong>
           {' '}
-          {amountFormattedPreview} {symbol}{' '}
+          {amountFormattedPreview} {symbol}
         </strong>
         {Intl.t('claim.rejected-2')}
       </div>

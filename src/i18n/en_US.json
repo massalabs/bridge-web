@@ -35,6 +35,7 @@
   },
   "claim": {
     "no-claim": "There are no active claims for address {address}",
+    "wrong-network": "By clicking on claim you will first have to change network.",
     "claim": "Claim",
     "pending": "Pending",
     "success": "You have successfully claimed:",
