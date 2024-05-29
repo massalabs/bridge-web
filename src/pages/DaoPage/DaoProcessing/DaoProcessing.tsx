@@ -40,9 +40,7 @@ export function DaoProcessing(props: DaoProcessingProps) {
 
   const [isReleaseSuccess, setIsReleaseSuccess] = useState(false);
   const [releaseOpId, setReleaseOpId] = useState<string>('');
-  const [releaseEvmChainId, setReleaseEvmChainId] = useState<
-    number | undefined
-  >(undefined);
+  const [releaseEvmChainId, setReleaseEvmChainId] = useState<number>();
 
   // lambdaResponse is an [], returning the object directly caused some problems
   // because ts doesn't evaluate {} as falsy

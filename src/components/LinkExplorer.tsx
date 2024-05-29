@@ -1,7 +1,6 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { FiExternalLink } from 'react-icons/fi';
-import { bsc, bscTestnet } from 'viem/chains';
-import { SupportedEvmBlockchain } from '@/const';
+import { BLOCKCHAIN_TO_CHAIN_IDS, SupportedEvmBlockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { isEVMTxID, openInNewTab } from '@/pages';
 import { useBridgeModeStore } from '@/store/modeStore';
@@ -32,10 +31,9 @@ export function LinkExplorer(props: LinkExplorerProps) {
     if (!currentTxId || !chainId) return undefined;
 
     if (isEVMTxID.test(currentTxId)) {
-      const explorerType =
-        chainId === bsc.id || chainId === bscTestnet.id
-          ? SupportedEvmBlockchain.BSC
-          : SupportedEvmBlockchain.ETH;
+      const explorerType = BLOCKCHAIN_TO_CHAIN_IDS.BSC.includes(chainId)
+        ? SupportedEvmBlockchain.BSC
+        : SupportedEvmBlockchain.ETH;
       return `${EVM_EXPLORER[explorerType][currentMode]}${currentTxId}`;
     }
 

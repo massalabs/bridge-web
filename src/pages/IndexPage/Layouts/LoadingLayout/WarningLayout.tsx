@@ -29,7 +29,6 @@ export function WarningLayout() {
           support.bridge@massa.net
         </a>
       </u>
-      {/* Link will be updated at a later stage because this component needs to be changed  */}
       <BridgeLinkExplorer currentTxID={currentTxID} />
     </div>
   );
