@@ -37,9 +37,9 @@ export function InitClaim(props: InitClaimProps) {
   const { switchChainAsync } = useSwitchChain();
 
   const claimState = operation.claimState;
+  const isChainIncompatible = chainId !== operation.evmChainId;
   const isClaimRejected = claimState === ClaimState.REJECTED;
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
-  const isChainIncompatible = chainId !== operation.evmChainId;
 
   let { amountFormattedPreview } = formatAmount(operation.amount, decimals);
 
