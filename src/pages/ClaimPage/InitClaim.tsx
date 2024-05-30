@@ -6,6 +6,7 @@ import {
   getAssetIcons,
 } from '@massalabs/react-ui-kit';
 import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../custom/bridge/useClaim';
 import { BNBSvg } from '@/assets/BNBSvg';
@@ -17,6 +18,7 @@ import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore } from '@/store/modeStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
+import { CustomError } from '@/utils/error';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface InitClaimProps {
@@ -31,7 +33,11 @@ export function InitClaim(props: InitClaimProps) {
   const { write, error, isSuccess, hash, isPending } = useClaim();
   const { setClaim } = useGlobalStatusesStore();
 
+  const { chainId } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
+
   const claimState = operation.claimState;
+  const isChainIncompatible = chainId !== operation.evmChainId;
   const isClaimRejected = claimState === ClaimState.REJECTED;
   const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
@@ -57,9 +63,7 @@ export function InitClaim(props: InitClaimProps) {
     }
   }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
 
-  function handleClaim() {
-    onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
-    setClaim(Status.Loading);
+  function writeClaim() {
     write({
       amount: operation.amount,
       recipient: operation.recipient,
@@ -69,6 +73,23 @@ export function InitClaim(props: InitClaimProps) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       signatures: operation.signatures!,
     });
+  }
+
+  async function handleClaim() {
+    onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
+    setClaim(Status.Loading);
+
+    if (isChainIncompatible) {
+      try {
+        await switchChainAsync({ chainId: operation.evmChainId });
+      } catch (e) {
+        const typedError = e as CustomError;
+        const errorClaimState = handleEvmClaimError(typedError);
+        onUpdate({ claimState: errorClaimState });
+        return;
+      }
+    }
+    writeClaim();
   }
 
   if (
@@ -90,10 +111,13 @@ export function InitClaim(props: InitClaimProps) {
         symbol={symbol}
         decimals={decimals}
       />
-      <div>
+      <div className="flex flex-col gap-2">
         <Button onClick={() => handleClaim()}>
           {Intl.t('claim.claim')} {amountFormattedPreview} {symbol}
         </Button>
+        {isChainIncompatible && (
+          <div className="w-56">{Intl.t('claim.wrong-network')}</div>
+        )}
       </div>
     </div>
   );
@@ -138,7 +162,7 @@ function DisplayContent(props: DisplayContentProps) {
         {Intl.t('claim.rejected-1')}
         <strong>
           {' '}
-          {amountFormattedPreview} {symbol}{' '}
+          {amountFormattedPreview} {symbol}
         </strong>
         {Intl.t('claim.rejected-2')}
       </div>
@@ -165,11 +189,11 @@ function DisplayContent(props: DisplayContentProps) {
   }
 }
 
-// This should be in ui-kit
-export function getEvmNetworkIcon(chaindId: number, size = 16) {
-  interface EvmIcons {
-    [key: string]: JSX.Element;
-  }
+interface EvmIcons {
+  [key: string]: JSX.Element;
+}
+
+export function getEvmNetworkIcon(chainId: number, size = 16) {
   const evmIcons: EvmIcons = {
     [mainnet.id]: <EthSvg size={size} />,
     [sepolia.id]: <SepoliaSvg size={size} />,
@@ -177,10 +201,9 @@ export function getEvmNetworkIcon(chaindId: number, size = 16) {
     [bscTestnet.id]: <BNBSvg size={size} />,
   };
 
-  return evmIcons[chaindId];
+  return evmIcons[chainId];
 }
 
-// This should be in ui-kit
 export function getEvmChainName(chainId: number) {
   const chains = [mainnet, sepolia, bsc, bscTestnet];
 
