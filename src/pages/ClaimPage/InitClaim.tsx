@@ -191,11 +191,12 @@ function DisplayContent(props: DisplayContentProps) {
   }
 }
 
+interface EvmIcons {
+  [key: string]: JSX.Element;
+}
+
 // This should be in ui-kit
-export function getEvmNetworkIcon(chaindId: number, size = 16) {
-  interface EvmIcons {
-    [key: string]: JSX.Element;
-  }
+export function getEvmNetworkIcon(chainId: number, size = 16) {
   const evmIcons: EvmIcons = {
     [mainnet.id]: <EthSvg size={size} />,
     [sepolia.id]: <SepoliaSvg size={size} />,
@@ -203,7 +204,7 @@ export function getEvmNetworkIcon(chaindId: number, size = 16) {
     [bscTestnet.id]: <BNBSvg size={size} />,
   };
 
-  return evmIcons[chaindId];
+  return evmIcons[chainId];
 }
 
 // This should be in ui-kit
