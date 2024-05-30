@@ -10,7 +10,7 @@ import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../custom/bridge/useClaim';
-import { BNBSvg } from '@/assets/BNBSvg';
+import { BSCSvg } from '@/assets/BSCSvg';
 import { EthSvg } from '@/assets/EthSvg';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
@@ -191,8 +191,8 @@ export function getEvmNetworkIcon(chainId: number, size = 16) {
   const evmIcons: EvmIcons = {
     [mainnet.id]: <EthSvg size={size} />,
     [sepolia.id]: <Sepolia size={size} />,
-    [bsc.id]: <BNBSvg size={size} />,
-    [bscTestnet.id]: <BNBSvg size={size} />,
+    [bsc.id]: <BSCSvg size={size} />,
+    [bscTestnet.id]: <BSCSvg size={size} />,
   };
 
   return evmIcons[chainId];

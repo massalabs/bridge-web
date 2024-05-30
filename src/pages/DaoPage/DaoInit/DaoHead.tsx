@@ -3,7 +3,7 @@ import { WMAS } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
-import { BNBSvg } from '@/assets/BNBSvg';
+import { BSCSvg } from '@/assets/BSCSvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
@@ -63,7 +63,7 @@ export function DaoHead(props: DaoHeadProps) {
               readOnly={true}
               options={[
                 {
-                  icon: <BNBSvg />,
+                  icon: <BSCSvg />,
                   item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
                     `general.${currentMode}`,
                   )}`,

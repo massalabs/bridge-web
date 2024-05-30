@@ -2,7 +2,7 @@
 
 import { SVGProps } from '@massalabs/react-ui-kit';
 
-export function BNBSvg(props: SVGProps) {
+export function BSCSvg(props: SVGProps) {
   let { size } = props;
   return (
     <svg
