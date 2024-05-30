@@ -13,27 +13,25 @@ interface WrongChainProps {
 export function WrongChain(props: WrongChainProps) {
   const { blockchain } = props;
   const { currentProvider } = useAccountStore();
-  const { isMainnet } = useBridgeModeStore();
+  const { massaNetwork } = useBridgeModeStore();
+
+  const currentMassaNetwork = massaNetwork();
 
   let body = '';
   if (blockchain === Blockchain.MASSA && currentProvider) {
     // currentProvider is always defined when blockchain is MASSA
     const providerName = currentProvider.name();
 
-    const targetNetwork = isMainnet()
-      ? Blockchain.MASSA_MAINNET
-      : Blockchain.MASSA_BUILDNET;
-
     if (providerName === SUPPORTED_MASSA_WALLETS.MASSASTATION) {
       body = Intl.t('index.tag.wrong-chain-massa-station-tooltip', {
-        network: Intl.t(`general.${targetNetwork}`),
+        network: Intl.t(`general.${currentMassaNetwork}`),
       });
     } else if (
       blockchain === Blockchain.MASSA &&
       providerName === SUPPORTED_MASSA_WALLETS.BEARBY
     ) {
       body = Intl.t('index.tag.wrong-chain-bearby-tooltip', {
-        network: Intl.t(`general.${targetNetwork}`),
+        network: Intl.t(`general.${currentMassaNetwork}`),
       });
     }
   } else {

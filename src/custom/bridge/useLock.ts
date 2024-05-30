@@ -16,10 +16,11 @@ export function useLock() {
   const { currentMode } = useBridgeModeStore();
   const { selectedToken } = useTokenStore();
   const { connectedAccount } = useAccountStore();
-  const { amount } = useOperationStore();
+  const { amount, selectedEvm } = useOperationStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
 
-  const bridgeContractAddr = config[currentMode].ethBridgeContract;
+  const bridgeContractAddr = config[currentMode][selectedEvm];
+
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
   const { data: hash, writeContract, error } = useWriteContract();

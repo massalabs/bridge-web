@@ -38,8 +38,6 @@ export function InitClaim(props: InitClaimProps) {
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;
-  const isClaimRejected = claimState === ClaimState.REJECTED;
-  const boxSize = isClaimRejected ? 'w-[720px]' : 'w-[520px]';
 
   let { amountFormattedPreview } = formatAmount(operation.amount, decimals);
 
@@ -103,7 +101,7 @@ export function InitClaim(props: InitClaimProps) {
     <div
       className={`flex justify-between 
          bg-secondary/50  backdrop-blur-lg text-f-primary 
-          ${boxSize} h-fit border border-tertiary rounded-2xl p-10`}
+          w-[720px] h-fit border border-tertiary rounded-2xl p-10`}
     >
       <DisplayContent
         claimState={claimState}
@@ -128,7 +126,7 @@ function PendingClaim() {
     <div
       className="flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 
-          w-[520px] h-12 border border-tertiary 
+         w-[720px] h-12 border border-tertiary 
           mas-menu-active rounded-2xl px-10 py-14 text-menu-active"
     >
       <p>{Intl.t('claim.pending')}</p>
