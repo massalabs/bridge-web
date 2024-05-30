@@ -4,6 +4,7 @@ import {
   Button,
   formatAmount,
   getAssetIcons,
+  Sepolia,
 } from '@massalabs/react-ui-kit';
 import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 import { useAccount, useSwitchChain } from 'wagmi';
@@ -11,7 +12,6 @@ import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransact
 import { useClaim } from '../../custom/bridge/useClaim';
 import { BNBSvg } from '@/assets/BNBSvg';
 import { EthSvg } from '@/assets/EthSvg';
-import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
@@ -190,7 +190,7 @@ interface EvmIcons {
 export function getEvmNetworkIcon(chainId: number, size = 16) {
   const evmIcons: EvmIcons = {
     [mainnet.id]: <EthSvg size={size} />,
-    [sepolia.id]: <SepoliaSvg size={size} />,
+    [sepolia.id]: <Sepolia size={size} />,
     [bsc.id]: <BNBSvg size={size} />,
     [bscTestnet.id]: <BNBSvg size={size} />,
   };

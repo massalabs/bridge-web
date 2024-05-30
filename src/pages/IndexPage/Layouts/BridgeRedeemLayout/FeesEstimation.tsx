@@ -3,6 +3,7 @@ import { toMAS } from '@massalabs/massa-web3';
 import {
   FetchingLine,
   MassaLogo,
+  Sepolia,
   Tooltip,
   formatAmount,
 } from '@massalabs/react-ui-kit';
@@ -10,7 +11,6 @@ import { FiInfo } from 'react-icons/fi';
 import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { EthSvg } from '@/assets/EthSvg';
-import { SepoliaSvg } from '@/assets/SepoliaSVG';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
 import {
   Blockchain,
@@ -195,7 +195,7 @@ export function FeesEstimation() {
         <div className="flex items-center">
           1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="mx-1">
-            {isMainnet() ? <EthSvg size={20} /> : <SepoliaSvg size={20} />}
+            {isMainnet() ? <EthSvg size={20} /> : <Sepolia size={20} />}
           </span>{' '}
           = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="ml-1">
