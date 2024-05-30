@@ -9,14 +9,8 @@ interface EmitterProps {
 }
 export function Emitter(props: EmitterProps) {
   const { operation } = props;
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-
-  const isMainnet = getIsMainnet();
-
-  const massaSide = isMainnet
-    ? `${Blockchain.MASSA} ${Blockchain.MASSA_MAINNET}`
-    : `${Blockchain.MASSA} ${Blockchain.MASSA_BUILDNET}`;
-
+  const { massaNetwork } = useBridgeModeStore();
+  const currentMassaNetwork = massaNetwork();
   return (
     <div className="flex items-center gap-2">
       <div>
@@ -37,7 +31,7 @@ export function Emitter(props: EmitterProps) {
             case Entities.Lock:
               return getEvmChainName(operation.evmChainId);
             case Entities.Burn:
-              return massaSide;
+              return `${Blockchain.MASSA} ${currentMassaNetwork}`;
           }
         })()}
       </div>

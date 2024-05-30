@@ -9,14 +9,8 @@ interface RecipientProps {
 }
 export function Recipient(props: RecipientProps) {
   const { operation } = props;
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-
-  const isMainnet = getIsMainnet();
-
-  const massaSide = isMainnet
-    ? `${Blockchain.MASSA} ${Blockchain.MASSA_MAINNET}`
-    : `${Blockchain.MASSA} ${Blockchain.MASSA_BUILDNET}`;
-
+  const { massaNetwork } = useBridgeModeStore();
+  const currentMassaNetwork = massaNetwork();
   return (
     <div className="flex items-center gap-2">
       <div>
@@ -35,7 +29,7 @@ export function Recipient(props: RecipientProps) {
           switch (operation.entity) {
             case Entities.ReleaseMAS:
             case Entities.Lock:
-              return massaSide;
+              return `${Blockchain.MASSA} ${currentMassaNetwork}`;
             case Entities.Burn:
               return getEvmChainName(operation.evmChainId);
           }
