@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { Accordion, AccordionContent } from '@massalabs/react-ui-kit';
-import { config } from '@/const';
+import { SupportedEvmBlockchain, config } from '@/const';
 import {
   FAQsections,
   bridgeEmail,
@@ -228,7 +228,7 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.bridge-address-desc-1')}{' '}
-            {config[currentMode].ethBridgeContract}
+            {config[currentMode][SupportedEvmBlockchain.ETH]}
           </p>
           <p>
             {Intl.t('index.faq.mainnet.bridge-address-desc-2')}{' '}
