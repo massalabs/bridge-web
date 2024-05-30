@@ -1,5 +1,6 @@
-import { formatAmountToDisplay } from '@massalabs/react-ui-kit';
+import { formatStandard } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
+import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { BridgeLinkExplorer } from './BridgeLinkExplorer';
 import { Blockchain } from '@/const';
@@ -16,11 +17,8 @@ import {
 export function SuccessLayout() {
   const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
-  const {
-    currentMode,
-    isMainnet: getIsMainnet,
-    massaNetwork: getMassaNetwork,
-  } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet, massaNetwork: getMassaNetwork } =
+    useBridgeModeStore();
   const { chain } = useAccount();
   const evmWalletName = useConnectorName();
   const isMainnet = getIsMainnet();
@@ -33,8 +31,8 @@ export function SuccessLayout() {
 
   const massaToEvm = isMassaToEvm();
   const currentRedeemOperation = getCurrentRedeemOperation();
-  const { amountFormattedPreview } = formatAmountToDisplay(
-    amount,
+  const amountFormatted = formatStandard(
+    parseUnits(amount, token.decimals).toString(),
     token.decimals,
   );
 
@@ -42,9 +40,7 @@ export function SuccessLayout() {
     `general.${massaNetwork}`,
   )}`;
 
-  const evmChainAndNetwork = `${chain.name} ${Intl.t(
-    `general.${currentMode}`,
-  )}`;
+  const evmChainAndNetwork = chain.name;
 
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
@@ -68,7 +64,7 @@ export function SuccessLayout() {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
-          {amountFormattedPreview} {massaToEvm ? token.symbol : token.symbolEVM}
+          {amountFormatted} {massaToEvm ? token.symbol : token.symbolEVM}
         </div>
         <div>
           {Intl.t('index.loading-box.from-to', {
@@ -78,7 +74,7 @@ export function SuccessLayout() {
         </div>
         <div>
           {Intl.t('index.loading-box.received-tokens', {
-            amount: `${amountFormattedPreview} ${
+            amount: `${amountFormatted} ${
               massaToEvm ? token.symbolEVM : token.symbol
             }`,
           })}

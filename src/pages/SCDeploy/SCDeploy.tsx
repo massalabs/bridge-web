@@ -13,7 +13,7 @@ export function SCDeploy() {
 
   useEffect(() => {
     if (!SC_DEPLOY) {
-      navigate(`/index`);
+      navigate('/index');
     }
   }, [navigate]);
 
