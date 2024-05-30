@@ -40,13 +40,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions nativeToken={true} />,
+        token: <TokenOptions nativeToken={false} />,
         balance: <TokenBalance />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions nativeToken={false} />,
+        token: <TokenOptions nativeToken={true} />,
         balance: null,
       },
     },
@@ -54,13 +54,13 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions nativeToken={false} />,
+        token: <TokenOptions nativeToken={true} />,
         balance: <TokenBalance />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions nativeToken={true} />,
+        token: <TokenOptions nativeToken={false} />,
         balance: null,
       },
     },

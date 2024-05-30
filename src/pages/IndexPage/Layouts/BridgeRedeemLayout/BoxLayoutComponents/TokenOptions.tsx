@@ -29,8 +29,8 @@ export function TokenOptions(props: TokenOptionsProps) {
       size="md"
       options={tokens.map((token: IToken) => {
         return {
-          item: nativeToken ? token.symbol : token.symbolEVM,
-          icon: getAssetIcons(token.symbolEVM, targetChainId),
+          item: nativeToken ? token.symbolEVM : token.symbol,
+          icon: getAssetIcons(token.symbolEVM, targetChainId, nativeToken),
           onClick: () => setSelectedToken(token),
         };
       })}
