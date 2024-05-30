@@ -38,7 +38,7 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
       <div
         className="flex justify-between items-center
       bg-secondary/50 backdrop-blur-lg text-f-primary 
-      w-[620px] h-12 border border-tertiary rounded-2xl 
+      w-[720px] h-12 border border-tertiary rounded-2xl 
       px-10 py-14 animate-pulse"
       >
         <div className="w-full h-4 bg-gray-300 rounded-xl"></div>

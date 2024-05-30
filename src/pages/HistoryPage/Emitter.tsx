@@ -1,8 +1,5 @@
 import { MassaLogo } from '@massalabs/react-ui-kit';
-import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
-import { BNBSvg } from '@/assets/BNBSvg';
-import { EthSvg } from '@/assets/EthSvg';
-import { SepoliaSvg } from '@/assets/SepoliaSVG';
+import { getEvmChainName, getEvmNetworkIcon } from '..';
 import { Blockchain } from '@/const';
 import { useBridgeModeStore } from '@/store/store';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
@@ -12,27 +9,16 @@ interface EmitterProps {
 }
 export function Emitter(props: EmitterProps) {
   const { operation } = props;
-  const { isMainnet: getIsMainnet } = useBridgeModeStore();
-
-  const isMainnet = getIsMainnet();
-
-  const massaSide = isMainnet
-    ? `${Blockchain.MASSA} ${Blockchain.MASSA_MAINNET}`
-    : `${Blockchain.MASSA} ${Blockchain.MASSA_BUILDNET}`;
-
+  const { massaNetwork } = useBridgeModeStore();
+  const currentMassaNetwork = massaNetwork();
   return (
     <div className="flex items-center gap-2">
       <div>
         {(() => {
           switch (operation.entity) {
             case Entities.ReleaseMAS:
-              return <BNBSvg size={24} />;
             case Entities.Lock:
-              return isMainnet ? (
-                <EthSvg size={24} />
-              ) : (
-                <SepoliaSvg size={24} />
-              );
+              return getEvmNetworkIcon(operation.evmChainId, 24);
             case Entities.Burn:
               return <MassaLogo size={24} />;
           }
@@ -42,11 +28,10 @@ export function Emitter(props: EmitterProps) {
         {(() => {
           switch (operation.entity) {
             case Entities.ReleaseMAS:
-              return isMainnet ? bsc.name : bscTestnet.name;
             case Entities.Lock:
-              return isMainnet ? mainnet.name : sepolia.name;
+              return getEvmChainName(operation.evmChainId);
             case Entities.Burn:
-              return massaSide;
+              return `${Blockchain.MASSA} ${currentMassaNetwork}`;
           }
         })()}
       </div>
