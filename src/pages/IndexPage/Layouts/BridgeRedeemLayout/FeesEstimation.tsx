@@ -75,11 +75,7 @@ export function FeesEstimation() {
   const { isMassaToEvm, amount } = useOperationStore();
   const massaToEvm = isMassaToEvm();
   const { selectedToken } = useTokenStore();
-  const {
-    currentMode,
-    massaNetwork: getMassaNetwork,
-    isMainnet,
-  } = useBridgeModeStore();
+  const { massaNetwork: getMassaNetwork, isMainnet } = useBridgeModeStore();
   const { isConnected: isEvmWalletConnected, chain } = useAccount();
 
   const massaNetwork = getMassaNetwork();
@@ -180,7 +176,7 @@ export function FeesEstimation() {
   const symbolMASSA = selectedToken.symbol;
 
   const chainName = chain
-    ? chain.name.replace('Testnet', '').replace('Mainnet', '')
+    ? chain.name
     : Intl.t(`general.${Blockchain.UNKNOWN}`);
 
   const storageMASString = storageMAS ? toMAS(storageMAS).toString() : '';
@@ -227,7 +223,6 @@ export function FeesEstimation() {
         <p>
           {Intl.t('index.fee-estimate.network-fees', {
             name: chainName,
-            network: Intl.t(`general.${currentMode}`),
           })}
         </p>
         <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />

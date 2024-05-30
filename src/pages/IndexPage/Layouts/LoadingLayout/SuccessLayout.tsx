@@ -16,11 +16,8 @@ import {
 export function SuccessLayout() {
   const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
     useOperationStore();
-  const {
-    currentMode,
-    isMainnet: getIsMainnet,
-    massaNetwork: getMassaNetwork,
-  } = useBridgeModeStore();
+  const { isMainnet: getIsMainnet, massaNetwork: getMassaNetwork } =
+    useBridgeModeStore();
   const { chain } = useAccount();
   const evmWalletName = useConnectorName();
   const isMainnet = getIsMainnet();
@@ -42,9 +39,7 @@ export function SuccessLayout() {
     `general.${massaNetwork}`,
   )}`;
 
-  const evmChainAndNetwork = `${chain.name} ${Intl.t(
-    `general.${currentMode}`,
-  )}`;
+  const evmChainAndNetwork = chain.name;
 
   const emitter = massaToEvm ? massaChainAndNetwork : evmChainAndNetwork;
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;

@@ -280,7 +280,7 @@
     },
     "fee-estimate": {
       "bridge-rate": "Bridge rate",
-      "network-fees": "Transaction fees on {name} {network} est.",
+      "network-fees": "Transaction fees on {name} est.",
       "on": "on",
       "tooltip-massa": "Massa blockchain charges {fees} MAS to pay for the storage on the ledger."
     }
