@@ -19,9 +19,8 @@ export function ReleaseSuccess(props: ReleaseSuccessProps) {
   const massaChainAndNetwork = `${Blockchain.MASSA} ${Intl.t(
     `general.${massaNetwork}`,
   )}`;
-  const evmChainAndNetwork = `${chain.name}`;
 
-  const emitter = evmChainAndNetwork;
+  const emitter = chain.name;
   const recipient = massaChainAndNetwork;
 
   return (

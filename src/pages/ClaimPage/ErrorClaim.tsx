@@ -1,4 +1,3 @@
-import { SyntheticEvent } from 'react';
 import { Button, formatAmount } from '@massalabs/react-ui-kit';
 import { FiAlertCircle, FiRefreshCcw } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
@@ -39,11 +38,7 @@ export function ErrorClaim(props: ErrorClaimProps) {
               {amountFormattedPreview} {symbol}{' '}
             </strong>
           </div>
-          <Button
-            variant="icon"
-            customClass="text-s-warning"
-            onClick={(_: SyntheticEvent) => onReset()}
-          >
+          <Button variant="icon" customClass="text-s-warning" onClick={onReset}>
             <FiRefreshCcw />
           </Button>
         </div>
