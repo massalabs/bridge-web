@@ -1,14 +1,22 @@
 import { erc20Abi } from 'viem';
 import { useAccount, useReadContracts } from 'wagmi';
-import { config } from '@/const/const';
-import { useBridgeModeStore, useTokenStore } from '@/store/store';
+import { SupportedEvmBlockchain, config } from '@/const/const';
+import {
+  useBridgeModeStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store/store';
 
 const useEvmToken = () => {
   const { address: accountAddress } = useAccount();
   const { selectedToken } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
+  const { selectedEvm } = useOperationStore();
 
-  const bridgeContractAddr = config[currentMode].ethBridgeContract;
+  const bridgeContractAddr =
+    selectedEvm === SupportedEvmBlockchain.ETH
+      ? config[currentMode].ethBridgeContract
+      : config[currentMode].bscBridgeContract;
 
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
