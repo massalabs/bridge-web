@@ -18,6 +18,7 @@ import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore } from '@/store/modeStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
+import { CustomError } from '@/utils/error';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface InitClaimProps {
@@ -77,20 +78,20 @@ export function InitClaim(props: InitClaimProps) {
   async function handleClaim() {
     onUpdate({ claimState: ClaimState.AWAITING_SIGNATURE });
     setClaim(Status.Loading);
+
     if (isChainIncompatible) {
-      await switchChainAsync({
-        chainId: operation.evmChainId,
-      })
-        .then(() => {
-          writeClaim();
-        })
-        .catch((e) => {
-          const errorClaimState = handleEvmClaimError(e);
-          onUpdate({ claimState: errorClaimState });
-        });
-      return;
+      try {
+        await switchChainAsync({ chainId: operation.evmChainId });
+        writeClaim();
+      } catch (e) {
+        const typedError = e as CustomError;
+        const errorClaimState = handleEvmClaimError(typedError);
+        onUpdate({ claimState: errorClaimState });
+        return;
+      }
+    } else {
+      writeClaim();
     }
-    writeClaim();
   }
 
   if (
