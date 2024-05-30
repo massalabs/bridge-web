@@ -59,8 +59,7 @@ export const config = {
       '0xf18a8776cD5AA54b05C0C0e5Dc82D992849eD006' as `0x${string}`,
     [SupportedEvmBlockchain.BSC]:
       '0xb06Cf6Ed6E24f31bf9148CF7c4D4218903d500b2' as `0x${string}`,
-    massaBridgeContract:
-      'AS12HknkNx2rWBxhtTn4CU1PRhdG13cfvRff2nAKcFUuCk1QStSuZ',
+    massaBridgeContract: 'AS1owaJB7NkqY2pjsggBP7m1jFA9XRZKGpXBbjBMeysQDSxjm7MS',
     lambdaUrl:
       'https://6sul7w7nqer7pd5mf7cl6l2muy0isblj.lambda-url.eu-west-3.on.aws/default/',
     wmas_address: '0x3C53552D3A54672fe1113e2FDDd2099d6E9E585D' as `0x${string}`,
