@@ -195,7 +195,6 @@ interface EvmIcons {
   [key: string]: JSX.Element;
 }
 
-// This should be in ui-kit
 export function getEvmNetworkIcon(chainId: number, size = 16) {
   const evmIcons: EvmIcons = {
     [mainnet.id]: <EthSvg size={size} />,
@@ -207,7 +206,6 @@ export function getEvmNetworkIcon(chainId: number, size = 16) {
   return evmIcons[chainId];
 }
 
-// This should be in ui-kit
 export function getEvmChainName(chainId: number) {
   const chains = [mainnet, sepolia, bsc, bscTestnet];
 
