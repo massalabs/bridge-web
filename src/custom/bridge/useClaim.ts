@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { SupportedEvmBlockchain, config } from '@/const/const';
+import { config } from '@/const/const';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { ethMinConfirmations } from '@/utils/const';
 
@@ -17,10 +17,7 @@ export function useClaim() {
   const { currentMode } = useBridgeModeStore();
   const { selectedEvm } = useOperationStore();
 
-  const bridgeContractAddr =
-    selectedEvm === SupportedEvmBlockchain.ETH
-      ? config[currentMode].ethBridgeContract
-      : config[currentMode].bscBridgeContract;
+  const bridgeContractAddr = config[currentMode][selectedEvm];
 
   const { data: hash, writeContract, error, isPending } = useWriteContract();
 

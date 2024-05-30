@@ -1,7 +1,7 @@
 import { U256_MAX } from '@massalabs/massa-web3';
 import { erc20Abi } from 'viem';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { SupportedEvmBlockchain, config } from '@/const/const';
+import { config } from '@/const/const';
 import {
   useBridgeModeStore,
   useOperationStore,
@@ -13,10 +13,7 @@ export function useEvmApprove() {
   const { selectedToken } = useTokenStore();
   const { selectedEvm } = useOperationStore();
 
-  const bridgeContractAddr =
-    selectedEvm === SupportedEvmBlockchain.ETH
-      ? config[currentMode].ethBridgeContract
-      : config[currentMode].bscBridgeContract;
+  const bridgeContractAddr = config[currentMode][selectedEvm];
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
   const { data: hash, writeContract, error } = useWriteContract();

@@ -3,7 +3,7 @@ import { useDebounceValue } from 'usehooks-ts';
 import { parseUnits } from 'viem';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { SupportedEvmBlockchain, config } from '@/const/const';
+import { config } from '@/const/const';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -19,10 +19,7 @@ export function useLock() {
   const { amount, selectedEvm } = useOperationStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
 
-  const bridgeContractAddr =
-    selectedEvm === SupportedEvmBlockchain.ETH
-      ? config[currentMode].ethBridgeContract
-      : config[currentMode].bscBridgeContract;
+  const bridgeContractAddr = config[currentMode][selectedEvm];
 
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
