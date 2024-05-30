@@ -82,16 +82,14 @@ export function InitClaim(props: InitClaimProps) {
     if (isChainIncompatible) {
       try {
         await switchChainAsync({ chainId: operation.evmChainId });
-        writeClaim();
       } catch (e) {
         const typedError = e as CustomError;
         const errorClaimState = handleEvmClaimError(typedError);
         onUpdate({ claimState: errorClaimState });
         return;
       }
-    } else {
-      writeClaim();
     }
+    writeClaim();
   }
 
   if (
