@@ -1,8 +1,5 @@
 import { MassaLogo } from '@massalabs/react-ui-kit';
-import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
-import { BNBSvg } from '@/assets/BNBSvg';
-import { EthSvg } from '@/assets/EthSvg';
-import { SepoliaSvg } from '@/assets/SepoliaSVG';
+import { getEvmChainName, getEvmNetworkIcon } from '..';
 import { Blockchain } from '@/const';
 import { useBridgeModeStore } from '@/store/store';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
@@ -26,13 +23,8 @@ export function Emitter(props: EmitterProps) {
         {(() => {
           switch (operation.entity) {
             case Entities.ReleaseMAS:
-              return <BNBSvg size={24} />;
             case Entities.Lock:
-              return isMainnet ? (
-                <EthSvg size={24} />
-              ) : (
-                <SepoliaSvg size={24} />
-              );
+              return getEvmNetworkIcon(operation.evmChainId, 24);
             case Entities.Burn:
               return <MassaLogo size={24} />;
           }
@@ -42,9 +34,8 @@ export function Emitter(props: EmitterProps) {
         {(() => {
           switch (operation.entity) {
             case Entities.ReleaseMAS:
-              return isMainnet ? bsc.name : bscTestnet.name;
             case Entities.Lock:
-              return isMainnet ? mainnet.name : sepolia.name;
+              return getEvmChainName(operation.evmChainId);
             case Entities.Burn:
               return massaSide;
           }

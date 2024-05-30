@@ -1,7 +1,5 @@
 import { MassaLogo } from '@massalabs/react-ui-kit';
-import { mainnet, sepolia } from 'viem/chains';
-import { EthSvg } from '@/assets/EthSvg';
-import { SepoliaSvg } from '@/assets/SepoliaSVG';
+import { getEvmChainName, getEvmNetworkIcon } from '..';
 import { Blockchain } from '@/const';
 import { useBridgeModeStore } from '@/store/store';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
@@ -28,11 +26,7 @@ export function Recipient(props: RecipientProps) {
             case Entities.Lock:
               return <MassaLogo size={24} />;
             case Entities.Burn:
-              return isMainnet ? (
-                <EthSvg size={24} />
-              ) : (
-                <SepoliaSvg size={24} />
-              );
+              return getEvmNetworkIcon(operation.evmChainId, 24);
           }
         })()}
       </div>
@@ -43,7 +37,7 @@ export function Recipient(props: RecipientProps) {
             case Entities.Lock:
               return massaSide;
             case Entities.Burn:
-              return isMainnet ? mainnet.name : sepolia.name;
+              return getEvmChainName(operation.evmChainId);
           }
         })()}
       </div>
