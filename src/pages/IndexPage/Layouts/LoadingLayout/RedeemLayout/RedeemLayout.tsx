@@ -36,12 +36,13 @@ export function RedeemLayout() {
           <LoadingState state={burn} />
         </div>
         <div className="flex justify-between">
-          <div className="mas-body-2 flex items-center">
+          <div className="mas-body-2 gap-2 flex items-center">
             {Intl.t('index.loading-box.claim-label', {
               state: getClaimStateTranslation(claimState),
             })}
             {claimState === ClaimState.PENDING && (
               <Tooltip
+                customClass="mas-caption w-fit whitespace-nowrap px-2 py-1"
                 body={Intl.t('index.loading-box.claim-pending-tooltip', {
                   wallet: evmWalletName,
                 })}

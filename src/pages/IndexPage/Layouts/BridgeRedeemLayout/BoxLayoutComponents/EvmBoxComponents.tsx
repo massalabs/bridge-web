@@ -33,8 +33,8 @@ export function EVMHeader() {
   const options = [
     {
       icon: isMainnet
-        ? getEvmNetworkIcon(mainnet.id, 40)
-        : getEvmNetworkIcon(sepolia.id, 40),
+        ? getEvmNetworkIcon(mainnet.id, 32)
+        : getEvmNetworkIcon(sepolia.id, 32),
       item: `${Intl.t(
         `general.${isMainnet ? Blockchain.ETHEREUM : Blockchain.SEPOLIA}`,
       )} ${Intl.t(`general.${currentMode}`)}`,
@@ -42,8 +42,8 @@ export function EVMHeader() {
     },
     {
       icon: isMainnet
-        ? getEvmNetworkIcon(bsc.id, 40)
-        : getEvmNetworkIcon(bscTestnet.id, 40),
+        ? getEvmNetworkIcon(bsc.id, 32)
+        : getEvmNetworkIcon(bscTestnet.id, 32),
       item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
         `general.${currentMode}`,
       )}`,

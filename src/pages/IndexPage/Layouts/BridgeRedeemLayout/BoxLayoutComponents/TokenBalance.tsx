@@ -35,10 +35,10 @@ export function TokenBalance() {
         {!isFetched || !selectedToken || amount === undefined ? (
           <FetchingLine />
         ) : (
-          <div className="flex items-center">
+          <div className="flex gap-2 items-center">
             {amountFormattedPreview}
             <Tooltip
-              customClass="mas-caption w-fit whitespace-nowrap"
+              customClass="mas-caption w-fit whitespace-nowrap px-2 py-1"
               body={amountFormattedFull + ' ' + symbol ?? ''}
             />
           </div>

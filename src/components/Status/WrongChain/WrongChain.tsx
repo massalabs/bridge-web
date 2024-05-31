@@ -1,6 +1,4 @@
 import { Tag, Tooltip } from '@massalabs/react-ui-kit';
-
-import { FiHelpCircle } from 'react-icons/fi';
 import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -40,17 +38,12 @@ export function WrongChain(props: WrongChainProps) {
 
   return (
     <Tag type={tagTypes.warning}>
-      <div className="flex items-center">
+      <div className="flex gap-2 items-center">
+        {Intl.t('index.tag.wrong-chain')}
         <Tooltip
-          className="w-fit p-0 hover:cursor-pointer"
-          customClass="p-0 mas-caption w-fit whitespace-nowrap"
+          customClass="mas-caption w-fit whitespace-nowrap px-2 py-1"
           body={body}
-        >
-          <div className="flex items-center">
-            <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
-            <FiHelpCircle className="text-s-warning" />
-          </div>
-        </Tooltip>
+        />
       </div>
     </Tag>
   );
