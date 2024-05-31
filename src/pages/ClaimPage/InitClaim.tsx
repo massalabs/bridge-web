@@ -169,10 +169,7 @@ function DisplayContent(props: DisplayContentProps) {
         <strong className="flex items-center gap-2">
           {getAssetIcons(symbol, operation.evmChainId, true, 26)}
           {amountFormattedPreview} {symbol}
-          <Tooltip
-            customClass="mas-caption w-fit whitespace-nowrap px-2 py-1"
-            body={amountFormattedFull + ' ' + symbol}
-          />
+          <Tooltip body={amountFormattedFull + ' ' + symbol} />
         </strong>
 
         <div className="flex items-center gap-2">

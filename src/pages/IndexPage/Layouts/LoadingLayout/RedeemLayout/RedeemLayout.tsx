@@ -42,7 +42,6 @@ export function RedeemLayout() {
             })}
             {claimState === ClaimState.PENDING && (
               <Tooltip
-                customClass="mas-caption w-fit whitespace-nowrap px-2 py-1"
                 body={Intl.t('index.loading-box.claim-pending-tooltip', {
                   wallet: evmWalletName,
                 })}

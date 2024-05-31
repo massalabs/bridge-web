@@ -37,10 +37,7 @@ export function TokenBalance() {
         ) : (
           <div className="flex gap-2 items-center">
             {amountFormattedPreview}
-            <Tooltip
-              customClass="mas-caption w-fit whitespace-nowrap px-2 py-1"
-              body={amountFormattedFull + ' ' + symbol ?? ''}
-            />
+            <Tooltip body={amountFormattedFull + ' ' + symbol ?? ''} />
           </div>
         )}
       </div>

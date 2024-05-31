@@ -46,11 +46,7 @@ export function UpdateMassaWalletWarning(props: { customClass?: string }) {
 
   return (
     <div className={`flex items-center ${props.customClass}`}>
-      <Tooltip
-        className="w-fit p-0 hover:cursor-pointer"
-        customClass="p-0 mas-caption w-fit whitespace-nowrap"
-        body={body}
-      >
+      <Tooltip customClass="whitespace-nowrap" body={body}>
         <div className="flex items-center">
           <FiAlertTriangle className="text-s-warning" size={28} />
         </div>

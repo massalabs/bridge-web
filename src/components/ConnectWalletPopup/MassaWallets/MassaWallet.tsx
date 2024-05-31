@@ -86,7 +86,6 @@ export function MassaWallet() {
           />
           {selectedProvider === SUPPORTED_MASSA_WALLETS.BEARBY && (
             <Tooltip
-              customClass="mas-caption w-fit whitespace-nowrap"
               body={Intl.t('connect-wallet.card-destination.non-massa-wallet')}
             />
           )}

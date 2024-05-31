@@ -40,10 +40,7 @@ export function WrongChain(props: WrongChainProps) {
     <Tag type={tagTypes.warning}>
       <div className="flex gap-2 items-center">
         {Intl.t('index.tag.wrong-chain')}
-        <Tooltip
-          customClass="mas-caption w-fit whitespace-nowrap px-2 py-1"
-          body={body}
-        />
+        <Tooltip customIconColor="text-s-warning" body={body} />
       </div>
     </Tag>
   );
