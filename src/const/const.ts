@@ -12,6 +12,7 @@ export enum Blockchain {
   ETHEREUM = 'Ethereum',
   MASSA = 'Massa',
   BSC = 'BSC',
+  UNKNOWN = 'Unknown',
 }
 
 // Supported blockchain to bridge from and to
