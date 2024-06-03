@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { useTokenStore } from './tokenStore';
-import { Blockchain, BridgeMode } from '../const';
+import { BridgeMode, MassaNetworkType } from '../const';
 
 export interface ModeStoreState {
   currentMode: BridgeMode;
@@ -20,7 +20,7 @@ export const useBridgeModeStore = create<ModeStoreState>(
     isMainnet: () => get().currentMode === BridgeMode.mainnet,
 
     massaNetwork: () =>
-      get().isMainnet() ? Blockchain.MASSA_MAINNET : Blockchain.MASSA_BUILDNET,
+      get().isMainnet() ? MassaNetworkType.Mainnet : MassaNetworkType.Buildnet,
 
     setCurrentMode: (mode: BridgeMode) => {
       const previousMode = get().currentMode;
