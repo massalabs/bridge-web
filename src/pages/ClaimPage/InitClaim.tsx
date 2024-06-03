@@ -156,9 +156,7 @@ function DisplayContent(props: DisplayContentProps) {
       <div>
         {Intl.t('claim.rejected-1')}
         <strong>
-          {' '}
-          {amountFormattedPreview} {symbol}{' '}
-          {getEvmNetworkIcon(operation.evmChainId, 24)}{' '}
+          {amountFormattedPreview} {symbol}
         </strong>
         {Intl.t('claim.rejected-2')}
       </div>
