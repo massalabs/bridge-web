@@ -1,6 +1,6 @@
 import { MassaLogo } from '@massalabs/react-ui-kit';
 import { getEvmChainName, getEvmNetworkIcon } from '..';
-import { Blockchain } from '@/const';
+import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
 
@@ -29,7 +29,7 @@ export function Recipient(props: RecipientProps) {
           switch (operation.entity) {
             case Entities.ReleaseMAS:
             case Entities.Lock:
-              return `${Blockchain.MASSA} ${currentMassaNetwork}`;
+              return `${Intl.t('general.Massa')} ${currentMassaNetwork}`;
             case Entities.Burn:
               return getEvmChainName(operation.evmChainId);
           }

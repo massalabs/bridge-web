@@ -1,6 +1,5 @@
 import { useAccount } from 'wagmi';
 import { wmasSymbol } from '../DaoPage';
-import { Blockchain } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 
@@ -16,7 +15,7 @@ export function ReleaseSuccess(props: ReleaseSuccessProps) {
 
   if (!chain) return null;
 
-  const massaChainAndNetwork = `${Blockchain.MASSA} ${Intl.t(
+  const massaChainAndNetwork = `${Intl.t('general.Massa')} ${Intl.t(
     `general.${massaNetwork}`,
   )}`;
 

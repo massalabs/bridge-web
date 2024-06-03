@@ -6,7 +6,7 @@ import {
   formatAmountToDisplay,
 } from '@massalabs/react-ui-kit';
 import { wmasDecimals } from '../DaoPage';
-import { Blockchain, MASSA_TOKEN } from '@/const';
+import { MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
@@ -43,7 +43,7 @@ export function DaoMiddle(props: DaoMiddleProps) {
       <div className="flex justify-between w-full">
         <div>{Intl.t('general.network')}</div>
         <div className="flex items-center gap-2">
-          <MassaLogo size={16} /> <div>{Blockchain.MASSA}</div>
+          <MassaLogo size={16} /> <div>{Intl.t('general.Massa')}</div>
         </div>
       </div>
     </div>

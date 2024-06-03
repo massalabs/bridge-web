@@ -36,7 +36,7 @@ export function EVMHeader() {
         ? getEvmNetworkIcon(mainnet.id, 32)
         : getEvmNetworkIcon(sepolia.id, 32),
       item: `${Intl.t(
-        `general.${isMainnet ? Blockchain.ETHEREUM : Blockchain.SEPOLIA}`,
+        `general.${isMainnet ? 'Ethereum' : 'Sepolia'}`,
       )} ${Intl.t(`general.${currentMode}`)}`,
       onClick: () => handleChangeEvmNetwork(SupportedEvmBlockchain.ETH),
     },
