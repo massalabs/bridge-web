@@ -10,7 +10,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { ethMinConfirmations } from '@/utils/const';
+import { getMinConfirmation } from '@/utils/utils';
 
 export function useLock() {
   const { currentMode } = useBridgeModeStore();
@@ -47,7 +47,7 @@ export function useLock() {
 
   const { isSuccess } = useWaitForTransactionReceipt({
     hash,
-    confirmations: ethMinConfirmations,
+    confirmations: getMinConfirmation(selectedEvm),
   });
 
   return { write, hash, isSuccess, error };

@@ -2,7 +2,10 @@ import {
   MASSA_EXPLORER_URL,
   MASSA_EXPLO_URL,
   MASSA_EXPLO_EXTENSION,
+  ethMinConfirmations,
+  bscMinConfirmations,
 } from './const';
+import { SupportedEvmBlockchain } from '@/const';
 import { useBridgeModeStore } from '@/store/store';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,4 +35,13 @@ export function linkifyMassaOpIdToExplo(txId: string | `0x${string}`): string {
   return isMainnet
     ? `${MASSA_EXPLORER_URL}${txId}`
     : `${MASSA_EXPLO_URL}${txId}${MASSA_EXPLO_EXTENSION}`;
+}
+
+export function getMinConfirmation(
+  selectedEvm: SupportedEvmBlockchain,
+): number {
+  if (selectedEvm === SupportedEvmBlockchain.ETH) {
+    return ethMinConfirmations;
+  }
+  return bscMinConfirmations;
 }
