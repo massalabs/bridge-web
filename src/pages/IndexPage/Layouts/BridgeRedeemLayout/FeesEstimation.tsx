@@ -10,12 +10,7 @@ import { FiInfo } from 'react-icons/fi';
 import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
-import {
-  Blockchain,
-  forwardBurnFees,
-  increaseAllowanceFee,
-  MASSA_TOKEN,
-} from '@/const';
+import { forwardBurnFees, increaseAllowanceFee, MASSA_TOKEN } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import {
@@ -174,9 +169,7 @@ export function FeesEstimation() {
   const symbolEVM = selectedToken.symbolEVM;
   const symbolMASSA = selectedToken.symbol;
 
-  const chainName = chain
-    ? chain.name
-    : Intl.t(`general.${Blockchain.UNKNOWN}`);
+  const chainName = chain ? chain.name : Intl.t('general.Unknown');
 
   const chainId = chain ? chain.id : 0;
 
