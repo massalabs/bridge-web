@@ -1,26 +1,22 @@
 import { Tag, Tooltip } from '@massalabs/react-ui-kit';
-import {
-  Blockchain,
-  SUPPORTED_MASSA_WALLETS,
-  SupportedEvmBlockchain,
-} from '@/const';
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { tagTypes } from '@/utils/const';
 
 interface WrongChainProps {
-  blockchain: Blockchain | SupportedEvmBlockchain;
+  isMassaChain: boolean;
 }
 
 export function WrongChain(props: WrongChainProps) {
-  const { blockchain } = props;
+  const { isMassaChain } = props;
   const { currentProvider } = useAccountStore();
   const { massaNetwork } = useBridgeModeStore();
 
   const currentMassaNetwork = massaNetwork();
 
   let body = '';
-  if (blockchain === Blockchain.MASSA && currentProvider) {
+  if (isMassaChain && currentProvider) {
     // currentProvider is always defined when blockchain is MASSA
     const providerName = currentProvider.name();
 
@@ -29,7 +25,7 @@ export function WrongChain(props: WrongChainProps) {
         network: Intl.t(`general.${currentMassaNetwork}`),
       });
     } else if (
-      blockchain === Blockchain.MASSA &&
+      isMassaChain &&
       providerName === SUPPORTED_MASSA_WALLETS.BEARBY
     ) {
       body = Intl.t('index.tag.wrong-chain-bearby-tooltip', {
