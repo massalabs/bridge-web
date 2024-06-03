@@ -27,7 +27,7 @@ export function MassaHeader() {
           readOnly={true}
           options={[
             {
-              item: `${Intl.t(`general.${Blockchain.MASSA}`)} ${Intl.t(
+              item: `${Intl.t('general.Massa')} ${Intl.t(
                 `general.${massaNetwork}`,
               )}`,
               icon: isMainnet

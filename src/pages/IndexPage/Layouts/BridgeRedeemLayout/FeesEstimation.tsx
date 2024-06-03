@@ -202,7 +202,7 @@ export function FeesEstimation() {
         <div className="flex items-center">
           <p>
             {Intl.t('index.fee-estimate.network-fees', {
-              name: Intl.t(`general.${Blockchain.MASSA}`),
+              name: Intl.t('general.Massa'),
               network: Intl.t(`general.${massaNetwork}`),
             })}
           </p>
