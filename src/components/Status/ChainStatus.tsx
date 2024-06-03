@@ -1,6 +1,5 @@
 import { useAccount } from 'wagmi';
 import { Connected, Disconnected, WrongChain } from '.';
-import { Blockchain, SupportedEvmBlockchain } from '@/const';
 import {
   ChainContext,
   useEvmChainValidation,
@@ -9,12 +8,12 @@ import {
 import { useAccountStore } from '@/store/store';
 
 interface ChainStatusProps {
-  blockchain: Blockchain | SupportedEvmBlockchain;
+  isMassaChain: boolean;
   context: ChainContext;
 }
 
 export function ChainStatus(props: ChainStatusProps) {
-  const { blockchain, context } = props;
+  const { isMassaChain, context } = props;
 
   const { connectedAccount, currentProvider } = useAccountStore();
   const isValidMassaNetwork = useMassaNetworkValidation();
@@ -24,7 +23,6 @@ export function ChainStatus(props: ChainStatusProps) {
   const isValidEvmNetwork = useEvmChainValidation(context);
 
   // Massa Chain Validation
-  const isMassaChain = blockchain === Blockchain.MASSA;
   const isMassaChainConnected = !!connectedAccount && !!currentProvider;
 
   // verifies that target chain is connected
