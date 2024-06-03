@@ -10,14 +10,8 @@ export enum MassaNetworkType {
 
 export enum Blockchain {
   ETHEREUM = 'Ethereum',
-  SEPOLIA = 'Sepolia',
   MASSA = 'Massa',
-  MASSA_BUILDNET = 'Buildnet',
-  MASSA_MAINNET = 'Mainnet',
   BSC = 'BSC',
-  // TBSC = 'TBSC',
-  INVALID_CHAIN = 'Invalid-chain',
-  UNKNOWN = 'Unknown',
 }
 
 // Supported blockchain to bridge from and to
