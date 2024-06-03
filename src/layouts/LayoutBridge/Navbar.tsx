@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 import { BridgeLogo } from '@/assets/BridgeLogo';
 import { Banner } from '@/components';
 import { Tos } from '@/components/Tos';
-import { Blockchain, PAGES } from '@/const';
+import { PAGES, SupportedEvmBlockchain } from '@/const';
 import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import {
   useEvmChainValidation,
@@ -134,7 +134,7 @@ export function Navbar(props: NavbarProps) {
         </div>
       </div>
       <Tos />
-      {currentEvmChain === Blockchain.BSC && (
+      {currentEvmChain === SupportedEvmBlockchain.BSC && (
         <Banner>
           {Intl.t('dao-maker.dao-bridge-redeem-warning')}{' '}
           <Link to={`/${PAGES.DAO}`}>

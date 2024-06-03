@@ -1,12 +1,11 @@
 import { useAccount } from 'wagmi';
-import { bsc, bscTestnet, mainnet, sepolia } from 'wagmi/chains';
-import { Blockchain } from '@/const';
+import { bsc, bscTestnet } from 'wagmi/chains';
+import { SupportedEvmBlockchain } from '@/const';
 
-export function useConnectedEvmChain(): Blockchain {
+export function useConnectedEvmChain(): SupportedEvmBlockchain {
   const { chain } = useAccount();
-  if (chain?.id === bsc.id || chain?.id === bscTestnet.id)
-    return Blockchain.BSC;
-  if (chain?.id === mainnet.id || chain?.id === sepolia.id)
-    return Blockchain.ETHEREUM;
-  return Blockchain.UNKNOWN;
+  if (chain?.id === bsc.id || chain?.id === bscTestnet.id) {
+    return SupportedEvmBlockchain.BSC;
+  }
+  return SupportedEvmBlockchain.ETH;
 }

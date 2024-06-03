@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { useConnectedEvmChain } from './useConnectedEvmChain';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { config } from '@/const/const';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
@@ -16,8 +17,10 @@ interface ClaimArguments {
 export function useClaim() {
   const { currentMode } = useBridgeModeStore();
   const { selectedEvm } = useOperationStore();
+  const chain = useConnectedEvmChain();
 
-  const bridgeContractAddr = config[currentMode][selectedEvm];
+  // selected evm is what we want when context is bridge; when claim page we want the connected chain
+  const bridgeContractAddr = config[currentMode][chain];
 
   const { data: hash, writeContract, error, isPending } = useWriteContract();
 
