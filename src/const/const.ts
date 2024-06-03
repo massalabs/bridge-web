@@ -22,7 +22,7 @@ export enum SupportedEvmBlockchain {
 }
 
 // Mapping from Supported blockchain to the list of supported chain ids (mainnet and testnets)
-export const BLOCKCHAIN_TO_CHAIN_IDS: Record<string, number[]> = {
+export const SUPPORTED_BLOCKCHAIN_TO_CHAIN_IDS: Record<string, number[]> = {
   [SupportedEvmBlockchain.ETH]: [mainnet.id, sepolia.id],
   [SupportedEvmBlockchain.BSC]: [bsc.id, bscTestnet.id],
 };
