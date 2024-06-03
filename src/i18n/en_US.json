@@ -71,7 +71,7 @@
     "tag": {
       "not-connected": "Not connected",
       "connected": "Connected",
-      "wrong-chain": "Unsupported network",
+      "wrong-chain": "Change network",
       "wrong-chain-massa-station-tooltip": "Switch to {network} in top-right corner of Station's homepage",
       "wrong-chain-bearby-tooltip": "Switch to {network} in top-left corner of Bearby's extension"
     },
