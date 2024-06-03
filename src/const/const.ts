@@ -3,6 +3,11 @@ import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
 export const METAMASK = 'Metamask';
 
+export enum MassaNetworkType {
+  Mainnet = 'Mainnet',
+  Buildnet = 'Buildnet',
+}
+
 export enum Blockchain {
   ETHEREUM = 'Ethereum',
   SEPOLIA = 'Sepolia',
