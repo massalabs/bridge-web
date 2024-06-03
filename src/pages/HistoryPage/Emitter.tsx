@@ -31,7 +31,9 @@ export function Emitter(props: EmitterProps) {
             case Entities.Lock:
               return getEvmChainName(operation.evmChainId);
             case Entities.Burn:
-              return `${Intl.t('general.Massa')} ${currentMassaNetwork}`;
+              return `${Intl.t('general.Massa')} ${Intl.t(
+                `general.${currentMassaNetwork}`,
+              )}`;
           }
         })()}
       </div>

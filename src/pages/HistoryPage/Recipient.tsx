@@ -29,7 +29,9 @@ export function Recipient(props: RecipientProps) {
           switch (operation.entity) {
             case Entities.ReleaseMAS:
             case Entities.Lock:
-              return `${Intl.t('general.Massa')} ${currentMassaNetwork}`;
+              return `${Intl.t('general.Massa')} ${Intl.t(
+                `general.${currentMassaNetwork}`,
+              )}`;
             case Entities.Burn:
               return getEvmChainName(operation.evmChainId);
           }
