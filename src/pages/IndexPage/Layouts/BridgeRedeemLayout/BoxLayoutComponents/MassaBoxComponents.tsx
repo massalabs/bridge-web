@@ -3,7 +3,6 @@ import { Dropdown, FetchingLine } from '@massalabs/react-ui-kit';
 import { massaIconsNetworks } from '../BoxLayout';
 import { UpdateMassaWalletWarning } from '@/components/ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
@@ -43,10 +42,7 @@ export function MassaHeader() {
             ? Intl.t(`connect-wallet.${currentProvider.name()}`)
             : Intl.t('connect-wallet.card-destination.to')}
         </p>
-        <ChainStatus
-          context={ChainContext.BRIDGE}
-          blockchain={Blockchain.MASSA}
-        />
+        <ChainStatus context={ChainContext.BRIDGE} isMassaChain={true} />
       </div>
     </div>
   );

@@ -49,12 +49,7 @@ export function DaoHead(props: DaoHeadProps) {
               ) : (
                 <div>{Intl.t('dao-maker.address-not-found')}</div>
               )}
-              {
-                <ChainStatus
-                  context={ChainContext.DAO}
-                  blockchain={Blockchain.BSC}
-                />
-              }
+              {<ChainStatus context={ChainContext.DAO} isMassaChain={false} />}
             </div>
           </div>
           <div className="w-1/2">
