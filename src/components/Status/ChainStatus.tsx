@@ -40,7 +40,7 @@ export function ChainStatus(props: ChainStatusProps) {
         networkIsValid ? (
           <Connected />
         ) : (
-          <WrongChain blockchain={blockchain} />
+          <WrongChain isMassaChain={isMassaChain} />
         )
       ) : (
         <Disconnected />
