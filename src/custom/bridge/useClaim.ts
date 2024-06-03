@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { useConnectedEvmChain } from './useConnectedEvmChain';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { config } from '@/const/const';
+import { config, SupportedEvmBlockchain } from '@/const/const';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { getMinConfirmation } from '@/utils/utils';
 
@@ -19,13 +19,23 @@ export function useClaim() {
   const { selectedEvm } = useOperationStore();
   const chain = useConnectedEvmChain();
 
-  // selected evm is what we want when context is bridge; when claim page we want the connected chain
-  const bridgeContractAddr = config[currentMode][chain];
-
   const { data: hash, writeContract, error, isPending } = useWriteContract();
 
   const write = useCallback(
     (operation: ClaimArguments) => {
+      const selectedSupportedBlockchain = Object.values(
+        SupportedEvmBlockchain,
+      ).find((s) => {
+        return chain.toString() === s;
+      });
+      if (!selectedSupportedBlockchain) {
+        console.error('Unsupported EVM network');
+        return;
+      }
+
+      const bridgeContractAddr =
+        config[currentMode][selectedSupportedBlockchain];
+
       writeContract({
         abi: bridgeVaultAbi,
         address: bridgeContractAddr,
@@ -39,7 +49,7 @@ export function useClaim() {
         ],
       });
     },
-    [writeContract, bridgeContractAddr],
+    [writeContract, chain, currentMode],
   );
 
   const { isSuccess } = useWaitForTransactionReceipt({
