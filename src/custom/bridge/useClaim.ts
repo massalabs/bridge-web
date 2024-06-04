@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { useConnectedEvmChain } from './useConnectedEvmChain';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { SupportedEvmBlockchain, config } from '@/const/const';
+import { config } from '@/const/const';
 import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { getMinConfirmation } from '@/utils/utils';
 
@@ -19,9 +19,8 @@ export function useClaim() {
   const { selectedEvm } = useOperationStore();
   const chain = useConnectedEvmChain();
 
-  // Conversion to type unkown is necessary because type Blockchain and SupportedEvmBlockchin don't overlap enough
-  const bridgeContractAddr =
-    config[currentMode][chain as unknown as SupportedEvmBlockchain];
+  // selected evm is what we want when context is bridge; when claim page we want the connected chain
+  const bridgeContractAddr = config[currentMode][chain];
 
   const { data: hash, writeContract, error, isPending } = useWriteContract();
 
