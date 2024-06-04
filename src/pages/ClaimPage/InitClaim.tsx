@@ -70,6 +70,7 @@ export function InitClaim(props: InitClaimProps) {
       evmToken: operation.evmToken!,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       signatures: operation.signatures!,
+      chainId: operation.evmChainId,
     });
   }
 
