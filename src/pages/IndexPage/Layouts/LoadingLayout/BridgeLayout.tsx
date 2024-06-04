@@ -40,6 +40,7 @@ export function BridgeLayout() {
     setMintTxId,
     setBox,
     setMint,
+    refreshBalances,
   ]);
 
   useEffect(() => {
