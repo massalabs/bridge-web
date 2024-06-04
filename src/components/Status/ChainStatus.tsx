@@ -13,7 +13,6 @@ interface ChainStatusProps {
   context: ChainContext;
 }
 
-// Blockchain can be either Massa or EVM chain
 export function ChainStatus(props: ChainStatusProps) {
   const { blockchain, context } = props;
 
