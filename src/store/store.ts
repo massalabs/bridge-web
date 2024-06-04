@@ -54,8 +54,12 @@ async function initAccountStore() {
 function initOperationStore() {
   const storedEvm = _getFromStorage(SELECTED_EVM_STORAGE_KEY);
   if (storedEvm) {
-    const evm = JSON.parse(storedEvm);
-    useOperationStore.getState().setSelectedEvm(evm);
+    try {
+      const evm = JSON.parse(storedEvm);
+      useOperationStore.getState().setSelectedEvm(evm);
+    } catch (e) {
+      console.warn('Error parsing stored evm', e);
+    }
   }
 }
 
