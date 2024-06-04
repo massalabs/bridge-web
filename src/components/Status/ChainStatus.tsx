@@ -1,6 +1,6 @@
 import { useAccount } from 'wagmi';
 import { Connected, Disconnected, WrongChain } from '.';
-import { Blockchain, SupportedEvmBlockchain } from '@/const';
+import { Blockchain } from '@/const';
 import {
   ChainContext,
   useEvmChainValidation,
@@ -9,7 +9,7 @@ import {
 import { useAccountStore } from '@/store/store';
 
 interface ChainStatusProps {
-  blockchain: Blockchain | SupportedEvmBlockchain;
+  blockchain: Blockchain;
   context: ChainContext;
 }
 

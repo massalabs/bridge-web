@@ -1,15 +1,11 @@
 import { Tag, Tooltip } from '@massalabs/react-ui-kit';
-import {
-  Blockchain,
-  SUPPORTED_MASSA_WALLETS,
-  SupportedEvmBlockchain,
-} from '@/const';
+import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { tagTypes } from '@/utils/const';
 
 interface WrongChainProps {
-  blockchain: Blockchain | SupportedEvmBlockchain;
+  blockchain: Blockchain;
 }
 
 export function WrongChain(props: WrongChainProps) {
