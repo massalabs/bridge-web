@@ -45,3 +45,33 @@ export function getMinConfirmation(
   }
   return bscMinConfirmations;
 }
+
+/**
+ *
+ * @param amount - string amount input
+ * @param serviceFee - bigint service fee received from the read sc
+ * @param decimals - IToken selectedToken.decimals
+ * @returns string
+ */
+
+export function calculateAmountReceived(
+  amount: string,
+  serviceFee: bigint,
+  decimals: number,
+): string {
+  if (!serviceFee) {
+    return amount;
+  }
+
+  const _amount = Number(amount);
+
+  const feesToPercent = Number(serviceFee) / 100;
+
+  const receivedAmount = _amount - (_amount * feesToPercent) / 100;
+
+  // what is rounding strategy ?
+  return receivedAmount.toFixed(decimals);
+}
+
+// TBD is we need it
+// function calculateAmountReceivedHistory() {}
