@@ -1,8 +1,12 @@
 import { useCallback } from 'react';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
 import { CHAIN_ID_TO_SUPPORTED_BLOCKCHAIN, config } from '@/const/const';
-import { useBridgeModeStore, useOperationStore } from '@/store/store';
+import { useBridgeModeStore } from '@/store/store';
 import { getMinConfirmation } from '@/utils/utils';
 
 interface ClaimArguments {
@@ -16,7 +20,7 @@ interface ClaimArguments {
 
 export function useClaim() {
   const { currentMode } = useBridgeModeStore();
-  const { selectedEvm } = useOperationStore();
+  const { chain } = useAccount();
 
   const { data: hash, writeContract, error, isPending } = useWriteContract();
 
@@ -45,7 +49,9 @@ export function useClaim() {
 
   const { isSuccess } = useWaitForTransactionReceipt({
     hash,
-    confirmations: getMinConfirmation(selectedEvm),
+    confirmations: getMinConfirmation(
+      CHAIN_ID_TO_SUPPORTED_BLOCKCHAIN[chain?.id || 0],
+    ),
   });
 
   return { isPending, isSuccess, error, write, hash };
