@@ -1,3 +1,5 @@
+import { formatFTAmount } from '@massalabs/react-ui-kit';
+import { parseUnits } from 'viem';
 import {
   MASSA_EXPLORER_URL,
   MASSA_EXPLO_URL,
@@ -63,14 +65,12 @@ export function calculateAmountReceived(
     return amount;
   }
 
-  const _amount = Number(amount);
+  const _amount = parseUnits(amount, decimals);
 
-  const feesToPercent = Number(serviceFee) / 100;
+  const redeemFee = (_amount * serviceFee) / 10000n;
 
-  const receivedAmount = _amount - (_amount * feesToPercent) / 100;
-
-  // what is rounding strategy ?
-  return receivedAmount.toFixed(decimals);
+  const receivedAmount = _amount - redeemFee;
+  return formatFTAmount(receivedAmount, decimals).amountFormattedFull;
 }
 
 // TBD is we need it
