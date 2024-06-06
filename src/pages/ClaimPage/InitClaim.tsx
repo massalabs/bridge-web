@@ -57,6 +57,7 @@ export function InitClaim(props: InitClaimProps) {
       const errorClaimState = handleEvmClaimError(error);
       if (claimState !== errorClaimState) {
         onUpdate({ claimState: errorClaimState });
+        setClaim(Status.Error);
       }
     }
   }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
