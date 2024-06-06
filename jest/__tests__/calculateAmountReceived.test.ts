@@ -1,5 +1,5 @@
 import { parseUnits } from 'viem';
-import { calculateAmountReceived } from '../../src/utils/utils';
+import { getAmountReceived, serviceFeeToPercent } from '../../src/utils/utils';
 
 import { formatFTAmount } from '@massalabs/react-ui-kit';
 
@@ -12,7 +12,7 @@ describe('calculateServiceFees with Bigint conversion', () => {
     const amount = '0.004';
     const serviceFee = 10n;
     const decimals = 6;
-    const result = calculateAmountReceived(amount, serviceFee, decimals);
+    const result = getAmountReceived(amount, serviceFee, decimals);
     expect(result).toBe('0.003996');
   });
 
@@ -20,7 +20,7 @@ describe('calculateServiceFees with Bigint conversion', () => {
     const amount = '100';
     const serviceFee = 0n;
     const decimals = 6;
-    const result = calculateAmountReceived(amount, serviceFee, decimals);
+    const result = getAmountReceived(amount, serviceFee, decimals);
     expect(result).toBe(amount);
   });
 
@@ -28,7 +28,7 @@ describe('calculateServiceFees with Bigint conversion', () => {
     const amount = '100';
     const serviceFee = 10n;
     const decimals = 6;
-    const result = calculateAmountReceived(amount, serviceFee, decimals);
+    const result = getAmountReceived(amount, serviceFee, decimals);
     expect(result).toBe('99.900000');
   });
 
@@ -36,7 +36,7 @@ describe('calculateServiceFees with Bigint conversion', () => {
     const amount = '24.02';
     const serviceFee = 20n;
     const decimals = 6;
-    const result = calculateAmountReceived(amount, serviceFee, decimals);
+    const result = getAmountReceived(amount, serviceFee, decimals);
     expect(result).toBe('23.971960');
   });
 
@@ -44,7 +44,7 @@ describe('calculateServiceFees with Bigint conversion', () => {
     const amount = '5618.897000';
     const serviceFee = 20n;
     const decimals = 6;
-    const result = calculateAmountReceived(amount, serviceFee, decimals);
+    const result = getAmountReceived(amount, serviceFee, decimals);
     expect(result).toBe('5,607.659206');
   });
 
@@ -52,7 +52,7 @@ describe('calculateServiceFees with Bigint conversion', () => {
     const amount = Number.MAX_SAFE_INTEGER.toString();
     const serviceFee = 20n;
     const decimals = 18;
-    const result = calculateAmountReceived(amount, serviceFee, decimals);
+    const result = getAmountReceived(amount, serviceFee, decimals);
 
     const _amount = parseUnits(amount, decimals);
     const redeemFee = (_amount * serviceFee) / 10000n;
@@ -63,5 +63,13 @@ describe('calculateServiceFees with Bigint conversion', () => {
     ).amountFormattedFull;
 
     expect(result).toBe(expected);
+  });
+
+  describe('test service fee correspondacne function', () => {
+    test('should return 10n as 0.01%', () => {
+      const serviceFee = 10n;
+      const result = serviceFeeToPercent(serviceFee);
+      expect(result).toBe('0.01%');
+    });
   });
 });

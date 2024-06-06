@@ -53,24 +53,41 @@ export function getMinConfirmation(
  * @param amount - string amount input
  * @param serviceFee - bigint service fee received from the read sc
  * @param decimals - IToken selectedToken.decimals
+ * @param inFull - boolean to return the full amount or preview
  * @returns string
  */
 
-export function calculateAmountReceived(
-  amount: string,
+export function getAmountReceived(
+  amount: string | undefined,
   serviceFee: bigint,
-  decimals: number,
+  decimals: number | undefined,
+  inFull = true,
 ): string {
+  if (!amount || !decimals) {
+    return '';
+  }
   if (!serviceFee) {
     return amount;
   }
-
   const _amount = parseUnits(amount, decimals);
-
   const redeemFee = (_amount * serviceFee) / 10000n;
-
   const receivedAmount = _amount - redeemFee;
-  return formatFTAmount(receivedAmount, decimals).amountFormattedFull;
+
+  const { amountFormattedFull } = formatFTAmount(receivedAmount, decimals);
+  return inFull
+    ? amountFormattedFull
+    : amountFormattedFull.replace(/\.?0+$/, '');
+}
+
+/**
+ *
+ * @param serviceFee - bigint service fee received from the read sc
+ * @returns string representing the service fee in percentage
+ */
+
+export function serviceFeeToPercent(serviceFee: bigint): string {
+  const convertedServiceFee = Number(serviceFee) / 1000;
+  return `${convertedServiceFee}%`;
 }
 
 // TBD is we need it
