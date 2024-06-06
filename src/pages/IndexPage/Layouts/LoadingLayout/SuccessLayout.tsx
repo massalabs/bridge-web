@@ -14,8 +14,12 @@ import {
 } from '@/store/store';
 
 export function SuccessLayout() {
-  const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, amount } =
-    useOperationStore();
+  const {
+    isMassaToEvm,
+    mintTxId,
+    getCurrentRedeemOperation,
+    inputAmount: amount,
+  } = useOperationStore();
   const { isMainnet: getIsMainnet, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();
   const { chain } = useAccount();

@@ -24,7 +24,7 @@ export function ClaimRedeem() {
   const { setClaim, setBox } = useGlobalStatusesStore();
   const {
     burnTxId,
-    amount,
+    inputAmount: amount,
     getCurrentRedeemOperation,
     updateBurnRedeemOperationById,
     setClaimTxId,

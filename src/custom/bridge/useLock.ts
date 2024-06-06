@@ -20,7 +20,7 @@ export function useLock() {
   const { currentMode } = useBridgeModeStore();
   const { selectedToken } = useTokenStore();
   const { connectedAccount } = useAccountStore();
-  const { amount } = useOperationStore();
+  const { inputAmount: amount, selectedEvm } = useOperationStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
   const { chainId } = useAccount();
 

@@ -9,7 +9,7 @@ import { BurnState } from '@/utils/const';
 
 export function useSubmitRedeem() {
   const { setBox, setBurn, setClaim } = useGlobalStatusesStore();
-  const { amount, setBurnState } = useOperationStore();
+  const { inputAmount: amount, setBurnState } = useOperationStore();
   const { tokenBalance: tokenBalanceEVM } = useEvmToken();
   const { handleBurnRedeem } = useBurn();
 
