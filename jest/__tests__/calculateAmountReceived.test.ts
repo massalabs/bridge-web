@@ -1,7 +1,6 @@
+import { formatFTAmount } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { getAmountReceived, serviceFeeToPercent } from '../../src/utils/utils';
-
-import { formatFTAmount } from '@massalabs/react-ui-kit';
 
 describe('calculateServiceFees with Bigint conversion', () => {
   afterEach(() => {
