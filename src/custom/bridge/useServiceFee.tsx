@@ -5,7 +5,7 @@ import { config } from '@/const';
 import { useBridgeModeStore } from '@/store/modeStore';
 import { useOperationStore } from '@/store/operationStore';
 
-export function useRedeemFee() {
+export function useServiceFee() {
   const { currentMode } = useBridgeModeStore();
   const { selectedEvm } = useOperationStore();
 
@@ -14,7 +14,7 @@ export function useRedeemFee() {
     abi: bridgeVaultAbi,
   };
 
-  const [redeemFee, setRedeemFee] = useState<bigint>();
+  const [serviceFee, setServiceFee] = useState<bigint>(0n);
   // this might not be necessary, but it could avoid some if serviceFee === 0 in the code
   const [isServiceFeeActivated, setIsServiceFeeActivated] =
     useState<boolean>(false);
@@ -31,14 +31,13 @@ export function useRedeemFee() {
   });
 
   useEffect(() => {
-    console.log(data);
     if (data && data[0].status === 'success') {
-      setRedeemFee(data[0].result as bigint);
+      setServiceFee(data[0].result as bigint);
       if (data[0].result !== BigInt(0)) {
         setIsServiceFeeActivated(true);
       }
     }
   }, [data]);
 
-  return { redeemFee, isServiceFeeActivated };
+  return { serviceFee, isServiceFeeActivated };
 }
