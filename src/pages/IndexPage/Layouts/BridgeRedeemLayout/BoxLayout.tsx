@@ -17,7 +17,6 @@ interface Layout {
   wallet: ReactNode;
   token: ReactNode;
   balance: ReactNode;
-  receive?: ReactNode;
 }
 
 interface MassaIconsNetworks {

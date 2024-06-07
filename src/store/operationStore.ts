@@ -162,6 +162,7 @@ export const useOperationStore = create<OperationStoreState>(
         mintTxId: undefined,
         burnTxId: undefined,
         inputAmount: undefined,
+        outputAmount: undefined,
       });
     },
   }),
