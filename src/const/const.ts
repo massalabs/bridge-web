@@ -3,15 +3,15 @@ import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 export const MASSA_WALLET_PROVIDER = 'massaWalletProvider';
 export const METAMASK = 'Metamask';
 
+export enum MassaNetworkType {
+  Mainnet = 'Mainnet',
+  Buildnet = 'Buildnet',
+}
+
 export enum Blockchain {
   ETHEREUM = 'Ethereum',
-  SEPOLIA = 'Sepolia',
   MASSA = 'Massa',
-  MASSA_BUILDNET = 'Buildnet',
-  MASSA_MAINNET = 'Mainnet',
   BSC = 'BSC',
-  // TBSC = 'TBSC',
-  INVALID_CHAIN = 'Invalid-chain',
   UNKNOWN = 'Unknown',
 }
 
@@ -22,9 +22,26 @@ export enum SupportedEvmBlockchain {
 }
 
 // Mapping from Supported blockchain to the list of supported chain ids (mainnet and testnets)
-export const BLOCKCHAIN_TO_CHAIN_IDS: Record<string, number[]> = {
+export const SUPPORTED_BLOCKCHAIN_TO_CHAIN_IDS: Record<string, number[]> = {
   [SupportedEvmBlockchain.ETH]: [mainnet.id, sepolia.id],
   [SupportedEvmBlockchain.BSC]: [bsc.id, bscTestnet.id],
+};
+
+export const CHAIN_ID_TO_SUPPORTED_BLOCKCHAIN: Record<
+  number,
+  SupportedEvmBlockchain
+> = {
+  [mainnet.id]: SupportedEvmBlockchain.ETH,
+  [sepolia.id]: SupportedEvmBlockchain.ETH,
+  [bsc.id]: SupportedEvmBlockchain.BSC,
+  [bscTestnet.id]: SupportedEvmBlockchain.BSC,
+};
+
+export const CHAIN_ID_TO_CHAIN_NAME: Record<number, string> = {
+  [mainnet.id]: mainnet.name,
+  [sepolia.id]: sepolia.name,
+  [bsc.id]: bsc.name,
+  [bscTestnet.id]: bscTestnet.name,
 };
 
 // SMART CONTRACTS ADDRESSES
@@ -56,9 +73,9 @@ export const config = {
   },
   [BridgeMode.testnet]: {
     [SupportedEvmBlockchain.ETH]:
-      '0xf18a8776cD5AA54b05C0C0e5Dc82D992849eD006' as `0x${string}`,
+      '0xc6C75C6d637074326ccBb6EDA6dA2fb9976E81eD' as `0x${string}`,
     [SupportedEvmBlockchain.BSC]:
-      '0xb06Cf6Ed6E24f31bf9148CF7c4D4218903d500b2' as `0x${string}`,
+      '0x2975523130cB2824D2774bf964a03e5ff5e4f6C5' as `0x${string}`,
     massaBridgeContract: 'AS1owaJB7NkqY2pjsggBP7m1jFA9XRZKGpXBbjBMeysQDSxjm7MS',
     lambdaUrl:
       'https://6sul7w7nqer7pd5mf7cl6l2muy0isblj.lambda-url.eu-west-3.on.aws/default/',

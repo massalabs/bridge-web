@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { SupportedEvmBlockchain } from '@/const';
 import { BurnState, ClaimState, SIDE } from '@/utils/const';
 import { OperationHistoryItem } from '@/utils/lambdaApi';
+import { _setInStorage } from '@/utils/storage';
+
+export const SELECTED_EVM_STORAGE_KEY = 'selectedEvm';
 
 export interface BurnRedeemOperation extends OperationHistoryItem {
   claimState: ClaimState;
@@ -106,6 +109,7 @@ export const useOperationStore = create<OperationStoreState>(
     availableEvmNetworks: Object.values(SupportedEvmBlockchain),
     selectedEvm: SupportedEvmBlockchain.ETH,
     setSelectedEvm(selectedEvm: SupportedEvmBlockchain) {
+      _setInStorage(SELECTED_EVM_STORAGE_KEY, JSON.stringify(selectedEvm));
       set({ selectedEvm });
     },
 

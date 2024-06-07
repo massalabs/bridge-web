@@ -3,9 +3,11 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FiEdit } from 'react-icons/fi';
 import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 import { MetaMaskSvg } from '@/assets';
+import { CHAIN_ID_TO_CHAIN_NAME } from '@/const';
 import {
   useEvmChainValidation,
   useGetChainValidationContext,
+  useGetTargetEvmChainId,
 } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { maskAddress } from '@/utils/massaFormat';
@@ -22,6 +24,8 @@ export function EvmConnectButton(): JSX.Element {
   const { targetChainId, context } = useGetChainValidationContext();
 
   const isValidEVMNetwork = useEvmChainValidation(context);
+
+  const targetChain = useGetTargetEvmChainId();
 
   return (
     <ConnectButton.Custom>
@@ -57,6 +61,9 @@ export function EvmConnectButton(): JSX.Element {
                     <div>
                       {Intl.t(
                         'connect-wallet.connect-metamask.invalid-network',
+                        {
+                          network: CHAIN_ID_TO_CHAIN_NAME[targetChain],
+                        },
                       )}
                     </div>
                     <Button

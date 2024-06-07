@@ -5,12 +5,17 @@ import { LoadingState } from './LoadingState';
 import { useFetchMintEvent } from '@/custom/bridge/useFetchMintEvent';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
-import { useBridgeModeStore, useOperationStore } from '@/store/store';
+import {
+  useBridgeModeStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store/store';
 
 export function BridgeLayout() {
   const { approve, lock, mint, setMint, setBox } = useGlobalStatusesStore();
   const { currentMode } = useBridgeModeStore();
   const { lockTxId, mintTxId, setMintTxId } = useOperationStore();
+  const { refreshBalances } = useTokenStore();
 
   const [currentIdToDisplay, setCurrentIdToDisplay] = useState<string>();
 
@@ -26,6 +31,7 @@ export function BridgeLayout() {
     if (lambdaResponse[0].isConfirmed) {
       setBox(Status.Success);
       setMint(Status.Success);
+      refreshBalances();
     }
   }, [
     lambdaResponse,
@@ -34,6 +40,7 @@ export function BridgeLayout() {
     setMintTxId,
     setBox,
     setMint,
+    refreshBalances,
   ]);
 
   useEffect(() => {

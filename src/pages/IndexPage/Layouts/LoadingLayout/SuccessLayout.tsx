@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { BridgeLinkExplorer } from './BridgeLinkExplorer';
-import { Blockchain } from '@/const';
 import { addTokensBuildnetLink, addTokensMainnetLink } from '@/const/faq';
 import { useBridgeUtils } from '@/custom/bridge/useBridgeUtils';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
@@ -36,7 +35,7 @@ export function SuccessLayout() {
     token.decimals,
   );
 
-  const massaChainAndNetwork = `${Blockchain.MASSA} ${Intl.t(
+  const massaChainAndNetwork = `${Intl.t('general.Massa')} ${Intl.t(
     `general.${massaNetwork}`,
   )}`;
 

@@ -5,6 +5,7 @@ import configStore, {
   BRIDGE_THEME_STORAGE_KEY,
   ConfigStoreState,
 } from './configStore';
+import { SELECTED_EVM_STORAGE_KEY, useOperationStore } from './operationStore';
 import { useTokenStore } from './tokenStore';
 import { LAST_USED_ACCOUNT, _getFromStorage } from '../utils/storage';
 import { updateProviders } from '@/store/helpers/massaProviders';
@@ -50,12 +51,25 @@ async function initAccountStore() {
   });
 }
 
+function initOperationStore() {
+  const storedEvm = _getFromStorage(SELECTED_EVM_STORAGE_KEY);
+  if (storedEvm) {
+    try {
+      const evm = JSON.parse(storedEvm);
+      useOperationStore.getState().setSelectedEvm(evm);
+    } catch (e) {
+      console.warn('Error parsing stored evm', e);
+    }
+  }
+}
+
 async function initTokenStore() {
   useTokenStore.getState().refreshTokens();
 }
 
 async function initializeStores() {
   initConfigStore();
+  initOperationStore();
   await initAccountStore();
   await initTokenStore();
 }

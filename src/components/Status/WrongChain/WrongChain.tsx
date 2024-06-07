@@ -1,24 +1,23 @@
 import { Tag, Tooltip } from '@massalabs/react-ui-kit';
-
-import { FiHelpCircle } from 'react-icons/fi';
-import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { CHAIN_ID_TO_CHAIN_NAME, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { useGetTargetEvmChainId } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { tagTypes } from '@/utils/const';
 
 interface WrongChainProps {
-  blockchain: Blockchain;
+  isMassaChain: boolean;
 }
 
 export function WrongChain(props: WrongChainProps) {
-  const { blockchain } = props;
+  const { isMassaChain } = props;
   const { currentProvider } = useAccountStore();
   const { massaNetwork } = useBridgeModeStore();
-
   const currentMassaNetwork = massaNetwork();
+  const targetChain = useGetTargetEvmChainId();
 
   let body = '';
-  if (blockchain === Blockchain.MASSA && currentProvider) {
+  if (isMassaChain && currentProvider) {
     // currentProvider is always defined when blockchain is MASSA
     const providerName = currentProvider.name();
 
@@ -27,7 +26,7 @@ export function WrongChain(props: WrongChainProps) {
         network: Intl.t(`general.${currentMassaNetwork}`),
       });
     } else if (
-      blockchain === Blockchain.MASSA &&
+      isMassaChain &&
       providerName === SUPPORTED_MASSA_WALLETS.BEARBY
     ) {
       body = Intl.t('index.tag.wrong-chain-bearby-tooltip', {
@@ -35,22 +34,16 @@ export function WrongChain(props: WrongChainProps) {
       });
     }
   } else {
-    body = Intl.t('connect-wallet.connect-metamask.invalid-network');
+    body = Intl.t('connect-wallet.connect-metamask.invalid-network', {
+      network: CHAIN_ID_TO_CHAIN_NAME[targetChain],
+    });
   }
 
   return (
     <Tag type={tagTypes.warning}>
-      <div className="flex items-center">
-        <Tooltip
-          className="w-fit p-0 hover:cursor-pointer"
-          customClass="p-0 mas-caption w-fit whitespace-nowrap"
-          body={body}
-        >
-          <div className="flex items-center">
-            <span className="mr-1">{Intl.t('index.tag.wrong-chain')}</span>
-            <FiHelpCircle className="text-s-warning" />
-          </div>
-        </Tooltip>
+      <div className="flex gap-2 items-center">
+        {Intl.t('index.tag.wrong-chain')}
+        <Tooltip customIconColor="text-s-warning" body={body} />
       </div>
     </Tag>
   );

@@ -114,6 +114,7 @@ export function ClaimRedeem() {
       inputOpId: burnTxId,
       signatures: currentRedeemOperation.signatures,
       recipient: evmAddress,
+      chainId: currentRedeemOperation.evmChainId,
     });
   }
 
