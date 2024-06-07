@@ -30,6 +30,7 @@ export function useSubmitRedeem() {
     setBox,
     setBurn,
     setBurnState,
+    setClaim,
     handleBurnRedeem,
   ]);
   return { handleSubmitRedeem };

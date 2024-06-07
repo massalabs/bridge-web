@@ -37,6 +37,13 @@ export const CHAIN_ID_TO_SUPPORTED_BLOCKCHAIN: Record<
   [bscTestnet.id]: SupportedEvmBlockchain.BSC,
 };
 
+export const CHAIN_ID_TO_CHAIN_NAME: Record<number, string> = {
+  [mainnet.id]: mainnet.name,
+  [sepolia.id]: sepolia.name,
+  [bsc.id]: bsc.name,
+  [bscTestnet.id]: bscTestnet.name,
+};
+
 // SMART CONTRACTS ADDRESSES
 export const TDAI_CONTRACT_ADDRESS =
   '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';

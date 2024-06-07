@@ -60,7 +60,16 @@ export function InitClaim(props: InitClaimProps) {
         setClaim(Status.Error);
       }
     }
-  }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
+  }, [
+    isPending,
+    error,
+    isSuccess,
+    hash,
+    claimState,
+    operation,
+    onUpdate,
+    setClaim,
+  ]);
 
   function writeClaim() {
     write({

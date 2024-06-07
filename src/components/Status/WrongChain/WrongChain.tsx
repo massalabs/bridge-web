@@ -1,5 +1,6 @@
 import { Tag, Tooltip } from '@massalabs/react-ui-kit';
-import { SUPPORTED_MASSA_WALLETS } from '@/const';
+import { CHAIN_ID_TO_CHAIN_NAME, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { useGetTargetEvmChainId } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore, useBridgeModeStore } from '@/store/store';
 import { tagTypes } from '@/utils/const';
@@ -12,8 +13,8 @@ export function WrongChain(props: WrongChainProps) {
   const { isMassaChain } = props;
   const { currentProvider } = useAccountStore();
   const { massaNetwork } = useBridgeModeStore();
-
   const currentMassaNetwork = massaNetwork();
+  const targetChain = useGetTargetEvmChainId();
 
   let body = '';
   if (isMassaChain && currentProvider) {
@@ -33,7 +34,9 @@ export function WrongChain(props: WrongChainProps) {
       });
     }
   } else {
-    body = Intl.t('connect-wallet.connect-metamask.invalid-network');
+    body = Intl.t('connect-wallet.connect-metamask.invalid-network', {
+      network: CHAIN_ID_TO_CHAIN_NAME[targetChain],
+    });
   }
 
   return (

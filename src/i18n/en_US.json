@@ -320,10 +320,10 @@
       "wallet-balance": "Balance: "
     },
     "wrong-chain-evm": "Wrong wallet network. Please, switch network in \"connected wallets\" popup.",
-    "wrong-chain-massa": "Wrong wallet network. Please, switch to a supported {network} in your {name} wallet settings",
+    "wrong-chain-massa": "Wrong wallet network. Please, switch to {network} in your {name} wallet settings",
     "connect-metamask": {
       "connect-to-metamask": "Connect to Metamask",
-      "invalid-network": "Current network is not supported. Please, switch to supported network.",
+      "invalid-network": "Wrong wallet network. Please, switch to {network} network.",
       "switch-network": "Switch network",
       "no-metamask": "It seems like you don't have Metamask installed.",
       "install-metamask": "Install Metamask"
