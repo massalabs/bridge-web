@@ -1,4 +1,4 @@
-import { formatFTAmount } from '@massalabs/react-ui-kit';
+import { formatFTAmount, removeTrailingZeros } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import {
   MASSA_EXPLORER_URL,
@@ -77,7 +77,7 @@ export function getAmountReceived(
   const { amountFormattedFull } = formatFTAmount(receivedAmount, decimals);
   return inFull
     ? amountFormattedFull
-    : amountFormattedFull.replace(/\.?0+$/, '');
+    : removeTrailingZeros(amountFormattedFull);
 }
 
 /**

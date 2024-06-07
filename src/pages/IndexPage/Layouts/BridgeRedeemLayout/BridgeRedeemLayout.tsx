@@ -5,6 +5,7 @@ import {
   Money,
   formatAmount,
   formatAmountToDisplay,
+  removeTrailingZeros,
 } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
@@ -111,8 +112,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     );
   }
 
-  const _inputAmount = inputAmount || '0';
-  const tokenDecimals = token?.decimals || 0;
   // Money component formats amount without decimals
   return (
     <>
@@ -200,10 +199,10 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 {Intl.t('index.input.placeholder.receive')}
               </p>
               <ServiceFeeToolip
-                input={formatAmountToDisplay(
-                  _inputAmount,
-                  tokenDecimals,
-                ).amountFormattedFull.replace(/\.?0+$/, '')}
+                input={removeTrailingZeros(
+                  formatAmountToDisplay(inputAmount, token?.decimals)
+                    .amountFormattedFull,
+                )}
                 serviceFee={serviceFeeToPercent(serviceFee)}
                 output={outputAmount || '0.00 '}
                 symbol={token?.symbol || ''}
