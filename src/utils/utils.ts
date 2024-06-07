@@ -51,7 +51,6 @@ export function getMinConfirmation(
 /**
  * Calculates the amount received after the service fee is applied
  *
- *
  * @param amount - string amount input
  * @param serviceFee - bigint service fee received from the read sc
  * @param decimals - IToken selectedToken.decimals

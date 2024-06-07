@@ -15,9 +15,6 @@ export function useServiceFee() {
   };
 
   const [serviceFee, setServiceFee] = useState<bigint>(0n);
-  // this might not be necessary, but it could avoid some if serviceFee === 0 in the code
-  const [isServiceFeeActivated, setIsServiceFeeActivated] =
-    useState<boolean>(false);
 
   // the read will fail is user is not connected to correct network
   const { data } = useReadContracts({
@@ -33,11 +30,8 @@ export function useServiceFee() {
   useEffect(() => {
     if (data && data[0].status === 'success') {
       setServiceFee(data[0].result as bigint);
-      if (data[0].result !== BigInt(0)) {
-        setIsServiceFeeActivated(true);
-      }
     }
   }, [data]);
 
-  return { serviceFee, isServiceFeeActivated };
+  return { serviceFee };
 }

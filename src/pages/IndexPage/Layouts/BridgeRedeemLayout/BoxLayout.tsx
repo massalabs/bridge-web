@@ -33,7 +33,6 @@ interface BoxLayoutResult {
   down: Layout;
 }
 
-// should refactor this function
 export function boxLayout(): BoxLayoutResult {
   const { side } = useOperationStore.getState();
 
