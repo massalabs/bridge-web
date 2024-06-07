@@ -88,7 +88,7 @@ describe('should calculate service fees', () => {
       expect(result).toBe('0.5%');
     });
 
-    test('should return 10000n as 0.5%', () => {
+    test('should return 100000n as 100%', () => {
       const serviceFee = 100000n;
       const result = serviceFeeToPercent(serviceFee);
       expect(result).toBe('100%');
