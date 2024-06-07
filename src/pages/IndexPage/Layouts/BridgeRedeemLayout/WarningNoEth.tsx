@@ -8,14 +8,14 @@ import { SIDE } from '@/utils/const';
 
 export function WarningNoEth() {
   const { side } = useOperationStore();
-  const { address, chain } = useAccount();
+  const { address } = useAccount();
   const { estimateClaimFees } = useFeeEstimation();
 
   const { data } = useBalance({
     address,
   });
 
-  if (!address || !data || !chain) return null;
+  if (!address || !data) return null;
 
   if (side === SIDE.EVM_TO_MASSA || data?.value !== 0n) return null;
 
@@ -29,10 +29,7 @@ export function WarningNoEth() {
     <div className="flex items-center gap-2">
       <FiAlertTriangle className="text-s-warning" size={24} />
       <p className="mas-body2 text-s-warning">
-        {Intl.t('index.warning-no-eth', {
-          fees,
-          symbol: chain.nativeCurrency.symbol,
-        })}
+        {Intl.t('index.warning-no-eth', { fees, symbol: data.symbol })}
       </p>
     </div>
   );
