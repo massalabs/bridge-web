@@ -126,6 +126,23 @@ export function AddTokensFAQ(props: FAQProps) {
                   <p> Decimals: {token.decimals}</p>
                 </div>
               ))}
+              {filteredBscTokens.map((token: IToken, index) => (
+                <div className="flex flex-col" key={index}>
+                  <p>
+                    For
+                    <a
+                      className="underline pl-1.5"
+                      href={`https://testnet.bscscan.com/address/${token.evmToken}`}
+                      target="_blank"
+                    >
+                      {token.name}
+                    </a>
+                    , provide this address: {token.evmToken}
+                  </p>
+                  <p> Symbol: {token.symbolEVM}</p>
+                  <p> Decimals: {token.decimals}</p>
+                </div>
+              ))}
             </div>
           </div>
         </AccordionContent>
