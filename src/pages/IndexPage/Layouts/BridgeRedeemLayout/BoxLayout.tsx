@@ -9,10 +9,8 @@ import {
 import { TokenBalance } from './BoxLayoutComponents/TokenBalance';
 import { TokenOptions } from './BoxLayoutComponents/TokenOptions';
 import { MassaBuildnetLogo } from '@/assets/MassaBuildnetLogo';
-import { ServiceFeeToolip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
-import { useOperationStore, useTokenStore } from '@/store/store';
+import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { serviceFeeToPercent } from '@/utils/utils';
 
 interface Layout {
   header: ReactNode;
@@ -36,9 +34,8 @@ interface BoxLayoutResult {
 }
 
 // should refactor this function
-export function boxLayout(serviceFee: bigint): BoxLayoutResult {
-  const { side, outputAmount, inputAmount } = useOperationStore.getState();
-  const { selectedToken } = useTokenStore.getState();
+export function boxLayout(): BoxLayoutResult {
+  const { side } = useOperationStore.getState();
 
   const layouts = {
     [SIDE.MASSA_TO_EVM]: {
@@ -53,14 +50,6 @@ export function boxLayout(serviceFee: bigint): BoxLayoutResult {
         wallet: <EVMMiddle />,
         token: <TokenOptions nativeToken={true} />,
         balance: null,
-        receive: (
-          <ServiceFeeToolip
-            input={inputAmount}
-            serviceFee={serviceFeeToPercent(serviceFee)}
-            output={outputAmount}
-            symbol={selectedToken?.symbol || ''}
-          />
-        ),
       },
     },
     [SIDE.EVM_TO_MASSA]: {

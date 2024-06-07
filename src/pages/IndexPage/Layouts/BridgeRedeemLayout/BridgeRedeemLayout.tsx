@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
-import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
+import {
+  Button,
+  Money,
+  formatAmount,
+  formatAmountToDisplay,
+} from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
@@ -9,6 +14,7 @@ import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';
 
 import { GetTokensPopUpModal } from '@/components';
+import { ServiceFeeToolip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useServiceFee } from '@/custom/bridge/useServiceFee';
 import { useSubmitBridge } from '@/custom/bridge/useSubmitBridge';
@@ -24,7 +30,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { getAmountReceived } from '@/utils/utils';
+import { getAmountReceived, serviceFeeToPercent } from '@/utils/utils';
 
 interface BridgeRedeemProps {
   isBlurred: string;
@@ -104,6 +110,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       getAmountReceived(amount, serviceFee, token?.decimals, false),
     );
   }
+
+  const _inputAmount = inputAmount || '0';
+  const tokenDecimals = token?.decimals || 0;
   // Money component formats amount without decimals
   return (
     <>
@@ -113,8 +122,8 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       >
         <div className="p-6 bg-primary rounded-2xl mb-5">
           <p className="mb-4 mas-body">{Intl.t('index.from')}</p>
-          {boxLayout(serviceFee).up.header}
-          {boxLayout(serviceFee).up.wallet}
+          {boxLayout().up.header}
+          {boxLayout().up.wallet}
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
               <Money
@@ -156,7 +165,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 </ul>
               </div>
             </div>
-            <div className="w-1/3 mb-4">{boxLayout(serviceFee).up.token}</div>
+            <div className="w-1/3 mb-4">{boxLayout().up.token}</div>
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -169,7 +178,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 </h3>
               )}
             </div>
-            {boxLayout(serviceFee).up.balance}
+            {boxLayout().up.balance}
           </div>
         </div>
         <div className="mb-5 flex justify-center items-center">
@@ -185,9 +194,26 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
           </Button>
         </div>
         <div className="mb-5 p-6 bg-primary rounded-2xl">
-          <p className="mb-4 mas-body">{Intl.t('index.to')}</p>
-          {boxLayout(serviceFee).down.header}
-          {boxLayout(serviceFee).down.wallet}
+          {isMassaToEvm() ? (
+            <div className="flex items-center mb-4 gap-2">
+              <p className="mas-body">
+                {Intl.t('index.input.placeholder.receive')}
+              </p>
+              <ServiceFeeToolip
+                input={formatAmountToDisplay(
+                  _inputAmount,
+                  tokenDecimals,
+                ).amountFormattedFull.replace(/\.?0+$/, '')}
+                serviceFee={serviceFeeToPercent(serviceFee)}
+                output={outputAmount || '0.00 '}
+                symbol={token?.symbol || ''}
+              />
+            </div>
+          ) : (
+            <p className="mb-4 mas-body">{Intl.t('index.to')}</p>
+          )}
+          {boxLayout().down.header}
+          {boxLayout().down.wallet}
           <div className="mb-4 flex items-center gap-2">
             <div className="w-full">
               <Money
@@ -200,9 +226,8 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 disable={true}
               />
             </div>
-            <div className="w-1/3">{boxLayout(serviceFee).down.token}</div>
+            <div className="w-1/3">{boxLayout().down.token}</div>
           </div>
-          <div>{boxLayout(serviceFee).down.receive}</div>
           <WarningNoEth />
         </div>
         <div className="mb-5">
