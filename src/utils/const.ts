@@ -69,6 +69,10 @@ export const EVM_EXPLORER = {
   },
 };
 
+export const sepoliaEtherscanTokenLink = 'https://sepolia.etherscan.io/token/';
+
+export const bscScanTokenLink = 'https://testnet.bscscan.com/address/';
+
 export const ethMinConfirmations = 5;
 export const bscMinConfirmations = 10;
 

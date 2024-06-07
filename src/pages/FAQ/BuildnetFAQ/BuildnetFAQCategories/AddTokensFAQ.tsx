@@ -3,6 +3,7 @@ import { bscTestnet, sepolia } from 'viem/chains';
 import { FAQProps, FAQcategories } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { IToken, useTokenStore } from '@/store/tokenStore';
+import { bscScanTokenLink, sepoliaEtherscanTokenLink } from '@/utils/const';
 
 export function AddTokensFAQ(props: FAQProps) {
   const { category } = props;
@@ -97,7 +98,7 @@ export function AddTokensFAQ(props: FAQProps) {
                     For
                     <a
                       className="underline pl-1.5"
-                      href={`https://sepolia.etherscan.io/token/${token.evmToken}`}
+                      href={`${sepoliaEtherscanTokenLink}${token.evmToken}`}
                       target="_blank"
                     >
                       {token.name}
@@ -114,7 +115,7 @@ export function AddTokensFAQ(props: FAQProps) {
                     For
                     <a
                       className="underline pl-1.5"
-                      href={`https://testnet.bscscan.com/address/${token.evmToken}`}
+                      href={`${bscScanTokenLink}${token.evmToken}`}
                       target="_blank"
                     >
                       {token.name}
