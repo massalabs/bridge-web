@@ -49,11 +49,13 @@ export function getMinConfirmation(
 }
 
 /**
+ * Calculates the amount received after the service fee is applied
+ *
  *
  * @param amount - string amount input
  * @param serviceFee - bigint service fee received from the read sc
  * @param decimals - IToken selectedToken.decimals
- * @param inFull - boolean to return the full amount or preview
+ * @param inFull - boolean to return the full amount or amount with no trailing zeros
  * @returns string
  */
 
@@ -80,6 +82,7 @@ export function getAmountReceived(
 }
 
 /**
+ * Converts a service fee in bigint to a percentage string meant to be displayed
  *
  * @param serviceFee - bigint service fee received from the read sc
  * @returns string representing the service fee in percentage
@@ -89,6 +92,3 @@ export function serviceFeeToPercent(serviceFee: bigint): string {
   const convertedServiceFee = Number(serviceFee) / 1000;
   return `${convertedServiceFee}%`;
 }
-
-// TBD is we need it
-// function calculateAmountReceivedHistory() {}

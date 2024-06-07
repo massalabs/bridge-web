@@ -24,14 +24,13 @@ export function EVMHeader() {
     setOutputAmount,
   } = useOperationStore();
   const { resetSelectedToken } = useTokenStore();
-  const isMainnet = getIsMainnet();
-
   const walletName = useConnectorName();
+  const currentEvmChain = useConnectedEvmChain();
+  const isMainnet = getIsMainnet();
 
   function handleChangeEvmNetwork(selectedEvm: SupportedEvmBlockchain) {
     setInputAmount('');
     setOutputAmount('');
-
     setSelectedEvm(selectedEvm);
     resetSelectedToken();
   }
