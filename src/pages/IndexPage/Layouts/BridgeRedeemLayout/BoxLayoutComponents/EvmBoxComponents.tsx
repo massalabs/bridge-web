@@ -25,7 +25,6 @@ export function EVMHeader() {
   } = useOperationStore();
   const { resetSelectedToken } = useTokenStore();
   const walletName = useConnectorName();
-  const currentEvmChain = useConnectedEvmChain();
   const isMainnet = getIsMainnet();
 
   function handleChangeEvmNetwork(selectedEvm: SupportedEvmBlockchain) {
