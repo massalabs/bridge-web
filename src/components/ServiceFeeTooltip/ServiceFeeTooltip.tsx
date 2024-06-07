@@ -1,27 +1,36 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
+import Intl from '@/i18n/i18n';
 
 export interface ServiceFeeToolipProps {
-  input: string | undefined;
+  input: string;
   serviceFee: string;
-  output: string | undefined;
+  output: string;
   symbol: string;
 }
 
 export function ServiceFeeToolip(props: ServiceFeeToolipProps) {
   const { input, serviceFee, output, symbol } = props;
   const serviceFeeTooltipBody = (
-    <>
-      <div>this is a servcie fee body</div>
-      <div>input: {input}</div>
-      <div>service fee: {serviceFee}</div>
-      <div>output: {output}</div>
-    </>
+    <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-2">
+        <div>{Intl.t('service-fee.sending')}</div>
+        {input} {symbol}
+      </div>
+      <div>-</div>
+      <div className="flex flex-col gap-2">
+        <div>
+          {Intl.t('service-fee.fee', {
+            fee: serviceFee,
+          })}
+        </div>
+        {output} {symbol}
+      </div>
+    </div>
   );
 
   return (
     <div className="flex items-center gap-2">
-      to receive: {output} {symbol}
-      <Tooltip body={serviceFeeTooltipBody} />
+      <Tooltip customClass="py-2" body={serviceFeeTooltipBody} />
     </div>
   );
 }
