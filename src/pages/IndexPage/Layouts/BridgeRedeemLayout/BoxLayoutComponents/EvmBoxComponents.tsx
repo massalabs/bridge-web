@@ -3,7 +3,6 @@ import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SupportedEvmBlockchain } from '@/const';
-import { useConnectedEvmChain } from '@/custom/bridge/useConnectedEvmChain';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
@@ -23,7 +22,6 @@ export function EVMHeader() {
   const isMainnet = getIsMainnet();
 
   const walletName = useConnectorName();
-  const currentEvmChain = useConnectedEvmChain();
 
   function handleChangeEvmNetwork(selectedEvm: SupportedEvmBlockchain) {
     setSelectedEvm(selectedEvm);
@@ -33,17 +31,17 @@ export function EVMHeader() {
   const options = [
     {
       icon: isMainnet
-        ? getEvmNetworkIcon(mainnet.id, 40)
-        : getEvmNetworkIcon(sepolia.id, 40),
+        ? getEvmNetworkIcon(mainnet.id, 32)
+        : getEvmNetworkIcon(sepolia.id, 32),
       item: `${Intl.t(
-        `general.${isMainnet ? Blockchain.ETHEREUM : Blockchain.SEPOLIA}`,
+        `general.${isMainnet ? 'Ethereum' : 'Sepolia'}`,
       )} ${Intl.t(`general.${currentMode}`)}`,
       onClick: () => handleChangeEvmNetwork(SupportedEvmBlockchain.ETH),
     },
     {
       icon: isMainnet
-        ? getEvmNetworkIcon(bsc.id, 40)
-        : getEvmNetworkIcon(bscTestnet.id, 40),
+        ? getEvmNetworkIcon(bsc.id, 32)
+        : getEvmNetworkIcon(bscTestnet.id, 32),
       item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
         `general.${currentMode}`,
       )}`,
@@ -64,10 +62,7 @@ export function EVMHeader() {
             ? walletName
             : Intl.t('connect-wallet.card-destination.from')}
         </p>
-        <ChainStatus
-          context={ChainContext.BRIDGE}
-          blockchain={currentEvmChain}
-        />
+        <ChainStatus context={ChainContext.BRIDGE} isMassaChain={false} />
       </div>
     </div>
   );

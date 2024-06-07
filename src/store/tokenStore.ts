@@ -15,7 +15,7 @@ import {
   useBridgeModeStore,
   useOperationStore,
 } from './store';
-import { BLOCKCHAIN_TO_CHAIN_IDS, config } from '../const';
+import { SUPPORTED_BLOCKCHAIN_TO_CHAIN_IDS, config } from '../const';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
 import {
   getAllowance,
@@ -71,7 +71,7 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
   getTokens: () => {
     const { selectedEvm } = useOperationStore.getState();
     return get().tokens.filter((token) =>
-      BLOCKCHAIN_TO_CHAIN_IDS[selectedEvm].includes(token.chainId),
+      SUPPORTED_BLOCKCHAIN_TO_CHAIN_IDS[selectedEvm].includes(token.chainId),
     );
   },
 

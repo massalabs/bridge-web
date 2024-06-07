@@ -5,13 +5,14 @@ import {
   formatAmount,
   getAssetIcons,
   Sepolia,
+  Eth,
+  Bsc,
 } from '@massalabs/react-ui-kit';
 import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../custom/bridge/useClaim';
-import { BSCSvg } from '@/assets/BSCSvg';
-import { EthSvg } from '@/assets/EthSvg';
+
 import { Spinner } from '@/components';
 import Intl from '@/i18n/i18n';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
@@ -56,9 +57,19 @@ export function InitClaim(props: InitClaimProps) {
       const errorClaimState = handleEvmClaimError(error);
       if (claimState !== errorClaimState) {
         onUpdate({ claimState: errorClaimState });
+        setClaim(Status.Error);
       }
     }
-  }, [isPending, error, isSuccess, hash, claimState, operation, onUpdate]);
+  }, [
+    isPending,
+    error,
+    isSuccess,
+    hash,
+    claimState,
+    operation,
+    onUpdate,
+    setClaim,
+  ]);
 
   function writeClaim() {
     write({
@@ -69,6 +80,7 @@ export function InitClaim(props: InitClaimProps) {
       evmToken: operation.evmToken!,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       signatures: operation.signatures!,
+      chainId: operation.evmChainId,
     });
   }
 
@@ -125,7 +137,7 @@ function PendingClaim() {
     <div
       className="flex justify-between items-center
           bg-secondary/50 backdrop-blur-lg text-f-primary 
-         w-[720px] h-12 border border-tertiary 
+          w-[720px] h-12 border border-tertiary 
           mas-menu-active rounded-2xl px-10 py-14 text-menu-active"
     >
       <p>{Intl.t('claim.pending')}</p>
@@ -155,7 +167,6 @@ function DisplayContent(props: DisplayContentProps) {
       <div>
         {Intl.t('claim.rejected-1')}
         <strong>
-          {' '}
           {amountFormattedPreview} {symbol}
         </strong>
         {Intl.t('claim.rejected-2')}
@@ -163,18 +174,15 @@ function DisplayContent(props: DisplayContentProps) {
     );
   } else if (!isClaimRejected) {
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         <strong className="flex items-center gap-2">
           {getAssetIcons(symbol, operation.evmChainId, true, 26)}
           {amountFormattedPreview} {symbol}
-          <Tooltip
-            customClass="mas-caption w-fit whitespace-nowrap"
-            body={amountFormattedFull + ' ' + symbol}
-          />
+          <Tooltip body={amountFormattedFull + ' ' + symbol} />
         </strong>
 
         <div className="flex items-center gap-2">
-          {getEvmNetworkIcon(operation.evmChainId, 16)}
+          {getEvmNetworkIcon(operation.evmChainId, 24)}
           {getEvmChainName(operation.evmChainId)}
         </div>
         <div>{maskAddress(operation.recipient, 4)}</div>
@@ -187,12 +195,16 @@ interface EvmIcons {
   [key: string]: JSX.Element;
 }
 
-export function getEvmNetworkIcon(chainId: number, size = 16) {
+export function getEvmNetworkIcon(
+  chainId: number,
+
+  size = 16,
+) {
   const evmIcons: EvmIcons = {
-    [mainnet.id]: <EthSvg size={size} />,
+    [mainnet.id]: <Eth size={size} />,
     [sepolia.id]: <Sepolia size={size} />,
-    [bsc.id]: <BSCSvg size={size} />,
-    [bscTestnet.id]: <BSCSvg size={size} />,
+    [bsc.id]: <Bsc size={size} />,
+    [bscTestnet.id]: <Bsc size={size} />,
   };
 
   return evmIcons[chainId];

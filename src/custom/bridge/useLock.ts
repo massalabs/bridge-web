@@ -1,25 +1,33 @@
 import { useCallback } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseUnits } from 'viem';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi';
 import bridgeVaultAbi from '@/abi/bridgeAbi.json';
-import { config } from '@/const/const';
+import { CHAIN_ID_TO_SUPPORTED_BLOCKCHAIN, config } from '@/const/const';
 import {
   useAccountStore,
   useBridgeModeStore,
   useOperationStore,
   useTokenStore,
 } from '@/store/store';
-import { ethMinConfirmations } from '@/utils/const';
+import { getMinConfirmation } from '@/utils/utils';
 
 export function useLock() {
   const { currentMode } = useBridgeModeStore();
   const { selectedToken } = useTokenStore();
   const { connectedAccount } = useAccountStore();
-  const { amount, selectedEvm } = useOperationStore();
+  const { amount } = useOperationStore();
   const [debouncedAmount] = useDebounceValue(amount, 500);
+  const { chainId } = useAccount();
 
-  const bridgeContractAddr = config[currentMode][selectedEvm];
+  const chain = chainId || 0;
+
+  const bridgeContractAddr =
+    config[currentMode][CHAIN_ID_TO_SUPPORTED_BLOCKCHAIN[chain]];
 
   const evmToken = selectedToken?.evmToken as `0x${string}`;
 
@@ -47,7 +55,7 @@ export function useLock() {
 
   const { isSuccess } = useWaitForTransactionReceipt({
     hash,
-    confirmations: ethMinConfirmations,
+    confirmations: getMinConfirmation(CHAIN_ID_TO_SUPPORTED_BLOCKCHAIN[chain]),
   });
 
   return { write, hash, isSuccess, error };

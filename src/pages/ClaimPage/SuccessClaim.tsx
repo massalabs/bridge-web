@@ -24,7 +24,7 @@ export function SuccessClaim(args: SuccessClaimProps) {
           w-[620px] h-12 border border-tertiary rounded-2xl 
           px-10 py-14"
     >
-      <div className="flex items-center">
+      <div className="flex gap-2 items-center">
         <div>
           {Intl.t('claim.success')}
           <strong>
@@ -32,10 +32,7 @@ export function SuccessClaim(args: SuccessClaimProps) {
             {amountFormattedPreview} {symbol}{' '}
           </strong>
         </div>
-        <Tooltip
-          customClass="mas-caption w-fit whitespace-nowrap"
-          body={amountFormattedFull + ' ' + symbol}
-        />
+        <Tooltip body={amountFormattedFull + ' ' + symbol} />
       </div>
       <div className="flex gap-4 items-center">
         <LinkExplorer

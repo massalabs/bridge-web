@@ -1,7 +1,9 @@
 import { AccordionCategory, AccordionContent } from '@massalabs/react-ui-kit';
+import { bscTestnet, sepolia } from 'viem/chains';
 import { FAQProps, FAQcategories } from '@/const/faq';
 import Intl from '@/i18n/i18n';
 import { IToken, useTokenStore } from '@/store/tokenStore';
+import { bscScanTokenLink, sepoliaEtherscanTokenLink } from '@/utils/const';
 
 export function AddTokensFAQ(props: FAQProps) {
   const { category } = props;
@@ -10,6 +12,14 @@ export function AddTokensFAQ(props: FAQProps) {
 
   const showAddToMassa = category === FAQcategories.addToMassa;
   const showAddToMetamask = category === FAQcategories.addToMetamask;
+
+  const filteredBscTokens = tokens.filter(
+    (token) => token.chainId === bscTestnet.id,
+  );
+
+  const filteredEthTokens = tokens.filter(
+    (token) => token.chainId === sepolia.id,
+  );
   return (
     <>
       <AccordionCategory
@@ -82,20 +92,37 @@ export function AddTokensFAQ(props: FAQProps) {
                 </a>
                 by Metamask.
               </div>
-              {tokens.map((token: IToken, index) => (
+              {filteredEthTokens.map((token: IToken, index) => (
                 <div className="flex flex-col" key={index}>
                   <p>
                     For
                     <a
                       className="underline pl-1.5"
-                      href={`https://sepolia.etherscan.io/token/${token.evmToken}`}
+                      href={`${sepoliaEtherscanTokenLink}${token.evmToken}`}
                       target="_blank"
                     >
                       {token.name}
                     </a>
                     , provide this address: {token.evmToken}
                   </p>
-                  <p> Symbol: {token.symbol}</p>
+                  <p> Symbol: {token.symbolEVM}</p>
+                  <p> Decimals: {token.decimals}</p>
+                </div>
+              ))}
+              {filteredBscTokens.map((token: IToken, index) => (
+                <div className="flex flex-col" key={index}>
+                  <p>
+                    For
+                    <a
+                      className="underline pl-1.5"
+                      href={`${bscScanTokenLink}${token.evmToken}`}
+                      target="_blank"
+                    >
+                      {token.name}
+                    </a>
+                    , provide this address: {token.evmToken}
+                  </p>
+                  <p> Symbol: {token.symbolEVM}</p>
                   <p> Decimals: {token.decimals}</p>
                 </div>
               ))}

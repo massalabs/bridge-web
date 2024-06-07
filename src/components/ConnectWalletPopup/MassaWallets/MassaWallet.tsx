@@ -10,7 +10,7 @@ import SwitchWalletButton from './SwitchWalletButton';
 import { UpdateMassaWalletWarning } from './UpdateMassaWalletWarning';
 import { BearbySvg } from '@/assets/BearbySvg';
 import { ChainStatus } from '@/components/Status/ChainStatus';
-import { Blockchain, SUPPORTED_MASSA_WALLETS } from '@/const';
+import { SUPPORTED_MASSA_WALLETS } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
@@ -80,13 +80,9 @@ export function MassaWallet() {
         <div className="flex gap-2 items-center">
           <UpdateMassaWalletWarning />
           {renderSelectedWallet()}
-          <ChainStatus
-            context={ChainContext.CONNECT}
-            blockchain={Blockchain.MASSA}
-          />
+          <ChainStatus context={ChainContext.CONNECT} isMassaChain={true} />
           {selectedProvider === SUPPORTED_MASSA_WALLETS.BEARBY && (
             <Tooltip
-              customClass="mas-caption w-fit whitespace-nowrap"
               body={Intl.t('connect-wallet.card-destination.non-massa-wallet')}
             />
           )}

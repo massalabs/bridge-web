@@ -8,7 +8,7 @@ import { useOperationStore } from '@/store/store';
 import { BurnState } from '@/utils/const';
 
 export function useSubmitRedeem() {
-  const { setBox, setBurn } = useGlobalStatusesStore();
+  const { setBox, setBurn, setClaim } = useGlobalStatusesStore();
   const { amount, setBurnState } = useOperationStore();
   const { tokenBalance: tokenBalanceEVM } = useEvmToken();
   const { handleBurnRedeem } = useBurn();
@@ -16,6 +16,7 @@ export function useSubmitRedeem() {
   const handleSubmitRedeem = useCallback(async () => {
     // validate amount to transact
     if (!validate(tokenBalanceEVM) || !amount) return;
+    setClaim(Status.None);
     setBox(Status.Loading);
     const approved = await handleApproveRedeem(amount);
     if (approved) {
@@ -29,6 +30,7 @@ export function useSubmitRedeem() {
     setBox,
     setBurn,
     setBurnState,
+    setClaim,
     handleBurnRedeem,
   ]);
   return { handleSubmitRedeem };

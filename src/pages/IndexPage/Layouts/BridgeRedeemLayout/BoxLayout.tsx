@@ -23,8 +23,8 @@ interface MassaIconsNetworks {
   [key: string]: JSX.Element;
 }
 export const massaIconsNetworks: MassaIconsNetworks = {
-  [MAINNET]: <MassaLogo size={40} />,
-  [BUILDNET]: <MassaBuildnetLogo size={40} />,
+  [MAINNET]: <MassaLogo size={32} />,
+  [BUILDNET]: <MassaBuildnetLogo size={32} />,
 };
 
 interface BoxLayoutResult {

@@ -3,21 +3,14 @@ import { toMAS } from '@massalabs/massa-web3';
 import {
   FetchingLine,
   MassaLogo,
-  Sepolia,
   Tooltip,
   formatAmount,
 } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 import { parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
-import { EthSvg } from '@/assets/EthSvg';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
-import {
-  Blockchain,
-  forwardBurnFees,
-  increaseAllowanceFee,
-  MASSA_TOKEN,
-} from '@/const';
+import { forwardBurnFees, increaseAllowanceFee, MASSA_TOKEN } from '@/const';
 import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import {
@@ -25,6 +18,7 @@ import {
   useGetChainValidationContext,
 } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
+import { getEvmNetworkIcon } from '@/pages';
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -75,7 +69,7 @@ export function FeesEstimation() {
   const { isMassaToEvm, amount } = useOperationStore();
   const massaToEvm = isMassaToEvm();
   const { selectedToken } = useTokenStore();
-  const { massaNetwork: getMassaNetwork, isMainnet } = useBridgeModeStore();
+  const { massaNetwork: getMassaNetwork } = useBridgeModeStore();
   const { isConnected: isEvmWalletConnected, chain } = useAccount();
 
   const massaNetwork = getMassaNetwork();
@@ -175,9 +169,9 @@ export function FeesEstimation() {
   const symbolEVM = selectedToken.symbolEVM;
   const symbolMASSA = selectedToken.symbol;
 
-  const chainName = chain
-    ? chain.name
-    : Intl.t(`general.${Blockchain.UNKNOWN}`);
+  const chainName = chain ? chain.name : Intl.t('general.Unknown');
+
+  const chainId = chain ? chain.id : 0;
 
   const storageMASString = storageMAS ? toMAS(storageMAS).toString() : '';
   const totalCostMASString = toMAS(
@@ -190,12 +184,10 @@ export function FeesEstimation() {
         <p>{Intl.t('index.fee-estimate.bridge-rate')}</p>
         <div className="flex items-center">
           1 {symbolEVM} {Intl.t('index.fee-estimate.on')}{' '}
-          <span className="mx-1">
-            {isMainnet() ? <EthSvg size={20} /> : <Sepolia size={20} />}
-          </span>{' '}
-          = 1 {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
+          <span className="mx-1">{getEvmNetworkIcon(chainId, 24)}</span> = 1{' '}
+          {symbolMASSA} {Intl.t('index.fee-estimate.on')}{' '}
           <span className="ml-1">
-            <MassaLogo size={20} />
+            <MassaLogo size={24} />
           </span>
         </div>
       </div>
@@ -203,7 +195,7 @@ export function FeesEstimation() {
         <div className="flex items-center">
           <p>
             {Intl.t('index.fee-estimate.network-fees', {
-              name: Intl.t(`general.${Blockchain.MASSA}`),
+              name: Intl.t('general.Massa'),
               network: Intl.t(`general.${massaNetwork}`),
             })}
           </p>
