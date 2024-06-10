@@ -5,8 +5,9 @@ import { ChainStatus } from '@/components/Status/ChainStatus';
 import { Blockchain, SupportedEvmBlockchain } from '@/const';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
+import { getEvmNetworkIcon } from '@/custom/useGetEvmIconsAndName';
 import Intl from '@/i18n/i18n';
-import { getEvmNetworkIcon } from '@/pages';
+
 import {
   useBridgeModeStore,
   useOperationStore,

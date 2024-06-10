@@ -17,8 +17,9 @@ import {
   useEvmChainValidation,
   useGetChainValidationContext,
 } from '@/custom/bridge/useNetworkValidation';
+import { getEvmNetworkIcon } from '@/custom/useGetEvmIconsAndName';
 import Intl from '@/i18n/i18n';
-import { getEvmNetworkIcon } from '@/pages';
+
 import {
   useAccountStore,
   useBridgeModeStore,
