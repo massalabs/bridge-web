@@ -14,12 +14,13 @@ interface DisplayContentProps {
 
 export function OperationInfo(props: DisplayContentProps) {
   const { claimState, operation, symbol, decimals } = props;
+
+  const { getEvmChainName, getEvmNetworkIcon } = useGetEvmIconsAndName();
+
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(
     operation.amount,
     decimals,
   );
-
-  const { getEvmChainName, getEvmNetworkIcon } = useGetEvmIconsAndName();
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
 
