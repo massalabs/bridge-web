@@ -66,17 +66,13 @@ export function HistoryPage() {
     setShownOperations({ low: newLowest, high: newHighest });
   }
 
-  const historyOperations = operationList
-    .slice(shownOperations.low, shownOperations.high)
-    .map((op) => <Operation operation={op} key={op.inputId} />);
-
   const skeleton = Array(itemsInPage)
     .fill(0)
     .map((_, index) => <OperationSkeleton key={index} />);
 
   if (!evmAddress) return skeleton;
 
-  function renderHistory() {
+  function HistoryBody() {
     if (!isFetchedAfterMount) {
       return skeleton;
     }
@@ -87,6 +83,10 @@ export function HistoryPage() {
         </p>
       );
     }
+
+    const historyOperations = operationList
+      .slice(shownOperations.low, shownOperations.high)
+      .map((op) => <Operation operation={op} key={op.inputId} />);
     return historyOperations;
   }
 
@@ -108,7 +108,7 @@ export function HistoryPage() {
         <Hr />
 
         <div className="mb-4 mt-8 flex flex-col gap-8 py-4 h-[600px]">
-          {renderHistory()}
+          <HistoryBody />
         </div>
         <div className="flex items-center justify-center gap-12">
           <Button
