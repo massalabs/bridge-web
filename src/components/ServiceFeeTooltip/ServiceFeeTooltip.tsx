@@ -1,14 +1,14 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
 import Intl from '@/i18n/i18n';
 
-export interface ServiceFeeToolipProps {
+export interface ServiceFeeTooltipProps {
   input: string;
   serviceFee: string;
   output: string;
   symbol: string;
 }
 
-export function ServiceFeeToolip(props: ServiceFeeToolipProps) {
+export function ServiceFeeTooltip(props: ServiceFeeTooltipProps) {
   const { input, serviceFee, output, symbol } = props;
   const serviceFeeTooltipBody = (
     <div className="flex items-center gap-4">
