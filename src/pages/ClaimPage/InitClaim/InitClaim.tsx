@@ -1,25 +1,15 @@
 import { useEffect } from 'react';
-import {
-  Tooltip,
-  Button,
-  formatAmount,
-  getAssetIcons,
-  Sepolia,
-  Eth,
-  Bsc,
-} from '@massalabs/react-ui-kit';
-import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
-import { useAccount, useSwitchChain } from 'wagmi';
-import { handleEvmClaimError } from '../../custom/bridge/handlers/handleTransactionErrors';
-import { useClaim } from '../../custom/bridge/useClaim';
+import { Button, formatAmount } from '@massalabs/react-ui-kit';
 
-import { Spinner } from '@/components';
+import { useAccount, useSwitchChain } from 'wagmi';
+import { handleEvmClaimError } from '../../../custom/bridge/handlers/handleTransactionErrors';
+import { useClaim } from '../../../custom/bridge/useClaim';
 import Intl from '@/i18n/i18n';
+import { OperationInfo, PendingClaim } from '@/pages';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { CustomError } from '@/utils/error';
-import { maskAddress } from '@/utils/massaFormat';
 
 interface InitClaimProps {
   operation: BurnRedeemOperation;
@@ -114,7 +104,7 @@ export function InitClaim(props: InitClaimProps) {
           bg-secondary/50  backdrop-blur-lg text-f-primary 
           w-[720px] h-fit border border-tertiary rounded-2xl p-10`}
     >
-      <DisplayContent
+      <OperationInfo
         claimState={claimState}
         operation={operation}
         symbol={symbol}
@@ -130,88 +120,4 @@ export function InitClaim(props: InitClaimProps) {
       </div>
     </div>
   );
-}
-
-function PendingClaim() {
-  return (
-    <div
-      className="flex justify-between items-center
-          bg-secondary/50 backdrop-blur-lg text-f-primary 
-          w-[720px] h-12 border border-tertiary 
-          mas-menu-active rounded-2xl px-10 py-14 text-menu-active"
-    >
-      <p>{Intl.t('claim.pending')}</p>
-      <Spinner size="md" />
-    </div>
-  );
-}
-
-interface DisplayContentProps {
-  claimState: ClaimState;
-  operation: BurnRedeemOperation;
-  symbol: string;
-  decimals?: number;
-}
-
-function DisplayContent(props: DisplayContentProps) {
-  const { claimState, operation, symbol, decimals } = props;
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
-    operation.amount,
-    decimals,
-  );
-
-  const isClaimRejected = claimState === ClaimState.REJECTED;
-
-  if (isClaimRejected) {
-    return (
-      <div>
-        {Intl.t('claim.rejected-1')}
-        <strong>
-          {amountFormattedPreview} {symbol}
-        </strong>
-        {Intl.t('claim.rejected-2')}
-      </div>
-    );
-  } else if (!isClaimRejected) {
-    return (
-      <div className="flex flex-col gap-4">
-        <strong className="flex items-center gap-2">
-          {getAssetIcons(symbol, operation.evmChainId, true, 26)}
-          {amountFormattedPreview} {symbol}
-          <Tooltip body={amountFormattedFull + ' ' + symbol} />
-        </strong>
-
-        <div className="flex items-center gap-2">
-          {getEvmNetworkIcon(operation.evmChainId, 24)}
-          {getEvmChainName(operation.evmChainId)}
-        </div>
-        <div>{maskAddress(operation.recipient, 4)}</div>
-      </div>
-    );
-  }
-}
-
-interface EvmIcons {
-  [key: string]: JSX.Element;
-}
-
-export function getEvmNetworkIcon(
-  chainId: number,
-
-  size = 16,
-) {
-  const evmIcons: EvmIcons = {
-    [mainnet.id]: <Eth size={size} />,
-    [sepolia.id]: <Sepolia size={size} />,
-    [bsc.id]: <Bsc size={size} />,
-    [bscTestnet.id]: <Bsc size={size} />,
-  };
-
-  return evmIcons[chainId];
-}
-
-export function getEvmChainName(chainId: number) {
-  const chains = [mainnet, sepolia, bsc, bscTestnet];
-
-  return chains.find((x) => x.id === chainId)?.name;
 }

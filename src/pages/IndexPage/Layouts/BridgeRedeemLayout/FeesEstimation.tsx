@@ -17,8 +17,9 @@ import {
   useEvmChainValidation,
   useGetChainValidationContext,
 } from '@/custom/bridge/useNetworkValidation';
+import { useGetEvmIconsAndName } from '@/custom/useGetEvmIconsAndName';
 import Intl from '@/i18n/i18n';
-import { getEvmNetworkIcon } from '@/pages';
+
 import {
   useAccountStore,
   useBridgeModeStore,
@@ -94,6 +95,8 @@ export function FeesEstimation() {
   const { context } = useGetChainValidationContext();
 
   const isEvmNetworkValid = useEvmChainValidation(context);
+
+  const { getEvmNetworkIcon } = useGetEvmIconsAndName();
 
   const estimateFeesMassa = useCallback(
     async (selectedToken: IToken, amount?: string) => {
