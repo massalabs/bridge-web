@@ -1,6 +1,9 @@
 import { MassaLogo } from '@massalabs/react-ui-kit';
 
-import { useGetEvmIconsAndName } from '@/custom/useGetEvmIconsAndName';
+import {
+  getEvmChainName,
+  getEvmNetworkIcon,
+} from '@/custom/useGetEvmIconsAndName';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
@@ -12,7 +15,7 @@ export function Recipient(props: RecipientProps) {
   const { operation } = props;
   const { massaNetwork } = useBridgeModeStore();
   const currentMassaNetwork = massaNetwork();
-  const { getEvmChainName, getEvmNetworkIcon } = useGetEvmIconsAndName();
+
   return (
     <div className="flex items-center gap-2">
       <div>

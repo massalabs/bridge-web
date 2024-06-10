@@ -1,5 +1,9 @@
 import { formatAmount, getAssetIcons, Tooltip } from '@massalabs/react-ui-kit';
-import { useGetEvmIconsAndName } from '@/custom/useGetEvmIconsAndName';
+
+import {
+  getEvmChainName,
+  getEvmNetworkIcon,
+} from '@/custom/useGetEvmIconsAndName';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
@@ -14,8 +18,6 @@ interface DisplayContentProps {
 
 export function OperationInfo(props: DisplayContentProps) {
   const { claimState, operation, symbol, decimals } = props;
-
-  const { getEvmChainName, getEvmNetworkIcon } = useGetEvmIconsAndName();
 
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(
     operation.amount,
