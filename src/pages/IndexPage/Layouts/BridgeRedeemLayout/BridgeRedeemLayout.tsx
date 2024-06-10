@@ -31,7 +31,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { getAmountReceived, serviceFeeToPercent } from '@/utils/utils';
+import { getAmountToReceive } from '@/utils/utils';
 
 interface BridgeRedeemProps {
   isBlurred: string;
@@ -90,7 +90,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     const res = x.times(y).round(token.decimals).toFixed();
 
     setInputAmount(res);
-    setOutputAmount(getAmountReceived(res, serviceFee, token?.decimals, false));
+    setOutputAmount(
+      getAmountToReceive(res, serviceFee, token?.decimals, false),
+    );
   }
 
   function handleToggleLayout() {
@@ -109,7 +111,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   function changeAmount(amount: string) {
     setInputAmount(amount);
     setOutputAmount(
-      getAmountReceived(amount, serviceFee, token?.decimals, false),
+      getAmountToReceive(amount, serviceFee, token?.decimals, false),
     );
   }
 
