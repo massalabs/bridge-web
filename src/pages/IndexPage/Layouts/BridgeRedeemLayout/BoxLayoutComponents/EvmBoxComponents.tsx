@@ -16,14 +16,20 @@ import {
 export function EVMHeader() {
   const { isConnected } = useAccount();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
-  const { selectedEvm, setSelectedEvm, availableEvmNetworks } =
-    useOperationStore();
+  const {
+    selectedEvm,
+    setSelectedEvm,
+    availableEvmNetworks,
+    setInputAmount,
+    setOutputAmount,
+  } = useOperationStore();
   const { resetSelectedToken } = useTokenStore();
+  const walletName = useConnectorName();
   const isMainnet = getIsMainnet();
 
-  const walletName = useConnectorName();
-
   function handleChangeEvmNetwork(selectedEvm: SupportedEvmBlockchain) {
+    setInputAmount('');
+    setOutputAmount('');
     setSelectedEvm(selectedEvm);
     resetSelectedToken();
   }

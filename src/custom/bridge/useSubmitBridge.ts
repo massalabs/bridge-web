@@ -18,7 +18,7 @@ export function useSubmitBridge() {
   const { setMint, setBox, setLock, setApprove, approve } =
     useGlobalStatusesStore();
 
-  const { amount, setLockTxId } = useOperationStore();
+  const { inputAmount: amount, setLockTxId } = useOperationStore();
 
   const {
     write: writeEvmApprove,

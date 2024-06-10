@@ -403,5 +403,9 @@
     "1": "Update Massa Wallet to version 0.3.3 or higher.",
     "2": "To update it, go to Explore Module Store in your Station.",
     "3": "This is to ensure that your token balances will be correctly displayed."
+  },
+  "service-fee": {
+    "sending": "Sending amount",
+    "fee": "Service fee ({fee})"
   }
 }
