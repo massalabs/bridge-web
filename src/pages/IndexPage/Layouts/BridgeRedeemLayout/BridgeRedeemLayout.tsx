@@ -15,7 +15,7 @@ import { FeesEstimation } from './FeesEstimation';
 import { WarningNoEth } from './WarningNoEth';
 
 import { GetTokensPopUpModal } from '@/components';
-import { ServiceFeeToolip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
+import { ServiceFeeTooltip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useServiceFee } from '@/custom/bridge/useServiceFee';
 import { useSubmitBridge } from '@/custom/bridge/useSubmitBridge';
@@ -198,7 +198,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               <p className="mas-body">
                 {Intl.t('index.input.placeholder.receive')}
               </p>
-              <ServiceFeeToolip
+              <ServiceFeeTooltip
                 input={removeTrailingZeros(
                   formatAmountToDisplay(inputAmount, token?.decimals)
                     .amountFormattedFull,
