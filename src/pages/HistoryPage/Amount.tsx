@@ -1,13 +1,23 @@
-import { Tooltip } from '@massalabs/react-ui-kit';
+import { formatAmount, Tooltip } from '@massalabs/react-ui-kit';
 
 interface AmountProps {
-  amountFormattedPreview: string;
-  symbol: string | undefined;
-  amountFormattedFull: string;
+  amount?: string;
+  symbol?: string;
+  decimals?: number;
 }
 
 export function Amount(props: AmountProps) {
-  const { amountFormattedPreview, symbol, amountFormattedFull } = props;
+  const { amount, symbol = '', decimals = 9 } = props;
+
+  let amountFormattedPreview = '-';
+  let amountFormattedFull = '-';
+
+  if (amount !== undefined) {
+    const formattedResult = formatAmount(amount, decimals);
+    amountFormattedPreview = formattedResult.amountFormattedPreview;
+    amountFormattedFull = formattedResult.amountFormattedFull;
+  }
+
   return (
     <div className="flex gap-2 items-center">
       {amountFormattedPreview} {symbol}

@@ -33,6 +33,7 @@ export interface OperationHistoryItem {
   emitter: string;
   createdAt: string;
   amount: string;
+  outputAmount?: string;
   recipient: string;
   historyStatus: HistoryOperationStatus;
   serverState: BridgingState;
