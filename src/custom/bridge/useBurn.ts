@@ -19,7 +19,7 @@ export function useBurn() {
   const { massaClient } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
-  const { setBurnTxId, amount } = useOperationStore();
+  const { setBurnTxId, inputAmount: amount } = useOperationStore();
   const { address: evmAddress } = useAccount();
 
   const handleBurnRedeem = useCallback(async () => {

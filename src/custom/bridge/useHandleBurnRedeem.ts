@@ -18,7 +18,7 @@ export function useHandleBurnRedeem() {
   const {
     burnTxId,
     appendBurnRedeemOperation,
-    amount,
+    inputAmount: amount,
     setBurnState,
     claimTxId,
   } = useOperationStore();
