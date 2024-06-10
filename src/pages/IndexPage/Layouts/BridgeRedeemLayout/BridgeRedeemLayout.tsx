@@ -90,6 +90,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     const res = x.times(y).round(token.decimals).toFixed();
 
     setInputAmount(res);
+    setOutputAmount(getAmountReceived(res, serviceFee, token?.decimals, false));
   }
 
   function handleToggleLayout() {
