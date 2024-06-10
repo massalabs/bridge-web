@@ -49,7 +49,7 @@ export function getMinConfirmation(
 }
 
 /**
- * Calculates the amount received after the service fee is applied
+ * Calculates the amount to be received after the service fee is applied
  *
  * @param amount - string amount input
  * @param serviceFee - bigint service fee received from the read sc
@@ -57,7 +57,7 @@ export function getMinConfirmation(
  * @param inFull - boolean to return the full amount or amount with no trailing zeros
  * @returns string
  */
-export function getAmountReceived(
+export function getAmountToReceive(
   amount: string | undefined,
   serviceFee: bigint,
   decimals: number | undefined,
