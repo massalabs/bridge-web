@@ -57,7 +57,6 @@ export function getMinConfirmation(
  * @param inFull - boolean to return the full amount or amount with no trailing zeros
  * @returns string
  */
-
 export function getAmountReceived(
   amount: string | undefined,
   serviceFee: bigint,
@@ -86,7 +85,6 @@ export function getAmountReceived(
  * @param serviceFee - bigint service fee received from the read sc
  * @returns string representing the service fee in percentage
  */
-
 export function serviceFeeToPercent(serviceFee: bigint): string {
   const convertedServiceFee = Number(serviceFee) / 1000;
   return `${convertedServiceFee}%`;
