@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
-import { formatAmount } from '@massalabs/react-ui-kit';
 import { Amount } from './Amount';
 import { Emitter } from './Emitter';
 import { Recipient } from './Recipient';
 import { ShowStatus } from './ShowStatus';
 import { wmasDecimals, wmasSymbol } from '../DaoPage';
 import { LinkExplorer } from '@/components/LinkExplorer';
+import { ServiceFeeTooltip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
 import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
+import { retrievePercent } from '@/utils/utils';
 
 function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
@@ -51,30 +52,29 @@ export function Operation(props: OperationProps) {
 
   const { sentSymbol, receivedSymbol, tokenDecimals } = getTokenInfo();
 
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
-    op.amount,
-    tokenDecimals,
-  );
-
   return (
-    <div className={`grid grid-cols-7 mas-body2`}>
+    <div className={'grid grid-cols-7 mas-body2'}>
       <Emitter operation={op} />
       <Recipient operation={op} />
       <div className="flex items-center">
         {formatApiCreationTime(op.createdAt)}
       </div>
       {/* sent */}
-      <Amount
-        amountFormattedFull={amountFormattedFull}
-        amountFormattedPreview={amountFormattedPreview}
-        symbol={sentSymbol}
-      />
+      <Amount amount={op.amount} symbol={sentSymbol} decimals={tokenDecimals} />
       {/* received */}
-      <Amount
-        amountFormattedFull={amountFormattedFull}
-        amountFormattedPreview={amountFormattedPreview}
-        symbol={receivedSymbol}
-      />
+      <div className="flex flex-row items-center">
+        <ServiceFeeTooltip
+          inputAmount={op.amount}
+          outputAmount={op.outputAmount}
+          serviceFee={retrievePercent(op.amount, op.outputAmount)}
+          symbol={sentSymbol || ''}
+        />
+        <Amount
+          amount={op.outputAmount}
+          symbol={receivedSymbol}
+          decimals={tokenDecimals}
+        />
+      </div>
       {memoizedStatusComponent}
       <LinkExplorer
         currentTxId={op.outputId}
