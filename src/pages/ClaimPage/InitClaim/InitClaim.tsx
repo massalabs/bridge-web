@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button, formatAmount } from '@massalabs/react-ui-kit';
+import { Button } from '@massalabs/react-ui-kit';
 
 import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../../custom/bridge/handlers/handleTransactionErrors';
@@ -16,10 +16,18 @@ interface InitClaimProps {
   symbol: string;
   decimals?: number;
   onUpdate: (op: Partial<BurnRedeemOperation>) => void;
+  amountRedeemedPreview: string;
+  amountRedeemedFull: string;
 }
 
 export function InitClaim(props: InitClaimProps) {
-  const { operation, symbol, decimals, onUpdate } = props;
+  const {
+    operation,
+    symbol,
+    onUpdate,
+    amountRedeemedFull,
+    amountRedeemedPreview,
+  } = props;
   const { write, error, isSuccess, hash, isPending } = useClaim();
   const { setClaim } = useGlobalStatusesStore();
 
@@ -28,8 +36,6 @@ export function InitClaim(props: InitClaimProps) {
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;
-
-  let { amountFormattedPreview } = formatAmount(operation.amount, decimals);
 
   useEffect(() => {
     if (isPending && claimState !== ClaimState.PENDING) {
@@ -108,11 +114,12 @@ export function InitClaim(props: InitClaimProps) {
         claimState={claimState}
         operation={operation}
         symbol={symbol}
-        decimals={decimals}
+        amountRedeemedPreview={amountRedeemedPreview}
+        amountRedeemedFull={amountRedeemedFull}
       />
       <div className="flex flex-col gap-2">
         <Button onClick={() => handleClaim()}>
-          {Intl.t('claim.claim')} {amountFormattedPreview} {symbol}
+          {Intl.t('claim.claim')} {amountRedeemedPreview} {symbol}{' '}
         </Button>
         {isChainIncompatible && (
           <div className="w-56">{Intl.t('claim.wrong-network')}</div>

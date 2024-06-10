@@ -1,9 +1,10 @@
 import { useCallback, useEffect } from 'react';
-import { Button } from '@massalabs/react-ui-kit';
+import { Button, Tooltip } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
+import { useServiceFee } from '@/custom/bridge/useServiceFee';
 import Intl from '@/i18n/i18n';
 import { Status } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
@@ -14,6 +15,7 @@ import {
 } from '@/store/store';
 import { ClaimState } from '@/utils/const';
 import { useFetchSignatures } from '@/utils/lambdaApi';
+import { serviceFeeToPercent } from '@/utils/utils';
 
 // Renders when burn is successful, polls api to see if there is an operation to claim
 // If operation found, renders claim button that calls redeem function
@@ -28,7 +30,10 @@ export function ClaimRedeem() {
     getCurrentRedeemOperation,
     updateBurnRedeemOperationById,
     setClaimTxId,
+    outputAmount,
   } = useOperationStore();
+
+  const { serviceFee } = useServiceFee();
 
   useFetchSignatures();
 
@@ -155,7 +160,14 @@ export function ClaimRedeem() {
             handleRedeem();
           }}
         >
-          {Intl.t('index.loading-box.claim')} {symbol}
+          {Intl.t('index.loading-box.claim')} {outputAmount} {symbol}{' '}
+          <Tooltip
+            customIconColor="neutral"
+            customClass="z-10"
+            body={Intl.t('service-fee.fee-tooltip', {
+              fee: serviceFeeToPercent(serviceFee),
+            })}
+          />
         </Button>
       ) : null}
     </div>
