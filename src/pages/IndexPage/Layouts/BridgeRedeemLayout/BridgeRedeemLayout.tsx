@@ -31,7 +31,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 import { SIDE } from '@/utils/const';
-import { getAmountToReceive } from '@/utils/utils';
+import { getAmountToReceive, serviceFeeToPercent } from '@/utils/utils';
 
 interface BridgeRedeemProps {
   isBlurred: string;
@@ -202,12 +202,12 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 {Intl.t('index.input.placeholder.receive')}
               </p>
               <ServiceFeeTooltip
-                input={removeTrailingZeros(
+                inputAmount={removeTrailingZeros(
                   formatAmountToDisplay(inputAmount, token?.decimals)
                     .amountFormattedFull,
                 )}
                 serviceFee={serviceFeeToPercent(serviceFee)}
-                output={outputAmount || '0.00 '}
+                outputAmount={outputAmount || '0.00 '}
                 symbol={token?.symbol || ''}
               />
             </div>
