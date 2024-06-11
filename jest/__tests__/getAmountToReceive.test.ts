@@ -7,12 +7,12 @@ describe('should calculate service fees', () => {
     jest.clearAllMocks();
   });
 
-  test('should return 0.01% of 0.004', () => {
+  test('should return 0.004 - a 0.1% service fee', () => {
     const amount = '0.004';
     const serviceFee = 10n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('0.003996');
+    expect(result).toBe(3996n);
   });
 
   test('should return input amount when service fee is 0n', () => {
@@ -23,28 +23,28 @@ describe('should calculate service fees', () => {
     expect(result).toBe(amount);
   });
 
-  test('should return 0.01% of 100', () => {
+  test('should return 100 - 0.1% of service fees', () => {
     const amount = '100';
     const serviceFee = 10n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('99.900000');
+    expect(result).toBe(99900000n);
   });
 
-  test('should return 0.02% of 5618.897000', () => {
+  test('should return 5618.897000 - 0.02% of service fee', () => {
     const amount = '5618.897000';
     const serviceFee = 20n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('5,607.659206');
+    expect(result).toBe(5607659206n);
   });
 
-  test('should return 0.02% of 101299120121.128893', () => {
+  test('should return  101299120121.128893 - 0.02% of service fees', () => {
     const amount = '101299120121.128893';
     const serviceFee = 20n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('101,096,521,880.886640');
+    expect(result).toBe(101096521880886636n);
   });
 
   test('should calculate 0.02% of MAX SAFE INT', () => {
@@ -56,12 +56,8 @@ describe('should calculate service fees', () => {
     const _amount = parseUnits(amount, decimals);
     const redeemFee = (_amount * serviceFee) / 10000n;
     const expectedReceivedAmount = _amount - redeemFee;
-    const expected = formatFTAmount(
-      expectedReceivedAmount,
-      decimals,
-    ).amountFormattedFull;
 
-    expect(result).toBe(expected);
+    expect(result).toBe(expectedReceivedAmount);
   });
 
   describe('serviceFeeToPercent', () => {

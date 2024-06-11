@@ -1,4 +1,3 @@
-import { formatFTAmount, removeTrailingZeros } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import {
   MASSA_EXPLORER_URL,
@@ -55,14 +54,13 @@ export function getMinConfirmation(
  * @param serviceFee - bigint service fee received from the read sc
  * @param decimals - IToken selectedToken.decimals
  * @param inFull - boolean to return the full amount or amount with no trailing zeros
- * @returns string
+ * @returns bigint of the amount to be received
  */
 export function getAmountToReceive(
   amount: string | undefined,
   serviceFee: bigint,
   decimals: number | undefined,
-  inFull = true,
-): string {
+): bigint | string {
   if (!amount || !decimals) {
     return '';
   }
@@ -71,12 +69,7 @@ export function getAmountToReceive(
   }
   const _amount = parseUnits(amount, decimals);
   const redeemFee = (_amount * serviceFee) / 10000n;
-  const receivedAmount = _amount - redeemFee;
-
-  const { amountFormattedFull } = formatFTAmount(receivedAmount, decimals);
-  return inFull
-    ? amountFormattedFull
-    : removeTrailingZeros(amountFormattedFull);
+  return _amount - redeemFee;
 }
 
 /**
