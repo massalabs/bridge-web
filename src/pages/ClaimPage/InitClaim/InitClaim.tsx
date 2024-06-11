@@ -1,38 +1,46 @@
 import { useEffect } from 'react';
-import { Button } from '@massalabs/react-ui-kit';
+import {
+  Button,
+  formatAmount,
+  removeTrailingZeros,
+} from '@massalabs/react-ui-kit';
 
 import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../../custom/bridge/useClaim';
+import { CHAIN_ID_TO_SERVICE_FEE } from '@/const';
 import Intl from '@/i18n/i18n';
 import { OperationInfo, PendingClaim } from '@/pages';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { CustomError } from '@/utils/error';
+import { getAmountReceived } from '@/utils/utils';
 
 interface InitClaimProps {
   operation: BurnRedeemOperation;
   symbol: string;
   decimals?: number;
   onUpdate: (op: Partial<BurnRedeemOperation>) => void;
-  amountRedeemedPreview: string;
-  amountRedeemedFull: string;
 }
 
 export function InitClaim(props: InitClaimProps) {
-  const {
-    operation,
-    symbol,
-    onUpdate,
-    amountRedeemedFull,
-    amountRedeemedPreview,
-  } = props;
+  const { operation, symbol, onUpdate, decimals } = props;
   const { write, error, isSuccess, hash, isPending } = useClaim();
   const { setClaim } = useGlobalStatusesStore();
 
   const { chainId } = useAccount();
   const { switchChainAsync } = useSwitchChain();
+
+  const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
+
+  const amountRedeemedFull = getAmountReceived(
+    formatAmount(operation.amount, decimals).amountFormattedFull,
+    serviceFee,
+    decimals,
+  );
+
+  const amountRedeemedPreview = removeTrailingZeros(amountRedeemedFull);
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;

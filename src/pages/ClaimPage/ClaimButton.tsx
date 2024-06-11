@@ -1,13 +1,10 @@
-import { formatAmount, removeTrailingZeros } from '@massalabs/react-ui-kit';
 import { ErrorClaim } from './ErrorClaim';
 import { InitClaim } from './InitClaim';
 import { SuccessClaim } from './SuccessClaim';
-import { CHAIN_ID_TO_SERVICE_FEE } from '@/const';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { useOperationStore } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
 import { ClaimState } from '@/utils/const';
-import { getAmountReceived } from '@/utils/utils';
 
 interface ClaimOperationContainerProps {
   operation: BurnRedeemOperation;
@@ -25,14 +22,6 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
   const decimals = tokens.find(
     (t) => t.evmToken === operation.evmToken,
   )?.decimals;
-
-  const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
-
-  const amountRedeemedFull = getAmountReceived(
-    formatAmount(operation.amount, decimals).amountFormattedFull,
-    serviceFee,
-    decimals,
-  );
 
   const onReset = () => {
     updateBurnRedeemOperationById(operation.inputId, {
@@ -82,10 +71,6 @@ export function ClaimButton({ operation }: ClaimOperationContainerProps) {
                   operation={operation}
                   symbol={symbol}
                   decimals={decimals}
-                  amountRedeemedPreview={removeTrailingZeros(
-                    amountRedeemedFull,
-                  )}
-                  amountRedeemedFull={amountRedeemedFull}
                 />
               </div>
             );
