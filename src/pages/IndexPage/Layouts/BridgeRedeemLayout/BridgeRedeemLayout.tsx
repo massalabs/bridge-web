@@ -1,13 +1,5 @@
-import { useState } from 'react';
-
-import {
-  Button,
-  Money,
-  formatAmount,
-  formatAmountToDisplay,
-  formatFTAmount,
-  removeTrailingZeros,
-} from '@massalabs/react-ui-kit';
+import { useEffect, useState } from 'react';
+import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
@@ -60,6 +52,11 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   } = useOperationStore();
   const { isFetching } = useAccountStore();
 
+  useEffect(() => {
+    console.log('inputAmount', inputAmount);
+    console.log('outputAmount', outputAmount);
+  }, [inputAmount, outputAmount]);
+
   const { selectedToken: token } = useTokenStore();
   const { serviceFee } = useServiceFee();
 
@@ -99,12 +96,11 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     );
 
     setOutputAmount(
-      formatFTAmount(amountToReceive, token.decimals).amountFormattedFull,
+      formatAmount(amountToReceive, token.decimals).amountFormattedFull,
     );
   }
 
   function handleToggleLayout() {
-    setInputAmount('');
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
 
@@ -119,22 +115,26 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   function changeAmount(amount: string) {
     if (!token) return;
     setInputAmount(amount);
-    if (!amount) {
-      setOutputAmount('');
-    } else {
-      const amountToReceive = getAmountToReceive(
-        amount,
-        serviceFee,
-        token.decimals,
-      );
-
-      // replace trailing zeros
-      setOutputAmount(
-        formatFTAmount(
-          amountToReceive,
+    if (isMassaToEvm()) {
+      if (!amount) {
+        setOutputAmount(undefined);
+      } else {
+        const amountToReceive = getAmountToReceive(
+          amount,
+          serviceFee,
           token.decimals,
-        ).amountFormattedFull.replace(/\.?0+$/, ''),
-      );
+        );
+
+        // replace trailing zeros
+        setOutputAmount(
+          formatAmount(
+            amountToReceive,
+            token.decimals,
+          ).amountFormattedFull.replace(/\.?0+$/, ''),
+        );
+      }
+    } else {
+      setOutputAmount(amount);
     }
   }
 
@@ -154,7 +154,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               <Money
                 disable={isFetching}
                 name="amount"
-                value={inputAmount}
+                value={inputAmount || ''}
                 onValueChange={(o) => changeAmount(o.value)}
                 placeholder={Intl.t('index.input.placeholder.amount')}
                 suffix=""
@@ -225,10 +225,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 {Intl.t('index.input.placeholder.receive')}
               </p>
               <ServiceFeeTooltip
-                inputAmount={removeTrailingZeros(
-                  formatAmountToDisplay(inputAmount, token?.decimals)
-                    .amountFormattedFull,
-                )}
+                inputAmount={inputAmount}
                 serviceFee={serviceFeeToPercent(serviceFee)}
                 outputAmount={outputAmount}
                 symbol={token?.symbol || ''}
@@ -244,7 +241,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               <Money
                 placeholder={Intl.t('index.input.placeholder.receive')}
                 name="receive"
-                value={isMassaToEvm() ? outputAmount : inputAmount}
+                value={outputAmount || ''}
                 suffix=""
                 decimalScale={token?.decimals}
                 error=""

@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { Button, formatAmount, formatFTAmount } from '@massalabs/react-ui-kit';
-
+import { Button, formatAmount } from '@massalabs/react-ui-kit';
 import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../../custom/bridge/useClaim';
@@ -47,7 +46,7 @@ export function InitClaim(props: InitClaimProps) {
   const {
     amountFormattedPreview: amountRedeemedPreview,
     amountFormattedFull: amountRedeemedFull,
-  } = formatFTAmount(receivedAmount, decimals);
+  } = formatAmount(receivedAmount, decimals);
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;

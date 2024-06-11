@@ -60,13 +60,13 @@ export function getAmountToReceive(
   amount: string,
   serviceFee: bigint,
   decimals: number,
-): bigint {
+): string {
   if (!serviceFee) {
-    return parseUnits(amount, decimals);
+    return amount;
   }
   const _amount = parseUnits(amount, decimals);
   const redeemFee = (_amount * serviceFee) / 10000n;
-  return _amount - redeemFee;
+  return (_amount - redeemFee).toString();
 }
 
 /**
