@@ -30,17 +30,20 @@ export function InitClaim(props: InitClaimProps) {
 
   const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
 
+  // formats operation.amount to standard format
   const formatedOperationAmount = formatAmount(
     operation.amount,
     decimals,
   ).amountFormattedFull;
 
+  // calculates amount received
   const receivedAmount = getAmountToReceive(
     formatedOperationAmount,
     serviceFee,
     decimals,
   );
 
+  // format amount received
   const {
     amountFormattedPreview: amountRedeemedPreview,
     amountFormattedFull: amountRedeemedFull,
