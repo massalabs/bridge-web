@@ -15,7 +15,7 @@ import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { CustomError } from '@/utils/error';
-import { getAmountReceived } from '@/utils/utils';
+import { getAmountToReceive } from '@/utils/utils';
 
 interface InitClaimProps {
   operation: BurnRedeemOperation;
@@ -34,7 +34,7 @@ export function InitClaim(props: InitClaimProps) {
 
   const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
 
-  const amountRedeemedFull = getAmountReceived(
+  const amountRedeemedFull = getAmountToReceive(
     formatAmount(operation.amount, decimals).amountFormattedFull,
     serviceFee,
     decimals,
