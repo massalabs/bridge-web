@@ -12,7 +12,7 @@ export function Amount(props: AmountProps) {
   let preview = '-';
   let full = '-';
 
-  if (amount !== undefined) {
+  if (amount !== undefined && amount !== null) {
     const formattedResult = formatAmount(amount, decimals);
     preview = formattedResult.preview;
     full = formattedResult.full;
