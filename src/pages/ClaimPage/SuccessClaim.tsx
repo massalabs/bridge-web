@@ -6,12 +6,12 @@ import { BurnRedeemOperation } from '@/store/operationStore';
 
 interface SuccessClaimProps {
   operation: BurnRedeemOperation;
-  symbol?: string;
-  decimals?: number;
+  symbol: string;
+  decimals: number;
 }
 
-export function SuccessClaim(args: SuccessClaimProps) {
-  const { operation, symbol, decimals } = args;
+export function SuccessClaim(props: SuccessClaimProps) {
+  const { operation, symbol, decimals } = props;
 
   if (!operation.outputAmount) return;
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(
