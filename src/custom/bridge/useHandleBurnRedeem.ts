@@ -84,6 +84,7 @@ export function useHandleBurnRedeem() {
     setBurn,
     burn,
     amount,
+    outputAmount,
     evmAddress,
     selectedToken,
     burnTxId,

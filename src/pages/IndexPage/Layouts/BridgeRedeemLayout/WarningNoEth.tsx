@@ -29,9 +29,7 @@ export function WarningNoEth() {
 
   const estimatedFees = estimateClaimFees();
   const fees =
-    estimatedFees > 0n
-      ? formatAmount(estimatedFees.toString(), 18).amountFormattedFull
-      : '';
+    estimatedFees > 0n ? formatAmount(estimatedFees.toString(), 18).full : '';
   return (
     <div className="flex items-center gap-2">
       <FiAlertTriangle className="text-s-warning" size={24} />

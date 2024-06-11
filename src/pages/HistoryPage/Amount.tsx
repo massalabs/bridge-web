@@ -9,19 +9,19 @@ interface AmountProps {
 export function Amount(props: AmountProps) {
   const { amount, symbol = '', decimals = 9 } = props;
 
-  let amountFormattedPreview = '-';
-  let amountFormattedFull = '-';
+  let preview = '-';
+  let full = '-';
 
   if (amount !== undefined) {
     const formattedResult = formatAmount(amount, decimals);
-    amountFormattedPreview = formattedResult.amountFormattedPreview;
-    amountFormattedFull = formattedResult.amountFormattedFull;
+    preview = formattedResult.preview;
+    full = formattedResult.full;
   }
 
   return (
     <div className="flex gap-2 items-center">
-      {amountFormattedPreview} {symbol}
-      <Tooltip body={`${amountFormattedFull} ${symbol}`} />
+      {preview} {symbol}
+      <Tooltip body={`${full} ${symbol}`} />
     </div>
   );
 }

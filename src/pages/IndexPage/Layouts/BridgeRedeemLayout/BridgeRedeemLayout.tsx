@@ -76,10 +76,8 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     }
 
     const amount = massaToEvm
-      ? formatAmount(token?.balance.toString(), token.decimals, '')
-          .amountFormattedFull
-      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '')
-          .amountFormattedFull;
+      ? formatAmount(token?.balance.toString(), token.decimals, '').full
+      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '').full;
 
     const x = new Big(amount);
     const y = new Big(percent);
@@ -93,9 +91,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       token?.decimals,
     );
 
-    setOutputAmount(
-      formatAmount(amountToReceive, token.decimals).amountFormattedFull,
-    );
+    setOutputAmount(formatAmount(amountToReceive, token.decimals).full);
   }
 
   function handleToggleLayout() {
@@ -131,12 +127,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       );
 
       // replace trailing zeros
-      setOutputAmount(
-        formatAmount(
-          amountToReceive,
-          token.decimals,
-        ).amountFormattedFull.replace(/\.?0+$/, ''),
-      );
+      setOutputAmount(formatAmount(amountToReceive, token.decimals).full);
     } else {
       setOutputAmount(amount);
     }

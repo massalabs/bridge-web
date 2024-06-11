@@ -29,24 +29,16 @@ export function InitClaim(props: InitClaimProps) {
 
   const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
 
-  // formats operation.amount to standard format
-  const formatedOperationAmount = formatAmount(
-    operation.amount,
-    decimals,
-  ).amountFormattedFull;
-
   // calculates amount received
   const receivedAmount = getAmountToReceive(
-    formatedOperationAmount,
+    formatAmount(operation.amount, decimals).full,
     serviceFee,
     decimals,
   );
 
   // format amount received
-  const {
-    amountFormattedPreview: amountRedeemedPreview,
-    amountFormattedFull: amountRedeemedFull,
-  } = formatAmount(receivedAmount, decimals);
+  const { preview: amountRedeemedPreview, full: amountRedeemedFull } =
+    formatAmount(receivedAmount, decimals);
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;

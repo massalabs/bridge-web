@@ -14,10 +14,7 @@ export function SuccessClaim(props: SuccessClaimProps) {
   const { operation, symbol, decimals } = props;
 
   if (!operation.outputAmount) return;
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
-    operation.outputAmount,
-    decimals,
-  );
+  const formatted = formatAmount(operation.outputAmount, decimals);
 
   return (
     <div
@@ -31,10 +28,10 @@ export function SuccessClaim(props: SuccessClaimProps) {
           {Intl.t('claim.success')}
           <strong>
             {' '}
-            {amountFormattedPreview} {symbol}{' '}
+            {formatted.preview} {symbol}{' '}
           </strong>
         </div>
-        <Tooltip body={amountFormattedFull + ' ' + symbol} />
+        <Tooltip body={formatted.full + ' ' + symbol} />
       </div>
       <div className="flex gap-4 items-center">
         <LinkExplorer

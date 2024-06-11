@@ -1,4 +1,4 @@
-import { formatStandard } from '@massalabs/react-ui-kit';
+import { formatAmount } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -30,10 +30,10 @@ export function SuccessLayout() {
 
   const massaToEvm = isMassaToEvm();
   const currentRedeemOperation = getCurrentRedeemOperation();
-  const amountFormatted = formatStandard(
+  const amountFormatted = formatAmount(
     parseUnits(outputAmount, token.decimals).toString(),
     token.decimals,
-  );
+  ).full;
 
   const massaChainAndNetwork = `${Intl.t('general.Massa')} ${Intl.t(
     `general.${massaNetwork}`,

@@ -1,4 +1,3 @@
-import { formatFTAmount } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { getAmountToReceive, serviceFeeToPercent } from '../../src/utils/utils';
 
