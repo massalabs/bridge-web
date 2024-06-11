@@ -111,7 +111,14 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   function changeAmount(amount: string) {
     if (!token) return;
-    if (!amount) setOutputAmount(undefined);
+    if (!amount) {
+      setInputAmount(undefined);
+      setOutputAmount(undefined);
+      return;
+    }
+
+    setInputAmount(amount);
+
     if (isMassaToEvm()) {
       const amountToReceive = getAmountToReceive(
         amount,
@@ -127,7 +134,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
         ).amountFormattedFull.replace(/\.?0+$/, ''),
       );
     } else {
-      setInputAmount(amount);
       setOutputAmount(amount);
     }
   }
