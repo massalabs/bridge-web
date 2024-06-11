@@ -61,7 +61,7 @@ export function useHandleBurnRedeem() {
         inputId: burnTxId as string,
         signatures: [],
         claimState: ClaimState.RETRIEVING_INFO,
-        amount: parseUnits(amount, selectedToken.decimals).toString(),
+        amount: amount.toString(),
         outputAmount: parseUnits(
           outputAmount,
           selectedToken.decimals,

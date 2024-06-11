@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { Args, EOperationStatus, MAX_GAS_CALL } from '@massalabs/massa-web3';
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { handleBurnError } from './handlers/handleTransactionErrors';
 import { ForwardingRequest } from '../serializable/request';
@@ -27,15 +26,13 @@ export function useBurn() {
     if (!massaClient) throw new Error('Massa client not found');
     if (!selectedToken) throw new Error('Token not selected');
 
-    const amt = parseUnits(amount, selectedToken.decimals);
-
     const tokenPair = new TokenPair(
       selectedToken.massaToken,
       selectedToken.evmToken,
       selectedToken.chainId,
     );
 
-    const request = new ForwardingRequest(amt, evmAddress, tokenPair);
+    const request = new ForwardingRequest(amount, evmAddress, tokenPair);
 
     try {
       const callData = {

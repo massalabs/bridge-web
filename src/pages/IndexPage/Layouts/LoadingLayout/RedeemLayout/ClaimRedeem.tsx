@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from 'react';
 import { Button, Tooltip } from '@massalabs/react-ui-kit';
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
@@ -114,7 +113,7 @@ export function ClaimRedeem() {
       claimState: ClaimState.AWAITING_SIGNATURE,
     });
     write({
-      amount: parseUnits(amount, selectedToken.decimals).toString(),
+      amount: amount.toString(),
       evmToken: selectedToken.evmToken as `0x${string}`,
       inputOpId: burnTxId,
       signatures: currentRedeemOperation.signatures,
