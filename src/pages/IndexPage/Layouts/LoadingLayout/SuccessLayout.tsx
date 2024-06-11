@@ -14,12 +14,8 @@ import {
 } from '@/store/store';
 
 export function SuccessLayout() {
-  const {
-    isMassaToEvm,
-    mintTxId,
-    getCurrentRedeemOperation,
-    inputAmount: amount,
-  } = useOperationStore();
+  const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, outputAmount } =
+    useOperationStore();
   const { isMainnet: getIsMainnet, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();
   const { chain } = useAccount();
@@ -30,12 +26,12 @@ export function SuccessLayout() {
 
   const { selectedToken: token } = useTokenStore();
 
-  if (!chain || !token || !amount) return null;
+  if (!chain || !token || !outputAmount) return null;
 
   const massaToEvm = isMassaToEvm();
   const currentRedeemOperation = getCurrentRedeemOperation();
   const amountFormatted = formatStandard(
-    parseUnits(amount, token.decimals).toString(),
+    parseUnits(outputAmount, token.decimals).toString(),
     token.decimals,
   );
 
