@@ -29,8 +29,8 @@ export function EVMHeader() {
   const isMainnet = getIsMainnet();
 
   function handleChangeEvmNetwork(selectedEvm: SupportedEvmBlockchain) {
-    setInputAmount('');
-    setOutputAmount('');
+    setInputAmount(undefined);
+    setOutputAmount(undefined);
     setSelectedEvm(selectedEvm);
     resetSelectedToken();
   }
