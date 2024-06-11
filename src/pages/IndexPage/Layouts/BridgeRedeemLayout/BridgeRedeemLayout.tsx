@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
@@ -45,10 +44,11 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const isMainnet = getIsMainnet();
   const {
     isMassaToEvm,
+    inputAmount,
     outputAmount,
     setSide,
-    setOutputAmount,
     setInputAmount,
+    setOutputAmount,
   } = useOperationStore();
   const { isFetching } = useAccountStore();
 
@@ -61,8 +61,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   const { handleSubmitBridge } = useSubmitBridge();
   const { handleSubmitRedeem } = useSubmitRedeem();
-
-  const [localInputAmount, setLocalInputAmount] = useState<string>();
 
   function handlePercent(percent: number) {
     if (!token || !isBalanceFetched) return;
@@ -85,8 +83,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     const y = new Big(percent);
     const res = x.times(y).round(token.decimals).toFixed();
 
-    setLocalInputAmount(res);
-    setInputAmount(parseUnits(res, token.decimals));
+    setInputAmount(res);
     const amountToReceive = getAmountToReceive(
       res,
       serviceFee,
@@ -99,7 +96,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   }
 
   function handleToggleLayout() {
-    setLocalInputAmount(undefined);
     setInputAmount(undefined);
     setOutputAmount(undefined);
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
@@ -115,14 +111,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   function changeAmount(amount: string) {
     if (!token) return;
-    if (!amount) {
-      setInputAmount(undefined);
-      setLocalInputAmount(undefined);
-      setOutputAmount(undefined);
-      return;
-    }
-    setInputAmount(parseUnits(amount, token.decimals));
-    setLocalInputAmount(amount);
+    if (!amount) setOutputAmount(undefined);
     if (isMassaToEvm()) {
       const amountToReceive = getAmountToReceive(
         amount,
@@ -138,6 +127,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
         ).amountFormattedFull.replace(/\.?0+$/, ''),
       );
     } else {
+      setInputAmount(amount);
       setOutputAmount(amount);
     }
   }
@@ -158,7 +148,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               <Money
                 disable={isFetching}
                 name="amount"
-                value={localInputAmount || ''}
+                value={inputAmount || ''}
                 onValueChange={(o) => changeAmount(o.value)}
                 placeholder={Intl.t('index.input.placeholder.amount')}
                 suffix=""
@@ -229,7 +219,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 {Intl.t('index.input.placeholder.receive')}
               </p>
               <ServiceFeeTooltip
-                inputAmount={localInputAmount}
+                inputAmount={inputAmount}
                 serviceFee={serviceFeeToPercent(serviceFee)}
                 outputAmount={outputAmount}
                 symbol={token?.symbol || ''}

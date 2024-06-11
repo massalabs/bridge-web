@@ -49,8 +49,8 @@ export interface OperationStoreState {
   claimTxId?: string;
   setClaimTxId(currentTxID?: string): void;
 
-  inputAmount?: bigint;
-  setInputAmount(amount?: bigint): void;
+  inputAmount?: string;
+  setInputAmount(amount?: string): void;
 
   outputAmount?: string;
   setOutputAmount(amount?: string): void;
@@ -147,7 +147,7 @@ export const useOperationStore = create<OperationStoreState>(
     },
 
     inputAmount: undefined,
-    setInputAmount(amount?: bigint) {
+    setInputAmount(amount?: string) {
       set({ inputAmount: amount });
     },
 
