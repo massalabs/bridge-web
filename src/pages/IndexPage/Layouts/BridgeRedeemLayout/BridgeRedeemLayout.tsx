@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
@@ -52,11 +52,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   } = useOperationStore();
   const { isFetching } = useAccountStore();
 
-  useEffect(() => {
-    console.log('inputAmount', inputAmount);
-    console.log('outputAmount', outputAmount);
-  }, [inputAmount, outputAmount]);
-
   const { selectedToken: token } = useTokenStore();
   const { serviceFee } = useServiceFee();
 
@@ -101,6 +96,8 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   }
 
   function handleToggleLayout() {
+    setInputAmount(undefined);
+    setOutputAmount(undefined);
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
 
@@ -114,26 +111,23 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   function changeAmount(amount: string) {
     if (!token) return;
-    setInputAmount(amount);
+    if (!amount) setOutputAmount(undefined);
     if (isMassaToEvm()) {
-      if (!amount) {
-        setOutputAmount(undefined);
-      } else {
-        const amountToReceive = getAmountToReceive(
-          amount,
-          serviceFee,
-          token.decimals,
-        );
+      const amountToReceive = getAmountToReceive(
+        amount,
+        serviceFee,
+        token.decimals,
+      );
 
-        // replace trailing zeros
-        setOutputAmount(
-          formatAmount(
-            amountToReceive,
-            token.decimals,
-          ).amountFormattedFull.replace(/\.?0+$/, ''),
-        );
-      }
+      // replace trailing zeros
+      setOutputAmount(
+        formatAmount(
+          amountToReceive,
+          token.decimals,
+        ).amountFormattedFull.replace(/\.?0+$/, ''),
+      );
     } else {
+      setInputAmount(amount);
       setOutputAmount(amount);
     }
   }
