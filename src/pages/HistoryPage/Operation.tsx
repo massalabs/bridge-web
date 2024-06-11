@@ -20,23 +20,23 @@ interface OperationProps {
 }
 
 export function Operation(props: OperationProps) {
-  const { operation: op } = props;
+  const { operation } = props;
 
   const { tokens } = useTokenStore();
 
   const memoizedStatusComponent = useMemo(() => {
-    return <ShowStatus status={op.historyStatus} />;
-  }, [op.historyStatus]);
+    return <ShowStatus status={operation.historyStatus} />;
+  }, [operation.historyStatus]);
 
   function getTokenInfo() {
-    const token = tokens.find((t) => t.evmToken === op.evmToken);
-    if (op.entity === Entities.ReleaseMAS) {
+    const token = tokens.find((t) => t.evmToken === operation.evmToken);
+    if (operation.entity === Entities.ReleaseMAS) {
       return {
         sentSymbol: wmasSymbol,
         receivedSymbol: MASSA_TOKEN,
         tokenDecimals: wmasDecimals,
       };
-    } else if (op.entity === Entities.Lock) {
+    } else if (operation.entity === Entities.Lock) {
       return {
         sentSymbol: token?.symbolEVM,
         receivedSymbol: token?.symbol,
@@ -54,31 +54,35 @@ export function Operation(props: OperationProps) {
 
   return (
     <div className={'grid grid-cols-7 mas-body2'}>
-      <Emitter operation={op} />
-      <Recipient operation={op} />
+      <Emitter operation={operation} />
+      <Recipient operation={operation} />
       <div className="flex items-center">
-        {formatApiCreationTime(op.createdAt)}
+        {formatApiCreationTime(operation.createdAt)}
       </div>
       {/* sent */}
-      <Amount amount={op.amount} symbol={sentSymbol} decimals={tokenDecimals} />
+      <Amount
+        amount={operation.amount}
+        symbol={sentSymbol}
+        decimals={tokenDecimals}
+      />
       {/* received */}
       <div className="flex flex-row items-center">
         <ServiceFeeTooltip
-          inputAmount={op.amount}
-          outputAmount={op.outputAmount}
-          serviceFee={retrievePercent(op.amount, op.outputAmount)}
+          inputAmount={operation.amount}
+          outputAmount={operation.outputAmount}
+          serviceFee={retrievePercent(operation.amount, operation.outputAmount)}
           symbol={sentSymbol || ''}
         />
         <Amount
-          amount={op.outputAmount}
+          amount={operation.outputAmount}
           symbol={receivedSymbol}
           decimals={tokenDecimals}
         />
       </div>
       {memoizedStatusComponent}
       <LinkExplorer
-        currentTxId={op.outputId}
-        chainId={op.evmChainId}
+        currentTxId={operation.outputId}
+        chainId={operation.evmChainId}
         size="md"
       />
     </div>
