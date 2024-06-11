@@ -12,6 +12,8 @@ interface SuccessClaimProps {
 
 export function SuccessClaim(args: SuccessClaimProps) {
   const { operation, symbol, decimals } = args;
+
+  if (!operation.outputAmount) return;
   let { amountFormattedFull, amountFormattedPreview } = formatAmount(
     operation.outputAmount,
     decimals,
