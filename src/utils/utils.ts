@@ -59,14 +59,13 @@ export function getMinConfirmation(
  */
 export function getAmountToReceive(
   amount: string | undefined,
-  serviceFee: bigint | undefined,
+  serviceFee: bigint,
   decimals: number | undefined,
   inFull = true,
 ): string {
   if (!amount || !decimals) {
     return '';
   }
-
   if (!serviceFee) {
     return amount;
   }
