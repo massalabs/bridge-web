@@ -21,6 +21,7 @@ export function useHandleBurnRedeem() {
     inputAmount: amount,
     setBurnState,
     claimTxId,
+    outputAmount,
   } = useOperationStore();
   const { connectedAccount } = useAccountStore();
   const { selectedToken } = useTokenStore();
@@ -42,7 +43,13 @@ export function useHandleBurnRedeem() {
       setCurrentIdToDisplay(burnTxId);
     }
     if (burn === Status.Success) return;
-    if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
+    if (
+      lambdaResponseIsEmpty ||
+      !amount ||
+      !outputAmount ||
+      !evmAddress ||
+      !selectedToken
+    )
       return;
     if (
       lambdaResponse[0].inputId === burnTxId &&
@@ -55,6 +62,10 @@ export function useHandleBurnRedeem() {
         signatures: [],
         claimState: ClaimState.RETRIEVING_INFO,
         amount: parseUnits(amount, selectedToken.decimals).toString(),
+        outputAmount: parseUnits(
+          outputAmount,
+          selectedToken.decimals,
+        ).toString(),
         recipient: evmAddress as string,
         evmToken: selectedToken.evmToken,
         massaToken: selectedToken.massaToken,
