@@ -81,7 +81,7 @@ export function serviceFeeToPercent(serviceFee: bigint): string {
 }
 
 export function retrievePercent(amountIn: string, amountOut?: string): string {
-  if (amountOut === undefined) {
+  if (amountOut === undefined || amountOut === null) {
     return '-%';
   }
   const amountInNum = BigInt(amountIn);
@@ -91,7 +91,7 @@ export function retrievePercent(amountIn: string, amountOut?: string): string {
   }
   const feeAmount = amountInNum - amountOutNum;
   if (feeAmount === 0n) {
-    return '100%';
+    return '0%';
   }
   const percent = (feeAmount * 10_000n) / amountInNum;
   return serviceFeeToPercent(percent);
