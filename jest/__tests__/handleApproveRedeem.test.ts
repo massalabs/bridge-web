@@ -11,7 +11,7 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should increaseAllowance and approve redeem', async () => {
-    const amount = U256_MAX.toString();
+    const amount = U256_MAX;
     const opId = 'opId';
     smartContractsMock.callSmartContract.mockResolvedValueOnce(opId);
     smartContractsMock.getOperationStatus.mockResolvedValueOnce(
@@ -37,7 +37,7 @@ describe('handleApproveRedeem', () => {
   });
 
   test('should not increaseAllowance and show success of redeem approval', async () => {
-    const amount = '1';
+    const amount = 1n;
 
     const result = await handleApproveRedeem(amount);
 
@@ -62,7 +62,7 @@ describe('handleApproveRedeem', () => {
       new Error('error'),
     );
 
-    const amount = U256_MAX.toString();
+    const amount = U256_MAX;
 
     const result = await handleApproveRedeem(amount);
 
@@ -96,7 +96,7 @@ describe('handleApproveRedeem', () => {
           ),
       );
 
-    const amount = U256_MAX.toString();
+    const amount = U256_MAX;
 
     const result = await handleApproveRedeem(amount);
 
@@ -124,7 +124,7 @@ describe('handleApproveRedeem', () => {
       .fn()
       .mockRejectedValueOnce(new Error(TIMEOUT));
 
-    const amount = U256_MAX.toString();
+    const amount = U256_MAX;
 
     const result = await handleApproveRedeem(amount);
 

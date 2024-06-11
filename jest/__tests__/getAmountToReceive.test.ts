@@ -11,7 +11,7 @@ describe('should calculate service fees', () => {
     const serviceFee = 10n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe(3996n);
+    expect(result).toBe('3996');
   });
 
   test('should return input amount when service fee is 0n', () => {
@@ -27,7 +27,7 @@ describe('should calculate service fees', () => {
     const serviceFee = 10n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe(99900000n);
+    expect(result).toBe('99900000');
   });
 
   test('should return 5618.897000 - 0.02% of service fee', () => {
@@ -35,7 +35,7 @@ describe('should calculate service fees', () => {
     const serviceFee = 20n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe(5607659206n);
+    expect(result).toBe('5607659206');
   });
 
   test('should return  101299120121.128893 - 0.02% of service fees', () => {
@@ -43,7 +43,7 @@ describe('should calculate service fees', () => {
     const serviceFee = 20n;
     const decimals = 6;
     const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe(101096521880886636n);
+    expect(result).toBe('101096521880886636');
   });
 
   test('should calculate 0.02% of MAX SAFE INT', () => {
@@ -56,7 +56,7 @@ describe('should calculate service fees', () => {
     const redeemFee = (_amount * serviceFee) / 10000n;
     const expectedReceivedAmount = _amount - redeemFee;
 
-    expect(result).toBe(expectedReceivedAmount);
+    expect(result).toBe(expectedReceivedAmount.toString());
   });
 
   describe('serviceFeeToPercent', () => {
