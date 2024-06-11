@@ -57,15 +57,12 @@ export function getMinConfirmation(
  * @returns bigint of the amount to be received
  */
 export function getAmountToReceive(
-  amount: string | undefined,
+  amount: string,
   serviceFee: bigint,
-  decimals: number | undefined,
-): bigint | string {
-  if (!amount || !decimals) {
-    return '';
-  }
+  decimals: number,
+): bigint {
   if (!serviceFee) {
-    return amount;
+    return parseUnits(amount, decimals);
   }
   const _amount = parseUnits(amount, decimals);
   const redeemFee = (_amount * serviceFee) / 10000n;

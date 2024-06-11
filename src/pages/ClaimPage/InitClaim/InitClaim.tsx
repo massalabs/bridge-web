@@ -1,9 +1,5 @@
 import { useEffect } from 'react';
-import {
-  Button,
-  formatAmount,
-  removeTrailingZeros,
-} from '@massalabs/react-ui-kit';
+import { Button, formatAmount, formatFTAmount } from '@massalabs/react-ui-kit';
 
 import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../../custom/bridge/handlers/handleTransactionErrors';
@@ -20,7 +16,7 @@ import { getAmountToReceive } from '@/utils/utils';
 interface InitClaimProps {
   operation: BurnRedeemOperation;
   symbol: string;
-  decimals?: number;
+  decimals: number;
   onUpdate: (op: Partial<BurnRedeemOperation>) => void;
 }
 
@@ -34,13 +30,21 @@ export function InitClaim(props: InitClaimProps) {
 
   const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
 
-  const amountRedeemedFull = getAmountToReceive(
-    formatAmount(operation.amount, decimals).amountFormattedFull,
+  const formatedOperationAmount = formatAmount(
+    operation.amount,
+    decimals,
+  ).amountFormattedFull;
+
+  const receivedAmount = getAmountToReceive(
+    formatedOperationAmount,
     serviceFee,
     decimals,
   );
 
-  const amountRedeemedPreview = removeTrailingZeros(amountRedeemedFull);
+  const {
+    amountFormattedPreview: amountRedeemedPreview,
+    amountFormattedFull: amountRedeemedFull,
+  } = formatFTAmount(receivedAmount, decimals);
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;

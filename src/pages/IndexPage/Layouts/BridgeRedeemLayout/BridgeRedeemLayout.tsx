@@ -5,6 +5,7 @@ import {
   Money,
   formatAmount,
   formatAmountToDisplay,
+  formatFTAmount,
   removeTrailingZeros,
 } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
@@ -58,6 +59,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     setOutputAmount,
   } = useOperationStore();
   const { isFetching } = useAccountStore();
+
   const { selectedToken: token } = useTokenStore();
   const { serviceFee } = useServiceFee();
 
@@ -90,8 +92,14 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     const res = x.times(y).round(token.decimals).toFixed();
 
     setInputAmount(res);
+    const amountToReceive = getAmountToReceive(
+      res,
+      serviceFee,
+      token?.decimals,
+    );
+
     setOutputAmount(
-      getAmountToReceive(res, serviceFee, token?.decimals, false),
+      formatFTAmount(amountToReceive, token.decimals).amountFormattedFull,
     );
   }
 
@@ -109,10 +117,25 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   if (isOperationPending) return <PendingOperationLayout />;
 
   function changeAmount(amount: string) {
+    if (!token) return;
     setInputAmount(amount);
-    setOutputAmount(
-      getAmountToReceive(amount, serviceFee, token?.decimals, false),
-    );
+    if (!amount) {
+      setOutputAmount('');
+    } else {
+      const amountToReceive = getAmountToReceive(
+        amount,
+        serviceFee,
+        token.decimals,
+      );
+
+      // replace trailing zeros
+      setOutputAmount(
+        formatFTAmount(
+          amountToReceive,
+          token.decimals,
+        ).amountFormattedFull.replace(/\.?0+$/, ''),
+      );
+    }
   }
 
   // Money component formats amount without decimals
@@ -207,7 +230,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                     .amountFormattedFull,
                 )}
                 serviceFee={serviceFeeToPercent(serviceFee)}
-                outputAmount={outputAmount || '0.00 '}
+                outputAmount={outputAmount}
                 symbol={token?.symbol || ''}
               />
             </div>
