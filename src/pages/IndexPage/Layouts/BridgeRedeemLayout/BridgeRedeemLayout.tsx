@@ -58,7 +58,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       );
       return;
     }
-    isMassaToEvm() ? handleSubmitRedeem() : handleSubmitBridge();
+    massaToEvm ? handleSubmitRedeem() : handleSubmitBridge();
     // sets inputAmount to undefined for next transfer
     setInputAmount(undefined);
   }

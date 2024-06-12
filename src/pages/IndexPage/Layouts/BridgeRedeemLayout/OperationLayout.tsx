@@ -61,11 +61,11 @@ export function OperationLayout() {
     const y = new Big(percent);
     const res = x.times(y).round(token.decimals).toFixed();
 
-    const _amount = parseUnits(res, token.decimals);
+    const newAmount = parseUnits(res, token.decimals);
 
-    setInputAmount(_amount);
+    setInputAmount(newAmount);
 
-    const amountToReceive = getAmountToReceive(_amount, serviceFee);
+    const amountToReceive = getAmountToReceive(newAmount, serviceFee);
     setOutputAmount(amountToReceive);
   }
 
@@ -85,14 +85,14 @@ export function OperationLayout() {
       return;
     }
 
-    const parsedInputAmount = parseUnits(amount, token.decimals);
-    setInputAmount(parsedInputAmount);
+    const newAmount = parseUnits(amount, token.decimals);
+    setInputAmount(newAmount);
 
-    if (isMassaToEvm()) {
-      const amountToReceive = getAmountToReceive(parsedInputAmount, serviceFee);
+    if (massaToEvm) {
+      const amountToReceive = getAmountToReceive(newAmount, serviceFee);
       setOutputAmount(amountToReceive);
     } else {
-      setOutputAmount(parsedInputAmount);
+      setOutputAmount(newAmount);
     }
   }
   return (
@@ -175,7 +175,7 @@ export function OperationLayout() {
         </Button>
       </div>
       <div className="mb-5 p-6 bg-primary rounded-2xl">
-        {isMassaToEvm() ? (
+        {massaToEvm ? (
           <div className="flex items-center mb-4 gap-2">
             <p className="mas-body">
               {Intl.t('index.input.placeholder.receive')}
