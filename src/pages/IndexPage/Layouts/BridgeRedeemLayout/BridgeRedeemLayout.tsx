@@ -119,15 +119,15 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       return;
     }
 
-    const _amount = parseUnits(amount, token.decimals);
-    setInputAmount(_amount);
+    const parsedInputAmount = parseUnits(amount, token.decimals);
+    setInputAmount(parsedInputAmount);
     setInputField(amount);
 
     if (isMassaToEvm()) {
-      const amountToReceive = getAmountToReceive(_amount, serviceFee);
+      const amountToReceive = getAmountToReceive(parsedInputAmount, serviceFee);
       setOutputAmount(amountToReceive);
     } else {
-      setOutputAmount(_amount);
+      setOutputAmount(parsedInputAmount);
     }
   }
 
