@@ -122,7 +122,7 @@ export function ClaimRedeem() {
     });
   }
 
-  const _outputAmount = formatAmount(
+  const formattedOutputAmount = formatAmount(
     outputAmount || '0',
     selectedToken?.decimals,
   ).full;
@@ -164,7 +164,7 @@ export function ClaimRedeem() {
             handleRedeem();
           }}
         >
-          {Intl.t('index.loading-box.claim')} {_outputAmount} {symbol}{' '}
+          {Intl.t('index.loading-box.claim')} {formattedOutputAmount} {symbol}{' '}
           <Tooltip
             customIconColor="neutral"
             customClass="z-10"

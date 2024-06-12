@@ -41,7 +41,10 @@ export function SuccessLayout() {
 
   const currentTxID = massaToEvm ? currentRedeemOperation?.outputId : mintTxId;
 
-  const _outputAmount = formatAmount(outputAmount || '0', token?.decimals).full;
+  const formattedOutputAmount = formatAmount(
+    outputAmount || '0',
+    token?.decimals,
+  ).full;
 
   const redirectToFaq = getFaqUrl();
 
@@ -60,7 +63,7 @@ export function SuccessLayout() {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
-          {_outputAmount} {massaToEvm ? token.symbol : token.symbolEVM}
+          {formattedOutputAmount} {massaToEvm ? token.symbol : token.symbolEVM}
         </div>
         <div>
           {Intl.t('index.loading-box.from-to', {
@@ -70,7 +73,7 @@ export function SuccessLayout() {
         </div>
         <div>
           {Intl.t('index.loading-box.received-tokens', {
-            amount: `${_outputAmount} ${
+            amount: `${formattedOutputAmount} ${
               massaToEvm ? token.symbolEVM : token.symbol
             }`,
           })}
