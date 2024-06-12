@@ -1,4 +1,3 @@
-import { parseUnits } from 'viem';
 import {
   MASSA_EXPLORER_URL,
   MASSA_EXPLO_URL,
@@ -56,17 +55,12 @@ export function getMinConfirmation(
  * @param inFull - boolean to return the full amount or amount with no trailing zeros
  * @returns bigint of the amount to be received
  */
-export function getAmountToReceive(
-  amount: string,
-  serviceFee: bigint,
-  decimals: number,
-): string {
+export function getAmountToReceive(amount: bigint, serviceFee: bigint): string {
   if (!serviceFee) {
-    return amount;
+    return amount.toString();
   }
-  const _amount = parseUnits(amount, decimals);
-  const redeemFee = (_amount * serviceFee) / 10000n;
-  return (_amount - redeemFee).toString();
+  const redeemFee = (amount * serviceFee) / 10000n;
+  return (amount - redeemFee).toString();
 }
 
 /**

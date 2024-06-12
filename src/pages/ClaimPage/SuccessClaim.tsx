@@ -17,14 +17,10 @@ export function SuccessClaim(props: SuccessClaimProps) {
 
   const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
   // format amount received from lambda without seperator
-  const operationAmount = formatAmount(operation.amount, decimals, '').full;
+  const operationAmount = BigInt(operation.amount);
 
   // calculates amount received
-  const receivedAmount = getAmountToReceive(
-    operationAmount,
-    serviceFee,
-    decimals,
-  );
+  const receivedAmount = getAmountToReceive(operationAmount, serviceFee);
 
   // format amount received
   const { preview, full } = formatAmount(receivedAmount, decimals);

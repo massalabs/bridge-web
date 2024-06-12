@@ -85,13 +85,11 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     const y = new Big(percent);
     const res = x.times(y).round(token.decimals).toFixed();
 
-    setInputAmount(parseUnits(res, token.decimals));
+    const _amount = parseUnits(res, token.decimals);
+
+    setInputAmount(_amount);
     setInputField(res);
-    const amountToReceive = getAmountToReceive(
-      res,
-      serviceFee,
-      token?.decimals,
-    );
+    const amountToReceive = getAmountToReceive(_amount, serviceFee);
     setOutputAmount(formatAmount(amountToReceive, token.decimals).full);
   }
 
@@ -121,18 +119,15 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       return;
     }
 
-    setInputAmount(parseUnits(amount, token.decimals));
+    const _amount = parseUnits(amount, token.decimals);
+    setInputAmount(_amount);
     setInputField(amount);
 
     if (isMassaToEvm()) {
-      const amountToReceive = getAmountToReceive(
-        amount,
-        serviceFee,
-        token.decimals,
-      );
+      const amountToReceive = getAmountToReceive(_amount, serviceFee);
       setOutputAmount(formatAmount(amountToReceive, token.decimals).full);
     } else {
-      setOutputAmount(amount);
+      setOutputAmount(formatAmount(_amount, token.decimals).full);
     }
   }
 

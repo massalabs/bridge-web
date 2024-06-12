@@ -45,7 +45,6 @@ export function useLock() {
     });
   }, [
     debouncedAmount,
-    selectedToken,
     connectedAccount,
     evmToken,
     bridgeContractAddr,
