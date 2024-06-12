@@ -74,15 +74,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
         className={`p-10 max-w-3xl w-full border border-tertiary rounded-2xl
             bg-secondary/50 text-f-primary mb-5 ${isBlurred}`}
       >
-        {() => {
-            const OperationSteps: Record<StepsEnum, ReactNode> = {
-    [StepsEnum.PENDING]: <OperationLayout />,
-    [StepsEnum.AWAITING_CONFIRMATION]: (
-      <ConfirmationLayout prevPage={prevPage} />
-    ),
-    return OperationSteps[step];
-  };
-        }
+        {OperationSteps[step]}
         <div className="mb-5">
           <Button disabled={isButtonDisabled} onClick={handleSubmission}>
             {cta}
