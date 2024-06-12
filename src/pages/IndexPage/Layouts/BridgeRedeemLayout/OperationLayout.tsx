@@ -20,8 +20,7 @@ import { getAmountToReceive, serviceFeeToPercent } from '@/utils/utils';
 export function OperationLayout() {
   const { setAmountError, amountError } = useGlobalStatusesStore();
 
-  const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
-    useEvmToken();
+  const { tokenBalance, isFetched: isBalanceFetched } = useEvmToken();
   const { isConnected: isEvmWalletConnected } = useAccount();
   const { isMainnet: getIsMainnet } = useBridgeModeStore();
   const isMainnet = getIsMainnet();
@@ -48,7 +47,7 @@ export function OperationLayout() {
 
     if (
       (massaToEvm && token.balance <= 0) ||
-      (!massaToEvm && _tokenBalanceEVM <= 0)
+      (!massaToEvm && tokenBalance <= 0)
     ) {
       setAmountError(Intl.t('index.approve.error.insufficient-funds'));
       return;
@@ -56,7 +55,7 @@ export function OperationLayout() {
 
     const amount = massaToEvm
       ? formatAmount(token?.balance.toString(), token.decimals, '').full
-      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '').full;
+      : formatAmount(tokenBalance.toString(), token.decimals, '').full;
 
     const x = new Big(amount);
     const y = new Big(percent);
