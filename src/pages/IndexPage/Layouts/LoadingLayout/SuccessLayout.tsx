@@ -1,3 +1,4 @@
+import { formatAmount } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { BridgeLinkExplorer } from './BridgeLinkExplorer';
@@ -40,6 +41,8 @@ export function SuccessLayout() {
 
   const currentTxID = massaToEvm ? currentRedeemOperation?.outputId : mintTxId;
 
+  const _outputAmount = formatAmount(outputAmount || '0', token?.decimals).full;
+
   const redirectToFaq = getFaqUrl();
 
   function getFaqUrl(): string {
@@ -57,7 +60,7 @@ export function SuccessLayout() {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
-          {outputAmount} {massaToEvm ? token.symbol : token.symbolEVM}
+          {_outputAmount} {massaToEvm ? token.symbol : token.symbolEVM}
         </div>
         <div>
           {Intl.t('index.loading-box.from-to', {
@@ -67,7 +70,7 @@ export function SuccessLayout() {
         </div>
         <div>
           {Intl.t('index.loading-box.received-tokens', {
-            amount: `${outputAmount} ${
+            amount: `${_outputAmount} ${
               massaToEvm ? token.symbolEVM : token.symbol
             }`,
           })}

@@ -11,7 +11,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('0.004', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe('3996');
+    expect(result).toBe(3996);
   });
 
   test('should return input amount when service fee is 0n', () => {
@@ -27,7 +27,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('100', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe('99900000');
+    expect(result).toBe(99900000);
   });
 
   test('should return 5618.897000 - 0.02% of service fee', () => {
@@ -35,7 +35,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('5618.897000', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe('5607659206');
+    expect(result).toBe(5607659206);
   });
 
   test('should return  101299120121.128893 - 0.02% of service fees', () => {
@@ -43,7 +43,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('101299120121.128893', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe('101096521880886636');
+    expect(result).toBe(101096521880886636);
   });
 
   test('should calculate 0.02% of MAX SAFE INT', () => {

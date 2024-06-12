@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { Button, Tooltip } from '@massalabs/react-ui-kit';
+import { Button, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { useAccount } from 'wagmi';
 import { handleEvmClaimBoxError } from '@/custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '@/custom/bridge/useClaim';
@@ -25,7 +25,7 @@ export function ClaimRedeem() {
   const { setClaim, setBox } = useGlobalStatusesStore();
   const {
     burnTxId,
-    inputAmount: amount,
+    inputAmount,
     getCurrentRedeemOperation,
     updateBurnRedeemOperationById,
     setClaimTxId,
@@ -98,7 +98,7 @@ export function ClaimRedeem() {
   // Event handler for claim button
   async function handleRedeem() {
     if (
-      !amount ||
+      !inputAmount ||
       !evmAddress ||
       !selectedToken ||
       !burnTxId ||
@@ -113,7 +113,7 @@ export function ClaimRedeem() {
       claimState: ClaimState.AWAITING_SIGNATURE,
     });
     write({
-      amount: amount.toString(),
+      amount: inputAmount.toString(),
       evmToken: selectedToken.evmToken as `0x${string}`,
       inputOpId: burnTxId,
       signatures: currentRedeemOperation.signatures,
@@ -121,6 +121,11 @@ export function ClaimRedeem() {
       chainId: currentRedeemOperation.evmChainId,
     });
   }
+
+  const _outputAmount = formatAmount(
+    outputAmount || '0',
+    selectedToken?.decimals,
+  ).full;
 
   const symbol = selectedToken?.symbolEVM as string;
   const selectedChain = chain?.name as string;
@@ -159,7 +164,7 @@ export function ClaimRedeem() {
             handleRedeem();
           }}
         >
-          {Intl.t('index.loading-box.claim')} {outputAmount} {symbol}{' '}
+          {Intl.t('index.loading-box.claim')} {_outputAmount} {symbol}{' '}
           <Tooltip
             customIconColor="neutral"
             customClass="z-10"

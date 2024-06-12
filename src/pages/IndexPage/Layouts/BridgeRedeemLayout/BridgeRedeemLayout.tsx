@@ -90,7 +90,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     setInputAmount(_amount);
     setInputField(res);
     const amountToReceive = getAmountToReceive(_amount, serviceFee);
-    setOutputAmount(formatAmount(amountToReceive, token.decimals).full);
+    setOutputAmount(amountToReceive);
   }
 
   function handleToggleLayout() {
@@ -125,9 +125,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
     if (isMassaToEvm()) {
       const amountToReceive = getAmountToReceive(_amount, serviceFee);
-      setOutputAmount(formatAmount(amountToReceive, token.decimals).full);
+      setOutputAmount(amountToReceive);
     } else {
-      setOutputAmount(formatAmount(_amount, token.decimals).full);
+      setOutputAmount(_amount);
     }
   }
 
@@ -222,7 +222,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                   formatAmount(inputAmount || '0', token?.decimals).full
                 }
                 serviceFee={serviceFeeToPercent(serviceFee)}
-                outputAmount={outputAmount}
+                outputAmount={
+                  formatAmount(outputAmount || '0', token?.decimals).full
+                }
                 symbol={token?.symbol || ''}
               />
             </div>
@@ -236,7 +238,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               <Money
                 placeholder={Intl.t('index.input.placeholder.receive')}
                 name="receive"
-                value={outputAmount || ''}
+                value={
+                  formatAmount(outputAmount || '0', token?.decimals).full || ''
+                }
                 suffix=""
                 decimalScale={token?.decimals}
                 error=""

@@ -55,12 +55,12 @@ export function getMinConfirmation(
  * @param inFull - boolean to return the full amount or amount with no trailing zeros
  * @returns bigint of the amount to be received
  */
-export function getAmountToReceive(amount: bigint, serviceFee: bigint): string {
+export function getAmountToReceive(amount: bigint, serviceFee: bigint): bigint {
   if (!serviceFee) {
-    return amount.toString();
+    return amount;
   }
   const redeemFee = (amount * serviceFee) / 10000n;
-  return (amount - redeemFee).toString();
+  return amount - redeemFee;
 }
 
 /**

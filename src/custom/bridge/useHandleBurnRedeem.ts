@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { useFetchBurnEvent } from './useFetchBurnEvent';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
@@ -63,10 +61,7 @@ export function useHandleBurnRedeem() {
         signatures: [],
         claimState: ClaimState.RETRIEVING_INFO,
         amount: inputAmount.toString(),
-        outputAmount: parseUnits(
-          outputAmount.replace(/,/g, ''),
-          selectedToken.decimals,
-        ).toString(),
+        outputAmount: outputAmount.toString(),
         recipient: evmAddress as string,
         evmToken: selectedToken.evmToken,
         massaToken: selectedToken.massaToken,

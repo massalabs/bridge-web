@@ -52,8 +52,8 @@ export interface OperationStoreState {
   inputAmount?: bigint;
   setInputAmount(amount?: bigint): void;
 
-  outputAmount?: string;
-  setOutputAmount(amount?: string): void;
+  outputAmount?: bigint;
+  setOutputAmount(amount?: bigint): void;
 
   resetTxIDs: () => void;
 }
@@ -152,7 +152,7 @@ export const useOperationStore = create<OperationStoreState>(
     },
 
     outputAmount: undefined,
-    setOutputAmount(amount?: string) {
+    setOutputAmount(amount?: bigint) {
       set({ outputAmount: amount });
     },
 
