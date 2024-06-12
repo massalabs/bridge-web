@@ -13,7 +13,8 @@
     "Mainnet": "Mainnet",
     "Unknown": "Unknown",
     "Invalid-chain": "Invalid chain",
-    "network": "Network"
+    "network": "Network",
+    "next": "next"
   },
   "navbar": {
     "history": "History",
