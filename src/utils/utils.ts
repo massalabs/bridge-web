@@ -1,5 +1,3 @@
-import { formatFTAmount, removeTrailingZeros } from '@massalabs/react-ui-kit';
-import { parseUnits } from 'viem';
 import {
   MASSA_EXPLORER_URL,
   MASSA_EXPLO_URL,
@@ -55,28 +53,14 @@ export function getMinConfirmation(
  * @param serviceFee - bigint service fee received from the read sc
  * @param decimals - IToken selectedToken.decimals
  * @param inFull - boolean to return the full amount or amount with no trailing zeros
- * @returns string
+ * @returns bigint of the amount to be received
  */
-export function getAmountToReceive(
-  amount: string | undefined,
-  serviceFee: bigint,
-  decimals: number | undefined,
-  inFull = true,
-): string {
-  if (!amount || !decimals) {
-    return '';
-  }
-  if (!serviceFee) {
+export function getAmountToReceive(amount: bigint, serviceFee: bigint): bigint {
+  if (serviceFee === 0n) {
     return amount;
   }
-  const _amount = parseUnits(amount, decimals);
-  const redeemFee = (_amount * serviceFee) / 10000n;
-  const receivedAmount = _amount - redeemFee;
-
-  const { amountFormattedFull } = formatFTAmount(receivedAmount, decimals);
-  return inFull
-    ? amountFormattedFull
-    : removeTrailingZeros(amountFormattedFull);
+  const redeemFee = (amount * serviceFee) / 10000n;
+  return amount - redeemFee;
 }
 
 /**
@@ -91,7 +75,7 @@ export function serviceFeeToPercent(serviceFee: bigint): string {
 }
 
 export function retrievePercent(amountIn: string, amountOut?: string): string {
-  if (amountOut === undefined) {
+  if (amountOut === undefined || amountOut === null) {
     return '-%';
   }
   const amountInNum = BigInt(amountIn);
@@ -101,7 +85,7 @@ export function retrievePercent(amountIn: string, amountOut?: string): string {
   }
   const feeAmount = amountInNum - amountOutNum;
   if (feeAmount === 0n) {
-    return '100%';
+    return '0%';
   }
   const percent = (feeAmount * 10_000n) / amountInNum;
   return serviceFeeToPercent(percent);

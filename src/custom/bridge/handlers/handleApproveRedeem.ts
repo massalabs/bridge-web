@@ -1,5 +1,4 @@
 import { toast } from '@massalabs/react-ui-kit';
-import { parseUnits } from 'viem';
 import { TIMEOUT, U256_MAX } from '../../../const/const';
 import Intl from '../../../i18n/i18n';
 import { useTokenStore } from '../../../store/tokenStore';
@@ -11,7 +10,7 @@ import {
   isRejectedByUser,
 } from '@/utils/error';
 
-export async function handleApproveRedeem(amount: string) {
+export async function handleApproveRedeem(amount: bigint) {
   const { setApprove, setBox } = useGlobalStatusesStore.getState();
   try {
     const { selectedToken } = useTokenStore.getState();
@@ -19,8 +18,7 @@ export async function handleApproveRedeem(amount: string) {
 
     if (!selectedToken) throw new Error('Token not selected');
 
-    const _amount = parseUnits(amount, selectedToken.decimals);
-    if (selectedToken.allowance < _amount) {
+    if (selectedToken.allowance < amount) {
       await increaseAllowance(U256_MAX);
     }
 

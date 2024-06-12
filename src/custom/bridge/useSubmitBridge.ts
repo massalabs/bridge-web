@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from 'react';
-import { parseUnits } from 'viem';
 import {
   handleEvmApproveError,
   handleLockError,
@@ -92,8 +91,8 @@ export function useSubmitBridge() {
 
     // Init bridge approval
     setApprove(Status.Loading);
-    let parsedAmount = parseUnits(amount, selectedToken.decimals);
-    const needApproval = allowanceEVM < parsedAmount;
+
+    const needApproval = allowanceEVM < amount;
 
     if (needApproval) {
       // writing bridge approval

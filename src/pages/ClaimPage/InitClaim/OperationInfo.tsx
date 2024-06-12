@@ -1,4 +1,4 @@
-import { formatAmount, getAssetIcons, Tooltip } from '@massalabs/react-ui-kit';
+import { getAssetIcons, Tooltip } from '@massalabs/react-ui-kit';
 
 import {
   getEvmChainName,
@@ -13,16 +13,18 @@ interface DisplayContentProps {
   claimState: ClaimState;
   operation: BurnRedeemOperation;
   symbol: string;
-  decimals?: number;
+  amountRedeemedPreview: string;
+  amountRedeemedFull: string;
 }
 
 export function OperationInfo(props: DisplayContentProps) {
-  const { claimState, operation, symbol, decimals } = props;
-
-  let { amountFormattedFull, amountFormattedPreview } = formatAmount(
-    operation.amount,
-    decimals,
-  );
+  const {
+    claimState,
+    operation,
+    symbol,
+    amountRedeemedFull,
+    amountRedeemedPreview,
+  } = props;
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
 
@@ -31,7 +33,7 @@ export function OperationInfo(props: DisplayContentProps) {
       <div>
         {Intl.t('claim.rejected-1')}
         <strong>
-          {amountFormattedPreview} {symbol}
+          {amountRedeemedPreview} {symbol}
         </strong>
         {Intl.t('claim.rejected-2')}
       </div>
@@ -41,8 +43,8 @@ export function OperationInfo(props: DisplayContentProps) {
       <div className="flex flex-col gap-4">
         <strong className="flex items-center gap-2">
           {getAssetIcons(symbol, operation.evmChainId, true, 26)}
-          {amountFormattedPreview} {symbol}
-          <Tooltip body={amountFormattedFull + ' ' + symbol} />
+          {amountRedeemedPreview} {symbol}
+          <Tooltip body={`${amountRedeemedFull} ${symbol}`} />
         </strong>
 
         <div className="flex items-center gap-2">

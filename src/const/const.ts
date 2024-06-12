@@ -111,3 +111,11 @@ export const WAIT_STATUS_TIMEOUT = 300_000;
 export const STATUS_POLL_INTERVAL_MS = 1000;
 
 export const TIMEOUT = 'timeout';
+
+// Service fees object to be used in claim page
+export const CHAIN_ID_TO_SERVICE_FEE: Record<number, bigint> = {
+  [mainnet.id]: 0n,
+  [sepolia.id]: 20n,
+  [bsc.id]: 0n,
+  [bscTestnet.id]: 10n,
+};

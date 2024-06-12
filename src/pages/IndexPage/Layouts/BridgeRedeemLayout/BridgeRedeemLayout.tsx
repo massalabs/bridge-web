@@ -1,14 +1,8 @@
 import { useState } from 'react';
-
-import {
-  Button,
-  Money,
-  formatAmount,
-  formatAmountToDisplay,
-  removeTrailingZeros,
-} from '@massalabs/react-ui-kit';
+import { Button, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { FiRepeat } from 'react-icons/fi';
+import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { boxLayout } from './BoxLayout';
 import { FeesEstimation } from './FeesEstimation';
@@ -57,7 +51,11 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     setInputAmount,
     setOutputAmount,
   } = useOperationStore();
+
+  const [inputField, setInputField] = useState<string>();
+
   const { isFetching } = useAccountStore();
+
   const { selectedToken: token } = useTokenStore();
   const { serviceFee } = useServiceFee();
 
@@ -80,28 +78,32 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     }
 
     const amount = massaToEvm
-      ? formatAmount(token?.balance.toString(), token.decimals, '')
-          .amountFormattedFull
-      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '')
-          .amountFormattedFull;
+      ? formatAmount(token?.balance.toString(), token.decimals, '').full
+      : formatAmount(_tokenBalanceEVM.toString(), token.decimals, '').full;
 
     const x = new Big(amount);
     const y = new Big(percent);
     const res = x.times(y).round(token.decimals).toFixed();
 
-    setInputAmount(res);
-    setOutputAmount(
-      getAmountToReceive(res, serviceFee, token?.decimals, false),
-    );
+    const _amount = parseUnits(res, token.decimals);
+
+    setInputAmount(_amount);
+    setInputField(res);
+    const amountToReceive = getAmountToReceive(_amount, serviceFee);
+    setOutputAmount(amountToReceive);
   }
 
   function handleToggleLayout() {
-    setInputAmount('');
+    setInputAmount(undefined);
+    setOutputAmount(undefined);
+    setInputField(undefined);
     setSide(massaToEvm ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
 
   function handleGenericSubmit() {
     isMassaToEvm() ? handleSubmitRedeem() : handleSubmitBridge();
+    // sets input field to undefined for next transfer
+    setInputField(undefined);
   }
 
   const isOperationPending = box !== Status.None;
@@ -109,10 +111,24 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   if (isOperationPending) return <PendingOperationLayout />;
 
   function changeAmount(amount: string) {
-    setInputAmount(amount);
-    setOutputAmount(
-      getAmountToReceive(amount, serviceFee, token?.decimals, false),
-    );
+    if (!token) return;
+    if (!amount) {
+      setInputAmount(undefined);
+      setInputField(undefined);
+      setOutputAmount(undefined);
+      return;
+    }
+
+    const parsedInputAmount = parseUnits(amount, token.decimals);
+    setInputAmount(parsedInputAmount);
+    setInputField(amount);
+
+    if (isMassaToEvm()) {
+      const amountToReceive = getAmountToReceive(parsedInputAmount, serviceFee);
+      setOutputAmount(amountToReceive);
+    } else {
+      setOutputAmount(parsedInputAmount);
+    }
   }
 
   // Money component formats amount without decimals
@@ -131,7 +147,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               <Money
                 disable={isFetching}
                 name="amount"
-                value={inputAmount}
+                value={inputField || ''}
                 onValueChange={(o) => changeAmount(o.value)}
                 placeholder={Intl.t('index.input.placeholder.amount')}
                 suffix=""
@@ -202,12 +218,13 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
                 {Intl.t('index.input.placeholder.receive')}
               </p>
               <ServiceFeeTooltip
-                inputAmount={removeTrailingZeros(
-                  formatAmountToDisplay(inputAmount, token?.decimals)
-                    .amountFormattedFull,
-                )}
+                inputAmount={
+                  formatAmount(inputAmount || '0', token?.decimals).full
+                }
                 serviceFee={serviceFeeToPercent(serviceFee)}
-                outputAmount={outputAmount || '0.00 '}
+                outputAmount={
+                  formatAmount(outputAmount || '0', token?.decimals).full
+                }
                 symbol={token?.symbol || ''}
               />
             </div>
@@ -221,7 +238,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
               <Money
                 placeholder={Intl.t('index.input.placeholder.receive')}
                 name="receive"
-                value={isMassaToEvm() ? outputAmount : inputAmount}
+                value={
+                  formatAmount(outputAmount || '0', token?.decimals).full || ''
+                }
                 suffix=""
                 decimalScale={token?.decimals}
                 error=""

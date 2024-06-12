@@ -1,35 +1,45 @@
 import { useEffect } from 'react';
 import { Button, formatAmount } from '@massalabs/react-ui-kit';
-
 import { useAccount, useSwitchChain } from 'wagmi';
 import { handleEvmClaimError } from '../../../custom/bridge/handlers/handleTransactionErrors';
 import { useClaim } from '../../../custom/bridge/useClaim';
+import { CHAIN_ID_TO_SERVICE_FEE } from '@/const';
 import Intl from '@/i18n/i18n';
 import { OperationInfo, PendingClaim } from '@/pages';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { BurnRedeemOperation } from '@/store/operationStore';
 import { ClaimState } from '@/utils/const';
 import { CustomError } from '@/utils/error';
+import { getAmountToReceive } from '@/utils/utils';
 
 interface InitClaimProps {
   operation: BurnRedeemOperation;
   symbol: string;
-  decimals?: number;
+  decimals: number;
   onUpdate: (op: Partial<BurnRedeemOperation>) => void;
 }
 
 export function InitClaim(props: InitClaimProps) {
-  const { operation, symbol, decimals, onUpdate } = props;
+  const { operation, symbol, onUpdate, decimals } = props;
   const { write, error, isSuccess, hash, isPending } = useClaim();
   const { setClaim } = useGlobalStatusesStore();
 
   const { chainId } = useAccount();
   const { switchChainAsync } = useSwitchChain();
 
+  const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
+
+  // calculates amount received
+  const receivedAmount = getAmountToReceive(
+    BigInt(operation.amount),
+    serviceFee,
+  );
+
+  // format amount received
+  const { preview, full } = formatAmount(receivedAmount, decimals);
+
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;
-
-  let { amountFormattedPreview } = formatAmount(operation.amount, decimals);
 
   useEffect(() => {
     if (isPending && claimState !== ClaimState.PENDING) {
@@ -108,11 +118,12 @@ export function InitClaim(props: InitClaimProps) {
         claimState={claimState}
         operation={operation}
         symbol={symbol}
-        decimals={decimals}
+        amountRedeemedPreview={preview}
+        amountRedeemedFull={full}
       />
       <div className="flex flex-col gap-2">
         <Button onClick={() => handleClaim()}>
-          {Intl.t('claim.claim')} {amountFormattedPreview} {symbol}
+          {Intl.t('claim.claim')} {preview} {symbol}
         </Button>
         {isChainIncompatible && (
           <div className="w-56">{Intl.t('claim.wrong-network')}</div>

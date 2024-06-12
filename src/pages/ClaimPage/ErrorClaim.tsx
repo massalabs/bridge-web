@@ -13,7 +13,6 @@ interface ErrorClaimProps {
 
 export function ErrorClaim(props: ErrorClaimProps) {
   const { operation, symbol, decimals, onReset } = props;
-  let { amountFormattedPreview } = formatAmount(operation.amount, decimals);
 
   const isAlreadyExecuted =
     operation.claimState === ClaimState.ALREADY_EXECUTED;
@@ -35,7 +34,7 @@ export function ErrorClaim(props: ErrorClaimProps) {
             {Intl.t('claim.error')}
             <strong>
               {' '}
-              {amountFormattedPreview} {symbol}{' '}
+              {formatAmount(operation.amount, decimals).preview} {symbol}{' '}
             </strong>
           </div>
           <Button variant="icon" customClass="text-s-warning" onClick={onReset}>

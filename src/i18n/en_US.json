@@ -406,6 +406,7 @@
   },
   "service-fee": {
     "sending": "Sending amount",
-    "fee": "Service fee ({fee})"
+    "fee": "Service fee ({fee})",
+    "fee-tooltip": "We deducted the service fee of {fee} from the amount sent."
   }
 }

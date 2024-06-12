@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
-import { Amount } from './Amount';
 import { Emitter } from './Emitter';
+import { Received } from './Received';
 import { Recipient } from './Recipient';
+import { Sent } from './Sent';
 import { ShowStatus } from './ShowStatus';
 import { wmasDecimals, wmasSymbol } from '../DaoPage';
 import { LinkExplorer } from '@/components/LinkExplorer';
-import { ServiceFeeTooltip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
 import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
-import { retrievePercent } from '@/utils/utils';
 
 function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
@@ -20,23 +19,23 @@ interface OperationProps {
 }
 
 export function Operation(props: OperationProps) {
-  const { operation: op } = props;
+  const { operation } = props;
 
   const { tokens } = useTokenStore();
 
   const memoizedStatusComponent = useMemo(() => {
-    return <ShowStatus status={op.historyStatus} />;
-  }, [op.historyStatus]);
+    return <ShowStatus status={operation.historyStatus} />;
+  }, [operation.historyStatus]);
 
   function getTokenInfo() {
-    const token = tokens.find((t) => t.evmToken === op.evmToken);
-    if (op.entity === Entities.ReleaseMAS) {
+    const token = tokens.find((t) => t.evmToken === operation.evmToken);
+    if (operation.entity === Entities.ReleaseMAS) {
       return {
         sentSymbol: wmasSymbol,
         receivedSymbol: MASSA_TOKEN,
         tokenDecimals: wmasDecimals,
       };
-    } else if (op.entity === Entities.Lock) {
+    } else if (operation.entity === Entities.Lock) {
       return {
         sentSymbol: token?.symbolEVM,
         receivedSymbol: token?.symbol,
@@ -54,31 +53,28 @@ export function Operation(props: OperationProps) {
 
   return (
     <div className={'grid grid-cols-7 mas-body2'}>
-      <Emitter operation={op} />
-      <Recipient operation={op} />
+      <Emitter operation={operation} />
+      <Recipient operation={operation} />
       <div className="flex items-center">
-        {formatApiCreationTime(op.createdAt)}
+        {formatApiCreationTime(operation.createdAt)}
       </div>
       {/* sent */}
-      <Amount amount={op.amount} symbol={sentSymbol} decimals={tokenDecimals} />
+      <Sent
+        amount={operation.amount}
+        symbol={sentSymbol}
+        decimals={tokenDecimals}
+      />
       {/* received */}
-      <div className="flex flex-row items-center">
-        <ServiceFeeTooltip
-          inputAmount={op.amount}
-          outputAmount={op.outputAmount}
-          serviceFee={retrievePercent(op.amount, op.outputAmount)}
-          symbol={sentSymbol || ''}
-        />
-        <Amount
-          amount={op.outputAmount}
-          symbol={receivedSymbol}
-          decimals={tokenDecimals}
-        />
-      </div>
+      <Received
+        inputAmount={operation.amount}
+        outputAmount={operation.outputAmount}
+        symbol={receivedSymbol}
+        decimals={tokenDecimals}
+      />
       {memoizedStatusComponent}
       <LinkExplorer
-        currentTxId={op.outputId}
-        chainId={op.evmChainId}
+        currentTxId={operation.outputId}
+        chainId={operation.evmChainId}
         size="md"
       />
     </div>
