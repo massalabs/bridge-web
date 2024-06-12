@@ -3,14 +3,14 @@ import { FiInfo } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
 
 export interface ServiceFeeTooltipProps {
-  inputAmount: string;
+  inputAmount?: string;
   outputAmount?: string;
   serviceFee: string;
   symbol: string;
 }
 
 export function ServiceFeeTooltip(props: ServiceFeeTooltipProps) {
-  const { inputAmount, outputAmount = '-', serviceFee, symbol } = props;
+  const { inputAmount = '-', outputAmount = '-', serviceFee, symbol } = props;
 
   function ServiceFeeTooltipBody() {
     return (

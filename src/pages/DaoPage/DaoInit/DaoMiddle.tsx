@@ -3,7 +3,7 @@ import {
   FetchingLine,
   MassaLogo,
   Tag,
-  formatAmountToDisplay,
+  formatAmount,
 } from '@massalabs/react-ui-kit';
 import { wmasDecimals } from '../DaoPage';
 import { MASSA_TOKEN } from '@/const';
@@ -16,7 +16,6 @@ interface DaoMiddleProps {
 
 export function DaoMiddle(props: DaoMiddleProps) {
   const { amount } = props;
-  const { amountFormattedFull } = formatAmountToDisplay(amount, wmasDecimals);
   const { connectedAccount } = useAccountStore();
   const massaAddress = connectedAccount?.address();
 
@@ -33,7 +32,7 @@ export function DaoMiddle(props: DaoMiddleProps) {
       <div className="flex justify-between w-full">
         <div>{Intl.t('dao-maker.receive')}</div>
         <div>
-          {amountFormattedFull} {MASSA_TOKEN}
+          {formatAmount(amount, wmasDecimals).full} {MASSA_TOKEN}
         </div>
       </div>
       <div className="flex justify-between w-full">

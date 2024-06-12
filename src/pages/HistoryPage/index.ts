@@ -5,3 +5,5 @@ export * from './Operation';
 export * from './ShowStatus';
 export * from './Operation';
 export * from './Recipient';
+export * from './Sent';
+export * from './Received';

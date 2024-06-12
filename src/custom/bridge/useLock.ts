@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
-import { parseUnits } from 'viem';
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -34,19 +33,18 @@ export function useLock() {
   const { data: hash, writeContract, error } = useWriteContract();
 
   const write = useCallback(() => {
-    const amountInBigInt = parseUnits(
-      debouncedAmount || '0',
-      selectedToken?.decimals || 18,
-    );
     writeContract({
       address: bridgeContractAddr,
       abi: bridgeVaultAbi,
       functionName: 'lock',
-      args: [amountInBigInt.toString(), connectedAccount?.address(), evmToken],
+      args: [
+        debouncedAmount?.toString(),
+        connectedAccount?.address(),
+        evmToken,
+      ],
     });
   }, [
     debouncedAmount,
-    selectedToken,
     connectedAccount,
     evmToken,
     bridgeContractAddr,

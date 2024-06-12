@@ -1,6 +1,5 @@
-import { formatStandard } from '@massalabs/react-ui-kit';
+import { formatAmount } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { BridgeLinkExplorer } from './BridgeLinkExplorer';
 import { addTokensBuildnetLink, addTokensMainnetLink } from '@/const/faq';
@@ -14,12 +13,8 @@ import {
 } from '@/store/store';
 
 export function SuccessLayout() {
-  const {
-    isMassaToEvm,
-    mintTxId,
-    getCurrentRedeemOperation,
-    inputAmount: amount,
-  } = useOperationStore();
+  const { isMassaToEvm, mintTxId, getCurrentRedeemOperation, outputAmount } =
+    useOperationStore();
   const { isMainnet: getIsMainnet, massaNetwork: getMassaNetwork } =
     useBridgeModeStore();
   const { chain } = useAccount();
@@ -30,14 +25,10 @@ export function SuccessLayout() {
 
   const { selectedToken: token } = useTokenStore();
 
-  if (!chain || !token || !amount) return null;
+  if (!chain || !token || !outputAmount) return null;
 
   const massaToEvm = isMassaToEvm();
   const currentRedeemOperation = getCurrentRedeemOperation();
-  const amountFormatted = formatStandard(
-    parseUnits(amount, token.decimals).toString(),
-    token.decimals,
-  );
 
   const massaChainAndNetwork = `${Intl.t('general.Massa')} ${Intl.t(
     `general.${massaNetwork}`,
@@ -49,6 +40,11 @@ export function SuccessLayout() {
   const recipient = massaToEvm ? evmChainAndNetwork : massaChainAndNetwork;
 
   const currentTxID = massaToEvm ? currentRedeemOperation?.outputId : mintTxId;
+
+  const formattedOutputAmount = formatAmount(
+    outputAmount || '0',
+    token?.decimals,
+  ).full;
 
   const redirectToFaq = getFaqUrl();
 
@@ -67,7 +63,7 @@ export function SuccessLayout() {
           ? Intl.t('index.loading-box.redeemed')
           : Intl.t('index.loading-box.bridged')}
         <div className="mas-subtitle p-2">
-          {amountFormatted} {massaToEvm ? token.symbol : token.symbolEVM}
+          {formattedOutputAmount} {massaToEvm ? token.symbol : token.symbolEVM}
         </div>
         <div>
           {Intl.t('index.loading-box.from-to', {
@@ -77,7 +73,7 @@ export function SuccessLayout() {
         </div>
         <div>
           {Intl.t('index.loading-box.received-tokens', {
-            amount: `${amountFormatted} ${
+            amount: `${formattedOutputAmount} ${
               massaToEvm ? token.symbolEVM : token.symbol
             }`,
           })}

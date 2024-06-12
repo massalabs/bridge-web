@@ -36,6 +36,7 @@
     "big.js": "^6.2.1",
     "currency.js": "^2.0.4",
     "delay": "^6.0.0",
+    "dot-object": "^2.1.5",
     "esbuild": "0.17.19",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.0",

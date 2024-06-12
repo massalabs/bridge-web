@@ -1,4 +1,3 @@
-import { formatFTAmount } from '@massalabs/react-ui-kit';
 import { parseUnits } from 'viem';
 import { getAmountToReceive, serviceFeeToPercent } from '../../src/utils/utils';
 
@@ -7,61 +6,55 @@ describe('should calculate service fees', () => {
     jest.clearAllMocks();
   });
 
-  test('should return 0.01% of 0.004', () => {
-    const amount = '0.004';
+  test('should return 0.004 - a 0.1% service fee', () => {
     const serviceFee = 10n;
     const decimals = 6;
-    const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('0.003996');
+    const amount = parseUnits('0.004', decimals);
+    const result = getAmountToReceive(amount, serviceFee);
+    expect(result).toBe(3996n);
   });
 
   test('should return input amount when service fee is 0n', () => {
-    const amount = '100';
     const serviceFee = 0n;
     const decimals = 6;
-    const result = getAmountToReceive(amount, serviceFee, decimals);
+    const amount = parseUnits('100', decimals);
+    const result = getAmountToReceive(amount, serviceFee);
     expect(result).toBe(amount);
   });
 
-  test('should return 0.01% of 100', () => {
-    const amount = '100';
+  test('should return 100 - 0.1% of service fees', () => {
     const serviceFee = 10n;
     const decimals = 6;
-    const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('99.900000');
+    const amount = parseUnits('100', decimals);
+    const result = getAmountToReceive(amount, serviceFee);
+    expect(result).toBe(99900000n);
   });
 
-  test('should return 0.02% of 5618.897000', () => {
-    const amount = '5618.897000';
+  test('should return 5618.897000 - 0.02% of service fee', () => {
     const serviceFee = 20n;
     const decimals = 6;
-    const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('5,607.659206');
+    const amount = parseUnits('5618.897000', decimals);
+    const result = getAmountToReceive(amount, serviceFee);
+    expect(result).toBe(5607659206n);
   });
 
-  test('should return 0.02% of 101299120121.128893', () => {
-    const amount = '101299120121.128893';
+  test('should return  101299120121.128893 - 0.02% of service fees', () => {
     const serviceFee = 20n;
     const decimals = 6;
-    const result = getAmountToReceive(amount, serviceFee, decimals);
-    expect(result).toBe('101,096,521,880.886640');
+    const amount = parseUnits('101299120121.128893', decimals);
+    const result = getAmountToReceive(amount, serviceFee);
+    expect(result).toBe(101096521880886636n);
   });
 
   test('should calculate 0.02% of MAX SAFE INT', () => {
-    const amount = Number.MAX_SAFE_INTEGER.toString();
     const serviceFee = 20n;
     const decimals = 18;
-    const result = getAmountToReceive(amount, serviceFee, decimals);
+    const amount = parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals);
+    const result = getAmountToReceive(amount, serviceFee);
 
-    const _amount = parseUnits(amount, decimals);
-    const redeemFee = (_amount * serviceFee) / 10000n;
-    const expectedReceivedAmount = _amount - redeemFee;
-    const expected = formatFTAmount(
-      expectedReceivedAmount,
-      decimals,
-    ).amountFormattedFull;
-
-    expect(result).toBe(expected);
+    const redeemFee = (amount * serviceFee) / 10000n;
+    const expectedReceivedAmount = amount - redeemFee;
+    expect(result).toBe(expectedReceivedAmount);
   });
 
   describe('serviceFeeToPercent', () => {

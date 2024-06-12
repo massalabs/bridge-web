@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { useFetchBurnEvent } from './useFetchBurnEvent';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
@@ -18,9 +17,10 @@ export function useHandleBurnRedeem() {
   const {
     burnTxId,
     appendBurnRedeemOperation,
-    inputAmount: amount,
+    inputAmount,
     setBurnState,
     claimTxId,
+    outputAmount,
   } = useOperationStore();
   const { connectedAccount } = useAccountStore();
   const { selectedToken } = useTokenStore();
@@ -42,7 +42,13 @@ export function useHandleBurnRedeem() {
       setCurrentIdToDisplay(burnTxId);
     }
     if (burn === Status.Success) return;
-    if (lambdaResponseIsEmpty || !amount || !evmAddress || !selectedToken)
+    if (
+      lambdaResponseIsEmpty ||
+      !inputAmount ||
+      !outputAmount ||
+      !evmAddress ||
+      !selectedToken
+    )
       return;
     if (
       lambdaResponse[0].inputId === burnTxId &&
@@ -54,7 +60,8 @@ export function useHandleBurnRedeem() {
         inputId: burnTxId as string,
         signatures: [],
         claimState: ClaimState.RETRIEVING_INFO,
-        amount: parseUnits(amount, selectedToken.decimals).toString(),
+        amount: inputAmount.toString(),
+        outputAmount: outputAmount.toString(),
         recipient: evmAddress as string,
         evmToken: selectedToken.evmToken,
         massaToken: selectedToken.massaToken,
@@ -72,7 +79,8 @@ export function useHandleBurnRedeem() {
     lambdaResponseIsEmpty,
     setBurn,
     burn,
-    amount,
+    inputAmount,
+    outputAmount,
     evmAddress,
     selectedToken,
     burnTxId,

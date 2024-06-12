@@ -7,7 +7,7 @@ import {
   formatAmount,
 } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
-import { parseUnits } from 'viem';
+
 import { useAccount, useBalance } from 'wagmi';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
 import { forwardBurnFees, increaseAllowanceFee, MASSA_TOKEN } from '@/const';
@@ -67,7 +67,7 @@ function EstimatedAmount(props: FeesEstimationProps) {
 }
 
 export function FeesEstimation() {
-  const { isMassaToEvm, inputAmount: amount } = useOperationStore();
+  const { isMassaToEvm, inputAmount } = useOperationStore();
   const massaToEvm = isMassaToEvm();
   const { selectedToken } = useTokenStore();
   const { massaNetwork: getMassaNetwork } = useBridgeModeStore();
@@ -97,14 +97,11 @@ export function FeesEstimation() {
   const isEvmNetworkValid = useEvmChainValidation(context);
 
   const estimateFeesMassa = useCallback(
-    async (selectedToken: IToken, amount?: string) => {
-      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
+    async (selectedToken: IToken, amount?: bigint) => {
+      if (!amount) return;
       let storageCostMAS = forwardBurnFees.coins;
       let feesCostMAS = forwardBurnFees.fee;
-      if (
-        selectedToken.allowance === 0n ||
-        selectedToken.allowance < amountInBigInt
-      ) {
+      if (selectedToken.allowance === 0n || selectedToken.allowance < amount) {
         storageCostMAS += await increaseAllowanceStorageCost();
         feesCostMAS += increaseAllowanceFee.fee;
       }
@@ -119,7 +116,7 @@ export function FeesEstimation() {
       if (fees === 0n) {
         setFeesETH(undefined);
       } else {
-        setFeesETH(formatAmount(fees.toString(), 18).amountFormattedFull);
+        setFeesETH(formatAmount(fees.toString(), 18).full);
       }
     };
 
@@ -129,7 +126,7 @@ export function FeesEstimation() {
         setStorageMAS(undefined);
         return;
       }
-      estimateFeesMassa(selectedToken, amount);
+      estimateFeesMassa(selectedToken, inputAmount);
       setFeesETHWithCheck(estimateClaimFees());
     } else {
       setFeesMAS(0n);
@@ -138,9 +135,10 @@ export function FeesEstimation() {
         setFeesETH(undefined);
         return;
       }
-      const amountInBigInt = parseUnits(amount || '0', selectedToken.decimals);
+
       const lockFees = estimateLockFees();
-      if (allowance < amountInBigInt) {
+      if (!inputAmount) return;
+      if (allowance < inputAmount) {
         const approveFees = estimateApproveFees();
         setFeesETHWithCheck(approveFees + lockFees);
       } else {
@@ -149,7 +147,7 @@ export function FeesEstimation() {
     }
   }, [
     massaToEvm,
-    amount,
+    inputAmount,
     allowance,
     estimateApproveFees,
     estimateLockFees,

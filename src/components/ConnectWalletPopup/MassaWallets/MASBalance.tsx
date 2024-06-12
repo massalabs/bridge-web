@@ -29,10 +29,7 @@ export function MASBalance() {
     });
   }, [connectedAccount, setBalance]);
 
-  const { amountFormattedFull } = formatAmount(
-    fromMAS(balance?.candidateBalance || '0').toString(),
-    9,
-  );
+  const { full } = formatAmount(fromMAS(balance?.candidateBalance || '0'), 9);
 
   const isBalanceZero = balance?.candidateBalance === '0';
 
@@ -46,7 +43,7 @@ export function MASBalance() {
         <FetchingLine />
       ) : (
         <>
-          {amountFormattedFull} {MASSA_TOKEN}
+          {full} {MASSA_TOKEN}
           {renderCustomTooltip && <CustomInfoTag />}
         </>
       )}

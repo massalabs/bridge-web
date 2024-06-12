@@ -21,7 +21,7 @@ export function TokenBalance() {
     symbol = selectedToken?.symbolEVM;
   }
 
-  let { amountFormattedPreview, amountFormattedFull } = formatAmount(
+  let { preview, full } = formatAmount(
     amount ? amount.toString() : '0',
     decimals,
   );
@@ -36,8 +36,8 @@ export function TokenBalance() {
           <FetchingLine />
         ) : (
           <div className="flex gap-2 items-center">
-            {amountFormattedPreview}
-            <Tooltip body={amountFormattedFull + ' ' + symbol ?? ''} />
+            {preview}
+            <Tooltip body={full + ' ' + symbol ?? ''} />
           </div>
         )}
       </div>
