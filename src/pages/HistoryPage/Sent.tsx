@@ -6,7 +6,7 @@ interface AmountProps {
   decimals?: number;
 }
 
-export function Amount(props: AmountProps) {
+export function Sent(props: AmountProps) {
   const { amount, symbol = '', decimals = 9 } = props;
 
   let preview = '-';

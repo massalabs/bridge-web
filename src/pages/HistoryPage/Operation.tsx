@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
-import { Amount } from './Amount';
 import { Emitter } from './Emitter';
+import { Received } from './Received';
 import { Recipient } from './Recipient';
+import { Sent } from './Sent';
 import { ShowStatus } from './ShowStatus';
 import { wmasDecimals, wmasSymbol } from '../DaoPage';
 import { LinkExplorer } from '@/components/LinkExplorer';
-import { ServiceFeeTooltip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
 import { MASSA_TOKEN } from '@/const';
 import { useTokenStore } from '@/store/tokenStore';
 import { Entities, OperationHistoryItem } from '@/utils/lambdaApi';
-import { retrievePercent } from '@/utils/utils';
 
 function formatApiCreationTime(inputTimestamp: string) {
   const dateObject = new Date(inputTimestamp);
@@ -60,25 +59,18 @@ export function Operation(props: OperationProps) {
         {formatApiCreationTime(operation.createdAt)}
       </div>
       {/* sent */}
-      <Amount
+      <Sent
         amount={operation.amount}
         symbol={sentSymbol}
         decimals={tokenDecimals}
       />
       {/* received */}
-      <div className="flex flex-row items-center">
-        <ServiceFeeTooltip
-          inputAmount={operation.amount}
-          outputAmount={operation.outputAmount}
-          serviceFee={retrievePercent(operation.amount, operation.outputAmount)}
-          symbol={sentSymbol || ''}
-        />
-        <Amount
-          amount={operation.outputAmount}
-          symbol={receivedSymbol}
-          decimals={tokenDecimals}
-        />
-      </div>
+      <Received
+        inputAmount={operation.amount}
+        outputAmount={operation.outputAmount}
+        symbol={receivedSymbol}
+        decimals={tokenDecimals}
+      />
       {memoizedStatusComponent}
       <LinkExplorer
         currentTxId={operation.outputId}
