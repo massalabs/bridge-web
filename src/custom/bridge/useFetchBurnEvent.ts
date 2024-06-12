@@ -5,12 +5,12 @@ import { useOperationStore } from '@/store/operationStore';
 import { useBridgeModeStore } from '@/store/store';
 import { lambdaEndpoint, OperationHistoryItem } from '@/utils/lambdaApi';
 
-export function useFetchBurnEvent() {
+export function useFetchBurnEvent(inputOpId?: string) {
   const { burnTxId } = useOperationStore();
   const { currentMode } = useBridgeModeStore();
   const [enableRefetch, setEnableRefetch] = useState<boolean>(true);
 
-  const queryParams = `?inputOpId=${burnTxId}`;
+  const queryParams = `?inputOpId=${inputOpId ?? burnTxId}`;
   const lambdaUrl = `${config[currentMode].lambdaUrl}${lambdaEndpoint}${queryParams}`;
 
   const { data } = useResource<OperationHistoryItem[]>(
