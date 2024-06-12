@@ -130,8 +130,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
         serviceFee,
         token.decimals,
       );
-
-      // replace trailing zeros
       setOutputAmount(formatAmount(amountToReceive, token.decimals).full);
     } else {
       setOutputAmount(amount);
