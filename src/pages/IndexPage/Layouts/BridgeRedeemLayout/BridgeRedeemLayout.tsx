@@ -11,7 +11,6 @@ import { PendingOperationLayout } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
 import { useGlobalStatusesStore, useOperationStore } from '@/store/store';
 
-
 interface BridgeRedeemProps {
   isBlurred: string;
   isButtonDisabled: boolean;
