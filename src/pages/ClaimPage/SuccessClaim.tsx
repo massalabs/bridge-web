@@ -1,8 +1,10 @@
 import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { SuccessCheck } from '@/components';
 import { LinkExplorer } from '@/components/LinkExplorer';
+import { CHAIN_ID_TO_SERVICE_FEE } from '@/const';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
+import { getAmountToReceive } from '@/utils/utils';
 
 interface SuccessClaimProps {
   operation: BurnRedeemOperation;
@@ -13,8 +15,19 @@ interface SuccessClaimProps {
 export function SuccessClaim(props: SuccessClaimProps) {
   const { operation, symbol, decimals } = props;
 
-  if (!operation.outputAmount) return;
-  const formatted = formatAmount(operation.outputAmount, decimals);
+  const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
+  // format amount received from lambda without seperator
+  const operationAmount = formatAmount(operation.amount, decimals, '').full;
+
+  // calculates amount received
+  const receivedAmount = getAmountToReceive(
+    operationAmount,
+    serviceFee,
+    decimals,
+  );
+
+  // format amount received
+  const { preview, full } = formatAmount(receivedAmount, decimals);
 
   return (
     <div
@@ -28,10 +41,10 @@ export function SuccessClaim(props: SuccessClaimProps) {
           {Intl.t('claim.success')}
           <strong>
             {' '}
-            {formatted.preview} {symbol}{' '}
+            {preview} {symbol}{' '}
           </strong>
         </div>
-        <Tooltip body={formatted.full + ' ' + symbol} />
+        <Tooltip body={full + ' ' + symbol} />
       </div>
       <div className="flex gap-4 items-center">
         <LinkExplorer

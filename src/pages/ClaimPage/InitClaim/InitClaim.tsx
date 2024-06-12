@@ -29,16 +29,18 @@ export function InitClaim(props: InitClaimProps) {
 
   const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
 
+  // format amount received from lambda without seperator
+  const operationAmount = formatAmount(operation.amount, decimals, '').full;
+
   // calculates amount received
   const receivedAmount = getAmountToReceive(
-    formatAmount(operation.amount, decimals).full,
+    operationAmount,
     serviceFee,
     decimals,
   );
 
   // format amount received
-  const { preview: amountRedeemedPreview, full: amountRedeemedFull } =
-    formatAmount(receivedAmount, decimals);
+  const { preview, full } = formatAmount(receivedAmount, decimals);
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;
@@ -120,12 +122,12 @@ export function InitClaim(props: InitClaimProps) {
         claimState={claimState}
         operation={operation}
         symbol={symbol}
-        amountRedeemedPreview={amountRedeemedPreview}
-        amountRedeemedFull={amountRedeemedFull}
+        amountRedeemedPreview={preview}
+        amountRedeemedFull={full}
       />
       <div className="flex flex-col gap-2">
         <Button onClick={() => handleClaim()}>
-          {Intl.t('claim.claim')} {amountRedeemedPreview} {symbol}
+          {Intl.t('claim.claim')} {preview} {symbol}
         </Button>
         {isChainIncompatible && (
           <div className="w-56">{Intl.t('claim.wrong-network')}</div>
