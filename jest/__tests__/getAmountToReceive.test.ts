@@ -11,7 +11,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('0.004', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe(3996);
+    expect(result).toBe(3996n);
   });
 
   test('should return input amount when service fee is 0n', () => {
@@ -19,7 +19,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('100', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe(amount.toString());
+    expect(result).toBe(amount);
   });
 
   test('should return 100 - 0.1% of service fees', () => {
@@ -27,7 +27,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('100', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe(99900000);
+    expect(result).toBe(99900000n);
   });
 
   test('should return 5618.897000 - 0.02% of service fee', () => {
@@ -35,7 +35,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('5618.897000', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe(5607659206);
+    expect(result).toBe(5607659206n);
   });
 
   test('should return  101299120121.128893 - 0.02% of service fees', () => {
@@ -43,7 +43,7 @@ describe('should calculate service fees', () => {
     const decimals = 6;
     const amount = parseUnits('101299120121.128893', decimals);
     const result = getAmountToReceive(amount, serviceFee);
-    expect(result).toBe(101096521880886636);
+    expect(result).toBe(101096521880886636n);
   });
 
   test('should calculate 0.02% of MAX SAFE INT', () => {
@@ -54,7 +54,7 @@ describe('should calculate service fees', () => {
 
     const redeemFee = (amount * serviceFee) / 10000n;
     const expectedReceivedAmount = amount - redeemFee;
-    expect(result).toBe(expectedReceivedAmount.toString());
+    expect(result).toBe(expectedReceivedAmount);
   });
 
   describe('serviceFeeToPercent', () => {

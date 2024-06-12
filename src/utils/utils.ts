@@ -56,7 +56,7 @@ export function getMinConfirmation(
  * @returns bigint of the amount to be received
  */
 export function getAmountToReceive(amount: bigint, serviceFee: bigint): bigint {
-  if (!serviceFee) {
+  if (serviceFee === 0n) {
     return amount;
   }
   const redeemFee = (amount * serviceFee) / 10000n;
