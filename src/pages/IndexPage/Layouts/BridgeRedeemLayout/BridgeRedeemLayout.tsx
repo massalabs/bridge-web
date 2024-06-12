@@ -16,6 +16,11 @@ interface BridgeRedeemProps {
   isButtonDisabled: boolean;
 }
 
+enum StepsEnum {
+  PENDING = 'pending',
+  AWAITING_CONFIRMATION = 'confirmation',
+}
+
 export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const { isBlurred, isButtonDisabled } = props;
 
@@ -27,11 +32,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   const { handleSubmitBridge } = useSubmitBridge();
   const { handleSubmitRedeem } = useSubmitRedeem();
-
-  enum StepsEnum {
-    PENDING = 'pending',
-    AWAITING_CONFIRMATION = 'confirmation',
-  }
 
   const [step, setStep] = useState<StepsEnum>(StepsEnum.PENDING);
   const [cta, setCTA] = useState<string>(Intl.t('general.next'));
