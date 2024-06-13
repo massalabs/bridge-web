@@ -1,5 +1,6 @@
 import { Button, formatAmount } from '@massalabs/react-ui-kit';
-import { FiArrowRight, FiX } from 'react-icons/fi';
+import { FiArrowLeft } from 'react-icons/fi';
+import { OperationDirection } from './OperationDirection';
 import { Hr } from '@/components/Hr';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/operationStore';
@@ -19,23 +20,21 @@ export function ConfirmationLayout(props: ConfirmationLayoutProps) {
 
   return (
     <div className="flex flex-col gap-4 mb-8">
-      <div className="flex items-center">
+      <div className="flex items-center mb-8">
         <Button
           customClass="absolute"
           onClick={() => prevPage()}
           variant={'icon'}
         >
-          <FiX />
+          <FiArrowLeft />
         </Button>
-        <div className="flex items-center w-full justify-center">
+        <div className="flex items-center w-full justify-center mas-subtitle">
           {massaToEvm
             ? Intl.t('confirmation.redeem')
             : Intl.t('confirmation.bridge')}
         </div>
       </div>
-      <div className="flex items-center gap-6 justify-center w-full">
-        MASSA <FiArrowRight /> EVM
-      </div>
+      <OperationDirection />
       <Hr />
       <div>
         <div className="flex flex-col gap-2">
