@@ -18,7 +18,7 @@ export function IndexPage() {
   const { box } = useGlobalStatusesStore();
   const { connectedAccount, isFetching } = useAccountStore();
 
-  const { isMassaToEvm } = useOperationStore();
+  const { isMassaToEvm, inputAmount } = useOperationStore();
 
   const massaToEvm = isMassaToEvm();
   const isValidEvmNetwork = useEvmChainValidation(ChainContext.BRIDGE);
@@ -31,6 +31,7 @@ export function IndexPage() {
     isFetching ||
     !connectedAccount ||
     !isValidEvmNetwork ||
+    !inputAmount ||
     !isValidMassaNetwork ||
     (BRIDGE_OFF && !massaToEvm) ||
     (REDEEM_OFF && massaToEvm);
