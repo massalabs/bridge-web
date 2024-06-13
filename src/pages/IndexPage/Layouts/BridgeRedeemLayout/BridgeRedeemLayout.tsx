@@ -1,5 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
+import { FiArrowRight } from 'react-icons/fi';
 import { FeesEstimation } from './FeesEstimation';
 import { OperationLayout } from './OperationLayout';
 import { ConfirmationLayout } from '../ConfirmationLayout/ConfirmationLayout';
@@ -76,7 +77,11 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       >
         {OperationSteps[step]}
         <div className="mb-5">
-          <Button disabled={isButtonDisabled} onClick={handleSubmission}>
+          <Button
+            disabled={isButtonDisabled}
+            posIcon={step === StepsEnum.PENDING && <FiArrowRight />}
+            onClick={handleSubmission}
+          >
             {cta}
           </Button>
         </div>
