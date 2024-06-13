@@ -6,8 +6,7 @@ import {
   MassaHeader,
   MassaMiddle,
 } from './BoxLayoutComponents/MassaBoxComponents';
-import { TokenBalance } from './BoxLayoutComponents/TokenBalance';
-import { TokenOptions } from './BoxLayoutComponents/TokenOptions';
+import { InputAmount } from '../../../../components/inputAmount/inputAmount';
 import { MassaBuildnetLogo } from '@/assets/MassaBuildnetLogo';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
@@ -15,8 +14,7 @@ import { SIDE } from '@/utils/const';
 interface Layout {
   header: ReactNode;
   wallet: ReactNode;
-  token: ReactNode;
-  balance: ReactNode;
+  input: ReactNode;
 }
 
 interface MassaIconsNetworks {
@@ -40,28 +38,24 @@ export function boxLayout(): BoxLayoutResult {
       up: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions nativeToken={false} />,
-        balance: <TokenBalance />,
+        input: <InputAmount isInput={true} massaTokens={false} />,
       },
       down: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions nativeToken={true} />,
-        balance: null,
+        input: <InputAmount isInput={false} massaTokens={true} />,
       },
     },
     [SIDE.EVM_TO_MASSA]: {
       up: {
         header: <EVMHeader />,
         wallet: <EVMMiddle />,
-        token: <TokenOptions nativeToken={true} />,
-        balance: <TokenBalance />,
+        input: <InputAmount isInput={true} massaTokens={true} />,
       },
       down: {
         header: <MassaHeader />,
         wallet: <MassaMiddle />,
-        token: <TokenOptions nativeToken={false} />,
-        balance: null,
+        input: <InputAmount isInput={false} massaTokens={false} />,
       },
     },
   };
