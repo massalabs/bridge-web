@@ -70,31 +70,28 @@ export function FeesEstimation() {
   const { isMassaToEvm, inputAmount } = useOperationStore();
   const massaToEvm = isMassaToEvm();
   const { selectedToken } = useTokenStore();
+  const { context } = useGetChainValidationContext();
+
+  const isEvmNetworkValid = useEvmChainValidation(context);
+  const { isConnected: isEvmWalletConnected, chain, address } = useAccount();
+  const { connectedAccount } = useAccountStore();
+
   const { massaNetwork: getMassaNetwork } = useBridgeModeStore();
-  const { isConnected: isEvmWalletConnected, chain } = useAccount();
 
   const massaNetwork = getMassaNetwork();
 
   const { allowance } = useEvmToken();
 
-  const [feesETH, setFeesETH] = useState<string>();
-  const [storageMAS, setStorageMAS] = useState<bigint>();
-  const [feesMAS, setFeesMAS] = useState<bigint>();
-
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
     useFeeEstimation();
-
-  const { address } = useAccount();
 
   const { data: balanceData } = useBalance({
     address,
   });
 
-  const { connectedAccount } = useAccountStore();
-
-  const { context } = useGetChainValidationContext();
-
-  const isEvmNetworkValid = useEvmChainValidation(context);
+  const [feesETH, setFeesETH] = useState<bigint>();
+  const [storageMAS, setStorageMAS] = useState<bigint>();
+  const [feesMAS, setFeesMAS] = useState<bigint>();
 
   const estimateFeesMassa = useCallback(
     async (selectedToken: IToken, amount?: bigint) => {
@@ -112,32 +109,29 @@ export function FeesEstimation() {
   );
 
   useEffect(() => {
+    if (!selectedToken || !inputAmount) {
+      setFeesMAS(undefined);
+      setStorageMAS(undefined);
+      setFeesETH(undefined);
+      return;
+    }
     const setFeesETHWithCheck = (fees: bigint) => {
       if (fees === 0n) {
         setFeesETH(undefined);
       } else {
-        setFeesETH(formatAmount(fees.toString(), 18).full);
+        setFeesETH(fees);
       }
     };
 
     if (massaToEvm) {
-      if (!selectedToken) {
-        setFeesMAS(undefined);
-        setStorageMAS(undefined);
-        return;
-      }
       estimateFeesMassa(selectedToken, inputAmount);
       setFeesETHWithCheck(estimateClaimFees());
     } else {
       setFeesMAS(0n);
       setStorageMAS(0n);
-      if (!selectedToken) {
-        setFeesETH(undefined);
-        return;
-      }
 
       const lockFees = estimateLockFees();
-      if (!inputAmount) return;
+
       if (allowance < inputAmount) {
         const approveFees = estimateApproveFees();
         setFeesETHWithCheck(approveFees + lockFees);
@@ -216,7 +210,10 @@ export function FeesEstimation() {
             name: chainName,
           })}
         </p>
-        <EstimatedAmount amount={feesETH} symbol={balanceData?.symbol} />
+        <EstimatedAmount
+          amount={formatAmount(feesETH || '', 18).full}
+          symbol={balanceData?.symbol}
+        />
       </div>
     </div>
   );
