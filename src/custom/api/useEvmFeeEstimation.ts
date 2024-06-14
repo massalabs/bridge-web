@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useEstimateFeesPerGas } from 'wagmi';
 
-const VITE_CLAIM_GAS_COST = import.meta.env.VITE_CLAIM_GAS_COST || '92261';
-const VITE_LOCK_GAS_COST = import.meta.env.VITE_LOCK_GAS_COST || '73185';
-const VITE_APPROVE_GAS_COST = import.meta.env.VITE_APPROVE_GAS_COST || '29823';
+const VITE_CLAIM_GAS_COST = import.meta.env.VITE_CLAIM_GAS_COST || '65484';
+const VITE_LOCK_GAS_COST = import.meta.env.VITE_LOCK_GAS_COST || '85676';
+const VITE_APPROVE_GAS_COST = import.meta.env.VITE_APPROVE_GAS_COST || '30846';
 
 export function useEvmFeeEstimation() {
   const { data, refetch } = useEstimateFeesPerGas();
@@ -20,12 +20,17 @@ export function useEvmFeeEstimation() {
     return () => clearInterval(intervalId);
   }, [data, refetch]);
 
-  const estimateClaimFees = () => BigInt(VITE_CLAIM_GAS_COST) * maxFeePerGas;
+  const estimateClaimFees = useCallback((): bigint => {
+    return BigInt(VITE_CLAIM_GAS_COST) * maxFeePerGas;
+  }, [VITE_CLAIM_GAS_COST, maxFeePerGas]);
 
-  const estimateLockFees = () => BigInt(VITE_LOCK_GAS_COST) * maxFeePerGas;
+  const estimateLockFees = useCallback((): bigint => {
+    return BigInt(VITE_LOCK_GAS_COST) * maxFeePerGas;
+  }, [VITE_LOCK_GAS_COST, maxFeePerGas]);
 
-  const estimateApproveFees = () =>
-    BigInt(VITE_APPROVE_GAS_COST) * maxFeePerGas;
+  const estimateApproveFees = useCallback((): bigint => {
+    return BigInt(VITE_APPROVE_GAS_COST) * maxFeePerGas;
+  }, [VITE_APPROVE_GAS_COST, maxFeePerGas]);
 
   return { estimateClaimFees, estimateLockFees, estimateApproveFees };
 }
