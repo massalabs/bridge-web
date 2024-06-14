@@ -1,17 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import { toMAS } from '@massalabs/massa-web3';
-import {
-  FetchingLine,
-  MassaLogo,
-  Tooltip,
-  formatAmount,
-} from '@massalabs/react-ui-kit';
+import { useCallback, useEffect } from 'react';
+import { MassaLogo, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 
 import { useAccount, useBalance } from 'wagmi';
-import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
-import { forwardBurnFees, increaseAllowanceFee, MASSA_TOKEN } from '@/const';
-import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
+import { EstimatedAmount } from '@/components/EstimatedAmount';
+import { MASSA_TOKEN } from '@/const';
+import { useEvmFeeEstimation } from '@/custom/api/useEvmFeeEstimation';
+import {
+  EstimateFeesMas,
+  useMassaFeeEstimation,
+} from '@/custom/api/useMassaFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import {
   useEvmChainValidation,
@@ -27,47 +25,17 @@ import {
   useTokenStore,
 } from '@/store/store';
 
-import { IToken } from '@/store/tokenStore';
-
-interface FeesEstimationProps {
-  amount?: string;
-  symbol?: string;
-}
-
-function EstimatedAmount(props: FeesEstimationProps) {
-  const { amount, symbol } = props;
-
-  const [fade, setFade] = useState(false);
-  const [amountCopy, setAmountCopy] = useState(amount);
-
-  useEffect(() => {
-    setFade(true);
-    const timeout = setTimeout(() => {
-      setFade(false);
-      setAmountCopy(amount);
-    }, 500);
-    return () => clearTimeout(timeout);
-  }, [amount]);
-
-  return (
-    <div className="flex items-center">
-      {amount && symbol ? (
-        <span
-          className={`transition-opacity duration-500 ease-in-out ${
-            fade ? 'opacity-0' : 'opacity-100'
-          }`}
-        >
-          {amountCopy} {symbol}
-        </span>
-      ) : (
-        <FetchingLine width={52} height={2} />
-      )}
-    </div>
-  );
-}
-
 export function FeesEstimation() {
-  const { isMassaToEvm, inputAmount } = useOperationStore();
+  const {
+    isMassaToEvm,
+    inputAmount,
+    setFeesMAS,
+    setStorageMAS,
+    feesMAS,
+    storageMAS,
+    feesETH,
+    setFeesETH,
+  } = useOperationStore();
   const massaToEvm = isMassaToEvm();
   const { selectedToken } = useTokenStore();
   const { context } = useGetChainValidationContext();
@@ -83,79 +51,73 @@ export function FeesEstimation() {
   const { allowance } = useEvmToken();
 
   const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
-    useFeeEstimation();
+    useEvmFeeEstimation();
 
   const { data: balanceData } = useBalance({
     address,
   });
 
-  const [feesETH, setFeesETH] = useState<bigint>();
-  const [storageMAS, setStorageMAS] = useState<bigint>();
-  const [feesMAS, setFeesMAS] = useState<bigint>();
+  const { estimateFeesMassa, formatTotalMasFees, formatTotalMasStorage } =
+    useMassaFeeEstimation();
 
-  const estimateFeesMassa = useCallback(
-    async (selectedToken: IToken, amount?: bigint) => {
-      if (!amount) return;
-      let storageCostMAS = forwardBurnFees.coins;
-      let feesCostMAS = forwardBurnFees.fee;
-      if (selectedToken.allowance === 0n || selectedToken.allowance < amount) {
-        storageCostMAS += await increaseAllowanceStorageCost();
-        feesCostMAS += increaseAllowanceFee.fee;
-      }
-      setStorageMAS(storageCostMAS);
-      setFeesMAS(feesCostMAS);
-    },
-    [],
-  );
+  const getMasFees = useCallback(async (): Promise<
+    EstimateFeesMas | undefined
+  > => {
+    try {
+      const res = await estimateFeesMassa();
+      return res;
+    } catch (e) {
+      console.error(e);
+    }
+  }, [estimateFeesMassa]);
+
+  const getEthRedeemFees = useCallback((): bigint => {
+    const claimFees = estimateClaimFees();
+    return claimFees;
+  }, [estimateClaimFees]);
+
+  const getEthBridgeFees = useCallback((): bigint | undefined => {
+    const lockFees = estimateLockFees();
+    if (!inputAmount) return undefined;
+    if (allowance < inputAmount) {
+      const approveFees = estimateApproveFees();
+      return approveFees + lockFees;
+    } else {
+      return lockFees;
+    }
+  }, [estimateLockFees, inputAmount, allowance, estimateApproveFees]);
 
   useEffect(() => {
-    if (!selectedToken || !inputAmount) {
-      setFeesMAS(undefined);
-      setStorageMAS(undefined);
-      setFeesETH(undefined);
-      return;
-    }
-    const setFeesETHWithCheck = (fees: bigint) => {
-      if (fees === 0n) {
-        setFeesETH(undefined);
-      } else {
-        setFeesETH(fees);
-      }
-    };
-
     if (massaToEvm) {
-      estimateFeesMassa(selectedToken, inputAmount);
-      setFeesETHWithCheck(estimateClaimFees());
+      getMasFees().then((res) => {
+        if (!res) return;
+        setFeesMAS(res.feesMAS);
+        setStorageMAS(res.storageMAS);
+      });
+      const ethRedeemFees = getEthRedeemFees();
+      setFeesETH(ethRedeemFees);
     } else {
       setFeesMAS(0n);
       setStorageMAS(0n);
-
-      const lockFees = estimateLockFees();
-
-      if (allowance < inputAmount) {
-        const approveFees = estimateApproveFees();
-        setFeesETHWithCheck(approveFees + lockFees);
-      } else {
-        setFeesETHWithCheck(lockFees);
-      }
+      const ethBridgeFees = getEthBridgeFees();
+      setFeesETH(ethBridgeFees);
     }
   }, [
+    getMasFees,
+    setFeesMAS,
+    setFeesETH,
+    setStorageMAS,
+    getEthBridgeFees,
+    getEthRedeemFees,
     massaToEvm,
-    inputAmount,
-    allowance,
-    estimateApproveFees,
-    estimateLockFees,
-    estimateClaimFees,
-    estimateFeesMassa,
-    selectedToken,
-    connectedAccount, // update the estimation when account change to take into account the new allowance
   ]);
 
   if (
     !selectedToken ||
     !isEvmWalletConnected ||
     !connectedAccount ||
-    !isEvmNetworkValid
+    !isEvmNetworkValid ||
+    !inputAmount
   )
     return null;
 
@@ -165,11 +127,6 @@ export function FeesEstimation() {
   const chainName = chain ? chain.name : Intl.t('general.Unknown');
 
   const chainId = chain ? chain.id : 0;
-
-  const storageMASString = storageMAS ? toMAS(storageMAS).toString() : '';
-  const totalCostMASString = toMAS(
-    (storageMAS ?? 0n) + (feesMAS ?? 0n),
-  ).toString();
 
   return (
     <div className="mas-body2">
@@ -195,14 +152,17 @@ export function FeesEstimation() {
           {storageMAS !== 0n && (
             <Tooltip
               body={Intl.t('index.fee-estimate.tooltip-massa', {
-                fees: storageMASString,
+                fees: formatTotalMasStorage(storageMAS),
               })}
             >
               <FiInfo size={18} />
             </Tooltip>
           )}
         </div>
-        <EstimatedAmount amount={totalCostMASString} symbol={MASSA_TOKEN} />
+        <EstimatedAmount
+          amount={formatTotalMasFees(feesMAS, storageMAS)}
+          symbol={MASSA_TOKEN}
+        />
       </div>
       <div className="flex items-center justify-between mb-2">
         <p>
