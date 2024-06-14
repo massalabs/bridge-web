@@ -27,7 +27,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   const { tokenBalance: _tokenBalanceEVM } = useEvmToken();
   const { box } = useGlobalStatusesStore();
-  const { isMassaToEvm, setAmounts } = useOperationStore();
+  const { isMassaToEvm } = useOperationStore();
 
   const massaToEvm = isMassaToEvm();
 
@@ -60,8 +60,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       return;
     }
     massaToEvm ? handleSubmitRedeem() : handleSubmitBridge();
-    // sets inputAmount to undefined for next transfer
-    setAmounts(undefined, undefined);
+    setStep(StepsEnum.PENDING);
   }
 
   const isOperationPending = box !== Status.None;

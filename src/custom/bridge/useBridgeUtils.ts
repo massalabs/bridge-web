@@ -5,14 +5,13 @@ import { BurnState } from '@/utils/const';
 
 export function useBridgeUtils() {
   const { reset } = useGlobalStatusesStore();
-  const { setAmounts, resetTxIDs, setBurnState } = useOperationStore();
+  const { setAmounts, resetOperationStore, setBurnState } = useOperationStore();
 
   const closeLoadingBox = useCallback(() => {
     reset();
-    setAmounts(undefined, undefined);
-    resetTxIDs();
+    resetOperationStore();
     setBurnState(BurnState.INIT);
-  }, [reset, setAmounts, resetTxIDs, setBurnState]);
+  }, [reset, setAmounts, resetOperationStore, setBurnState]);
 
   return { closeLoadingBox };
 }

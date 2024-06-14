@@ -42,14 +42,7 @@ export function useHandleBurnRedeem() {
       setCurrentIdToDisplay(burnTxId);
     }
     if (burn === Status.Success) return;
-    if (
-      lambdaResponseIsEmpty ||
-      !inputAmount ||
-      !outputAmount ||
-      !evmAddress ||
-      !selectedToken
-    )
-      return;
+    if (lambdaResponseIsEmpty) return;
     if (
       lambdaResponse[0].inputId === burnTxId &&
       lambdaResponse[0].serverState === BridgingState.processing
@@ -60,17 +53,17 @@ export function useHandleBurnRedeem() {
         inputId: burnTxId as string,
         signatures: [],
         claimState: ClaimState.RETRIEVING_INFO,
-        amount: inputAmount.toString(),
-        outputAmount: outputAmount.toString(),
+        amount: inputAmount?.toString() || '',
+        outputAmount: outputAmount?.toString(),
         recipient: evmAddress as string,
-        evmToken: selectedToken.evmToken,
-        massaToken: selectedToken.massaToken,
+        evmToken: selectedToken?.evmToken,
+        massaToken: selectedToken?.massaToken,
         emitter: connectedAccount?.address() || '',
         createdAt: new Date().toISOString(),
         serverState: BridgingState.new,
         historyStatus: HistoryOperationStatus.Unknown,
         entity: Entities.Burn,
-        evmChainId: selectedToken.chainId,
+        evmChainId: selectedToken?.chainId || 0,
         isConfirmed: false,
       });
     }

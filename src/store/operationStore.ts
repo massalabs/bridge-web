@@ -66,7 +66,7 @@ export interface OperationStoreState {
   storageMAS?: bigint;
   setStorageMAS(storage?: bigint): void;
 
-  resetTxIDs: () => void;
+  resetOperationStore: () => void;
 }
 
 export const useOperationStore = create<OperationStoreState>(
@@ -186,7 +186,7 @@ export const useOperationStore = create<OperationStoreState>(
       set({ storageMAS: storage });
     },
 
-    resetTxIDs: () => {
+    resetOperationStore: () => {
       set({
         lockTxId: undefined,
         mintTxId: undefined,
