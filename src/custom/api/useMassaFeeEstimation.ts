@@ -33,17 +33,16 @@ export function useMassaFeeEstimation() {
     }
     return { feesMAS, storageMAS };
   }, [inputAmount, selectedToken]);
+  return { estimateFeesMassa };
+}
 
-  function formatTotalMasFees(
-    feesCostMAS: bigint | undefined,
-    storageCostMAS: bigint | undefined,
-  ) {
-    return toMAS((storageCostMAS ?? 0n) + (feesCostMAS ?? 0n)).toString();
-  }
+export function formatTotalMasFees(
+  feesCostMAS: bigint | undefined,
+  storageCostMAS: bigint | undefined,
+) {
+  return toMAS((storageCostMAS ?? 0n) + (feesCostMAS ?? 0n)).toString();
+}
 
-  function formatTotalMasStorage(storageCostMAS: bigint | undefined) {
-    return storageCostMAS ? toMAS(storageCostMAS).toString() : '';
-  }
-
-  return { estimateFeesMassa, formatTotalMasFees, formatTotalMasStorage };
+export function formatTotalMasStorage(storageCostMAS: bigint | undefined) {
+  return storageCostMAS ? toMAS(storageCostMAS).toString() : '';
 }
