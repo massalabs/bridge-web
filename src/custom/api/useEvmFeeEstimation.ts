@@ -5,7 +5,7 @@ const VITE_CLAIM_GAS_COST = import.meta.env.VITE_CLAIM_GAS_COST || '92261';
 const VITE_LOCK_GAS_COST = import.meta.env.VITE_LOCK_GAS_COST || '73185';
 const VITE_APPROVE_GAS_COST = import.meta.env.VITE_APPROVE_GAS_COST || '29823';
 
-export function useFeeEstimation() {
+export function useEvmFeeEstimation() {
   const { data, refetch } = useEstimateFeesPerGas();
   const [maxFeePerGas, setMaxFeePerGas] = useState(0n);
 
