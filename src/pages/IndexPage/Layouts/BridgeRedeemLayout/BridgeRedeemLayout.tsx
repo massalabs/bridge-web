@@ -4,6 +4,7 @@ import { FiArrowRight } from 'react-icons/fi';
 import { FeesEstimation } from './FeesEstimation';
 import { OperationLayout } from './OperationLayout';
 import { ConfirmationLayout } from '../ConfirmationLayout/ConfirmationLayout';
+import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useSubmitBridge } from '@/custom/bridge/useSubmitBridge';
 import { useSubmitRedeem } from '@/custom/bridge/useSubmitRedeem';
@@ -25,7 +26,7 @@ enum StepsEnum {
 export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const { isBlurred, isButtonDisabled } = props;
 
-  const { tokenBalance: _tokenBalanceEVM } = useEvmToken();
+  const { tokenBalance } = useEvmToken();
   const { box } = useGlobalStatusesStore();
   const { isMassaToEvm } = useOperationStore();
 
@@ -51,6 +52,8 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   function handleSubmission() {
     if (step === StepsEnum.PENDING) {
+      const isValid = validate(tokenBalance);
+      if (!isValid) return;
       setStep(StepsEnum.AWAITING_CONFIRMATION);
       setCTA(
         massaToEvm
