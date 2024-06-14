@@ -22,15 +22,15 @@ export function useEvmFeeEstimation() {
 
   const estimateClaimFees = useCallback((): bigint => {
     return BigInt(VITE_CLAIM_GAS_COST) * maxFeePerGas;
-  }, [VITE_CLAIM_GAS_COST, maxFeePerGas]);
+  }, [maxFeePerGas]);
 
   const estimateLockFees = useCallback((): bigint => {
     return BigInt(VITE_LOCK_GAS_COST) * maxFeePerGas;
-  }, [VITE_LOCK_GAS_COST, maxFeePerGas]);
+  }, [maxFeePerGas]);
 
   const estimateApproveFees = useCallback((): bigint => {
     return BigInt(VITE_APPROVE_GAS_COST) * maxFeePerGas;
-  }, [VITE_APPROVE_GAS_COST, maxFeePerGas]);
+  }, [maxFeePerGas]);
 
   return { estimateClaimFees, estimateLockFees, estimateApproveFees };
 }
