@@ -8,6 +8,8 @@ import { MASSA_TOKEN } from '@/const';
 import { useEvmFeeEstimation } from '@/custom/api/useEvmFeeEstimation';
 import {
   EstimateFeesMas,
+  formatTotalMasFees,
+  formatTotalMasStorage,
   useMassaFeeEstimation,
 } from '@/custom/api/useMassaFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
@@ -57,8 +59,7 @@ export function FeesEstimation() {
     address,
   });
 
-  const { estimateFeesMassa, formatTotalMasFees, formatTotalMasStorage } =
-    useMassaFeeEstimation();
+  const { estimateFeesMassa } = useMassaFeeEstimation();
 
   const getMasFees = useCallback(async (): Promise<
     EstimateFeesMas | undefined

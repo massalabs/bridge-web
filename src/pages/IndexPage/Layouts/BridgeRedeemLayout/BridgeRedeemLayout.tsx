@@ -1,7 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
 import { FiArrowRight } from 'react-icons/fi';
-import { FeesEstimation } from './FeesEstimation';
 import { OperationLayout } from './OperationLayout';
 import { ConfirmationLayout } from '../ConfirmationLayout/ConfirmationLayout';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
@@ -74,7 +73,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   return (
     <>
       <div
-        className={`p-10 max-w-3xl w-full border border-tertiary rounded-2xl
+        className={`flex flex-col gap-2 p-10 max-w-3xl w-full border border-tertiary rounded-2xl
             bg-secondary/50 text-f-primary mb-5 ${isBlurred}`}
       >
         {OperationSteps[step]}
@@ -87,7 +86,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
             {cta}
           </Button>
         </div>
-        <FeesEstimation />
       </div>
     </>
   );
