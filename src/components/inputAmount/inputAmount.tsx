@@ -2,7 +2,9 @@ import { Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { parseUnits } from 'viem';
 import useEvmToken from '../../custom/bridge/useEvmToken';
+import { useMassaNetworkValidation } from '../../custom/bridge/useNetworkValidation';
 import { useServiceFee } from '../../custom/bridge/useServiceFee';
+import { useUsdValue } from '../../custom/usdPrice/useFetchPrice';
 import { TokenBalance, TokenOptions } from '../../pages';
 import { useGlobalStatusesStore } from '../../store/globalStatusesStore';
 import { useOperationStore } from '../../store/operationStore';
@@ -25,9 +27,16 @@ export const InputAmount = (props: InputAmountProps) => {
   const { tokenBalance: _tokenBalanceEVM, isFetched: isBalanceFetched } =
     useEvmToken();
   const { setAmountError, amountError } = useGlobalStatusesStore();
+  // Price are fetched onchain from Dusa. If massa network is not valid, we don't show the price
+  const isValidMassaNetwork = useMassaNetworkValidation();
 
   const massaToEvm = isMassaToEvm();
   const decimals = selectedToken?.decimals;
+
+  const { usdValue } = useUsdValue(
+    isInput ? inputAmount : outputAmount,
+    selectedToken,
+  );
 
   function changeAmount(amount: string) {
     if (!isInput || !selectedToken) {
@@ -95,7 +104,9 @@ export const InputAmount = (props: InputAmountProps) => {
               error={isInput ? amountError : ''}
             />
           </div>
-          {!!inputAmount && <div className="pl-4 mb-1">USD value</div>}
+          {isValidMassaNetwork && !!inputAmount && !!usdValue && (
+            <div className="pl-4 mb-1">USD {usdValue}</div>
+          )}
         </div>
         <div className="flex flex-col items-center gap-2 mt-2">
           <div className="w-full">
