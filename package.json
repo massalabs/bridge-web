@@ -26,6 +26,7 @@
     "postcy:component-ci": "mv -n cypress-visual-report/cypress-visual-report.html cypress-visual-report/cypress-visual-report-component.html"
   },
   "dependencies": {
+    "@dusalabs/sdk": "^0.5.28",
     "@massalabs/massa-web3": "^4.0.2-dev",
     "@massalabs/react-ui-kit": "^0.0.5-dev",
     "@massalabs/wallet-provider": "^2.0.1-dev",

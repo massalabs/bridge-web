@@ -38,7 +38,7 @@ export function MassaHeader() {
       </div>
       <div className="flex items-center gap-3">
         <p className="mas-body">
-          {isConnected && currentProvider
+          {isConnected
             ? Intl.t(`connect-wallet.${currentProvider.name()}`)
             : Intl.t('connect-wallet.card-destination.to')}
         </p>
