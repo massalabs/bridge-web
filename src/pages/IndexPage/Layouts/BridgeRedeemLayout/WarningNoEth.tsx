@@ -1,7 +1,7 @@
 import { formatAmount } from '@massalabs/react-ui-kit';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { useAccount, useBalance } from 'wagmi';
-import { useFeeEstimation } from '@/custom/api/useFeeEstimation';
+import { useEvmFeeEstimation } from '@/custom/api/useEvmFeeEstimation';
 import {
   useEvmChainValidation,
   useGetChainValidationContext,
@@ -13,7 +13,7 @@ import { SIDE } from '@/utils/const';
 export function WarningNoEth() {
   const { side } = useOperationStore();
   const { address, chain } = useAccount();
-  const { estimateClaimFees } = useFeeEstimation();
+  const { estimateClaimFees } = useEvmFeeEstimation();
 
   const { context } = useGetChainValidationContext();
 

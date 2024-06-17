@@ -409,5 +409,15 @@
     "sending": "Sending amount",
     "fee": "Service fee ({fee})",
     "fee-tooltip": "We deducted the service fee of {fee} from the amount sent."
+  },
+  "confirmation": {
+    "bridge": "Bridge confirmation",
+    "redeem": "Redeem confirmation",
+    "sending": "Sending amount:",
+    "token-address": "Token address:",
+    "fees": "fees",
+    "service-fee": "Service fee",
+    "transfer-time": "Transfer time",
+    "minutes": "a few minutes"
   }
 }

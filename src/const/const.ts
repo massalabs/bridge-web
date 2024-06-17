@@ -85,16 +85,6 @@ export const config = {
 
 export const AVAILABLE_MODES = [BridgeMode.mainnet, BridgeMode.testnet];
 
-// Transaction fees
-export const forwardBurnFees = {
-  fee: 10_000_000n,
-  coins: 0n,
-};
-
-export const increaseAllowanceFee = {
-  fee: 10_000_000n,
-};
-
 export enum SupportedTokens {
   tDai = 'tDAI',
   WETH = 'WETH',
