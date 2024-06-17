@@ -35,11 +35,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const { handleSubmitRedeem } = useSubmitRedeem();
 
   const [step, setStep] = useState<StepsEnum>(StepsEnum.PENDING);
-  const [cta, setCTA] = useState<string>(Intl.t('general.next'));
 
   function prevPage() {
     setStep(StepsEnum.PENDING);
-    setCTA(Intl.t('general.next'));
   }
 
   const OperationSteps: Record<StepsEnum, ReactNode> = {
@@ -54,11 +52,6 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
       const isValid = validate(tokenBalance);
       if (!isValid) return;
       setStep(StepsEnum.AWAITING_CONFIRMATION);
-      setCTA(
-        massaToEvm
-          ? Intl.t('index.button.redeem')
-          : Intl.t('index.button.bridge'),
-      );
       return;
     }
     massaToEvm ? handleSubmitRedeem() : handleSubmitBridge();
@@ -83,7 +76,11 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
             posIcon={step === StepsEnum.PENDING && <FiArrowRight />}
             onClick={handleSubmission}
           >
-            {cta}
+            {step === StepsEnum.PENDING
+              ? Intl.t('general.next')
+              : massaToEvm
+              ? Intl.t('index.button.redeem')
+              : Intl.t('index.button.bridge')}
           </Button>
         </div>
       </div>
