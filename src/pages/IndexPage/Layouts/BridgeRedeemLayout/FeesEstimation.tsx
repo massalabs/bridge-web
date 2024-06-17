@@ -8,8 +8,7 @@ import { MASSA_TOKEN } from '@/const';
 import { useEvmFeeEstimation } from '@/custom/api/useEvmFeeEstimation';
 import {
   EstimateFeesMas,
-  formatTotalMasFees,
-  formatTotalMasStorage,
+  addFeesAndStorageCost,
   useMassaFeeEstimation,
 } from '@/custom/api/useMassaFeeEstimation';
 import useEvmToken from '@/custom/bridge/useEvmToken';
@@ -153,7 +152,7 @@ export function FeesEstimation() {
           {storageMAS !== 0n && (
             <Tooltip
               body={Intl.t('index.fee-estimate.tooltip-massa', {
-                fees: formatTotalMasStorage(storageMAS),
+                fees: formatAmount(storageMAS || 0n).full,
               })}
             >
               <FiInfo size={18} />
@@ -161,7 +160,7 @@ export function FeesEstimation() {
           )}
         </div>
         <EstimatedAmount
-          amount={formatTotalMasFees(feesMAS, storageMAS)}
+          amount={formatAmount(addFeesAndStorageCost(feesMAS, storageMAS)).full}
           symbol={MASSA_TOKEN}
         />
       </div>

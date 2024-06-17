@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { toMAS } from '@massalabs/massa-web3';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
 import { forwardBurnFees, increaseAllowanceFee } from '@/const';
 import { useOperationStore } from '@/store/operationStore';
@@ -36,13 +35,9 @@ export function useMassaFeeEstimation() {
   return { estimateFeesMassa };
 }
 
-export function formatTotalMasFees(
+export function addFeesAndStorageCost(
   feesCostMAS: bigint | undefined,
   storageCostMAS: bigint | undefined,
 ) {
-  return toMAS((storageCostMAS ?? 0n) + (feesCostMAS ?? 0n)).toString();
-}
-
-export function formatTotalMasStorage(storageCostMAS: bigint | undefined) {
-  return storageCostMAS ? toMAS(storageCostMAS).toString() : '';
+  return (storageCostMAS ?? 0n) + (feesCostMAS ?? 0n);
 }
