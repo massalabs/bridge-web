@@ -1,7 +1,8 @@
 import { formatAmount } from '@massalabs/react-ui-kit';
 import { useAccount, useBalance } from 'wagmi';
 import { EstimatedAmount } from '@/components/EstimatedAmount';
-import { formatTotalMasFees } from '@/custom/api/useMassaFeeEstimation';
+
+import { addFeesAndStorageCost } from '@/custom/api/useMassaFeeEstimation';
 import { useServiceFee } from '@/custom/bridge/useServiceFee';
 import Intl from '@/i18n/i18n';
 import { useOperationStore } from '@/store/operationStore';
@@ -26,7 +27,9 @@ export function OperationFees() {
       </div>
       <div className="flex items-center w-full  justify-between">
         <div>{`${Intl.t('general.Massa')} ${Intl.t('confirmation.fees')}`}</div>
-        <div>{formatTotalMasFees(feesMAS, storageMAS)}</div>
+        <div>
+          {formatAmount(addFeesAndStorageCost(feesMAS, storageMAS)).full}
+        </div>
       </div>
       <div className="flex items-center w-full  justify-between">
         <div>{Intl.t('confirmation.service-fee')}</div>
