@@ -15,6 +15,7 @@ export function increaseAllowanceStorageCost(): bigint {
   if (!massaClient) return 0n;
   if (!selectedToken) return 0n;
   if (!connectedAccount) return 0n;
+  if (!addrInfo) return 0n;
 
   const allKeys = addrInfo[0].candidate_datastore_keys;
   const key = allowanceKey(
