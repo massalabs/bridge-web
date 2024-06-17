@@ -75,7 +75,7 @@ export function useHandleBurnRedeem() {
         serverState: BridgingState.new,
         historyStatus: HistoryOperationStatus.Unknown,
         entity: Entities.Burn,
-        evmChainId: selectedToken?.chainId || 0,
+        evmChainId: selectedToken.chainId,
         isConfirmed: false,
       });
     }

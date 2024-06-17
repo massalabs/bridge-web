@@ -200,7 +200,7 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     useAccountStore.setState({
       addrInfo: await client
         ?.publicApi()
-        .getAddresses([selectedToken?.massaToken]),
+        .getAddresses([selectedToken.massaToken]),
     });
   },
 }));
