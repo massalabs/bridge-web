@@ -6,6 +6,7 @@ import { useTokenStore } from '@/store/tokenStore';
 export function OperationInput() {
   const { inputAmount } = useOperationStore();
   const { selectedToken } = useTokenStore();
+
   return (
     <div>
       <div className="flex flex-col gap-2">

@@ -1,7 +1,6 @@
 import { Button } from '@massalabs/react-ui-kit';
 import { FiArrowLeft } from 'react-icons/fi';
 import { OperationDirection } from './OperationDirection';
-
 import { OperationFees } from './OperationFees';
 import { OperationInput } from './OperationInput';
 import { OperationOutput } from './OperationOutput';
