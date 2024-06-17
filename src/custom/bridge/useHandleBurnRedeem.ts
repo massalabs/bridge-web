@@ -49,16 +49,28 @@ export function useHandleBurnRedeem() {
     ) {
       setBurn(Status.Success);
       setBurnState(BurnState.SUCCESS);
+
+      if (
+        !inputAmount ||
+        !outputAmount ||
+        !evmAddress ||
+        !selectedToken ||
+        !connectedAccount
+      ) {
+        console.warn('Missing data to append burn redeem operation'); // prevent silent fail if missing data
+        return;
+      }
+
       appendBurnRedeemOperation({
         inputId: burnTxId as string,
         signatures: [],
         claimState: ClaimState.RETRIEVING_INFO,
-        amount: inputAmount?.toString() || '',
-        outputAmount: outputAmount?.toString(),
+        amount: inputAmount.toString(),
+        outputAmount: outputAmount.toString(),
         recipient: evmAddress as string,
-        evmToken: selectedToken?.evmToken,
-        massaToken: selectedToken?.massaToken,
-        emitter: connectedAccount?.address() || '',
+        evmToken: selectedToken.evmToken,
+        massaToken: selectedToken.massaToken,
+        emitter: connectedAccount.address(),
         createdAt: new Date().toISOString(),
         serverState: BridgingState.new,
         historyStatus: HistoryOperationStatus.Unknown,
