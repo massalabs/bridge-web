@@ -3,12 +3,14 @@ import { Button } from '@massalabs/react-ui-kit';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import Intl from '@/i18n/i18n';
+import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import { useBridgeModeStore } from '@/store/store';
 import { useClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimTokensPopup() {
   const { chain: evmConnectedChain } = useAccount();
   const { currentMode } = useBridgeModeStore();
+  const { box } = useGlobalStatusesStore();
 
   const [renderButton, setRenderButton] = useState(false);
 
@@ -17,6 +19,10 @@ export function ClaimTokensPopup() {
   useEffect(() => {
     setRenderButton(!!claimableOperations.length);
   }, [claimableOperations, currentMode]);
+
+  const isOperationPending = box !== Status.None;
+
+  if (isOperationPending) return null;
 
   function ClaimButton() {
     const evmChainName = evmConnectedChain?.name;

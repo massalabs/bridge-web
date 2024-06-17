@@ -3,38 +3,42 @@ import { Button } from '@massalabs/react-ui-kit';
 import { FiArrowRight } from 'react-icons/fi';
 import { OperationLayout } from './OperationLayout';
 import { ConfirmationLayout } from '../ConfirmationLayout/ConfirmationLayout';
+import { BRIDGE_OFF, REDEEM_OFF } from '@/const/env/maintenance';
 import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import useEvmToken from '@/custom/bridge/useEvmToken';
+import {
+  ChainContext,
+  useEvmChainValidation,
+  useMassaNetworkValidation,
+} from '@/custom/bridge/useNetworkValidation';
 import { useSubmitBridge } from '@/custom/bridge/useSubmitBridge';
 import { useSubmitRedeem } from '@/custom/bridge/useSubmitRedeem';
 import Intl from '@/i18n/i18n';
 import { PendingOperationLayout } from '@/pages';
 import { Status } from '@/store/globalStatusesStore';
-import { useGlobalStatusesStore, useOperationStore } from '@/store/store';
-
-interface BridgeRedeemProps {
-  isBlurred: string;
-  isButtonDisabled: boolean;
-}
+import {
+  useAccountStore,
+  useGlobalStatusesStore,
+  useOperationStore,
+} from '@/store/store';
 
 enum StepsEnum {
   PENDING = 'pending',
   AWAITING_CONFIRMATION = 'confirmation',
 }
 
-export function BridgeRedeemLayout(props: BridgeRedeemProps) {
-  const { isBlurred, isButtonDisabled } = props;
-
+export function BridgeRedeemLayout() {
   const { tokenBalance } = useEvmToken();
   const { box } = useGlobalStatusesStore();
-  const { isMassaToEvm } = useOperationStore();
-
-  const massaToEvm = isMassaToEvm();
-
+  const { isMassaToEvm, inputAmount } = useOperationStore();
   const { handleSubmitBridge } = useSubmitBridge();
   const { handleSubmitRedeem } = useSubmitRedeem();
-
+  const { connectedAccount, isFetching } = useAccountStore();
   const [step, setStep] = useState<StepsEnum>(StepsEnum.PENDING);
+  const isValidEvmNetwork = useEvmChainValidation(ChainContext.BRIDGE);
+  const isValidMassaNetwork = useMassaNetworkValidation();
+
+  const massaToEvm = isMassaToEvm();
 
   function prevPage() {
     setStep(StepsEnum.PENDING);
@@ -59,6 +63,16 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   }
 
   const isOperationPending = box !== Status.None;
+  const blurClass = isOperationPending ? 'blur-md' : '';
+
+  const isButtonDisabled =
+    isFetching ||
+    !connectedAccount ||
+    !isValidEvmNetwork ||
+    !inputAmount ||
+    !isValidMassaNetwork ||
+    (BRIDGE_OFF && !massaToEvm) ||
+    (REDEEM_OFF && massaToEvm);
 
   if (isOperationPending) return <PendingOperationLayout />;
 
@@ -67,7 +81,7 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
     <>
       <div
         className={`flex flex-col gap-2 p-10 max-w-3xl w-full border border-tertiary rounded-2xl
-            bg-secondary/50 text-f-primary mb-5 ${isBlurred}`}
+            bg-secondary/50 text-f-primary mb-5 ${blurClass}`}
       >
         {OperationSteps[step]}
         <div className="mb-5">
