@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { formatAmount, Button } from '@massalabs/react-ui-kit';
 import { FiRepeat } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
-import { boxLayout, WarningNoEth } from '.';
+import { boxLayout, FeesEstimation, WarningNoEth } from '.';
 import { GetTokensPopUpModal } from '@/components';
 import { ServiceFeeTooltip } from '@/components/ServiceFeeTooltip/ServiceFeeTooltip';
 import { useServiceFee } from '@/custom/bridge/useServiceFee';
@@ -35,7 +35,7 @@ export function OperationLayout() {
 
   return (
     <>
-      <div className="p-6 bg-primary rounded-2xl mb-5">
+      <div className="p-6 bg-primary rounded-2xl">
         <p className="mb-4 mas-body">{Intl.t('index.from')}</p>
         {boxLayout().up.header}
         {boxLayout().up.wallet}
@@ -90,6 +90,8 @@ export function OperationLayout() {
         {boxLayout().down.input}
         <WarningNoEth />
       </div>
+
+      <FeesEstimation />
 
       {openTokensModal && (
         <GetTokensPopUpModal setOpenModal={setOpenTokensModal} />

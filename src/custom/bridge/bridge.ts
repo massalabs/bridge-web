@@ -13,10 +13,10 @@ import {
 } from '../../store/store';
 import { TokenPair } from '../serializable/tokenPair';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
-import { config, increaseAllowanceFee } from '@/const';
+import { config } from '@/const';
 
 export async function increaseAllowance(amount: bigint): Promise<string> {
-  const { massaClient } = useAccountStore.getState();
+  const { massaClient, minimalFees } = useAccountStore.getState();
   const { selectedToken } = useTokenStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
 
@@ -32,7 +32,7 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
         .addString(config[currentMode].massaBridgeContract)
         .addU256(amount)
         .serialize(),
-      coins: await increaseAllowanceStorageCost(),
+      coins: increaseAllowanceStorageCost(),
     });
 
   let maxGas = BigInt(Math.floor(readOnlyEstimation.info.gas_cost * 1.2));
@@ -44,8 +44,8 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
       .addString(config[currentMode].massaBridgeContract)
       .addU256(amount)
       .serialize(),
-    fee: increaseAllowanceFee.fee,
-    coins: await increaseAllowanceStorageCost(),
+    fee: minimalFees,
+    coins: increaseAllowanceStorageCost(),
     maxGas,
   });
 

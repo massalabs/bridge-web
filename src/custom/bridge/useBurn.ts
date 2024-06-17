@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import { handleBurnError } from './handlers/handleTransactionErrors';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
-import { config, forwardBurnFees } from '@/const';
+import { config } from '@/const';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -13,9 +13,14 @@ import {
 } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
 
+// Transaction fees
+export const forwardBurnFees = {
+  coins: 0n,
+};
+
 export function useBurn() {
   const { setBox, setBurn } = useGlobalStatusesStore();
-  const { massaClient } = useAccountStore();
+  const { massaClient, minimalFees } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
   const { setBurnTxId, inputAmount: amount } = useOperationStore();
@@ -50,7 +55,8 @@ export function useBurn() {
       const opId = await massaClient.smartContracts().callSmartContract({
         ...callData,
         maxGas,
-        ...forwardBurnFees,
+        fee: minimalFees,
+        coins: forwardBurnFees.coins,
       });
 
       setBurnTxId(opId);

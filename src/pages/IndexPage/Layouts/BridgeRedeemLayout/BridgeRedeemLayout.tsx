@@ -1,8 +1,9 @@
 import { ReactNode, useState } from 'react';
 import { Button } from '@massalabs/react-ui-kit';
-import { FeesEstimation } from './FeesEstimation';
+import { FiArrowRight } from 'react-icons/fi';
 import { OperationLayout } from './OperationLayout';
 import { ConfirmationLayout } from '../ConfirmationLayout/ConfirmationLayout';
+import { validate } from '@/custom/bridge/handlers/validateTransaction';
 import useEvmToken from '@/custom/bridge/useEvmToken';
 import { useSubmitBridge } from '@/custom/bridge/useSubmitBridge';
 import { useSubmitRedeem } from '@/custom/bridge/useSubmitRedeem';
@@ -24,9 +25,9 @@ enum StepsEnum {
 export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const { isBlurred, isButtonDisabled } = props;
 
-  const { tokenBalance: _tokenBalanceEVM } = useEvmToken();
+  const { tokenBalance } = useEvmToken();
   const { box } = useGlobalStatusesStore();
-  const { isMassaToEvm, setAmounts } = useOperationStore();
+  const { isMassaToEvm } = useOperationStore();
 
   const massaToEvm = isMassaToEvm();
 
@@ -34,11 +35,9 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   const { handleSubmitRedeem } = useSubmitRedeem();
 
   const [step, setStep] = useState<StepsEnum>(StepsEnum.PENDING);
-  const [cta, setCTA] = useState<string>(Intl.t('general.next'));
 
   function prevPage() {
     setStep(StepsEnum.PENDING);
-    setCTA(Intl.t('general.next'));
   }
 
   const OperationSteps: Record<StepsEnum, ReactNode> = {
@@ -50,17 +49,13 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
 
   function handleSubmission() {
     if (step === StepsEnum.PENDING) {
+      const isValid = validate(tokenBalance);
+      if (!isValid) return;
       setStep(StepsEnum.AWAITING_CONFIRMATION);
-      setCTA(
-        massaToEvm
-          ? Intl.t('index.button.redeem')
-          : Intl.t('index.button.bridge'),
-      );
       return;
     }
     massaToEvm ? handleSubmitRedeem() : handleSubmitBridge();
-    // sets inputAmount to undefined for next transfer
-    setAmounts(undefined, undefined);
+    setStep(StepsEnum.PENDING);
   }
 
   const isOperationPending = box !== Status.None;
@@ -71,16 +66,23 @@ export function BridgeRedeemLayout(props: BridgeRedeemProps) {
   return (
     <>
       <div
-        className={`p-10 max-w-3xl w-full border border-tertiary rounded-2xl
+        className={`flex flex-col gap-2 p-10 max-w-3xl w-full border border-tertiary rounded-2xl
             bg-secondary/50 text-f-primary mb-5 ${isBlurred}`}
       >
         {OperationSteps[step]}
         <div className="mb-5">
-          <Button disabled={isButtonDisabled} onClick={handleSubmission}>
-            {cta}
+          <Button
+            disabled={isButtonDisabled}
+            posIcon={step === StepsEnum.PENDING && <FiArrowRight />}
+            onClick={handleSubmission}
+          >
+            {step === StepsEnum.PENDING
+              ? Intl.t('general.next')
+              : massaToEvm
+              ? Intl.t('index.button.redeem')
+              : Intl.t('index.button.bridge')}
           </Button>
         </div>
-        <FeesEstimation />
       </div>
     </>
   );

@@ -57,7 +57,16 @@ export interface OperationStoreState {
 
   setAmounts(inputAmount?: bigint, outputAmount?: bigint): void;
 
-  resetTxIDs: () => void;
+  feesETH?: bigint;
+  setFeesETH(fees?: bigint): void;
+
+  feesMAS?: bigint;
+  setFeesMAS(fees?: bigint): void;
+
+  storageMAS?: bigint;
+  setStorageMAS(storage?: bigint): void;
+
+  resetOperationStore: () => void;
 }
 
 export const useOperationStore = create<OperationStoreState>(
@@ -162,13 +171,31 @@ export const useOperationStore = create<OperationStoreState>(
       set({ inputAmount, outputAmount });
     },
 
-    resetTxIDs: () => {
+    feesETH: undefined,
+    setFeesETH(fees: bigint) {
+      set({ feesETH: fees });
+    },
+
+    feesMAS: undefined,
+    setFeesMAS(fees: bigint) {
+      set({ feesMAS: fees });
+    },
+
+    storageMAS: undefined,
+    setStorageMAS(storage: bigint) {
+      set({ storageMAS: storage });
+    },
+
+    resetOperationStore: () => {
       set({
         lockTxId: undefined,
         mintTxId: undefined,
         burnTxId: undefined,
         inputAmount: undefined,
         outputAmount: undefined,
+        feesETH: undefined,
+        feesMAS: undefined,
+        storageMAS: undefined,
       });
     },
   }),
