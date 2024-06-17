@@ -197,6 +197,10 @@ const accountStore = (
     }
   },
 
+  setAddrInfo: (addrInfo: IAddressInfo[]) => {
+    set({ addrInfo });
+  },
+
   refreshMassaClient: async () => {
     const provider = get().currentProvider;
     if (!provider) return;
