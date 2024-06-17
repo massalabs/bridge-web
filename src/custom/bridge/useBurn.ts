@@ -15,13 +15,12 @@ import { useTokenStore } from '@/store/tokenStore';
 
 // Transaction fees
 export const forwardBurnFees = {
-  fee: 10_000_000n,
   coins: 0n,
 };
 
 export function useBurn() {
   const { setBox, setBurn } = useGlobalStatusesStore();
-  const { massaClient } = useAccountStore();
+  const { massaClient, minimalFees } = useAccountStore();
   const { selectedToken } = useTokenStore();
   const { currentMode } = useBridgeModeStore();
   const { setBurnTxId, inputAmount: amount } = useOperationStore();
@@ -56,7 +55,8 @@ export function useBurn() {
       const opId = await massaClient.smartContracts().callSmartContract({
         ...callData,
         maxGas,
-        ...forwardBurnFees,
+        fee: minimalFees,
+        coins: forwardBurnFees.coins,
       });
 
       setBurnTxId(opId);
