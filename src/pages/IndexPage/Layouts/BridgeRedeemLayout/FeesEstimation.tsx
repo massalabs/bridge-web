@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { MassaLogo, Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 
@@ -10,7 +10,6 @@ import {
   addFeesAndStorageCost,
   useMassaFeeEstimation,
 } from '@/custom/api/useMassaFeeEstimation';
-import useEvmToken from '@/custom/bridge/useEvmToken';
 import {
   useEvmChainValidation,
   useGetChainValidationContext,
@@ -48,27 +47,13 @@ export function FeesEstimation() {
 
   const massaNetwork = getMassaNetwork();
 
-  const { allowance } = useEvmToken();
-
-  const { estimateClaimFees, estimateLockFees, estimateApproveFees } =
-    useEvmFeeEstimation();
+  const { estimateClaimFees, estimateLockFees } = useEvmFeeEstimation();
 
   const { data: balanceData } = useBalance({
     address,
   });
 
   const { estimateFeesMassa } = useMassaFeeEstimation();
-
-  const getEthBridgeFees = useCallback((): bigint | undefined => {
-    const lockFees = estimateLockFees();
-    if (!inputAmount) return undefined;
-    if (allowance < inputAmount) {
-      const approveFees = estimateApproveFees();
-      return approveFees + lockFees;
-    } else {
-      return lockFees;
-    }
-  }, [estimateLockFees, inputAmount, allowance, estimateApproveFees]);
 
   useEffect(() => {
     if (massaToEvm) {
@@ -80,17 +65,17 @@ export function FeesEstimation() {
     } else {
       setFeesMAS(0n);
       setStorageMAS(0n);
-      const ethBridgeFees = getEthBridgeFees();
+      const ethBridgeFees = estimateLockFees();
       setFeesETH(ethBridgeFees);
     }
   }, [
     setFeesMAS,
     setFeesETH,
     setStorageMAS,
-    getEthBridgeFees,
     massaToEvm,
     estimateClaimFees,
     estimateFeesMassa,
+    estimateLockFees,
   ]);
 
   if (
