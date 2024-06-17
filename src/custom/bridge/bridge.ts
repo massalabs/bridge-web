@@ -32,7 +32,7 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
         .addString(config[currentMode].massaBridgeContract)
         .addU256(amount)
         .serialize(),
-      coins: await increaseAllowanceStorageCost(),
+      coins: increaseAllowanceStorageCost(),
     });
 
   let maxGas = BigInt(Math.floor(readOnlyEstimation.info.gas_cost * 1.2));
@@ -45,7 +45,7 @@ export async function increaseAllowance(amount: bigint): Promise<string> {
       .addU256(amount)
       .serialize(),
     fee: minimalFees,
-    coins: await increaseAllowanceStorageCost(),
+    coins: increaseAllowanceStorageCost(),
     maxGas,
   });
 
