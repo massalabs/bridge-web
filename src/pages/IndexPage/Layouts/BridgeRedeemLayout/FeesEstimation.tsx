@@ -91,8 +91,14 @@ export function FeesEstimation() {
     massaToEvm,
     estimateClaimFees,
     estimateFeesMassa,
-    connectedAccount, // refresh fees when connected account changes
   ]);
+
+  useEffect(() => {
+    console.log('connectedAccount', connectedAccount);
+    console.log('feesETH', feesETH);
+    console.log('feesMAS', feesMAS);
+    console.log('storageMAS', storageMAS);
+  }, [feesETH, feesMAS, storageMAS, connectedAccount]);
 
   if (
     !selectedToken ||
