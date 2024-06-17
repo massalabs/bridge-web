@@ -96,6 +96,7 @@ export function useBurn() {
     }
   }, [
     amount,
+    minimalFees,
     evmAddress,
     massaClient,
     selectedToken,
