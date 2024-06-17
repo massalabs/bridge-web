@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import { handleBurnError } from './handlers/handleTransactionErrors';
 import { ForwardingRequest } from '../serializable/request';
 import { TokenPair } from '../serializable/tokenPair';
-import { config, forwardBurnFees } from '@/const';
+import { config } from '@/const';
 import { Status, useGlobalStatusesStore } from '@/store/globalStatusesStore';
 import {
   useAccountStore,
@@ -12,6 +12,12 @@ import {
   useOperationStore,
 } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
+
+// Transaction fees
+export const forwardBurnFees = {
+  fee: 10_000_000n,
+  coins: 0n,
+};
 
 export function useBurn() {
   const { setBox, setBurn } = useGlobalStatusesStore();

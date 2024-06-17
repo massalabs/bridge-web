@@ -6,8 +6,9 @@ import {
   useTokenStore,
 } from '@/store/store';
 
-export async function increaseAllowanceStorageCost(): Promise<bigint> {
-  const { massaClient, connectedAccount } = useAccountStore.getState();
+export function increaseAllowanceStorageCost(): bigint {
+  const { massaClient, connectedAccount, addrInfo } =
+    useAccountStore.getState();
   const { selectedToken } = useTokenStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
 
@@ -15,9 +16,6 @@ export async function increaseAllowanceStorageCost(): Promise<bigint> {
   if (!selectedToken) return 0n;
   if (!connectedAccount) return 0n;
 
-  const addrInfo = await massaClient
-    .publicApi()
-    .getAddresses([selectedToken.massaToken]);
   const allKeys = addrInfo[0].candidate_datastore_keys;
   const key = allowanceKey(
     connectedAccount.address(),

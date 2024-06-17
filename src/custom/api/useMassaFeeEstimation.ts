@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
+import { forwardBurnFees } from '../bridge/useBurn';
 import { increaseAllowanceStorageCost } from '@/bridge/storage-cost';
-import { forwardBurnFees, increaseAllowanceFee } from '@/const';
+
 import { useOperationStore } from '@/store/operationStore';
 import { useAccountStore } from '@/store/store';
 import { useTokenStore } from '@/store/tokenStore';
@@ -13,25 +14,25 @@ export interface EstimateFeesMas {
 export function useMassaFeeEstimation() {
   const { selectedToken } = useTokenStore();
   const { inputAmount } = useOperationStore();
-  const { massaClient } = useAccountStore();
+  const { minimalFees } = useAccountStore();
 
-  const estimateFeesMassa = useCallback(async (): Promise<EstimateFeesMas> => {
+  const estimateFeesMassa = useCallback((): EstimateFeesMas => {
     if (!inputAmount || !selectedToken) {
       return { feesMAS: 0n, storageMAS: 0n };
     }
 
+    let feesMAS = minimalFees;
     let storageMAS = forwardBurnFees.coins;
-    let feesMAS = (await massaClient?.publicApi().getMinimalFees()) || 0n;
     if (
       selectedToken?.allowance === 0n ||
       selectedToken?.allowance < inputAmount
     ) {
-      storageMAS += await increaseAllowanceStorageCost();
-
-      feesMAS += increaseAllowanceFee.fee;
+      storageMAS += increaseAllowanceStorageCost();
+      feesMAS += minimalFees;
     }
     return { feesMAS, storageMAS };
   }, [inputAmount, selectedToken]);
+
   return { estimateFeesMassa };
 }
 

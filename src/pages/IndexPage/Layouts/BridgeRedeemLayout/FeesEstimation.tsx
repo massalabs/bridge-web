@@ -7,7 +7,6 @@ import { EstimatedAmount } from '@/components/EstimatedAmount';
 import { MASSA_TOKEN } from '@/const';
 import { useEvmFeeEstimation } from '@/custom/api/useEvmFeeEstimation';
 import {
-  EstimateFeesMas,
   addFeesAndStorageCost,
   useMassaFeeEstimation,
 } from '@/custom/api/useMassaFeeEstimation';
@@ -60,17 +59,6 @@ export function FeesEstimation() {
 
   const { estimateFeesMassa } = useMassaFeeEstimation();
 
-  const getMasFees = useCallback(async (): Promise<
-    EstimateFeesMas | undefined
-  > => {
-    try {
-      const res = await estimateFeesMassa();
-      return res;
-    } catch (e) {
-      console.error(e);
-    }
-  }, [estimateFeesMassa]);
-
   const getEthBridgeFees = useCallback((): bigint | undefined => {
     const lockFees = estimateLockFees();
     if (!inputAmount) return undefined;
@@ -84,11 +72,9 @@ export function FeesEstimation() {
 
   useEffect(() => {
     if (massaToEvm) {
-      getMasFees().then((res) => {
-        if (!res) return;
-        setFeesMAS(res.feesMAS);
-        setStorageMAS(res.storageMAS);
-      });
+      const { feesMAS, storageMAS } = estimateFeesMassa();
+      setFeesMAS(feesMAS);
+      setStorageMAS(storageMAS);
       const claimFees = estimateClaimFees();
       setFeesETH(claimFees);
     } else {
@@ -98,12 +84,14 @@ export function FeesEstimation() {
       setFeesETH(ethBridgeFees);
     }
   }, [
-    getMasFees,
     setFeesMAS,
     setFeesETH,
     setStorageMAS,
     getEthBridgeFees,
     massaToEvm,
+    estimateClaimFees,
+    estimateFeesMassa,
+    connectedAccount, // refresh fees when connected account changes
   ]);
 
   if (
@@ -136,7 +124,7 @@ export function FeesEstimation() {
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <p>
             {Intl.t('index.fee-estimate.network-fees', {
               name: Intl.t('general.Massa'),

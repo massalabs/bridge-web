@@ -1,4 +1,4 @@
-import { Client, ClientFactory } from '@massalabs/massa-web3';
+import { Client, ClientFactory, IAddressInfo } from '@massalabs/massa-web3';
 import { IAccount, IProvider } from '@massalabs/wallet-provider';
 import { useTokenStore } from './tokenStore';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
@@ -12,6 +12,8 @@ import {
 export interface AccountStoreState {
   connectedAccount?: IAccount;
   massaClient?: Client;
+  minimalFees: bigint;
+  addrInfo: IAddressInfo[];
   accounts?: IAccount[];
   currentProvider?: IProvider;
   providers: IProvider[];
@@ -29,6 +31,8 @@ export interface AccountStoreState {
 
   setConnectedAccount: (account?: IAccount) => void;
   refreshMassaClient: () => void;
+
+  setAddrInfo: (addrInfo: IAddressInfo[]) => void;
 }
 
 const accountStore = (
@@ -40,6 +44,8 @@ const accountStore = (
   accountObserver: undefined,
   networkObserver: undefined,
   massaClient: undefined,
+  minimalFees: 0n,
+  addrInfo: [],
   currentProvider: undefined,
   providers: [],
   isFetching: false,
@@ -172,12 +178,20 @@ const accountStore = (
         }),
       );
       // update the massa client with the new account
+
       set({
         massaClient: await ClientFactory.fromWalletProvider(
           provider,
           connectedAccount,
         ),
       });
+
+      const massaClient = get().massaClient;
+
+      set({
+        minimalFees: await massaClient?.publicApi().getMinimalFees(),
+      });
+
       // once current account is set, refresh balances
       useTokenStore.getState().refreshBalances();
     }
@@ -189,6 +203,7 @@ const accountStore = (
 
     const connectedAccount = get().connectedAccount;
     if (!connectedAccount) return;
+
     set({
       massaClient: await ClientFactory.fromWalletProvider(
         provider,

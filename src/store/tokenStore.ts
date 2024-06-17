@@ -55,6 +55,8 @@ export interface TokenStoreState {
   /** Refresh the list of supported tokens by reading the massa bridge smart contract */
   refreshTokens: () => void;
   refreshBalances: () => void;
+
+  setAddrInfo: () => void;
 }
 
 async function initMassaClient(isMainnet: boolean): Promise<Client> {
@@ -145,6 +147,8 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
       SELECTED_MASSA_TOKEN_KEY,
       selectedToken ? JSON.stringify(selectedToken) : '',
     );
+
+    get().setAddrInfo();
   },
 
   resetSelectedToken: () => {
@@ -186,5 +190,17 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
       }),
     );
     set({ tokens });
+  },
+  setAddrInfo: async () => {
+    const client = useAccountStore.getState().massaClient;
+    const selectedToken = get().selectedToken;
+
+    if (!selectedToken) return;
+
+    useAccountStore.setState({
+      addrInfo: await client
+        ?.publicApi()
+        .getAddresses([selectedToken?.massaToken]),
+    });
   },
 }));
