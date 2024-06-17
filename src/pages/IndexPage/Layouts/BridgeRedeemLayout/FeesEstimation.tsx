@@ -93,13 +93,6 @@ export function FeesEstimation() {
     estimateFeesMassa,
   ]);
 
-  useEffect(() => {
-    console.log('connectedAccount', connectedAccount);
-    console.log('feesETH', feesETH);
-    console.log('feesMAS', feesMAS);
-    console.log('storageMAS', storageMAS);
-  }, [feesETH, feesMAS, storageMAS, connectedAccount]);
-
   if (
     !selectedToken ||
     !isEvmWalletConnected ||

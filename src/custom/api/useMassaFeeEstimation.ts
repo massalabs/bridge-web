@@ -17,7 +17,6 @@ export function useMassaFeeEstimation() {
   const { minimalFees } = useAccountStore();
 
   const estimateFeesMassa = useCallback((): EstimateFeesMas => {
-    console.log('calculating massa fees');
     if (!inputAmount || !selectedToken) {
       return { feesMAS: 0n, storageMAS: 0n };
     }
@@ -28,14 +27,17 @@ export function useMassaFeeEstimation() {
       selectedToken?.allowance === 0n ||
       selectedToken?.allowance < inputAmount
     ) {
-      console.log('allowance is inferior to inputAmount');
-      console.log('selectedToken?.allowance', selectedToken?.allowance);
       storageMAS += increaseAllowanceStorageCost();
       feesMAS += minimalFees;
     }
 
     return { feesMAS, storageMAS };
-  }, [inputAmount, selectedToken?.allowance]);
+  }, [
+    inputAmount,
+    selectedToken?.allowance, // triggers the callback on account change
+    minimalFees,
+    selectedToken,
+  ]);
 
   return { estimateFeesMassa };
 }
