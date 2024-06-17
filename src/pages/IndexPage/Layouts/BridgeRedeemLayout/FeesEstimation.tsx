@@ -71,11 +71,6 @@ export function FeesEstimation() {
     }
   }, [estimateFeesMassa]);
 
-  const getEthRedeemFees = useCallback((): bigint => {
-    const claimFees = estimateClaimFees();
-    return claimFees;
-  }, [estimateClaimFees]);
-
   const getEthBridgeFees = useCallback((): bigint | undefined => {
     const lockFees = estimateLockFees();
     if (!inputAmount) return undefined;
@@ -94,8 +89,8 @@ export function FeesEstimation() {
         setFeesMAS(res.feesMAS);
         setStorageMAS(res.storageMAS);
       });
-      const ethRedeemFees = getEthRedeemFees();
-      setFeesETH(ethRedeemFees);
+      const claimFees = estimateClaimFees();
+      setFeesETH(claimFees);
     } else {
       setFeesMAS(0n);
       setStorageMAS(0n);
@@ -108,7 +103,6 @@ export function FeesEstimation() {
     setFeesETH,
     setStorageMAS,
     getEthBridgeFees,
-    getEthRedeemFees,
     massaToEvm,
   ]);
 
