@@ -8,7 +8,7 @@ import { useAccountStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface InputHeadProps {
-  address: string;
+  address: string | undefined;
   context: ChainContext;
   dropdownOptions: IOption[];
   isMassaChain: boolean;
@@ -48,7 +48,7 @@ export function InputHead(props: InputHeadProps) {
               <>
                 {isConnected
                   ? walletName
-                  : Intl.t('connect-wallet.card-destination.from')}{' '}
+                  : Intl.t('connect-wallet.card-destination.from')}
               </>
             )}
           </div>

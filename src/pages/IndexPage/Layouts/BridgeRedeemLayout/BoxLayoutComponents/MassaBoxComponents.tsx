@@ -30,7 +30,7 @@ export function MassaHeader() {
   return (
     <div className="flex items-center justify-between">
       <InputHead
-        address={connectedAccount?.address() || ''}
+        address={connectedAccount?.address()}
         dropdownOptions={massaOptions}
         isMassaChain={true}
         context={ChainContext.BRIDGE}

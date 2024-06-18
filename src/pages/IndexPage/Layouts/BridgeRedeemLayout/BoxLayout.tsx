@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import { MAINNET, BUILDNET } from '@massalabs/massa-web3';
 import { MassaLogo } from '@massalabs/react-ui-kit';
-import { EVMHeader } from './BoxLayoutComponents/EvmBoxComponents';
-import { MassaHeader } from './BoxLayoutComponents/MassaBoxComponents';
-import { InputAmount } from '../../../../components/inputAmount/InputAmount';
+
 import { MassaBuildnetLogo } from '@/assets/MassaBuildnetLogo';
+import { InputAmount } from '@/components/inputAmount/InputAmount';
+import { EVMHeader, MassaHeader } from '@/pages';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
