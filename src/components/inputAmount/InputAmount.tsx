@@ -85,7 +85,7 @@ export const InputAmount = (props: InputAmountProps) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="flex flex-col w-full gap-4">
       <div className="flex justify-between default-input border-0 pl-2 pr-10 mt-2 mb-1">
         <div className="flex flex-col items-left gap-2 mt-4">
           <div className="w-full">
