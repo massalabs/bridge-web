@@ -36,7 +36,7 @@ export function InitClaim(props: InitClaimProps) {
   );
 
   // format amount received
-  const { preview, full } = formatAmount(receivedAmount, decimals);
+  const { full } = formatAmount(receivedAmount, decimals);
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;
@@ -118,7 +118,6 @@ export function InitClaim(props: InitClaimProps) {
         claimState={claimState}
         operation={operation}
         symbol={symbol}
-        amountRedeemedPreview={preview}
         amountRedeemedFull={full}
       />
       <div className="flex flex-col gap-2">
