@@ -1,0 +1,59 @@
+import { Dropdown, FetchingLine, IOption } from '@massalabs/react-ui-kit';
+import { UpdateMassaWalletWarning } from '../ConnectWalletPopup/MassaWallets/UpdateMassaWalletWarning';
+import { ChainStatus } from '../Status/ChainStatus';
+import { useConnectorName } from '@/custom/bridge/useConnectorName';
+import { ChainContext } from '@/custom/bridge/useNetworkValidation';
+import Intl from '@/i18n/i18n';
+import { useAccountStore, useOperationStore } from '@/store/store';
+import { maskAddress } from '@/utils/massaFormat';
+
+interface InputHeadProps {
+  address: string;
+  context: ChainContext;
+  dropdownOptions: IOption[];
+  isMassaChain: boolean;
+  isConnected: boolean;
+}
+
+export function InputHead(props: InputHeadProps) {
+  const { address, context, dropdownOptions, isMassaChain, isConnected } =
+    props;
+
+  const { currentProvider } = useAccountStore();
+  const { selectedEvm, availableEvmNetworks } = useOperationStore();
+
+  const walletName = useConnectorName();
+  const isReadyOnly = dropdownOptions.length <= 1;
+
+  return (
+    <div className="flex w-full justify-between py-4">
+      <div className="flex flex-col items-start gap-2 mas-body2">
+        {!address ? <FetchingLine /> : maskAddress(address as string)}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 mas-body">
+            <UpdateMassaWalletWarning customClass="mr-3" />
+            {isMassaChain ? (
+              <>
+                {isConnected && currentProvider
+                  ? Intl.t(`connect-wallet.${currentProvider.name()}`)
+                  : Intl.t('connect-wallet.card-destination.to')}
+              </>
+            ) : (
+              <> {walletName} </>
+            )}
+          </div>
+          <ChainStatus context={context} isMassaChain={isMassaChain} />
+        </div>
+      </div>
+      <div className="w-1/2">
+        <Dropdown
+          readOnly={isReadyOnly}
+          options={dropdownOptions}
+          select={
+            isMassaChain ? undefined : availableEvmNetworks.indexOf(selectedEvm)
+          }
+        />
+      </div>
+    </div>
+  );
+}
