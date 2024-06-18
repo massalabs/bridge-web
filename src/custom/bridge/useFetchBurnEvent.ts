@@ -21,8 +21,9 @@ export function useFetchBurnEvent(inputOpId?: string) {
   useEffect(() => {
     if (!data) return;
     if (
-      data[0]?.serverState === 'processing' &&
-      data[0]?.inputId === burnTxId
+      (data[0]?.serverState === 'processing' &&
+        data[0]?.inputId === burnTxId) || // disable refetch on burn redeem
+      (data[0]?.outputAmount !== null && data[0]?.outputAmount !== undefined) // disable refetch success claim
     ) {
       setEnableRefetch(false);
     }
