@@ -13,18 +13,11 @@ interface DisplayContentProps {
   claimState: ClaimState;
   operation: BurnRedeemOperation;
   symbol: string;
-  amountRedeemedPreview: string;
   amountRedeemedFull: string;
 }
 
 export function OperationInfo(props: DisplayContentProps) {
-  const {
-    claimState,
-    operation,
-    symbol,
-    amountRedeemedFull,
-    amountRedeemedPreview,
-  } = props;
+  const { claimState, operation, symbol, amountRedeemedFull } = props;
 
   const isClaimRejected = claimState === ClaimState.REJECTED;
 
@@ -33,7 +26,7 @@ export function OperationInfo(props: DisplayContentProps) {
       <div>
         {Intl.t('claim.rejected-1')}
         <strong>
-          {amountRedeemedPreview} {symbol}
+          {amountRedeemedFull} {symbol}
         </strong>
         {Intl.t('claim.rejected-2')}
       </div>
@@ -43,7 +36,7 @@ export function OperationInfo(props: DisplayContentProps) {
       <div className="flex flex-col gap-4">
         <strong className="flex items-center gap-2">
           {getAssetIcons(symbol, operation.evmChainId, true, 26)}
-          {amountRedeemedPreview} {symbol}
+          {amountRedeemedFull} {symbol}
           <Tooltip body={`${amountRedeemedFull} ${symbol}`} />
         </strong>
 
