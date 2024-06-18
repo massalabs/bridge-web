@@ -53,6 +53,7 @@ export function DaoHead(props: DaoHeadProps) {
           context={ChainContext.DAO}
           dropdownOptions={options}
           isConnected={isConnected}
+          select={undefined}
         />
 
         <div className="flex items-center justify-between gap-4">

@@ -4,7 +4,7 @@ import { ChainStatus } from '../Status/ChainStatus';
 import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
-import { useAccountStore, useOperationStore } from '@/store/store';
+import { useAccountStore } from '@/store/store';
 import { maskAddress } from '@/utils/massaFormat';
 
 interface InputHeadProps {
@@ -13,14 +13,20 @@ interface InputHeadProps {
   dropdownOptions: IOption[];
   isMassaChain: boolean;
   isConnected: boolean;
+  select: number | undefined;
 }
 
 export function InputHead(props: InputHeadProps) {
-  const { address, context, dropdownOptions, isMassaChain, isConnected } =
-    props;
+  const {
+    address,
+    context,
+    dropdownOptions,
+    isMassaChain,
+    isConnected,
+    select,
+  } = props;
 
   const { currentProvider } = useAccountStore();
-  const { selectedEvm, availableEvmNetworks } = useOperationStore();
 
   const walletName = useConnectorName();
   const isReadyOnly = dropdownOptions.length <= 1;
@@ -39,7 +45,11 @@ export function InputHead(props: InputHeadProps) {
                   : Intl.t('connect-wallet.card-destination.to')}
               </>
             ) : (
-              <> {walletName} </>
+              <>
+                {isConnected
+                  ? walletName
+                  : Intl.t('connect-wallet.card-destination.from')}{' '}
+              </>
             )}
           </div>
           <ChainStatus context={context} isMassaChain={isMassaChain} />
@@ -49,9 +59,7 @@ export function InputHead(props: InputHeadProps) {
         <Dropdown
           readOnly={isReadyOnly}
           options={dropdownOptions}
-          select={
-            isMassaChain ? undefined : availableEvmNetworks.indexOf(selectedEvm)
-          }
+          select={select}
         />
       </div>
     </div>

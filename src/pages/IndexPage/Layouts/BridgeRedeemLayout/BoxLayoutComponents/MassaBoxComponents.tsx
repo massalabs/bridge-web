@@ -35,6 +35,7 @@ export function MassaHeader() {
         isMassaChain={true}
         context={ChainContext.BRIDGE}
         isConnected={isConnected}
+        select={undefined}
       />
     </div>
   );

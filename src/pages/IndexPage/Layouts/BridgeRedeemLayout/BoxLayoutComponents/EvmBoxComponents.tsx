@@ -15,7 +15,9 @@ import {
 export function EVMHeader() {
   const { isConnected, address } = useAccount();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
-  const { setSelectedEvm, setAmounts } = useOperationStore();
+  const { setSelectedEvm, setAmounts, selectedEvm, availableEvmNetworks } =
+    useOperationStore();
+
   const { resetSelectedToken } = useTokenStore();
   const isMainnet = getIsMainnet();
 
@@ -52,6 +54,7 @@ export function EVMHeader() {
       isMassaChain={false}
       isConnected={isConnected}
       dropdownOptions={options}
+      select={availableEvmNetworks.indexOf(selectedEvm)}
     />
   );
 }
