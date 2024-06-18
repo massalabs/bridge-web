@@ -80,7 +80,7 @@ export function BridgeRedeemLayout() {
   return (
     <>
       <div
-        className={`flex flex-col gap-2 p-10 max-w-3xl w-full border border-tertiary rounded-2xl
+        className={`flex flex-col gap-4 p-10 max-w-3xl w-full border border-tertiary rounded-2xl
             bg-secondary/50 text-f-primary mb-5 ${blurClass}`}
       >
         {OperationSteps[step]}
