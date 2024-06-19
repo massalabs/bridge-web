@@ -36,7 +36,7 @@ export function InitClaim(props: InitClaimProps) {
   );
 
   // format amount received
-  const { preview, full } = formatAmount(receivedAmount, decimals);
+  const { full } = formatAmount(receivedAmount, decimals);
 
   const claimState = operation.claimState;
   const isChainIncompatible = chainId !== operation.evmChainId;
@@ -118,12 +118,11 @@ export function InitClaim(props: InitClaimProps) {
         claimState={claimState}
         operation={operation}
         symbol={symbol}
-        amountRedeemedPreview={preview}
         amountRedeemedFull={full}
       />
       <div className="flex flex-col gap-2">
         <Button onClick={() => handleClaim()}>
-          {Intl.t('claim.claim')} {preview} {symbol}
+          {Intl.t('claim.claim')} {full} {symbol}
         </Button>
         {isChainIncompatible && (
           <div className="w-56">{Intl.t('claim.wrong-network')}</div>

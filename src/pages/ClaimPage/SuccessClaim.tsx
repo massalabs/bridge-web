@@ -1,10 +1,9 @@
 import { Tooltip, formatAmount } from '@massalabs/react-ui-kit';
 import { SuccessCheck } from '@/components';
 import { LinkExplorer } from '@/components/LinkExplorer';
-import { CHAIN_ID_TO_SERVICE_FEE } from '@/const';
+import { useFetchBurnEvent } from '@/custom/bridge/useFetchBurnEvent';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
-import { getAmountToReceive } from '@/utils/utils';
 
 interface SuccessClaimProps {
   operation: BurnRedeemOperation;
@@ -15,16 +14,23 @@ interface SuccessClaimProps {
 export function SuccessClaim(props: SuccessClaimProps) {
   const { operation, symbol, decimals } = props;
 
-  const serviceFee = CHAIN_ID_TO_SERVICE_FEE[operation.evmChainId];
+  const lambdaResponse = useFetchBurnEvent(operation.inputId);
 
-  // calculates amount received
-  const receivedAmount = getAmountToReceive(
-    BigInt(operation.amount),
-    serviceFee,
-  );
+  let outputPreview = '-';
+  let outputFull = '-';
 
-  // format amount received
-  const { preview, full } = formatAmount(receivedAmount, decimals);
+  if (
+    lambdaResponse &&
+    lambdaResponse[0].outputAmount !== undefined &&
+    lambdaResponse[0].outputAmount !== null
+  ) {
+    const formattedResult = formatAmount(
+      lambdaResponse[0].outputAmount,
+      decimals,
+    );
+    outputPreview = formattedResult.preview;
+    outputFull = formattedResult.full;
+  }
 
   return (
     <div
@@ -38,10 +44,10 @@ export function SuccessClaim(props: SuccessClaimProps) {
           {Intl.t('claim.success')}
           <strong>
             {' '}
-            {preview} {symbol}{' '}
+            {outputPreview} {symbol}{' '}
           </strong>
         </div>
-        <Tooltip body={full + ' ' + symbol} />
+        <Tooltip body={outputFull + ' ' + symbol} />
       </div>
       <div className="flex gap-4 items-center">
         <LinkExplorer
