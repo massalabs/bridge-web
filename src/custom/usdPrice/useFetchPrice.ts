@@ -80,7 +80,9 @@ export const useUsdValue = (amount?: bigint, token?: IToken) => {
       );
       // get the output amount without slippage
       outputAmount = formatAmount(
-        prices.virtualAmountsWithoutSlippage[2],
+        prices.virtualAmountsWithoutSlippage[
+          prices.virtualAmountsWithoutSlippage.length - 1
+        ],
         outputToken.decimals,
       ).preview;
     }
