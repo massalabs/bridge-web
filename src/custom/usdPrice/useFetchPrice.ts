@@ -113,9 +113,14 @@ export function useUsdValue() {
         debouncedAmount.toString(),
       );
 
-      if (!prices.virtualAmountsWithoutSlippage[2]) {
+      if (
+        !prices.virtualAmountsWithoutSlippage[
+          prices.virtualAmountsWithoutSlippage.length - 1
+        ]
+      ) {
         console.warn('No slippage amount found');
         setIsFetching(false);
+        setUsdValue('0');
         return;
       }
       // get the output amount without slippage
@@ -127,7 +132,6 @@ export function useUsdValue() {
       ).preview;
     }
 
-    console.log('outputAmount', outputAmount);
     setUsdValue(outputAmount);
     setIsFetching(false);
   }, [debouncedAmount, massaClient, isMainnet, inputAmount]);
