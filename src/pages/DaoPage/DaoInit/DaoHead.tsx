@@ -3,12 +3,11 @@ import { WMAS } from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';
-import { ChainStatus } from '@/components/Status/ChainStatus';
+import { InputHead } from '@/components/inputAmount/InputHead';
 import { Blockchain } from '@/const';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import Intl from '@/i18n/i18n';
 import { useBridgeModeStore } from '@/store/store';
-import { maskAddress } from '@/utils/massaFormat';
 
 interface DaoHeadProps {
   amount: string;
@@ -28,7 +27,7 @@ export function DaoHead(props: DaoHeadProps) {
     fetchingBalance,
     setAmountError,
   } = props;
-  const { address: evmAddress } = useAccount();
+  const { address: evmAddress, isConnected } = useAccount();
   const { currentMode } = useBridgeModeStore();
 
   function handleAmountChange(o: string) {
@@ -36,36 +35,26 @@ export function DaoHead(props: DaoHeadProps) {
     setAmountError('');
   }
 
+  const options = [
+    {
+      icon: <Bsc size={32} />,
+      item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
+        `general.${currentMode}`,
+      )}`,
+    },
+  ];
+
   return (
     <>
       <div className="flex flex-col p-6 gap-6 bg-primary rounded-2xl mb-5">
-        <div className="flex justify-between">
-          <div className="mas-body2">
-            <div className="mas-menu-active">{Intl.t('dao-maker.from')}</div>
-            <br />
-            <div className="flex items-center gap-2">
-              {evmAddress ? (
-                maskAddress(evmAddress as string)
-              ) : (
-                <div>{Intl.t('dao-maker.address-not-found')}</div>
-              )}
-              {<ChainStatus context={ChainContext.DAO} isMassaChain={false} />}
-            </div>
-          </div>
-          <div className="w-1/2">
-            <Dropdown
-              readOnly={true}
-              options={[
-                {
-                  icon: <Bsc size={32} />,
-                  item: `${Intl.t(`general.${Blockchain.BSC}`)} ${Intl.t(
-                    `general.${currentMode}`,
-                  )}`,
-                },
-              ]}
-            />
-          </div>
-        </div>
+        <InputHead
+          isMassaChain={false}
+          address={evmAddress as string}
+          context={ChainContext.DAO}
+          dropdownOptions={options}
+          isConnected={isConnected}
+          select={undefined}
+        />
 
         <div className="flex items-center justify-between gap-4">
           <div className="w-full">

@@ -36,9 +36,8 @@ export function OperationLayout() {
   return (
     <>
       <div className="p-6 bg-primary rounded-2xl">
-        <p className="mb-4 mas-body">{Intl.t('index.from')}</p>
+        <p className="mb-2 mas-body">{Intl.t('index.from')}</p>
         {boxLayout().up.header}
-        {boxLayout().up.wallet}
         {boxLayout().up.input}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -53,7 +52,7 @@ export function OperationLayout() {
           </div>
         </div>
       </div>
-      <div className="mb-5 flex justify-center items-center">
+      <div className=" flex justify-center items-center">
         <Button
           disabled={isFetching}
           variant="toggle"
@@ -65,7 +64,7 @@ export function OperationLayout() {
           <FiRepeat size={24} />
         </Button>
       </div>
-      <div className="mb-5 p-6 bg-primary rounded-2xl">
+      <div className="p-6 bg-primary rounded-2xl">
         {isMassaToEvm() ? (
           <div className="flex items-center mb-4 gap-2">
             <p className="mas-body">
@@ -83,10 +82,9 @@ export function OperationLayout() {
             />
           </div>
         ) : (
-          <p className="mb-4 mas-body">{Intl.t('index.to')}</p>
+          <p className="mb-2 mas-body">{Intl.t('index.to')}</p>
         )}
         {boxLayout().down.header}
-        {boxLayout().down.wallet}
         {boxLayout().down.input}
         <WarningNoEth />
       </div>

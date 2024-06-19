@@ -1,19 +1,15 @@
 import { ReactNode } from 'react';
 import { MAINNET, BUILDNET } from '@massalabs/massa-web3';
 import { MassaLogo } from '@massalabs/react-ui-kit';
-import { EVMHeader, EVMMiddle } from './BoxLayoutComponents/EvmBoxComponents';
-import {
-  MassaHeader,
-  MassaMiddle,
-} from './BoxLayoutComponents/MassaBoxComponents';
-import { InputAmount } from '../../../../components/inputAmount/inputAmount';
+
 import { MassaBuildnetLogo } from '@/assets/MassaBuildnetLogo';
+import { InputAmount } from '@/components/inputAmount/InputAmount';
+import { EVMHeader, MassaHeader } from '@/pages';
 import { useOperationStore } from '@/store/store';
 import { SIDE } from '@/utils/const';
 
 interface Layout {
   header: ReactNode;
-  wallet: ReactNode;
   input: ReactNode;
 }
 
@@ -37,24 +33,20 @@ export function boxLayout(): BoxLayoutResult {
     [SIDE.MASSA_TO_EVM]: {
       up: {
         header: <MassaHeader />,
-        wallet: <MassaMiddle />,
         input: <InputAmount isInput={true} massaTokens={false} />,
       },
       down: {
         header: <EVMHeader />,
-        wallet: <EVMMiddle />,
         input: <InputAmount isInput={false} massaTokens={true} />,
       },
     },
     [SIDE.EVM_TO_MASSA]: {
       up: {
         header: <EVMHeader />,
-        wallet: <EVMMiddle />,
         input: <InputAmount isInput={true} massaTokens={true} />,
       },
       down: {
         header: <MassaHeader />,
-        wallet: <MassaMiddle />,
         input: <InputAmount isInput={false} massaTokens={false} />,
       },
     },
