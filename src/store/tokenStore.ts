@@ -135,6 +135,21 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     if (!selectedToken) {
       set({ selectedToken });
     }
+    const currentSelectedToken = get().selectedToken;
+    const inputAmount = useOperationStore.getState().inputAmount;
+    if (
+      inputAmount &&
+      currentSelectedToken?.decimals !== selectedToken?.decimals
+    ) {
+      const decsDiff = selectedToken!.decimals - currentSelectedToken!.decimals;
+      let newAmount: bigint;
+      if (decsDiff > 0) {
+        newAmount = inputAmount * 10n ** BigInt(decsDiff);
+      } else {
+        newAmount = inputAmount / 10n ** BigInt(-decsDiff);
+      }
+      useOperationStore.setState({ inputAmount: newAmount });
+    }
     // if selected token is not in the list, set first selectable token
     // selectable is the token supported on the current evm chain selected
     const selectable = get().getTokens();
