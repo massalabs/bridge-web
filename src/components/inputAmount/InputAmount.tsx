@@ -1,8 +1,7 @@
-import { Money, formatAmount } from '@massalabs/react-ui-kit';
+import { FetchingLine, Money, formatAmount } from '@massalabs/react-ui-kit';
 import Big from 'big.js';
 import { parseUnits } from 'viem';
 import useEvmToken from '../../custom/bridge/useEvmToken';
-import { useMassaNetworkValidation } from '../../custom/bridge/useNetworkValidation';
 import { useServiceFee } from '../../custom/bridge/useServiceFee';
 import { useUsdValue } from '../../custom/usdPrice/useFetchPrice';
 import { TokenBalance, TokenOptions } from '../../pages';
@@ -28,15 +27,11 @@ export const InputAmount = (props: InputAmountProps) => {
     useEvmToken();
   const { setAmountError, amountError } = useGlobalStatusesStore();
   // Price are fetched onchain from Dusa. If massa network is not valid, we don't show the price
-  const isValidMassaNetwork = useMassaNetworkValidation();
 
   const massaToEvm = isMassaToEvm();
   const decimals = selectedToken?.decimals;
 
-  const { usdValue } = useUsdValue(
-    isInput ? inputAmount : outputAmount,
-    selectedToken,
-  );
+  const { usdValue, isFetching: isFetchingUsdAmount } = useUsdValue();
 
   function changeAmount(amount: string) {
     if (!isInput || !selectedToken) {
@@ -86,34 +81,33 @@ export const InputAmount = (props: InputAmountProps) => {
 
   return (
     <div className="flex flex-col w-full gap-4">
-      <div className="flex justify-between default-input border-0 pl-2 pr-10 mt-2 mb-1">
-        <div className="flex flex-col items-left gap-2 mt-4">
-          <div className="w-full">
-            <Money
-              disable={!isInput}
-              name={isInput ? 'amount' : 'receive'}
-              value={displayedAmount}
-              onValueChange={(o) => changeAmount(o.value)}
-              placeholder={Intl.t(
-                isInput
-                  ? 'index.input.placeholder.amount'
-                  : 'index.input.placeholder.receive',
-              )}
-              suffix=""
-              decimalScale={decimals}
-              error={isInput ? amountError : ''}
-            />
-          </div>
-          {isValidMassaNetwork && !!inputAmount && !!usdValue && (
-            <div className="pl-4 mb-1">USD {usdValue}</div>
+      <div className="flex justify-between default-input px-2 border-0">
+        <div className="flex flex-col h-fit gap-4 p-2">
+          <Money
+            disable={!isInput}
+            name={isInput ? 'amount' : 'receive'}
+            value={displayedAmount}
+            onValueChange={(o) => changeAmount(o.value)}
+            placeholder={Intl.t(
+              isInput
+                ? 'index.input.placeholder.amount'
+                : 'index.input.placeholder.receive',
+            )}
+            suffix=""
+            decimalScale={decimals}
+            error={isInput ? amountError : ''}
+          />
+
+          {isFetchingUsdAmount ? (
+            <FetchingLine width={20} />
+          ) : (
+            <div className="mas-caption">{`$ ${usdValue}`}</div>
           )}
         </div>
-        <div className="flex flex-col items-center gap-2 mt-2">
-          <div className="w-full">
-            <TokenOptions nativeToken={massaTokens} />
-          </div>
+        <div className="flex flex-col h-fit gap-4 p-2">
+          <TokenOptions nativeToken={massaTokens} />
           {isInput && (
-            <div className="w-full mb-2">
+            <div className="flex w-full justify-end">
               <TokenBalance />
             </div>
           )}
