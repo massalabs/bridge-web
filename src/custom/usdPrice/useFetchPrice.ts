@@ -68,13 +68,6 @@ export function useUsdValue() {
 
       const allPairs = PairV2.initPairs(allTokenPairs);
 
-      if (!allPairs) {
-        console.warn('No pairs found');
-        setIsFetching(false);
-        setUsdValue('0');
-        return;
-      }
-
       // generates all possible routes to consider
       const allRoutes = RouteV2.createAllRoutes(
         allPairs,
@@ -100,7 +93,6 @@ export function useUsdValue() {
       try {
         bestTrade = TradeV2.chooseBestTrade(trades, true);
       } catch (error) {
-        console.warn('No best trade found');
         setIsFetching(false);
         setUsdValue('0');
         return;
@@ -113,16 +105,6 @@ export function useUsdValue() {
         debouncedAmount.toString(),
       );
 
-      if (
-        !prices.virtualAmountsWithoutSlippage[
-          prices.virtualAmountsWithoutSlippage.length - 1
-        ]
-      ) {
-        console.warn('No slippage amount found');
-        setIsFetching(false);
-        setUsdValue('0');
-        return;
-      }
       // get the output amount without slippage
       outputAmount = formatAmount(
         prices.virtualAmountsWithoutSlippage[
