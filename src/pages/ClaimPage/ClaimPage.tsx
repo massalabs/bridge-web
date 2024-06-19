@@ -3,11 +3,12 @@ import { useAccount } from 'wagmi';
 import { ClaimButton } from './ClaimButton';
 import Intl from '@/i18n/i18n';
 import { BurnRedeemOperation } from '@/store/operationStore';
-import { useOperationStore } from '@/store/store';
+import { useBridgeModeStore, useOperationStore } from '@/store/store';
 import { useClaimableOperations } from '@/utils/lambdaApi';
 
 export function ClaimPage() {
   const { burnRedeemOperations, setBurnRedeemOperations } = useOperationStore();
+  const { currentMode } = useBridgeModeStore();
   const { address: evmAddress } = useAccount();
 
   // Keep the list of operation IDs to claim in the first call to getRedeemOperation,
@@ -29,6 +30,10 @@ export function ClaimPage() {
     setRedeemableOperationIds,
     setBurnRedeemOperations,
   ]);
+
+  useEffect(() => {
+    setRedeemableOperationIds([]);
+  }, [currentMode]);
 
   const burnOperations = burnRedeemOperations.filter((op) =>
     redeemableOperationIds.includes(op.inputId),
