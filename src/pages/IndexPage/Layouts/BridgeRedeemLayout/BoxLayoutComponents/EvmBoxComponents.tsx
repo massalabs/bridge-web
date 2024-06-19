@@ -1,9 +1,7 @@
-import { Dropdown } from '@massalabs/react-ui-kit';
 import { mainnet, sepolia, bsc, bscTestnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import { ChainStatus } from '@/components/Status/ChainStatus';
+import { InputHead } from '@/components/inputAmount/InputHead';
 import { Blockchain, SupportedEvmBlockchain } from '@/const';
-import { useConnectorName } from '@/custom/bridge/useConnectorName';
 import { ChainContext } from '@/custom/bridge/useNetworkValidation';
 import { getEvmNetworkIcon } from '@/custom/useGetEvmIconsAndName';
 import Intl from '@/i18n/i18n';
@@ -15,12 +13,12 @@ import {
 } from '@/store/store';
 
 export function EVMHeader() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { currentMode, isMainnet: getIsMainnet } = useBridgeModeStore();
-  const { selectedEvm, setSelectedEvm, availableEvmNetworks, setAmounts } =
+  const { setSelectedEvm, setAmounts, selectedEvm, availableEvmNetworks } =
     useOperationStore();
+
   const { resetSelectedToken } = useTokenStore();
-  const walletName = useConnectorName();
   const isMainnet = getIsMainnet();
 
   function handleChangeEvmNetwork(selectedEvm: SupportedEvmBlockchain) {
@@ -50,32 +48,13 @@ export function EVMHeader() {
     },
   ];
   return (
-    <div className="flex items-center justify-between">
-      <div className="w-1/2">
-        <Dropdown
-          options={options}
-          select={availableEvmNetworks.indexOf(selectedEvm)}
-        />
-      </div>
-      <div className="flex items-center gap-3">
-        <p className="mas-body">
-          {isConnected
-            ? walletName
-            : Intl.t('connect-wallet.card-destination.from')}
-        </p>
-        <ChainStatus context={ChainContext.BRIDGE} isMassaChain={false} />
-      </div>
-    </div>
-  );
-}
-
-export function EVMMiddle() {
-  const { address } = useAccount();
-
-  return (
-    <div className="mt-4 mb-4 flex items-center gap-2">
-      <p className="mas-body2">{Intl.t('index.box-layout.wallet-address')}</p>
-      <p className="mas-caption">{address}</p>
-    </div>
+    <InputHead
+      address={address as string}
+      context={ChainContext.BRIDGE}
+      isMassaChain={false}
+      isConnected={isConnected}
+      dropdownOptions={options}
+      select={availableEvmNetworks.indexOf(selectedEvm)}
+    />
   );
 }
