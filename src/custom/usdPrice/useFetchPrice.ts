@@ -120,7 +120,9 @@ export function useUsdValue() {
       }
       // get the output amount without slippage
       outputAmount = formatAmount(
-        prices.virtualAmountsWithoutSlippage[2],
+        prices.virtualAmountsWithoutSlippage[
+          prices.virtualAmountsWithoutSlippage.length - 1
+        ],
         outputToken.decimals,
       ).preview;
     }
