@@ -32,7 +32,7 @@ export const InputAmount = (props: InputAmountProps) => {
   const decimals = selectedToken?.decimals;
 
   const { usdValue, isFetching: isFetchingUsdAmount } = useUsdValue(
-    inputAmount,
+    isInput ? inputAmount : outputAmount,
     selectedToken,
   );
 
@@ -84,9 +84,10 @@ export const InputAmount = (props: InputAmountProps) => {
 
   return (
     <div className="flex flex-col w-full gap-4">
-      <div className="flex justify-between default-input px-2 border-0">
-        <div className="flex flex-col h-fit gap-4 p-2">
+      <div className="flex justify-between default-input px-2 border-0 ">
+        <div className="flex flex-col h-full w-full gap-2 p-2 ">
           <Money
+            customClass="h-14"
             disable={!isInput}
             name={isInput ? 'amount' : 'receive'}
             value={displayedAmount}
@@ -104,16 +105,14 @@ export const InputAmount = (props: InputAmountProps) => {
           {isFetchingUsdAmount ? (
             <FetchingLine width={20} />
           ) : (
-            !!usdValue && <div className="mas-caption">{`$ ${usdValue}`}</div>
+            !!usdValue && (
+              <div className="mas-caption ml-1">{`$ ${usdValue}`}</div>
+            )
           )}
         </div>
-        <div className="flex flex-col h-fit gap-4 p-2">
+        <div className="flex flex-col items-end h-full gap-2 p-2 ">
           <TokenOptions nativeToken={massaTokens} />
-          {isInput && (
-            <div className="flex w-full justify-end">
-              <TokenBalance />
-            </div>
-          )}
+          {isInput && <TokenBalance />}
         </div>
       </div>
       <div className="flex justify-end gap-4">
