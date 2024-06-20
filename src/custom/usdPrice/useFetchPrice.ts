@@ -15,23 +15,42 @@ import { formatAmount } from '@massalabs/react-ui-kit';
 import { useDebounceValue } from 'usehooks-ts';
 import { useBridgeModeStore } from '../../store/modeStore';
 import { useAccountStore } from '../../store/store';
-import { IToken } from '../../store/tokenStore';
+import { useMassaNetworkValidation } from '../bridge/useNetworkValidation';
+import { IToken } from '@/store/tokenStore';
 
-export const useUsdValue = (amount?: bigint, token?: IToken) => {
-  const { isMainnet } = useBridgeModeStore();
-  const [usdValue, setUsdValue] = useState<string>();
-  const [debouncedAmount] = useDebounceValue(amount, 300);
+export function useUsdValue(
+  inputAmount: bigint | undefined,
+  selectedToken: IToken | undefined,
+) {
+  const { isMainnet, currentMode } = useBridgeModeStore();
+
+  const [debouncedAmount] = useDebounceValue(inputAmount, 300);
   const { massaClient } = useAccountStore();
 
+  const isValidMassaNetwork = useMassaNetworkValidation();
+  const [usdValue, setUsdValue] = useState<string>();
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const getUsdValue = useCallback(async () => {
-    if (!token || !debouncedAmount || !massaClient) {
+    if (
+      !selectedToken ||
+      !debouncedAmount ||
+      !massaClient ||
+      !inputAmount ||
+      !isValidMassaNetwork
+    ) {
+      setIsFetching(false);
+      setUsdValue(undefined);
       return;
     }
-
-    const symbol = token.symbolEVM.toUpperCase();
+    setIsFetching(true);
+    const symbol = selectedToken.symbolEVM.toUpperCase();
     let outputAmount: string;
     if (symbol.includes('USD') || symbol.includes('DAI')) {
-      outputAmount = formatAmount(debouncedAmount, token.decimals).preview;
+      outputAmount = formatAmount(
+        debouncedAmount,
+        selectedToken.decimals,
+      ).preview;
     } else {
       const chainId = isMainnet() ? ChainId.MAINNET : ChainId.BUILDNET;
       const USDC = _USDC[chainId];
@@ -70,7 +89,9 @@ export const useUsdValue = (amount?: bigint, token?: IToken) => {
       );
 
       // chooses the best trade
-      const bestTrade = TradeV2.chooseBestTrade(trades, true);
+      let bestTrade;
+
+      bestTrade = TradeV2.chooseBestTrade(trades, true);
 
       const quoter = new IQuoter(LB_QUOTER_ADDRESS[chainId], massaClient);
 
@@ -78,19 +99,23 @@ export const useUsdValue = (amount?: bigint, token?: IToken) => {
         bestTrade.route.pathToStrArr(),
         debouncedAmount.toString(),
       );
+
       // get the output amount without slippage
       outputAmount = formatAmount(
-        prices.virtualAmountsWithoutSlippage[2],
+        prices.virtualAmountsWithoutSlippage[
+          prices.virtualAmountsWithoutSlippage.length - 1
+        ],
         outputToken.decimals,
       ).preview;
     }
 
     setUsdValue(outputAmount);
-  }, [debouncedAmount, token, massaClient, isMainnet]);
+    setIsFetching(false);
+  }, [debouncedAmount, massaClient, isMainnet, inputAmount]);
 
   useEffect(() => {
     getUsdValue();
-  }, [getUsdValue]);
+  }, [getUsdValue, currentMode, selectedToken]);
 
-  return { usdValue };
-};
+  return { usdValue, isFetching };
+}
