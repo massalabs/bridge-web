@@ -10,6 +10,7 @@ import { serviceFeeToPercent } from '@/utils/utils';
 
 export function OperationFees() {
   const { serviceFee } = useServiceFee();
+  const { isMassaToEvm } = useOperationStore();
   const { chain, address } = useAccount();
   const { feesMAS, feesETH, storageMAS } = useOperationStore();
   const { data: balanceData } = useBalance({
@@ -33,7 +34,7 @@ export function OperationFees() {
       </div>
       <div className="flex items-center w-full  justify-between">
         <div>{Intl.t('confirmation.service-fee')}</div>
-        <div>{serviceFeeToPercent(serviceFee)}</div>
+        <div>{isMassaToEvm() ? serviceFeeToPercent(serviceFee) : 0}</div>
       </div>
     </div>
   );

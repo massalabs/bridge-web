@@ -51,7 +51,9 @@ export const InputAmount = (props: InputAmountProps) => {
 
     const newAmount = parseUnits(amount, decimals!);
 
-    const receivedAmount = getAmountToReceive(newAmount, serviceFee);
+    const receivedAmount = massaToEvm
+      ? getAmountToReceive(newAmount, serviceFee)
+      : newAmount;
     setAmounts(newAmount, receivedAmount);
   }
 
@@ -87,7 +89,7 @@ export const InputAmount = (props: InputAmountProps) => {
 
   return (
     <div className="flex flex-col w-full gap-4">
-      <div className="flex justify-between default-input px-2 border-0 ">
+      <div className="flex justify-between default-input px-2 border-0 py-2">
         <div className="flex flex-col h-full w-full gap-2 p-2 ">
           <Money
             customClass="h-14"
