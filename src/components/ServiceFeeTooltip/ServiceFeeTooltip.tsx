@@ -1,7 +1,6 @@
 import { Tooltip } from '@massalabs/react-ui-kit';
 import { FiInfo } from 'react-icons/fi';
 import Intl from '@/i18n/i18n';
-import { useOperationStore } from '@/store';
 
 export interface ServiceFeeTooltipProps {
   inputAmount?: string;
@@ -12,7 +11,6 @@ export interface ServiceFeeTooltipProps {
 
 export function ServiceFeeTooltip(props: ServiceFeeTooltipProps) {
   const { inputAmount = '-', outputAmount = '-', serviceFee, symbol } = props;
-  const { isMassaToEvm } = useOperationStore();
 
   function ServiceFeeTooltipBody() {
     return (
@@ -25,7 +23,7 @@ export function ServiceFeeTooltip(props: ServiceFeeTooltipProps) {
         <div className="flex flex-col gap-2">
           <div>
             {Intl.t('service-fee.fee', {
-              fee: isMassaToEvm() ? serviceFee : '0',
+              fee: serviceFee,
             })}
           </div>
           {outputAmount} {symbol}
