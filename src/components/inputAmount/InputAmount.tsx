@@ -31,7 +31,10 @@ export const InputAmount = (props: InputAmountProps) => {
   const massaToEvm = isMassaToEvm();
   const decimals = selectedToken?.decimals;
 
-  const { usdValue, isFetching: isFetchingUsdAmount } = useUsdValue();
+  const { usdValue, isFetching: isFetchingUsdAmount } = useUsdValue(
+    inputAmount,
+    selectedToken,
+  );
 
   function changeAmount(amount: string) {
     if (!isInput || !selectedToken) {
@@ -101,7 +104,7 @@ export const InputAmount = (props: InputAmountProps) => {
           {isFetchingUsdAmount ? (
             <FetchingLine width={20} />
           ) : (
-            <div className="mas-caption">{`$ ${usdValue}`}</div>
+            !!usdValue && <div className="mas-caption">{`$ ${usdValue}`}</div>
           )}
         </div>
         <div className="flex flex-col h-fit gap-4 p-2">

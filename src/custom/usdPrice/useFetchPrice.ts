@@ -14,22 +14,23 @@ import {
 import { formatAmount } from '@massalabs/react-ui-kit';
 import { useDebounceValue } from 'usehooks-ts';
 import { useBridgeModeStore } from '../../store/modeStore';
-import {
-  useAccountStore,
-  useOperationStore,
-  useTokenStore,
-} from '../../store/store';
+import { useAccountStore } from '../../store/store';
 import { useMassaNetworkValidation } from '../bridge/useNetworkValidation';
+import { IToken } from '@/store/tokenStore';
 
-export function useUsdValue() {
+export function useUsdValue(
+  inputAmount: bigint | undefined,
+  selectedToken: IToken | undefined,
+) {
   const { isMainnet, currentMode } = useBridgeModeStore();
-  const { inputAmount } = useOperationStore();
+
   const [debouncedAmount] = useDebounceValue(inputAmount, 300);
   const { massaClient } = useAccountStore();
-  const { selectedToken } = useTokenStore();
+
   const isValidMassaNetwork = useMassaNetworkValidation();
   const [usdValue, setUsdValue] = useState<string>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const getUsdValue = useCallback(async () => {
     if (
       !selectedToken ||
@@ -39,7 +40,7 @@ export function useUsdValue() {
       !isValidMassaNetwork
     ) {
       setIsFetching(false);
-      setUsdValue('0');
+      setUsdValue(undefined);
       return;
     }
     setIsFetching(true);
@@ -94,7 +95,6 @@ export function useUsdValue() {
         bestTrade = TradeV2.chooseBestTrade(trades, true);
       } catch (error) {
         setIsFetching(false);
-        setUsdValue('0');
         return;
       }
 
