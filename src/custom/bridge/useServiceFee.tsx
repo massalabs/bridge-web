@@ -8,6 +8,9 @@ import { useOperationStore } from '@/store/operationStore';
 export function useServiceFee() {
   const { currentMode } = useBridgeModeStore();
   const { selectedEvm } = useOperationStore();
+  const { isMassaToEvm } = useOperationStore();
+
+  const massaToEvm = isMassaToEvm();
 
   const redeemFeeContract = {
     address: config[currentMode][selectedEvm] as `0x${string}`,
@@ -29,9 +32,13 @@ export function useServiceFee() {
 
   useEffect(() => {
     if (data && data[0].status === 'success') {
-      setServiceFee(data[0].result as bigint);
+      if (!massaToEvm) {
+        setServiceFee(0n);
+      } else {
+        setServiceFee(data[0].result as bigint);
+      }
     }
-  }, [data]);
+  }, [data, massaToEvm]);
 
   return { serviceFee };
 }

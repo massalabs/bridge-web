@@ -36,7 +36,7 @@ export function TokenBalance() {
           <FetchingLine />
         ) : (
           <div className="flex gap-2 items-center mas-caption">
-            {preview}
+            {`${preview} ${symbol}`}
             <Tooltip body={full + ' ' + symbol ?? ''} />
           </div>
         )}
