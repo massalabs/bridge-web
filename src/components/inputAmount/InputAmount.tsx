@@ -5,10 +5,13 @@ import useEvmToken from '../../custom/bridge/useEvmToken';
 import { useServiceFee } from '../../custom/bridge/useServiceFee';
 import { useUsdValue } from '../../custom/usdPrice/useFetchPrice';
 import { TokenBalance, TokenOptions } from '../../pages';
-import { useGlobalStatusesStore } from '../../store/globalStatusesStore';
-import { useOperationStore } from '../../store/operationStore';
-import { useTokenStore } from '../../store/tokenStore';
+
 import Intl from '@/i18n/i18n';
+import {
+  useGlobalStatusesStore,
+  useOperationStore,
+  useTokenStore,
+} from '@/store';
 import { getAmountToReceive } from '@/utils/utils';
 
 export interface InputAmountProps {
@@ -19,7 +22,7 @@ export interface InputAmountProps {
 export const InputAmount = (props: InputAmountProps) => {
   const { isInput, massaTokens } = props;
   const { inputAmount, outputAmount, setAmounts, isMassaToEvm } =
-    useOperationStore.getState();
+    useOperationStore();
 
   const { serviceFee } = useServiceFee();
   const { selectedToken } = useTokenStore();
