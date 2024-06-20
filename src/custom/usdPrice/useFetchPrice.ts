@@ -91,12 +91,7 @@ export function useUsdValue(
       // chooses the best trade
       let bestTrade;
 
-      try {
-        bestTrade = TradeV2.chooseBestTrade(trades, true);
-      } catch (error) {
-        setIsFetching(false);
-        return;
-      }
+      bestTrade = TradeV2.chooseBestTrade(trades, true);
 
       const quoter = new IQuoter(LB_QUOTER_ADDRESS[chainId], massaClient);
 
