@@ -13,6 +13,7 @@ import {
 } from '@dusalabs/sdk';
 import { formatAmount } from '@massalabs/react-ui-kit';
 import { useDebounceValue } from 'usehooks-ts';
+import { formatUnits, parseUnits } from 'viem';
 import { useBridgeModeStore } from '../../store/modeStore';
 import { useAccountStore } from '../../store/store';
 import { useMassaNetworkValidation } from '../bridge/useNetworkValidation';
@@ -77,10 +78,10 @@ export function useUsdValue(
         3, // maxHops
       );
 
-      // generates all possible TradeV2 instances
+      // Get price for 1 input token
       const trades = await TradeV2.getTradesExactIn(
         allRoutes,
-        new TokenAmount(inputToken, debouncedAmount),
+        new TokenAmount(inputToken, parseUnits('1', inputToken.decimals)),
         outputToken,
         false,
         false,
@@ -103,21 +104,32 @@ export function useUsdValue(
 
       const prices = await quoter.findBestPathFromAmountIn(
         bestTrade.route.pathToStrArr(),
-        debouncedAmount.toString(),
+        parseUnits('1', inputToken.decimals).toString(),
       );
 
       // get the output amount without slippage
-      outputAmount = formatAmount(
+      const unitPrice =
         prices.virtualAmountsWithoutSlippage[
           prices.virtualAmountsWithoutSlippage.length - 1
-        ],
+        ];
+
+      // Multiply by the actual amount and format
+      outputAmount = formatAmount(
+        formatUnits(unitPrice * debouncedAmount, inputToken.decimals),
         outputToken.decimals,
       ).preview;
     }
 
     setUsdValue(outputAmount);
     setIsFetching(false);
-  }, [debouncedAmount, massaClient, isMainnet, inputAmount]);
+  }, [
+    debouncedAmount,
+    massaClient,
+    isMainnet,
+    inputAmount,
+    isValidMassaNetwork,
+    selectedToken,
+  ]);
 
   useEffect(() => {
     getUsdValue();
