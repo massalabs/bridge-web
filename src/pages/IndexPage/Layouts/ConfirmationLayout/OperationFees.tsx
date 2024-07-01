@@ -2,12 +2,12 @@ import { formatAmount } from '@massalabs/react-ui-kit';
 import { useAccount, useBalance } from 'wagmi';
 import { EstimatedAmount } from '@/components/EstimatedAmount';
 
+import { MASSA_TOKEN } from '@/const';
 import { addFeesAndStorageCost } from '@/custom/api/useMassaFeeEstimation';
 
 import Intl from '@/i18n/i18n';
 import { useTokenStore } from '@/store';
 import { useOperationStore } from '@/store/operationStore';
-
 
 export function OperationFees() {
   const { chain, address } = useAccount();
@@ -32,7 +32,7 @@ export function OperationFees() {
         <div>
           {`${
             formatAmount(addFeesAndStorageCost(feesMAS, storageMAS)).full
-          } MAS`}
+          } ${MASSA_TOKEN}`}
         </div>
       </div>
       <div className="flex items-center w-full  justify-between">
