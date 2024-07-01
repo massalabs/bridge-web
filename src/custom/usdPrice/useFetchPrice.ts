@@ -115,7 +115,9 @@ export function useUsdValue(
 
       // Multiply by the actual amount and format
       outputAmount = formatAmount(
-        formatUnits(unitPrice * debouncedAmount, inputToken.decimals),
+        formatUnits(unitPrice * debouncedAmount, inputToken.decimals)
+          // remove decimal part (floor)
+          .replace(/\..+$/g, ''),
         outputToken.decimals,
       ).preview;
     }
