@@ -17,7 +17,7 @@ export function OperationLayout() {
   const { isConnected: isEvmWalletConnected } = useAccount();
   const { isMainnet } = useBridgeModeStore();
 
-  const { isMassaToEvm, inputAmount, outputAmount, setSide, setAmounts } =
+  const { isMassaToEvm, inputAmount, setSide, setAmounts, serviceFeeAmount } =
     useOperationStore();
 
   const [openTokensModal, setOpenTokensModal] = useState<boolean>(false);
@@ -74,9 +74,9 @@ export function OperationLayout() {
               inputAmount={
                 formatAmount(inputAmount || '0', token?.decimals).full
               }
-              serviceFee={serviceFeeToPercent(serviceFee)}
-              outputAmount={
-                formatAmount(outputAmount || '0', token?.decimals).full
+              serviceFeePercent={serviceFeeToPercent(serviceFee)}
+              serviceFeeAmount={
+                formatAmount(serviceFeeAmount || 0n, token?.decimals).full
               }
               symbol={token?.symbol || ''}
             />

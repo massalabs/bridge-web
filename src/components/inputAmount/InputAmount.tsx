@@ -12,7 +12,7 @@ import {
   useOperationStore,
   useTokenStore,
 } from '@/store';
-import { getAmountToReceive } from '@/utils/utils';
+import { getAmountToReceive, getServiceFeeAmount } from '@/utils/utils';
 
 export interface InputAmountProps {
   isInput: boolean;
@@ -54,7 +54,8 @@ export const InputAmount = (props: InputAmountProps) => {
     const receivedAmount = massaToEvm
       ? getAmountToReceive(newAmount, serviceFee)
       : newAmount;
-    setAmounts(newAmount, receivedAmount);
+    const serviceFeeAmount = getServiceFeeAmount(newAmount, serviceFee);
+    setAmounts(newAmount, receivedAmount, serviceFeeAmount);
   }
 
   function handlePercent(percent: number) {

@@ -4,13 +4,18 @@ import Intl from '@/i18n/i18n';
 
 export interface ServiceFeeTooltipProps {
   inputAmount?: string;
-  outputAmount?: string;
-  serviceFee: string;
+  serviceFeeAmount?: string;
+  serviceFeePercent: string;
   symbol: string;
 }
 
 export function ServiceFeeTooltip(props: ServiceFeeTooltipProps) {
-  const { inputAmount = '-', outputAmount = '-', serviceFee, symbol } = props;
+  const {
+    inputAmount = '-',
+    serviceFeeAmount: outputAmount = '-',
+    serviceFeePercent: serviceFee,
+    symbol,
+  } = props;
 
   function ServiceFeeTooltipBody() {
     return (
