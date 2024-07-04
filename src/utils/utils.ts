@@ -64,6 +64,24 @@ export function getAmountToReceive(amount: bigint, serviceFee: bigint): bigint {
 }
 
 /**
+ * Calculates the service fee amount to be deducted from the input amount
+ *
+ * @param amount - string amount input
+ * @param serviceFee - bigint service fee received from the read sc
+ * @returns bigint of the service fee amount
+ */
+
+export function getServiceFeeAmount(
+  amount: bigint,
+  serviceFee: bigint,
+): bigint {
+  if (serviceFee === 0n) {
+    return amount;
+  }
+  return (amount * serviceFee) / 10000n;
+}
+
+/**
  * Converts a service fee in bigint to a percentage string meant to be displayed
  *
  * @param serviceFee - bigint service fee received from the read sc
@@ -74,19 +92,22 @@ export function serviceFeeToPercent(serviceFee: bigint): string {
   return `${convertedServiceFee}%`;
 }
 
-export function retrievePercent(amountIn: string, amountOut?: string): string {
+export function retrievePercent(
+  amountIn: string,
+  amountOut?: string,
+): { serviceFee: bigint; percent: string } {
   if (amountOut === undefined || amountOut === null) {
-    return '-%';
+    return { serviceFee: 0n, percent: '-%' };
   }
   const amountInNum = BigInt(amountIn);
   const amountOutNum = BigInt(amountOut);
   if (amountInNum === 0n) {
-    return '0%';
+    return { serviceFee: 0n, percent: '0%' };
   }
   const feeAmount = amountInNum - amountOutNum;
   if (feeAmount === 0n) {
-    return '0%';
+    return { serviceFee: 0n, percent: '0%' };
   }
   const percent = (feeAmount * 10_000n) / amountInNum;
-  return serviceFeeToPercent(percent);
+  return { serviceFee: percent, percent: serviceFeeToPercent(percent) };
 }
