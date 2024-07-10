@@ -55,7 +55,14 @@ export interface OperationStoreState {
   outputAmount?: bigint;
   setOutputAmount(amount?: bigint): void;
 
-  setAmounts(inputAmount?: bigint, outputAmount?: bigint): void;
+  serviceFeeAmount?: bigint;
+  setServiceFeeAmount(amount?: bigint): void;
+
+  setAmounts(
+    inputAmount?: bigint,
+    outputAmount?: bigint,
+    serviceFeeAmount?: bigint,
+  ): void;
 
   feesETH?: bigint;
   setFeesETH(fees?: bigint): void;
@@ -167,8 +174,17 @@ export const useOperationStore = create<OperationStoreState>(
       set({ outputAmount });
     },
 
-    setAmounts(inputAmount?: bigint, outputAmount?: bigint) {
-      set({ inputAmount, outputAmount });
+    serviceFeeAmount: undefined,
+    setServiceFeeAmount(serviceFeeAmount?: bigint) {
+      set({ serviceFeeAmount });
+    },
+
+    setAmounts(
+      inputAmount?: bigint,
+      outputAmount?: bigint,
+      serviceFeeAmount?: bigint,
+    ) {
+      set({ inputAmount, outputAmount, serviceFeeAmount });
     },
 
     feesETH: undefined,

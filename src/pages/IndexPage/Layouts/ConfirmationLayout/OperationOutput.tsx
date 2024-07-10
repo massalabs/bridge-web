@@ -6,7 +6,7 @@ import { useTokenStore, useOperationStore } from '@/store/store';
 import { serviceFeeToPercent } from '@/utils/utils';
 
 export function OperationOutput() {
-  const { outputAmount, inputAmount } = useOperationStore();
+  const { outputAmount, inputAmount, serviceFeeAmount } = useOperationStore();
   const { selectedToken } = useTokenStore();
   const { serviceFee } = useServiceFee();
 
@@ -16,8 +16,8 @@ export function OperationOutput() {
         <ServiceFeeTooltip
           inputAmount={formatAmount(inputAmount || '', 18).full}
           symbol={selectedToken?.symbol || ''}
-          serviceFee={serviceFeeToPercent(serviceFee)}
-          outputAmount={formatAmount(outputAmount || '', 18).full}
+          serviceFeePercent={serviceFeeToPercent(serviceFee)}
+          serviceFeeAmount={formatAmount(serviceFeeAmount || 0n, 18).full}
         />
         {Intl.t('index.input.placeholder.receive')}
       </div>
