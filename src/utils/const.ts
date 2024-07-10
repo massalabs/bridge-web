@@ -76,4 +76,4 @@ export const bscScanTokenLink = 'https://testnet.bscscan.com/address/';
 export const ethMinConfirmations = 5;
 export const bscMinConfirmations = 10;
 
-export const AIRDROP_AMOUNT = '1';
+export const AIRDROP_AMOUNT = '0.30';
