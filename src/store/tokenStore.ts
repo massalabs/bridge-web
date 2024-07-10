@@ -48,6 +48,7 @@ export interface TokenStoreState {
 
   /** Return the token filtered by supported token on the current selected evm chain */
   getTokens(): IToken[];
+
   /** Set the selected token if included in the list of the supported token on the current selected evm chain */
   setSelectedToken: (token?: IToken) => void;
   /** Reset selected token to the first token in the list of the supported token on the current selected evm chain */

@@ -158,14 +158,10 @@ export function MainnetFAQ() {
         <AccordionContent>
           <p>
             {Intl.t('index.faq.mainnet.not-visible-desc-1')}
-            <a target="_blank" href={`mailto:${bridgeEmail}`}>
-              <u> {bridgeEmail} </u>
-            </a>
-            .
             <br /> <br />
             {Intl.t('index.faq.mainnet.not-visible-desc-2')}
-            <a href={`mailto:${bridgeEmail}`}>
-              <u>{bridgeEmail}</u>
+            <a href={discordSupportChannel}>
+              <u> {Intl.t('index.faq.mainnet.not-visible-desc-3')}</u>
             </a>
             .
           </p>
@@ -211,16 +207,12 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.suffix-title')}>
         <AccordionContent>
           <p>{Intl.t('index.faq.mainnet.suffix-desc')}</p>
-        </AccordionContent>
-      </Accordion>
-
-      <Accordion title={Intl.t('index.faq.mainnet.token-address-title')}>
-        <AccordionContent>
-          {tokens.map((token, index) => (
-            <p key={index}>
-              {token.symbol} ({token.name}) - {token.massaToken}
-            </p>
-          ))}
+          <br />
+          <p>{Intl.t('index.faq.mainnet.suffix-desc-1')}</p>
+          <br />
+          <p>{Intl.t('index.faq.mainnet.suffix-desc-2')}</p>
+          <br /> <br />
+          <p>{Intl.t('index.faq.mainnet.suffix-desc-3')}</p>
         </AccordionContent>
       </Accordion>
 
@@ -231,9 +223,23 @@ export function MainnetFAQ() {
             {config[currentMode][SupportedEvmBlockchain.ETH]}
           </p>
           <p>
+            {Intl.t('index.faq.mainnet.bridge-address-desc-3')}{' '}
+            {config[currentMode][SupportedEvmBlockchain.BSC]}
+          </p>
+          <p>
             {Intl.t('index.faq.mainnet.bridge-address-desc-2')}{' '}
             {config[currentMode].massaBridgeContract}
           </p>
+        </AccordionContent>
+      </Accordion>
+
+      <Accordion title={Intl.t('index.faq.mainnet.token-address-title')}>
+        <AccordionContent>
+          {tokens.map((token, index) => (
+            <p key={index}>
+              {token.symbol} ({token.name}) - {token.massaToken}
+            </p>
+          ))}
         </AccordionContent>
       </Accordion>
 
@@ -249,20 +255,28 @@ export function MainnetFAQ() {
             {Intl.t('index.faq.mainnet.what-token-desc', {
               amount: AIRDROP_AMOUNT,
             })}
-
-            <a
-              target="_blank"
-              href="https://docs.massa.net/docs/learn/storage-costs"
-            >
-              <u> {Intl.t('index.faq.mainnet.massa-documentation')}</u>
-            </a>
           </p>
+          <br />
+          <p>{Intl.t('index.faq.mainnet.what-token-desc-1')}</p>
         </AccordionContent>
       </Accordion>
 
       <Accordion title={Intl.t('index.faq.mainnet.zero-tx-fees-title')}>
         <AccordionContent>
           <p>{Intl.t('index.faq.mainnet.zero-tx-fees-desc')}</p>
+          <br />
+          <p>
+            <p>
+              {Intl.t('index.faq.mainnet.zero-tx-fees-desc-1')}
+
+              <a
+                target="_blank"
+                href="https://docs.massa.net/docs/massaBridge/architecture-security"
+              >
+                <u> {Intl.t('index.faq.mainnet.massa-documentation')}</u>
+              </a>
+            </p>
+          </p>
         </AccordionContent>
       </Accordion>
 
@@ -284,6 +298,8 @@ export function MainnetFAQ() {
       <Accordion title={Intl.t('index.faq.mainnet.service-fees-title')}>
         <AccordionContent>
           <p>{Intl.t('index.faq.mainnet.service-fees-desc')}</p>
+          <br />
+          <p>{Intl.t('index.faq.mainnet.service-fees-desc-1')}</p>
         </AccordionContent>
       </Accordion>
 
@@ -318,6 +334,16 @@ export function MainnetFAQ() {
       >
         <AccordionContent>
           <p>{Intl.t('index.faq.mainnet.bridged-tokens-subtitle-1')}</p>
+          <br />
+          <p>
+            {Intl.t('index.faq.mainnet.bridged-tokens-subtitle-massa-desc')}
+          </p>
+          <br />
+          <p>
+            {Intl.t('index.faq.mainnet.bridged-tokens-subtitle-massa-desc-1')}
+          </p>
+          <br />
+          <p>{Intl.t('index.faq.mainnet.how-to')}</p>
           <br />
           <div>
             {Intl.t('index.faq.mainnet.bridged-tokens-desc-1')}
