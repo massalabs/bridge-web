@@ -75,9 +75,6 @@ export function getServiceFeeAmount(
   amount: bigint,
   serviceFee: bigint,
 ): bigint {
-  if (serviceFee === 0n) {
-    return amount;
-  }
   return (amount * serviceFee) / 10000n;
 }
 
