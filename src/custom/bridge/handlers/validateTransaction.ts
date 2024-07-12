@@ -5,7 +5,7 @@ import {
   useTokenStore,
 } from '@/store/store';
 
-export function validate(tokenBalanceEVM: any) {
+export function validate(tokenBalanceEVM: bigint) {
   const { inputAmount: amount, isMassaToEvm } = useOperationStore.getState();
   const { selectedToken } = useTokenStore.getState();
   const { setAmountError } = useGlobalStatusesStore.getState();

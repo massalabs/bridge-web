@@ -50,7 +50,7 @@ export interface TokenStoreState {
   getTokens(): IToken[];
 
   /** Set the selected token if included in the list of the supported token on the current selected evm chain */
-  setSelectedToken: (token?: IToken) => void;
+  setSelectedToken: (token: IToken) => void;
   /** Reset selected token to the first token in the list of the supported token on the current selected evm chain */
   resetSelectedToken: () => void;
   /** Refresh the list of supported tokens by reading the massa bridge smart contract */
@@ -131,18 +131,15 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
     }
   },
 
-  setSelectedToken: (selectedToken?: IToken) => {
-    // if given undefined, set undefined
-    if (!selectedToken) {
-      set({ selectedToken });
-    }
+  setSelectedToken: (selectedToken: IToken) => {
     const currentSelectedToken = get().selectedToken;
     const inputAmount = useOperationStore.getState().inputAmount;
     if (
       inputAmount &&
-      currentSelectedToken?.decimals !== selectedToken?.decimals
+      currentSelectedToken &&
+      currentSelectedToken.decimals !== selectedToken?.decimals
     ) {
-      const decsDiff = selectedToken!.decimals - currentSelectedToken!.decimals;
+      const decsDiff = selectedToken.decimals - currentSelectedToken.decimals;
       let newAmount: bigint;
       if (decsDiff > 0) {
         newAmount = inputAmount * 10n ** BigInt(decsDiff);
