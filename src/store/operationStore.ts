@@ -50,13 +50,10 @@ export interface OperationStoreState {
   setClaimTxId(currentTxID?: string): void;
 
   inputAmount?: bigint;
-  setInputAmount(amount?: bigint): void;
 
   outputAmount?: bigint;
-  setOutputAmount(amount?: bigint): void;
 
   serviceFeeAmount?: bigint;
-  setServiceFeeAmount(amount?: bigint): void;
 
   setAmounts(
     inputAmount?: bigint,
@@ -165,19 +162,8 @@ export const useOperationStore = create<OperationStoreState>(
     },
 
     inputAmount: undefined,
-    setInputAmount(inputAmount?: bigint) {
-      set({ inputAmount });
-    },
-
     outputAmount: undefined,
-    setOutputAmount(outputAmount?: bigint) {
-      set({ outputAmount });
-    },
-
     serviceFeeAmount: undefined,
-    setServiceFeeAmount(serviceFeeAmount?: bigint) {
-      set({ serviceFeeAmount });
-    },
 
     setAmounts(
       inputAmount?: bigint,

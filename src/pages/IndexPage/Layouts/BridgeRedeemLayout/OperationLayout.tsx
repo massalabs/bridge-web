@@ -28,7 +28,7 @@ export function OperationLayout() {
   const { serviceFee } = useServiceFee();
 
   function handleToggleLayout() {
-    setAmounts(undefined, undefined);
+    setAmounts();
 
     setSide(isMassaToEvm() ? SIDE.EVM_TO_MASSA : SIDE.MASSA_TO_EVM);
   }
