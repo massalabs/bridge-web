@@ -12,11 +12,11 @@ interface AmountProps {
 export function Received(props: AmountProps) {
   const { inputAmount, outputAmount, symbol = '', decimals = 9 } = props;
 
-  let outputFull = '-';
+  let output = '-';
 
   if (outputAmount !== undefined && outputAmount !== null) {
     const formattedResult = formatAmount(outputAmount, decimals);
-    outputFull = formattedResult.full;
+    output = formattedResult.preview;
   }
 
   const serviceFeeAmount = getServiceFeeAmount(
@@ -26,7 +26,7 @@ export function Received(props: AmountProps) {
 
   return (
     <div className="flex gap-2 items-center">
-      {outputFull} {symbol}
+      {output} {symbol}
       <ServiceFeeTooltip
         inputAmount={formatAmount(inputAmount, decimals).full}
         serviceFeeAmount={formatAmount(serviceFeeAmount, decimals).full}

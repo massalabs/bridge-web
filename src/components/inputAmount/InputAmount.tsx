@@ -44,12 +44,12 @@ export const InputAmount = (props: InputAmountProps) => {
       return;
     }
     if (!amount) {
-      setAmounts(undefined, undefined);
+      setAmounts();
       return;
     }
     setAmountError(undefined);
 
-    const newAmount = parseUnits(amount, decimals!);
+    const newAmount = parseUnits(amount, selectedToken.decimals);
 
     const receivedAmount = massaToEvm
       ? getAmountToReceive(newAmount, serviceFee)
