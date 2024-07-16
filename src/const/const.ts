@@ -63,10 +63,11 @@ export enum BridgeMode {
 export const config = {
   [BridgeMode.mainnet]: {
     [SupportedEvmBlockchain.ETH]:
-      '0xCD5dcE776c20260D96E2d0C65431f05da4fa8ba1' as `0x${string}`,
-    [SupportedEvmBlockchain.BSC]: '0x' as `0x${string}`,
+      '0x6c70c6A2b6B2b0d40e826bFDe89fE2e081Ca408B' as `0x${string}`,
+    [SupportedEvmBlockchain.BSC]:
+      '0x41D2841749476b4d7B949ef6318Ac0A376fddc54' as `0x${string}`,
     massaBridgeContract:
-      'AS12Kkm5NXHb4xjJJRBDSJiSUsSSbV7DcBCLSS1Zdugz1WdzjVSxg',
+      'AS12ZFbbwEckKkkyGYsdJA5CbSZBWxZJoQvZth2qCm1EoseS97FM7',
     lambdaUrl:
       'https://gfltuhv4oouk5qs6jf7lv7tvp40vfwsj.lambda-url.eu-west-3.on.aws/',
     wmas_address: '0xDc074966De429c92614769Dc6546A8E72E83175D' as `0x${string}`,
