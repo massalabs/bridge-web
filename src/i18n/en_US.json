@@ -274,7 +274,6 @@
     "claim": {
       "error": {
         "rejected": "Claim rejected by user, try again",
-        "timeout": "Claim timeout out.",
         "unknown": "Unknown error, Try again."
       }
     },

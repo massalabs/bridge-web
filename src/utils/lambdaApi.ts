@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ClaimState } from './const';
 import { config } from '../const';
-import { useBridgeModeStore, useGlobalStatusesStore } from '../store/store';
+import { useBridgeModeStore } from '../store/store';
 import { useResource } from '@/custom/api/useResource';
 import { BurnRedeemOperation, useOperationStore } from '@/store/operationStore';
 
@@ -143,7 +143,6 @@ function getClaimState(
 export function useFetchSignatures() {
   const { burnTxId, getCurrentRedeemOperation, updateBurnRedeemOperationById } =
     useOperationStore();
-  const { setBox } = useGlobalStatusesStore();
   const { currentMode } = useBridgeModeStore();
   const { address: evmAddress } = useAccount();
 
@@ -181,7 +180,6 @@ export function useFetchSignatures() {
   }, [
     burnTxId,
     burnOperations,
-    setBox,
     getCurrentRedeemOperation,
     updateBurnRedeemOperationById,
   ]);
