@@ -5,8 +5,6 @@ import { FetchingLine, Tag, formatAmount } from '@massalabs/react-ui-kit';
 import { IAccountBalanceResponse } from '@massalabs/wallet-provider';
 
 import { FiHelpCircle } from 'react-icons/fi';
-import { mainnet } from 'viem/chains';
-import { useAccount } from 'wagmi';
 import { fetchMASBalance } from '@/bridge';
 import { MASSA_TOKEN } from '@/const';
 import { useIsPageDAOMaker } from '@/custom/bridge/location';
@@ -18,7 +16,6 @@ export function MASBalance() {
   const [balance, setBalance] = useState<IAccountBalanceResponse>();
 
   const { connectedAccount } = useAccountStore();
-  const { chain } = useAccount();
   const { isMainnet } = useBridgeModeStore();
   const isPageDAOMaker = useIsPageDAOMaker();
 
@@ -33,8 +30,7 @@ export function MASBalance() {
 
   const isBalanceZero = balance?.candidateBalance === '0';
 
-  const renderCustomTooltip =
-    isBalanceZero && isMainnet() && chain?.id === mainnet.id && !isPageDAOMaker;
+  const renderCustomTooltip = isBalanceZero && isMainnet() && !isPageDAOMaker;
 
   return (
     <div className="flex gap-2 mas-body">
