@@ -122,7 +122,7 @@
         "speed-title": "Can I speed up an Ethereum transaction on the Massa Bridge?",
         "speed-desc": " If Ethereum network load implies long confirmation times, increase the transaction fee in your Metamask wallet for faster processing.",
         "what-token-title": "What token do I need to use to pay for transaction fees on the Massa network?",
-        "what-token-desc": "Massa network transactions require Massa’s native asset, the MAS token. When bridging to a new Massa address, you’ll receive 0.3 MAS for free, with 0.001 allocated for storing your address on the ledger and the rest for a few future transaction fees. ",
+        "what-token-desc": "Massa network transactions require Massa’s native asset, the MAS token. When bridging to a new Massa address, you’ll receive {amount} MAS for free, with 0.001 allocated for storing your address on the ledger and the rest for a few future transaction fees. ",
         "what-token-desc-1": "Since June 2024, Massa nodes require a very small minimal transaction fees of 0.01 MAS.",
         "zero-tx-fees-title": "Why are there low transaction fees on the Massa network?",
         "zero-tx-fees-desc": "As Massa is a new network, chain activity is low enough to have very low transaction fees. As chain activity increases, transaction fees may also increase.",
