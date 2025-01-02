@@ -1,11 +1,12 @@
 import { bsc, bscTestnet, mainnet, sepolia } from 'viem/chains';
 import { createConfig, createStorage, http } from 'wagmi';
+const { VITE_MAINNET_RPC } = import.meta.env;
 
 export const config = createConfig({
   chains: [mainnet, sepolia, bsc, bscTestnet],
   storage: createStorage({ storage: window.localStorage }),
   transports: {
-    [mainnet.id]: http(),
+    [mainnet.id]: http(VITE_MAINNET_RPC ?? mainnet.rpcUrls.default.http[0]),
     [sepolia.id]: http('https://rpc2.sepolia.org'),
     [bsc.id]: http(),
     [bscTestnet.id]: http(),
