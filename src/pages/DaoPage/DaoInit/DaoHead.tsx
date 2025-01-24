@@ -1,5 +1,10 @@
-import { Bsc, Dropdown, FetchingLine, Money } from '@massalabs/react-ui-kit';
-import { WMAS } from '@massalabs/react-ui-kit';
+import {
+  Bsc,
+  Dropdown,
+  FetchingLine,
+  Money,
+  WMAS,
+} from '@massalabs/react-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { wmasDecimals, wmasSymbol } from '..';

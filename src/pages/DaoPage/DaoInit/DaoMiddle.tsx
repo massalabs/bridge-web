@@ -1,11 +1,5 @@
 import { ReactElement } from 'react';
-import {
-  FetchingLine,
-  MassaLogo,
-  Tag,
-  formatAmount,
-} from '@massalabs/react-ui-kit';
-import { wmasDecimals } from '../DaoPage';
+import { FetchingLine, MassaLogo, Tag } from '@massalabs/react-ui-kit';
 import { MASSA_TOKEN } from '@/const';
 import Intl from '@/i18n/i18n';
 import { useAccountStore } from '@/store/store';
@@ -27,12 +21,16 @@ export function DaoMiddle(props: DaoMiddleProps) {
     }
     return <>{maskAddress(massaAddress)}</>;
   }
+
+  /* We parse to float to convert values such as '001.0000' to '1' */
+  const expectedRedeemedMasAmount = amount && parseFloat(amount);
+
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex justify-between w-full">
         <div>{Intl.t('dao-maker.receive')}</div>
         <div>
-          {formatAmount(amount, wmasDecimals).full} {MASSA_TOKEN}
+          {expectedRedeemedMasAmount} {MASSA_TOKEN}
         </div>
       </div>
       <div className="flex justify-between w-full">
