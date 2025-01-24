@@ -46,7 +46,7 @@ export function DaoPage() {
 
   const wmasBalance = data?.[0].status === 'success' ? data[0].result : 0n;
 
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(''); // the amount of WMAS to convert into MAS
   const [amountError, setAmountError] = useState<string | undefined>('');
   const [releaseMasStatus, setReleaseMasStatus] = useState<ReleaseMasStatus>(
     ReleaseMasStatus.init,
@@ -109,7 +109,7 @@ function validateWmas(
   _balance: bigint,
   setAmountError: (value: string) => void,
 ): boolean {
-  const _amount = parseUnits(amount, 9);
+  const _amount = parseUnits(amount, wmasDecimals);
   if (_amount <= 0n) {
     setAmountError(Intl.t('index.approve.error.invalid-amount'));
     return false;
