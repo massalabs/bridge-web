@@ -33,21 +33,21 @@ export function boxLayout(): BoxLayoutResult {
     [SIDE.MASSA_TO_EVM]: {
       up: {
         header: <MassaHeader />,
-        input: <InputAmount isInput={true} massaTokens={false} />,
+        input: <InputAmount isInput={true} EVMToken={false} />,
       },
       down: {
         header: <EVMHeader />,
-        input: <InputAmount isInput={false} massaTokens={true} />,
+        input: <InputAmount isInput={false} EVMToken={true} />,
       },
     },
     [SIDE.EVM_TO_MASSA]: {
       up: {
         header: <EVMHeader />,
-        input: <InputAmount isInput={true} massaTokens={true} />,
+        input: <InputAmount isInput={true} EVMToken={true} />,
       },
       down: {
         header: <MassaHeader />,
-        input: <InputAmount isInput={false} massaTokens={false} />,
+        input: <InputAmount isInput={false} EVMToken={false} />,
       },
     },
   };

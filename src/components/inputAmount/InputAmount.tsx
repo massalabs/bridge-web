@@ -16,11 +16,11 @@ import { getAmountToReceive, getServiceFeeAmount } from '@/utils/utils';
 
 export interface InputAmountProps {
   isInput: boolean;
-  massaTokens: boolean;
+  EVMToken: boolean;
 }
 
 export const InputAmount = (props: InputAmountProps) => {
-  const { isInput, massaTokens } = props;
+  const { isInput, EVMToken } = props;
   const { inputAmount, outputAmount, setAmounts, isMassaToEvm } =
     useOperationStore();
 
@@ -117,7 +117,7 @@ export const InputAmount = (props: InputAmountProps) => {
           )}
         </div>
         <div className="flex flex-col items-end h-full gap-2 p-2 ">
-          <TokenOptions nativeToken={massaTokens} />
+          <TokenOptions nativeToken={EVMToken} />
           {isInput && <TokenBalance />}
         </div>
       </div>
