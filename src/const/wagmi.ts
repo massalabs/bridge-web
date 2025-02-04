@@ -7,7 +7,7 @@ export const config = createConfig({
   storage: createStorage({ storage: window.localStorage }),
   transports: {
     [mainnet.id]: http(VITE_MAINNET_RPC ?? mainnet.rpcUrls.default.http[0]),
-    [sepolia.id]: http('https://rpc2.sepolia.org'),
+    [sepolia.id]: http('https://sepolia.drpc.org'),
     [bsc.id]: http(),
     [bscTestnet.id]: http(),
   },
