@@ -14,6 +14,7 @@ interface ImportMetaEnv {
   readonly VITE_INFURA_API_KEY: string;
   readonly VITE_ALCHEMY_API_KEY: string;
   readonly VITE_MAINNET_RPC: string;
+  readonly VITE_BSC_RPC: string;
 }
 
 interface ImportMeta {
