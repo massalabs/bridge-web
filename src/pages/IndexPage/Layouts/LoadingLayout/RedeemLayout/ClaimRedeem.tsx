@@ -48,11 +48,6 @@ export function ClaimRedeem() {
     [burnTxId, updateBurnRedeemOperationById],
   );
 
-  const setLoadingToError = useCallback(() => {
-    setClaim(Status.Error);
-    setBox(Status.Error);
-  }, [setClaim, setBox]);
-
   // Updates current redeem operation state based on claim status
   useEffect(() => {
     if (hash) setClaimTxId(hash);
@@ -76,7 +71,8 @@ export function ClaimRedeem() {
           claimState: ClaimState.REJECTED,
         });
       } else {
-        setLoadingToError();
+        setClaim(Status.Error);
+        setBox(Status.Error);
         updateCurrentRedeemOperation({
           claimState: ClaimState.ERROR,
         });
@@ -91,7 +87,6 @@ export function ClaimRedeem() {
     refreshBalances,
     setClaim,
     updateCurrentRedeemOperation,
-    setLoadingToError,
     setClaimTxId,
   ]);
 

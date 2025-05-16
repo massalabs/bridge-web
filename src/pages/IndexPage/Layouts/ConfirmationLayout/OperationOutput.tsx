@@ -14,10 +14,14 @@ export function OperationOutput() {
     <div className="flex itmes-center w-full justify-between mas-menu-default">
       <div className="flex items-center gap-2">
         <ServiceFeeTooltip
-          inputAmount={formatAmount(inputAmount || '', 18).full}
+          inputAmount={
+            formatAmount(inputAmount || '', selectedToken?.decimals).full
+          }
           symbol={selectedToken?.symbol || ''}
           serviceFeePercent={serviceFeeToPercent(serviceFee)}
-          serviceFeeAmount={formatAmount(serviceFeeAmount || 0n, 18).full}
+          serviceFeeAmount={
+            formatAmount(serviceFeeAmount || 0n, selectedToken?.decimals).full
+          }
         />
         {Intl.t('index.input.placeholder.receive')}
       </div>

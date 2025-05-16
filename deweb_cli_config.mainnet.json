@@ -1,0 +1,13 @@
+{
+  "address": "AS128S8h5Z36j2a62oGZydSu2e7AGskTFhx1Bdd9aiceFuUF6Geu4",
+  "node_url": "https://mainnet.massa.net/api/v2",
+  "metadatas": {
+    "TITLE": "Massa Bridge",
+    "DESCRIPTION": "Bridge asset back and from ethereum & BSC to Massa.",
+    "KEYWORD1": "freedom",
+    "KEYWORD2": "decentralizedweb",
+    "KEYWORD3": "bridge",
+    "KEYWORD4": "ethereum",
+    "KEYWORD5": "bsc"
+  }
+}

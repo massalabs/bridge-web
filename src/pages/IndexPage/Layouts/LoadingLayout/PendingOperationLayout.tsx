@@ -17,21 +17,22 @@ export function PendingOperationLayout() {
 
   const { box } = useGlobalStatusesStore();
 
-  const IS_BOX_SUCCESS = box === Status.Success;
-  const IS_BOX_WARNING = box === Status.Warning;
-  const IS_BOX_ERROR = box === Status.Error;
+  const isBoxSuccess = box === Status.Success;
+  const isBoxWarning = box === Status.Warning;
+  const isBoxError = box === Status.Error;
 
-  const displaySubtitle = !IS_BOX_SUCCESS && !IS_BOX_WARNING && !IS_BOX_ERROR;
+  const displaySubtitle = !isBoxSuccess && !isBoxWarning && !isBoxError;
 
-  const isNotProcessing = IS_BOX_SUCCESS || IS_BOX_WARNING || IS_BOX_ERROR;
+  const isNotProcessing = isBoxSuccess || isBoxWarning || isBoxError;
 
   function getLoadingBoxHeader() {
-    if (IS_BOX_SUCCESS) return Intl.t('index.loading-box.success');
-    else if (IS_BOX_ERROR) {
+    if (isBoxSuccess) return Intl.t('index.loading-box.success');
+    if (isBoxError) {
       return massaToEvm
         ? Intl.t('index.loading-box.title-redeem-error')
         : Intl.t('index.loading-box.title-bridge-error');
-    } else if (IS_BOX_WARNING) {
+    }
+    if (isBoxWarning) {
       return massaToEvm ? (
         <>
           {Intl.t('index.loading-box.title-redeem-warning-1')}
@@ -54,9 +55,9 @@ export function PendingOperationLayout() {
 
   function getLoadingBoxContent() {
     switch (true) {
-      case IS_BOX_SUCCESS:
+      case isBoxSuccess:
         return <SuccessLayout />;
-      case IS_BOX_WARNING:
+      case isBoxWarning:
         return <WarningLayout />;
       case massaToEvm:
         return <RedeemLayout />;
