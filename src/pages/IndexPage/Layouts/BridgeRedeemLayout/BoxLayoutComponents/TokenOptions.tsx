@@ -1,4 +1,5 @@
 import { Dropdown, getAssetIcons } from '@massalabs/react-ui-kit';
+import { getWBTCIcons } from './icons/WBTC';
 import { useGetTargetEvmChainId } from '@/custom/bridge/useNetworkValidation';
 import { useAccountStore, useOperationStore } from '@/store/store';
 import { useTokenStore, IToken } from '@/store/tokenStore';
@@ -34,6 +35,15 @@ export function TokenOptions(props: TokenOptionsProps) {
       readOnly={readOnlyDropdown}
       size="md"
       options={tokens.map((token: IToken) => {
+        // hack to avoid update ui-kit
+        if (token.symbolEVM === 'WBTC') {
+          return {
+            item: nativeToken ? token.symbolEVM : token.symbol,
+            icon: getWBTCIcons(targetChainId, nativeToken),
+            onClick: () => handleTokenChange(token),
+          };
+        }
+
         return {
           item: nativeToken ? token.symbolEVM : token.symbol,
           icon: getAssetIcons(token.symbolEVM, targetChainId, nativeToken),
