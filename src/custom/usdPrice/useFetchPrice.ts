@@ -52,6 +52,21 @@ export function useUsdValue(
         debouncedAmount,
         selectedToken.decimals,
       ).preview;
+    }
+    if (symbol.includes('BTC')) {
+      const btcPriceRes = await fetch(
+        'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
+      );
+      const btcPriceData = await btcPriceRes.json();
+      const btcPrice = parseFloat(btcPriceData.price);
+      const amount = Number(
+        formatUnits(debouncedAmount, selectedToken.decimals),
+      );
+      const outputUSDAmount = (amount * btcPrice).toFixed(2);
+      outputAmount = formatAmount(
+        parseUnits(outputUSDAmount, selectedToken.decimals),
+        selectedToken.decimals,
+      ).preview;
     } else {
       const chainId = isMainnet() ? ChainId.MAINNET : ChainId.BUILDNET;
       const USDC = _USDC[chainId];

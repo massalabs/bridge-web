@@ -1,5 +1,6 @@
 import { getAssetIcons, Tooltip } from '@massalabs/react-ui-kit';
 
+import { getWBTCIcons } from '../../IndexPage/Layouts/BridgeRedeemLayout/BoxLayoutComponents/icons/WBTC';
 import {
   getEvmChainName,
   getEvmNetworkIcon,
@@ -35,7 +36,9 @@ export function OperationInfo(props: DisplayContentProps) {
     return (
       <div className="flex flex-col gap-4">
         <strong className="flex items-center gap-2">
-          {getAssetIcons(symbol, operation.evmChainId, true, 26)}
+          {symbol === 'WBTC'
+            ? getWBTCIcons(operation.evmChainId, true, 26)
+            : getAssetIcons(symbol, operation.evmChainId, true, 26)}
           {amountRedeemedFull} {symbol}
           <Tooltip body={`${amountRedeemedFull} ${symbol}`} />
         </strong>
