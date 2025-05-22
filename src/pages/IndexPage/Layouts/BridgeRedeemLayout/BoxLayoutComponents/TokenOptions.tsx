@@ -34,22 +34,24 @@ export function TokenOptions(props: TokenOptionsProps) {
       select={selectedMassaTokenKey}
       readOnly={readOnlyDropdown}
       size="md"
-      options={tokens.map((token: IToken) => {
-        // hack to avoid update ui-kit
-        if (token.symbolEVM === 'WBTC') {
+      options={tokens
+        .filter((token: IToken) => token.symbolEVM !== 'WBTC')
+        .map((token: IToken) => {
+          // hack to avoid update ui-kit
+          if (token.symbolEVM === 'WBTC') {
+            return {
+              item: nativeToken ? token.symbolEVM : token.symbol,
+              icon: getWBTCIcons(targetChainId, nativeToken),
+              onClick: () => handleTokenChange(token),
+            };
+          }
+
           return {
             item: nativeToken ? token.symbolEVM : token.symbol,
-            icon: getWBTCIcons(targetChainId, nativeToken),
+            icon: getAssetIcons(token.symbolEVM, targetChainId, nativeToken),
             onClick: () => handleTokenChange(token),
           };
-        }
-
-        return {
-          item: nativeToken ? token.symbolEVM : token.symbol,
-          icon: getAssetIcons(token.symbolEVM, targetChainId, nativeToken),
-          onClick: () => handleTokenChange(token),
-        };
-      })}
+        })}
     />
   );
 }
