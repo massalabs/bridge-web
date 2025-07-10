@@ -47,13 +47,13 @@ export function useUsdValue(
     setIsFetching(true);
     const symbol = selectedToken.symbolEVM.toUpperCase();
     let outputAmount: string;
+
     if (symbol.includes('USD') || symbol.includes('DAI')) {
       outputAmount = formatAmount(
         debouncedAmount,
         selectedToken.decimals,
       ).preview;
-    }
-    if (symbol.includes('BTC')) {
+    } else if (symbol.includes('BTC')) {
       const btcPriceRes = await fetch(
         'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
       );
