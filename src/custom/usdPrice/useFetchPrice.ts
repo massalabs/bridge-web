@@ -1,16 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  ChainId,
-  IQuoter,
-  LB_QUOTER_ADDRESS,
-  PairV2,
-  RouteV2,
-  USDC as _USDC,
-  WMAS as _WMAS,
-  WETH as _WETH,
-  TradeV2,
-  TokenAmount,
-} from '@dusalabs/sdk';
 import { formatAmount } from '@massalabs/react-ui-kit';
 import { useDebounceValue } from 'usehooks-ts';
 import { formatUnits, parseUnits } from 'viem';
@@ -23,7 +11,7 @@ export function useUsdValue(
   inputAmount: bigint | undefined,
   selectedToken: IToken | undefined,
 ) {
-  const { isMainnet, currentMode } = useBridgeModeStore();
+  const { currentMode } = useBridgeModeStore();
 
   const [debouncedAmount] = useDebounceValue(inputAmount, 300);
   const { massaClient } = useAccountStore();
@@ -45,104 +33,52 @@ export function useUsdValue(
       return;
     }
     setIsFetching(true);
-    const symbol = selectedToken.symbolEVM.toUpperCase();
-    let outputAmount: string;
 
-    if (symbol.includes('USD') || symbol.includes('DAI')) {
-      outputAmount = formatAmount(
-        debouncedAmount,
-        selectedToken.decimals,
-      ).preview;
-    } else if (symbol.includes('BTC')) {
-      const btcPriceRes = await fetch(
-        'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
-      );
-      const btcPriceData = await btcPriceRes.json();
-      const btcPrice = parseFloat(btcPriceData.price);
-      const amount = Number(
-        formatUnits(debouncedAmount, selectedToken.decimals),
-      );
-      const outputUSDAmount = (amount * btcPrice).toFixed(2);
-      outputAmount = formatAmount(
-        parseUnits(outputUSDAmount, selectedToken.decimals),
-        selectedToken.decimals,
-      ).preview;
-    } else {
-      const chainId = isMainnet() ? ChainId.MAINNET : ChainId.BUILDNET;
-      const USDC = _USDC[chainId];
-      const ETH = _WETH[chainId];
-      const WMAS = _WMAS[chainId];
+    try {
+      const symbol = selectedToken.symbolEVM.toUpperCase();
+      let outputAmount = undefined;
 
-      // little hack because Dusa buildnet doesn't use same token addresses as Bridge
-      const inputToken = symbol.includes('ETH') ? ETH : WMAS;
-      const outputToken = USDC;
+      if (symbol.includes('USD') || symbol.includes('DAI')) {
+        outputAmount = formatAmount(
+          debouncedAmount,
+          selectedToken.decimals,
+        ).preview;
+      } else {
+        let binanceSymbol;
+        if (symbol.includes('BTC')) {
+          binanceSymbol = 'BTC';
+        } else if (symbol.includes('ETH')) {
+          binanceSymbol = 'ETH';
+        } else {
+          console.warn('Unsupported token for price fetch:', symbol);
+        }
 
-      const allTokenPairs = PairV2.createAllTokenPairs(
-        inputToken,
-        outputToken,
-        [ETH, USDC, WMAS],
-      );
-
-      const allPairs = PairV2.initPairs(allTokenPairs);
-
-      // generates all possible routes to consider
-      const allRoutes = RouteV2.createAllRoutes(
-        allPairs,
-        inputToken,
-        outputToken,
-        3, // maxHops
-      );
-
-      // Get price for 1 input token
-      const trades = await TradeV2.getTradesExactIn(
-        allRoutes,
-        new TokenAmount(inputToken, parseUnits('1', inputToken.decimals)),
-        outputToken,
-        false,
-        false,
-        massaClient,
-        chainId,
-      );
-
-      // chooses the best trade
-      let bestTrade;
-
-      try {
-        bestTrade = TradeV2.chooseBestTrade(trades, true);
-      } catch (error) {
-        setUsdValue(undefined);
-        setIsFetching(false);
-        return;
+        if (binanceSymbol) {
+          const data = await fetch(
+            `https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbol}USDT`,
+          );
+          const priceData = await data.json();
+          const priceFloat = parseFloat(priceData.price);
+          const amount = Number(
+            formatUnits(debouncedAmount, selectedToken.decimals),
+          );
+          const outputUSDAmount = (amount * priceFloat).toFixed(2);
+          outputAmount = formatAmount(
+            parseUnits(outputUSDAmount, selectedToken.decimals),
+            selectedToken.decimals,
+          ).preview;
+        }
       }
-
-      const quoter = new IQuoter(LB_QUOTER_ADDRESS[chainId], massaClient);
-
-      const prices = await quoter.findBestPathFromAmountIn(
-        bestTrade.route.pathToStrArr(),
-        parseUnits('1', inputToken.decimals).toString(),
-      );
-
-      // get the output amount without slippage
-      const unitPrice =
-        prices.virtualAmountsWithoutSlippage[
-          prices.virtualAmountsWithoutSlippage.length - 1
-        ];
-
-      // Multiply by the actual amount and format
-      outputAmount = formatAmount(
-        formatUnits(unitPrice * debouncedAmount, inputToken.decimals)
-          // remove decimal part (floor)
-          .replace(/\..+$/g, ''),
-        outputToken.decimals,
-      ).preview;
+      setUsdValue(outputAmount);
+    } catch (error) {
+      console.error('Error in USD value calculation:', error);
+      setUsdValue(undefined);
+    } finally {
+      setIsFetching(false);
     }
-
-    setUsdValue(outputAmount);
-    setIsFetching(false);
   }, [
     debouncedAmount,
     massaClient,
-    isMainnet,
     inputAmount,
     isValidMassaNetwork,
     selectedToken,

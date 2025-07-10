@@ -16,28 +16,32 @@ export function useMassaFeeEstimation() {
   const { inputAmount } = useOperationStore();
   const { minimalFees } = useAccountStore();
 
-  const estimateFeesMassa = useCallback((): EstimateFeesMas => {
-    if (!inputAmount || !selectedToken) {
-      return { feesMAS: 0n, storageMAS: 0n };
-    }
+  const estimateFeesMassa = useCallback(
+    (): EstimateFeesMas => {
+      if (!inputAmount || !selectedToken) {
+        return { feesMAS: 0n, storageMAS: 0n };
+      }
 
-    let feesMAS = minimalFees;
-    let storageMAS = forwardBurnFees.coins;
-    if (
-      selectedToken?.allowance === 0n ||
-      selectedToken?.allowance < inputAmount
-    ) {
-      storageMAS += increaseAllowanceStorageCost();
-      feesMAS += minimalFees;
-    }
+      let feesMAS = minimalFees;
+      let storageMAS = forwardBurnFees.coins;
+      if (
+        selectedToken?.allowance === 0n ||
+        selectedToken?.allowance < inputAmount
+      ) {
+        storageMAS += increaseAllowanceStorageCost();
+        feesMAS += minimalFees;
+      }
 
-    return { feesMAS, storageMAS };
-  }, [
-    inputAmount,
-    selectedToken?.allowance, // triggers the callback on account change
-    minimalFees,
-    selectedToken,
-  ]);
+      return { feesMAS, storageMAS };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      inputAmount,
+      selectedToken?.allowance, // triggers the callback on account change
+      minimalFees,
+      selectedToken,
+    ],
+  );
 
   return { estimateFeesMassa };
 }
