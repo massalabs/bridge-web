@@ -38,7 +38,7 @@ if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
 const plausibleEndpoint = import.meta.env.VITE_PLAUSIBLE_API_HOST;
 if (plausibleEndpoint && plausibleEndpoint !== 'false') {
   init({
-    domain: window.location.host,
+    domain: 'bridge.massa',
     endpoint: plausibleEndpoint,
   });
 }
