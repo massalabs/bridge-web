@@ -1,4 +1,5 @@
 import React from 'react';
+import { init } from '@plausible-analytics/tracker';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
@@ -11,7 +12,6 @@ import {
 
 import '@massalabs/react-ui-kit/src/global.css';
 import './index.css';
-
 import { ENV } from './const';
 import { EvmWalletContext } from './contexts/EvmWalletContext';
 import { DaoPage } from './pages/DaoPage';
@@ -33,6 +33,14 @@ const baseENV = import.meta.env.VITE_ENV;
 if ([ENV.DEV, ENV.TEST].includes(baseENV)) {
   const { mockServer } = await import('./mirage');
   mockServer(baseENV);
+}
+
+const plausibleEndpoint = import.meta.env.VITE_PLAUSIBLE_API_HOST;
+if (plausibleEndpoint && plausibleEndpoint !== 'false') {
+  init({
+    domain: window.location.host,
+    endpoint: plausibleEndpoint,
+  });
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt#use_within_json
