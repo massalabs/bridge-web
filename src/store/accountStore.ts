@@ -1,4 +1,4 @@
-import { Client, ClientFactory, IAddressInfo } from '@massalabs/massa-web3';
+import { Client, ClientFactory } from '@massalabs/massa-web3';
 import { IAccount, IProvider } from '@massalabs/wallet-provider';
 import { useTokenStore } from './tokenStore';
 import { SUPPORTED_MASSA_WALLETS } from '@/const';
@@ -13,7 +13,6 @@ export interface AccountStoreState {
   connectedAccount?: IAccount;
   massaClient?: Client;
   minimalFees: bigint;
-  addrInfo: IAddressInfo[];
   accounts?: IAccount[];
   currentProvider?: IProvider;
   providers: IProvider[];
@@ -31,8 +30,6 @@ export interface AccountStoreState {
 
   setConnectedAccount: (account?: IAccount) => void;
   refreshMassaClient: () => void;
-
-  setAddrInfo: (addrInfo: IAddressInfo[]) => void;
 }
 
 const accountStore = (
@@ -45,7 +42,6 @@ const accountStore = (
   networkObserver: undefined,
   massaClient: undefined,
   minimalFees: 0n,
-  addrInfo: [],
   currentProvider: undefined,
   providers: [],
   isFetching: false,
@@ -195,10 +191,6 @@ const accountStore = (
       // once current account is set, refresh balances
       useTokenStore.getState().refreshBalances();
     }
-  },
-
-  setAddrInfo: (addrInfo: IAddressInfo[]) => {
-    set({ addrInfo });
   },
 
   refreshMassaClient: async () => {

@@ -16,6 +16,7 @@ import {
   useOperationStore,
 } from './store';
 import { SUPPORTED_BLOCKCHAIN_TO_CHAIN_IDS, config } from '../const';
+import { allowanceKeysExist } from '@/bridge/storage-cost';
 import { getSupportedTokensList } from '@/custom/bridge/bridge';
 import {
   getAllowance,
@@ -33,6 +34,7 @@ import {
 export interface IToken {
   name: string;
   allowance: bigint; // MASSA token allowance
+  hasAllowanceKey: boolean; // whether the allowance entry exists, even with a 0 allowance
   decimals: number;
   symbol: string;
   symbolEVM: string;
@@ -56,8 +58,6 @@ export interface TokenStoreState {
   /** Refresh the list of supported tokens by reading the massa bridge smart contract */
   refreshTokens: () => void;
   refreshBalances: () => void;
-
-  setAddrInfo: () => void;
 }
 
 async function initMassaClient(isMainnet: boolean): Promise<Client> {
@@ -105,6 +105,7 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
             symbolEVM: getEVMSymbol(symbol),
             decimals,
             allowance: BigInt(0),
+            hasAllowanceKey: false,
             balance: BigInt(0),
           };
         }),
@@ -160,8 +161,6 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
       SELECTED_MASSA_TOKEN_KEY,
       selectedToken ? JSON.stringify(selectedToken) : '',
     );
-
-    get().setAddrInfo();
   },
 
   resetSelectedToken: () => {
@@ -186,8 +185,15 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
 
     const publicClient = await initMassaClient(getIsMainnet());
 
+    const hasAllowanceKeys = await allowanceKeysExist(
+      publicClient,
+      supportedTokens.map((token) => token.massaToken),
+      connectedAccount.address(),
+      config[currentMode].massaBridgeContract,
+    );
+
     const tokens = await Promise.all(
-      supportedTokens.map(async (token) => {
+      supportedTokens.map(async (token, i) => {
         const [accountAllowance, accountBalance] = await Promise.all([
           getAllowance(
             config[currentMode].massaBridgeContract,
@@ -198,22 +204,11 @@ export const useTokenStore = create<TokenStoreState>((set, get) => ({
           getBalance(token.massaToken, publicClient, connectedAccount),
         ]);
         token.allowance = accountAllowance;
+        token.hasAllowanceKey = hasAllowanceKeys[i];
         token.balance = accountBalance;
         return token;
       }),
     );
     set({ tokens });
-  },
-  setAddrInfo: async () => {
-    const client = useAccountStore.getState().massaClient;
-    const selectedToken = get().selectedToken;
-
-    if (!selectedToken) return;
-
-    useAccountStore.setState({
-      addrInfo: await client
-        ?.publicApi()
-        .getAddresses([selectedToken.massaToken]),
-    });
   },
 }));
