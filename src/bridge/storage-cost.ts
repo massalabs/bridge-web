@@ -1,4 +1,4 @@
-import { STORAGE_BYTE_COST, strToBytes } from '@massalabs/massa-web3';
+import { Client, STORAGE_BYTE_COST, strToBytes } from '@massalabs/massa-web3';
 import { config } from '@/const';
 import {
   useAccountStore,
@@ -6,28 +6,18 @@ import {
   useTokenStore,
 } from '@/store/store';
 
+/**
+ * Storage cost of the allowance entry that increaseAllowance creates when the connected account has
+ * never given an allowance to the bridge on the selected token.
+ */
 export function increaseAllowanceStorageCost(): bigint {
-  const { massaClient, connectedAccount, addrInfo } =
-    useAccountStore.getState();
+  const { connectedAccount } = useAccountStore.getState();
   const { selectedToken } = useTokenStore.getState();
   const { currentMode } = useBridgeModeStore.getState();
 
-  if (!massaClient) return 0n;
   if (!selectedToken) return 0n;
   if (!connectedAccount) return 0n;
-  if (!addrInfo) return 0n;
-
-  const allKeys = addrInfo[0].candidate_datastore_keys;
-  const key = allowanceKey(
-    connectedAccount.address(),
-    config[currentMode].massaBridgeContract,
-  );
-  const foundKey = allKeys.find((k) => {
-    return JSON.stringify(k) === JSON.stringify(key);
-  });
-  if (foundKey) {
-    return 0n;
-  }
+  if (selectedToken.hasAllowanceKey) return 0n;
 
   const storage =
     4n +
@@ -37,6 +27,32 @@ export function increaseAllowanceStorageCost(): bigint {
     32n;
 
   return STORAGE_BYTE_COST * storage;
+}
+
+/**
+ * Tells, for each token, whether the owner already has an allowance entry for the spender.
+ * Reads the exact datastore keys, in one request, instead of listing the keys of the token contracts:
+ * a token holds one entry per holder, and a node may cap how many keys it lists.
+ * @param client - The client to use
+ * @param tokens - The token contract addresses
+ * @param owner - The address giving the allowance
+ * @param spender - The address receiving the allowance
+ * @returns Whether the allowance entry exists, in the order of `tokens`
+ */
+export async function allowanceKeysExist(
+  client: Client,
+  tokens: string[],
+  owner: string,
+  spender: string,
+): Promise<boolean[]> {
+  if (!tokens.length) return [];
+
+  const key = Uint8Array.from(allowanceKey(owner, spender));
+  const entries = await client
+    .publicApi()
+    .getDatastoreEntries(tokens.map((address) => ({ address, key })));
+
+  return entries.map((entry) => entry.candidate_value !== null);
 }
 
 // from massa-standards/smart-contracts/assembly/contracts/FT/token-internals.ts
