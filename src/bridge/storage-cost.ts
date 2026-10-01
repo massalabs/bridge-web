@@ -52,7 +52,9 @@ export async function allowanceKeysExist(
     .publicApi()
     .getDatastoreEntries(tokens.map((address) => ({ address, key })));
 
-  return entries.map((entry) => entry.candidate_value !== null);
+  // massa-web3 types a missing value as null, but turns it into an empty array.
+  // An allowance entry is never empty: it holds a u256, even for a 0 allowance.
+  return entries.map((entry) => !!entry.candidate_value?.length);
 }
 
 // from massa-standards/smart-contracts/assembly/contracts/FT/token-internals.ts
