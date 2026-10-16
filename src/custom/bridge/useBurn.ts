@@ -61,6 +61,9 @@ export function useBurn() {
 
       setBurnTxId(opId);
 
+      // MAIN.5.1 nodes keep executed operations in their pool until final, and this
+      // massa-web3 version reports them as AWAITING_INCLUSION until then: the
+      // speculative statuses may never be seen, so the final ones are awaited too.
       const operationStatus = await massaClient
         .smartContracts()
         .awaitMultipleRequiredOperationStatus(
@@ -68,11 +71,16 @@ export function useBurn() {
           [
             EOperationStatus.SPECULATIVE_ERROR,
             EOperationStatus.SPECULATIVE_SUCCESS,
+            EOperationStatus.FINAL_ERROR,
+            EOperationStatus.FINAL_SUCCESS,
           ],
           200_000,
         );
 
-      if (operationStatus === EOperationStatus.SPECULATIVE_ERROR) {
+      if (
+        operationStatus === EOperationStatus.SPECULATIVE_ERROR ||
+        operationStatus === EOperationStatus.FINAL_ERROR
+      ) {
         await massaClient
           .smartContracts()
           .getFilteredScOutputEvents({
