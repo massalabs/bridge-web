@@ -48,7 +48,7 @@
     "tw-colors": "^3.3.1",
     "usehooks-ts": "^2.13.0",
     "viem": "^2.7.6",
-    "wagmi": "^2.5.6",
+    "wagmi": "^2.19.5",
     "zustand": "^4.3.8"
   },
   "devDependencies": {
