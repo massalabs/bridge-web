@@ -15,6 +15,7 @@ export function useMintToken({ tokenAddress }: useMintTokenProps) {
   const { data: hash, writeContract, error } = useWriteContract();
 
   const write = useCallback(() => {
+    if (!address) return;
     writeContract({
       address: tokenAddress as `0x${string}`,
       abi: [
@@ -28,7 +29,6 @@ export function useMintToken({ tokenAddress }: useMintTokenProps) {
       ],
       functionName: 'create',
       args: [address],
-      value: BigInt(0),
     });
   }, [address, tokenAddress, writeContract]);
 
